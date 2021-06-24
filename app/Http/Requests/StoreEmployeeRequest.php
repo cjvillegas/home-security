@@ -21,7 +21,7 @@ class StoreEmployeeRequest extends FormRequest
                 'string',
                 'nullable',
             ],
-            'barcode' => [
+            'pin_code' => [
                 'string',
                 'required',
                 'unique:employees',

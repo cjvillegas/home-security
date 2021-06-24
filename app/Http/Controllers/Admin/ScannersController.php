@@ -9,6 +9,7 @@ use App\Http\Requests\StoreScannerRequest;
 use App\Http\Requests\UpdateScannerRequest;
 use App\Models\Scanner;
 use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -20,9 +21,7 @@ class ScannersController extends Controller
     {
         abort_if(Gate::denies('scanner_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $scanners = Scanner::all();
-
-        return view('admin.scanners.index', compact('scanners'));
+        return view('admin.scanners.index');
     }
 
     public function create()
@@ -74,5 +73,49 @@ class ScannersController extends Controller
         Scanner::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Fetch list of scanners
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function fetchScanners(Request $request)
+    {
+        $search = $request->input('search.value'); // used for searching
+        $draw = $request->get('draw'); // used in Datatable
+        $limit = $request->get('length'); // used for pagination as limit
+        $offset = $request->get('start'); // used for pagination as offset
+        $index = $request->input('order.0.column'); // used for ordering, define the column  to order
+        $direction = $request->input('order.0.dir'); // used for ordering, define the direction of the order
+        $column = $request->input('columns')[$index]['name']; // used for ordering, the column to order
+
+        $scanners = Scanner::orderBy($column, $direction);
+
+        // if a search string exists
+        if ($search) {
+            $scanners->where(function ($q) use ($search) {
+                $q->where('id', 'like', "%$search%");
+                $q->orWhere('scannedtime', 'like', "%$search%");
+                $q->orWhere('employeeid', 'like', "%$search%");
+                $q->orWhere('processid', 'like', "%$search%");
+                $q->orWhere('blindid', 'like', "%$search%");
+            });
+        }
+
+        // retrieved filtered count
+        $filteredCount = $scanners->count();
+
+        // return the actual viewable results
+        $scanners = $scanners->limit($limit)->offset($offset)->get();
+
+        return response()->json([
+            'data' => $scanners,
+            'recordsTotal' => Scanner::count(),
+            'recordsFiltered' => $filteredCount,
+            'draw' => $draw,
+        ]);
     }
 }

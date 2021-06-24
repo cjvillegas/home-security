@@ -3,6 +3,7 @@
 return [
     'actions'                        => 'Actions',
     'add'                            => 'Add',
+    'print_barcode'                  => 'Print Barcode',
     'allRightsReserved'              => 'All rights reserved.',
     'areYouSure'                     => 'Are you sure?',
     'clickHereToVerify'              => 'Click here to verify',

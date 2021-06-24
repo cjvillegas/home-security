@@ -36,12 +36,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('scanners/destroy', 'ScannersController@massDestroy')->name('scanners.massDestroy');
     Route::post('scanners/parse-csv-import', 'ScannersController@parseCsvImport')->name('scanners.parseCsvImport');
     Route::post('scanners/process-csv-import', 'ScannersController@processCsvImport')->name('scanners.processCsvImport');
+    Route::match(['post', 'get'], 'scanners/fetch-scanners', 'ScannersController@fetchScanners')->name('scanners.fetch-scanners');
     Route::resource('scanners', 'ScannersController');
 
     // Employees
     Route::delete('employees/destroy', 'EmployeesController@massDestroy')->name('employees.massDestroy');
     Route::post('employees/parse-csv-import', 'EmployeesController@parseCsvImport')->name('employees.parseCsvImport');
     Route::post('employees/process-csv-import', 'EmployeesController@processCsvImport')->name('employees.processCsvImport');
+    Route::get('employees/{employee}/print-barcode', 'EmployeesController@printBarcode')->name('employees.print-barcode');
     Route::resource('employees', 'EmployeesController');
 
     // Processes

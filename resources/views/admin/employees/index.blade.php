@@ -36,6 +36,9 @@
                             {{ trans('cruds.employee.fields.barcode') }}
                         </th>
                         <th>
+                            {{ trans('cruds.employee.fields.pin_code') }}
+                        </th>
+                        <th>
                             {{ trans('cruds.employee.fields.target') }}
                         </th>
                         <th>
@@ -65,6 +68,9 @@
                                 {{ $employee->barcode ?? '' }}
                             </td>
                             <td>
+                                {{ $employee->pin_code ?? '' }}
+                            </td>
+                            <td>
                                 {{ $employee->target ?? '' }}
                             </td>
                             <td>
@@ -85,6 +91,13 @@
                                         {{ trans('global.edit') }}
                                     </a>
                                 @endcan
+
+                                <button
+                                    class="btn btn-xs btn-info"
+                                    id="print-barcode"
+                                    onclick="fuck({{ $employee }})">
+                                    {{ trans('global.print_barcode') }}
+                                </button>
 
                                 @can('employee_delete')
                                     <form action="{{ route('admin.employees.destroy', $employee->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
@@ -110,50 +123,76 @@
 @section('scripts')
 @parent
 <script>
-    $(function () {
-  let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('employee_delete')
-  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-  let deleteButton = {
-    text: deleteButtonTrans,
-    url: "{{ route('admin.employees.massDestroy') }}",
-    className: 'btn-danger',
-    action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-          return $(entry).data('entry-id')
-      });
+    function fuck(employee) {
+        let win = window.open("")
 
-      if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
+        let content = "<html><head>"
+        content += `<link href="{{ asset('css/print.css') }}" rel="stylesheet" />`
+        content += `<style media="print">
+            @page
+            {
+                margin: 0mm;  /* this affects the margin in the printer settings */
+                size: 89mm 28mm;
+            }
+        </style>`
+        content += "<body class='text-center'>"
+        content += `<div>${employee.fullname}</div>`
+        content += `<div class="code-font">${employee.barcode}</div>`
+        content += "</body></head></html>"
 
-        return
-      }
-
-      if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: config.url,
-          data: { ids: ids, _method: 'DELETE' }})
-          .done(function () { location.reload() })
-      }
+        win.document.write(content)
+        win.document.close()
+        setTimeout(_ => {
+            win.print()
+        }, 200)
     }
-  }
-  dtButtons.push(deleteButton)
-@endcan
 
-  $.extend(true, $.fn.dataTable.defaults, {
-    orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
-    pageLength: 100,
-  });
-  let table = $('.datatable-Employee:not(.ajaxTable)').DataTable({ buttons: dtButtons })
-  $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
-      $($.fn.dataTable.tables(true)).DataTable()
-          .columns.adjust();
-  });
-  
-})
+    $(function () {
+        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+        @can('employee_delete')
+            let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+            let deleteButton = {
+                text: deleteButtonTrans,
+                url: "{{ route('admin.employees.massDestroy') }}",
+                className: 'btn-danger',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
+                        return $(entry).data('entry-id')
+                    });
 
+                    if (ids.length === 0) {
+                        alert('{{ trans('global.datatables.zero_selected') }}')
+
+                        return
+                    }
+
+                    if (confirm('{{ trans('global.areYouSure') }}')) {
+                        $.ajax({
+                            headers: {'x-csrf-token': _token},
+                            method: 'POST',
+                            url: config.url,
+                            data: { ids: ids, _method: 'DELETE' }
+                        })
+                        .done(function () { location.reload() })
+                    }
+                }
+            }
+          dtButtons.push(deleteButton)
+        @endcan
+
+        $.extend(true, $.fn.dataTable.defaults, {
+            orderCellsTop: true,
+            order: [[ 1, 'desc' ]],
+            pageLength: 100,
+        });
+
+        let table = $('.datatable-Employee:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+        $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
+            $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+        });
+
+
+    })
 </script>
 @endsection

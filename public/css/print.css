@@ -1,0 +1,9 @@
+@import url('../fonts/code-128/stylesheet.css');
+
+.text-center {
+    text-align: center;
+}
+
+.code-font {
+    font-family: 'libre_barcode_128regular', cursive;
+}

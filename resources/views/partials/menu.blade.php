@@ -129,7 +129,7 @@
         @endcan
         @can('order_management_access')
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders*") ? "c-show" : "" }} {{ request()->is("admin/orderhistories*") ? "c-show" : "" }}">
-                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                <a class="c-sidebar-nav-dropdown-toggle c-disabled" href="#">
                     <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
                     </i>
@@ -138,7 +138,7 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.orders.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon">
 
                                 </i>
@@ -148,7 +148,7 @@
                     @endcan
                     @can('orderhistory_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.orderhistories.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/orderhistories") || request()->is("admin/orderhistories/*") ? "c-active" : "" }}">
+                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orderhistories") || request()->is("admin/orderhistories/*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
                                 </i>

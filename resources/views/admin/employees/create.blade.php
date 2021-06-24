@@ -21,10 +21,20 @@
             </div>
             <div class="form-group">
                 <label class="required" for="barcode">{{ trans('cruds.employee.fields.barcode') }}</label>
-                <input class="form-control {{ $errors->has('barcode') ? 'is-invalid' : '' }}" type="text" name="barcode" id="barcode" value="{{ old('barcode', '') }}" required>
+                <input class="form-control {{ $errors->has('barcode') ? 'is-invalid' : '' }}" type="text" disabled name="barcode" id="barcode" value="{{ old('barcode', '') }}" required placeholder="This field will be auto generated">
                 @if($errors->has('barcode'))
                     <div class="invalid-feedback">
                         {{ $errors->first('barcode') }}
+                    </div>
+                @endif
+                <span class="help-block">{{ trans('cruds.employee.fields.barcode_helper') }}</span>
+            </div>
+            <div class="form-group">
+                <label class="required" for="pin_code">{{ trans('cruds.employee.fields.pin_code') }}</label>
+                <input class="form-control {{ $errors->has('pin_code') ? 'is-invalid' : '' }}" type="text" name="pin_code" id="pin_code" value="{{ old('pin_code', '') }}" required>
+                @if($errors->has('pin_code'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('pin_code') }}
                     </div>
                 @endif
                 <span class="help-block">{{ trans('cruds.employee.fields.barcode_helper') }}</span>

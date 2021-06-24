@@ -32,6 +32,15 @@ class Scanner extends Model
         'deleted_at',
     ];
 
+    protected $appends = [
+        'is_checked'
+    ];
+
+    public function getIsCheckedAttribute()
+    {
+        return '';
+    }
+
     public function getScannedtimeAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;

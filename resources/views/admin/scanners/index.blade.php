@@ -23,9 +23,8 @@
             <table class=" table table-bordered table-striped table-hover datatable datatable-Scanner">
                 <thead>
                     <tr>
-                        <th width="10">
-
-                        </th>
+                        {{-- Column for checkbox --}}
+                        <th width="10"></th>
                         <th>
                             {{ trans('cruds.scanner.fields.id') }}
                         </th>
@@ -41,58 +40,9 @@
                         <th>
                             {{ trans('cruds.scanner.fields.blindid') }}
                         </th>
-                        <th>
-                            &nbsp;
-                        </th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($scanners as $key => $scanner)
-                        <tr data-entry-id="{{ $scanner->id }}">
-                            <td>
-
-                            </td>
-                            <td>
-                                {{ $scanner->id ?? '' }}
-                            </td>
-                            <td>
-                                {{ $scanner->scannedtime ?? '' }}
-                            </td>
-                            <td>
-                                {{ $scanner->employeeid ?? '' }}
-                            </td>
-                            <td>
-                                {{ $scanner->processid ?? '' }}
-                            </td>
-                            <td>
-                                {{ $scanner->blindid ?? '' }}
-                            </td>
-                            <td>
-                                @can('scanner_show')
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.scanners.show', $scanner->id) }}">
-                                        {{ trans('global.view') }}
-                                    </a>
-                                @endcan
-
-                                @can('scanner_edit')
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.scanners.edit', $scanner->id) }}">
-                                        {{ trans('global.edit') }}
-                                    </a>
-                                @endcan
-
-                                @can('scanner_delete')
-                                    <form action="{{ route('admin.scanners.destroy', $scanner->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
-                                        <input type="hidden" name="_method" value="DELETE">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
-                                    </form>
-                                @endcan
-
-                            </td>
-
-                        </tr>
-                    @endforeach
-                </tbody>
             </table>
         </div>
     </div>
@@ -105,48 +55,116 @@
 @parent
 <script>
     $(function () {
-  let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('scanner_delete')
-  let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
-  let deleteButton = {
-    text: deleteButtonTrans,
-    url: "{{ route('admin.scanners.massDestroy') }}",
-    className: 'btn-danger',
-    action: function (e, dt, node, config) {
-      var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
-          return $(entry).data('entry-id')
-      });
+        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+        @can('scanner_delete')
+            let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
+            let deleteButton = {
+                text: deleteButtonTrans,
+                url: "{{ route('admin.scanners.massDestroy') }}",
+                className: 'btn-danger',
+                action: function (e, dt, node, config) {
+                    var ids = $.map(dt.rows({ selected: true }).nodes(), function (entry) {
+                        // fetch the second column's ID text
+                        return $(entry).find("td:eq(1)").text()
+                    });
 
-      if (ids.length === 0) {
-        alert('{{ trans('global.datatables.zero_selected') }}')
+                    if (ids.length === 0) {
+                        alert('{{ trans('global.datatables.zero_selected') }}')
 
-        return
-      }
+                        return
+                    }
 
-      if (confirm('{{ trans('global.areYouSure') }}')) {
-        $.ajax({
-          headers: {'x-csrf-token': _token},
-          method: 'POST',
-          url: config.url,
-          data: { ids: ids, _method: 'DELETE' }})
-          .done(function () { location.reload() })
-      }
-    }
-  }
-  dtButtons.push(deleteButton)
-@endcan
+                    if (confirm('{{ trans('global.areYouSure') }}')) {
+                        $.ajax({
+                            headers: {'x-csrf-token': _token},
+                            method: 'POST',
+                            url: config.url,
+                            data: { ids: ids, _method: 'DELETE' }
+                        })
+                        .done(function () { location.reload() })
+                    }
+                }
+            }
+            dtButtons.push(deleteButton)
+        @endcan
 
-  $.extend(true, $.fn.dataTable.defaults, {
-    orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
-    pageLength: 100,
-  });
-  let table = $('.datatable-Scanner:not(.ajaxTable)').DataTable({ buttons: dtButtons })
-  $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
-      $($.fn.dataTable.tables(true)).DataTable()
-          .columns.adjust();
-  });
-  
+        $.extend(true, $.fn.dataTable.defaults, {
+            orderCellsTop: true,
+            order: [[ 1, 'desc' ]],
+            pageLength: 25,
+        });
+
+        let table = $('.datatable-Scanner:not(.ajaxTable)').DataTable({
+            searchDelay: 500,
+            buttons: dtButtons,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '/admin/scanners/fetch-scanners',
+            },
+            columns: [
+                {
+                    data: 'is_checked',
+                    name: 'is_checked'
+                },
+                {
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'scannedtime',
+                    name: 'scannedtime'
+                },
+                {
+                    data: 'employeeid',
+                    name: 'employeeid'
+                },
+                {
+                    data: 'processid',
+                    name: 'processid'
+                },
+                {
+                    data: 'blindid',
+                    name: 'blindid'
+                },
+                {
+                    data: 'id',
+                    render: function (data, type, row) {
+                        // build the action column
+                        let elements = ''
+                        // for viewing
+{{--                        @can('scanner_show')--}}
+{{--                            elements += `<a class="btn btn-xs btn-primary" href="/admin/scanners/${data}">{{ trans('global.view') }}</a>`--}}
+{{--                        @endcan--}}
+
+                        @can('scanner_edit')
+                            elements += `<a class="btn btn-xs btn-info" href="/admin/scanners/${data}/edit">
+                                {{ trans('global.edit') }}
+                            </a>`
+                        @endcan
+
+                        @can('scanner_delete')
+                            elements += `<form
+                                class="d-inline-block ml-3"
+                                action="/admin/scanners/${data}"
+                                method="POST"
+                                onsubmit="return confirm('{{ trans('global.areYouSure') }}');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
+                            </form>`
+                        @endcan
+
+                        return elements
+                    }
+                }
+            ],
+
+        })
+        $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
+            $($.fn.dataTable.tables(true)).DataTable()
+            .columns.adjust();
+        });
 })
 
 </script>

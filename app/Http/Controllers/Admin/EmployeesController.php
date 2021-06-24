@@ -40,7 +40,10 @@ class EmployeesController extends Controller
 
     public function store(StoreEmployeeRequest $request)
     {
-        $employee = Employee::create($request->all());
+        $attributes = $request->all();
+        $attributes['barcode'] = (new Employee())->generateBarcode();
+
+        Employee::create($attributes);
 
         return redirect()->route('admin.employees.index');
     }
@@ -88,5 +91,10 @@ class EmployeesController extends Controller
         Employee::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function printBarcode(Employee $employee)
+    {
+        return view('admin.employees.print-barcode')->with('employee', $employee);;
     }
 }

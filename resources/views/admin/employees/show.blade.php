@@ -41,6 +41,14 @@
                     </tr>
                     <tr>
                         <th>
+                            {{ trans('cruds.employee.fields.pin_code') }}
+                        </th>
+                        <td>
+                            {{ $employee->pin_code }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             {{ trans('cruds.employee.fields.target') }}
                         </th>
                         <td>

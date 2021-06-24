@@ -114,6 +114,7 @@ return [
             'fullname'          => 'Full Name',
             'fullname_helper'   => ' ',
             'barcode'           => 'Employee Barcode',
+            'pin_code'          => 'Employee Pin Code',
             'barcode_helper'    => ' ',
             'created_at'        => 'Created at',
             'created_at_helper' => ' ',
