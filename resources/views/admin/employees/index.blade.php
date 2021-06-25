@@ -136,9 +136,11 @@
             }
         </style>`
         content += "<body class='text-center'>"
+        content += `<div class="">`
         content += `<div class="text-uppercase f-size-16">${employee.fullname}</div>`
-        content += `<div class="code-font f-size-40">${employee.barcode}</div>`
-        content += `<div class="f-size-10" style="margin-top: -15px;">${employee.barcode}</div>`
+        content += `<div class="code-font f-size-70 letter-spacing-8">${employee.barcode}</div>`
+        content += `<div class="f-size-14" style="margin-top: -25px;">${employee.barcode}</div>`
+        content += "</div>"
         content += "</body></head></html>"
 
         win.document.write(content)
