@@ -129,7 +129,7 @@
         @endcan
         @can('order_management_access')
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders*") ? "c-show" : "" }} {{ request()->is("admin/orderhistories*") ? "c-show" : "" }}">
-                <a class="c-sidebar-nav-dropdown-toggle c-disabled" href="#">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
                     </i>
@@ -138,24 +138,35 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.index') }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon">
 
                                 </i>
-                                {{ trans('cruds.order.title') }}
+                                {{ trans('cruds.order.order_list') }}
                             </a>
                         </li>
                     @endcan
-                    @can('orderhistory_access')
-                        <li class="c-sidebar-nav-item">
-                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orderhistories") || request()->is("admin/orderhistories/*") ? "c-active" : "" }}">
-                                <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
-                                </i>
-                                {{ trans('cruds.orderhistory.title') }}
-                            </a>
-                        </li>
-                    @endcan
+{{--                    @can('order_access')--}}
+{{--                        <li class="c-sidebar-nav-item">--}}
+{{--                            <a href="#" class="c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">--}}
+{{--                                <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon">--}}
+
+{{--                                </i>--}}
+{{--                                {{ trans('cruds.order.title') }}--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                    @endcan--}}
+{{--                    @can('orderhistory_access')--}}
+{{--                        <li class="c-sidebar-nav-item">--}}
+{{--                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orderhistories") || request()->is("admin/orderhistories/*") ? "c-active" : "" }}">--}}
+{{--                                <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">--}}
+
+{{--                                </i>--}}
+{{--                                {{ trans('cruds.orderhistory.title') }}--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                    @endcan--}}
                 </ul>
             </li>
         @endcan

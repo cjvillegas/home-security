@@ -1,11 +1,5 @@
-@import url('../fonts/code-128/stylesheet.css');
-
 .text-center {
     text-align: center;
-}
-
-.code-font {
-    font-family: 'libre_barcode_128regular', cursive;
 }
 
 .d-flex {
@@ -26,10 +20,6 @@
 
 .f-size-16 {
     font-size: 16px;
-}
-
-.f-size-70 {
-    font-size: 70px;
 }
 
 .text-uppercase {

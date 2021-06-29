@@ -21,9 +21,7 @@ class OrdersController extends Controller
     {
         abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $orders = Order::latest()->distinct('order_no')->paginate(40);
-
-        return view('admin.orders.index', compact('orders'));
+        return view('admin.orders.index');
     }
 
     public function vieworderno($order_no)

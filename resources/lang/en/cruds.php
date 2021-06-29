@@ -149,6 +149,7 @@ return [
         ],
     ],
     'order' => [
+        'order_list'     => 'Orders',
         'title'          => 'Order Enquiry',
         'title_singular' => 'Order Enquiry',
         'fields'         => [

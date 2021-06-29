@@ -95,7 +95,7 @@
                                 <button
                                     class="btn btn-xs btn-info"
                                     id="print-barcode"
-                                    onclick="fuck({{ $employee }})">
+                                    onclick="printEmployeeBarcode({{ $employee }})">
                                     {{ trans('global.print_barcode') }}
                                 </button>
 
@@ -106,9 +106,7 @@
                                         <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                     </form>
                                 @endcan
-
                             </td>
-
                         </tr>
                     @endforeach
                 </tbody>
@@ -123,9 +121,7 @@
 @section('scripts')
 @parent
 <script>
-    function fuck(employee) {
-        let win = window.open("")
-
+    function printEmployeeBarcode(employee) {
         let content = "<html><head>"
         content += `<link href="{{ asset('css/print.css') }}" rel="stylesheet" />`
         content += `<style media="print">
@@ -136,23 +132,36 @@
             }
         </style>`
         content += "<body class='text-center'>"
-        content += `<div class="">`
-        content += `<div class="text-uppercase f-size-16">${employee.fullname}</div>`
-        content += `<div class="code-font f-size-70 letter-spacing-8">${employee.barcode}</div>`
-        content += `<div class="f-size-14" style="margin-top: -25px;">${employee.barcode}</div>`
-        content += "</div>"
+        content += `<div class="text-uppercase f-size-14">${employee.fullname}</div>`
+        content += `<svg id="barcode"></svg>`
         content += "</body></head></html>"
 
+        let script = document.createElement("script")
+        script.type = "text/javascript"
+        script.src = "{{ asset('js/jsbarcode.code128.min.js') }}"
+
+        let anotherScript = document.createElement("script")
+        anotherScript.text += `setTimeout(_ => {
+            JsBarcode("#barcode", "${employee.barcode}", {
+                height: 35,
+                fontSize: 14
+            })
+        }, 200)`
+
+        let win = window.open("")
         win.document.write(content)
+        win.document.body.appendChild(script)
+        win.document.body.appendChild(anotherScript)
         win.document.close()
         setTimeout(_ => {
             win.print()
-        }, 200)
+        }, 300)
     }
 
     $(function () {
-        let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-        @can('employee_delete')
+        if ($.fn.dataTable) {
+            let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
+            @can('employee_delete')
             let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
             let deleteButton = {
                 text: deleteButtonTrans,
@@ -176,26 +185,25 @@
                             url: config.url,
                             data: { ids: ids, _method: 'DELETE' }
                         })
-                        .done(function () { location.reload() })
+                            .done(function () { location.reload() })
                     }
                 }
             }
-          dtButtons.push(deleteButton)
-        @endcan
+            dtButtons.push(deleteButton)
+            @endcan
 
-        $.extend(true, $.fn.dataTable.defaults, {
-            orderCellsTop: true,
-            order: [[ 1, 'desc' ]],
-            pageLength: 100,
-        });
+            $.extend(true, $.fn.dataTable.defaults, {
+                orderCellsTop: true,
+                order: [[ 1, 'desc' ]],
+                pageLength: 100,
+            });
 
-        let table = $('.datatable-Employee:not(.ajaxTable)').DataTable({ buttons: dtButtons })
-        $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
-            $($.fn.dataTable.tables(true)).DataTable()
-            .columns.adjust();
-        });
-
-
+            let table = $('.datatable-Employee:not(.ajaxTable)').DataTable({ buttons: dtButtons })
+            $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
+                $($.fn.dataTable.tables(true)).DataTable()
+                    .columns.adjust();
+            });
+        }
     })
 </script>
 @endsection

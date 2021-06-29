@@ -13,42 +13,18 @@ class Order extends Model
     use SoftDeletes;
     use HasFactory;
 
-    public $table = 'orders';
-
-    protected $dates = [
-        'despatch_date',
-        'ordered',
-        'required',
-        'scheduled_date',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
-
     protected $fillable = [
         'blindid',
         'order_no',
         'customer',
-        'cust_ord_ref',
-        'cust_ord_no',
+        'customer_order_no',
         'quantity',
         'blind_type',
-        'range',
-        'colour',
-        'stock_code',
-        'man_width',
-        'man_drop',
         'blind_status',
-        'despatch_date',
-        'ordered',
-        'required',
-        'scheduled_date',
-        'roller_table',
-        'remake',
-        'same_day_despatch',
-        'over_size',
-        'man_location',
         'order_entered_by',
+        'serial_id',
+        'despatched_at',
+        'ordered_at',
         'created_at',
         'updated_at',
         'deleted_at',
