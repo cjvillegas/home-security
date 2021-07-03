@@ -9,6 +9,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
@@ -92,5 +93,52 @@ class OrdersController extends Controller
         Order::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Fetch list of orders with pagination and searching
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function fetch(Request $request)
+    {
+        $size = $request->get('size');
+        $page = $request->get('page');
+        $searchString = $request->get('searchString');
+
+        $orders = Order::groupBy('order_no');
+
+        if ($searchString) {
+            $orders->where(function($q) use ($searchString) {
+                $q->where('order_no', 'like', "%$searchString%");
+            });
+        }
+
+        $orders = $orders->orderBy('id', 'asc')->paginate($size);
+
+
+        return response()->json($orders);
+    }
+
+    /**
+     * Retrieve orders with same order_no
+     *
+     * @param string $order_no
+     *
+     * @return JsonResponse
+     */
+    public function showOrderList($order_no): JsonResponse
+    {
+        $orders= Order::where('order_no', $order_no)
+            ->with(['scanners' => function ($query) {
+                $query->with(['employee' => function ($query) {
+                    $query->with(['shift', 'team']);
+                }, 'process']);
+            }])
+            ->get();
+
+        return response()->json($orders);
     }
 }

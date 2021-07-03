@@ -3,7 +3,11 @@
 namespace App\Console\Commands\Orders;
 
 use App\Models\Order;
+use Carbon\Carbon;
+use DB;
 use Illuminate\Console\Command;
+use Log;
+use \Illuminate\Support\Collection;
 
 class PopulateOrdersFromSage extends Command
 {
@@ -38,15 +42,81 @@ class PopulateOrdersFromSage extends Command
      */
     public function handle()
     {
-        \Log::info('No CRON for the fucking day');
+        Log::info('CRON for populating orders table from SAGE is RUNNING!!!');
 
         // clear first the orders table
         $this->clearTable();
 
-        // do insert
-        $this->addNewItem([]);
+        // retrieve orders from sage
+        $orders = $this->getOrdersData();
+
+        $chunkCounter = 0;
+
+        // chunk the results to save memory
+        foreach ($orders->chunk(100) as $chunk) {
+            // foreach to each instance of retrieved order
+            $newOrders = [];
+            foreach ($chunk as $order) {
+                // perform insertion of the order
+                $newOrders[] = $this->sanitize((array) $order);
+            }
+
+            // do the actual insertion of data
+            Order::insert($newOrders);
+
+            // increment the execution counter
+            $chunkCounter++;
+
+            // execution throttling
+            // make the server rest after 10 bulk insert
+            if ($chunkCounter % 10 === 0) {
+                usleep(100000);
+            }
+        }
 
         return 0;
+    }
+
+    /**
+     * This will retrieve orders from SAGE
+     *
+     * @return Collection
+     */
+    public function getOrdersData(): Collection
+    {
+        $orders = DB::connection('sqlsrv')->select("
+            SELECT
+                OrderDetail.id AS BlindId,
+                [Order].order_id AS OrderNo,
+                [User].company AS Customer,
+                [Order].cust_no AS CustOrdNo,
+                OrderDetail.quantity AS Quantity,
+                BlindType.description AS BlindType,
+                DetailStatus.name AS BlindStatus,
+                [Order].dat_delivery AS DespatchDate,
+                [Order].dat_order AS Ordered,
+                [Order].username AS OrderEnteredBy,
+                SerialDetailLine.id as SerialID
+            FROM
+                OrderDetail INNER JOIN
+                [Order] ON OrderDetail.order_id = [Order].id INNER JOIN
+                [User] ON [Order].user_id = [User].id INNER JOIN
+                BlindType ON OrderDetail.blindtype_id = BlindType.id INNER JOIN
+                Fabric ON OrderDetail.fabric_id = Fabric.id INNER JOIN
+                OrderStatus ON [Order].orderstatus_id = OrderStatus.id INNER JOIN
+                DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id INNER JOIN
+                ManLocation ON BlindType.manlocation_id = ManLocation.id INNER JOIN
+                SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id LEFT OUTER JOIN
+                RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
+            WHERE
+                ([Order].order_id IS NOT NULL)
+                AND (OrderStatus.IsOrder = '1')
+                AND (OrderStatus.IsQuotation = '0')
+                AND (OrderStatus.id NOT BETWEEN '5' AND '7')
+                AND (BlindType.id <> '382')
+        ");
+
+        return collect($orders);
     }
 
     /**
@@ -61,26 +131,34 @@ class PopulateOrdersFromSage extends Command
     }
 
     /**
-     * Inserts new item in the orders table.
+     * Sanitize order item coming from SAGE
+     * This will ensure that we will only be saving item
+     * with right information in them
      *
      * @param array $sageOrder
      *
-     * @return void
+     * @return mixed
      */
-    private function addNewItem(array $sageOrder): void
+    private function sanitize(array $sageOrder)
     {
-        $order = new Order;
-        $order->blind_id = $sageOrder['blind_id'] ?? rand(2, 50000000);
-        $order->order_no = $sageOrder['order_no'] ?? rand(2, 50000000);
-        $order->customer = $sageOrder['customer'] ?? 'Chaprel John Villegas';
-        $order->customer_order_no = $sageOrder['customer_order_no'] ?? \Str::random(40);
-        $order->quantity = $sageOrder['quantity'] ?? 10;
-        $order->blind_type = $sageOrder['blind_type'] ?? 'Fuck';
-        $order->blind_status = $sageOrder['blind_status'] ?? 'FUck you';
-        $order->order_entered_by = $sageOrder['order_entered_by'] ?? 1;
-        $order->serial_id = $sageOrder['serial_id'] ?? rand(2, 5000000);
-        $order->ordered_at = $sageOrder['ordered_at'] ?? now();
+        // do a sanity check of the required data
+        if (empty($sageOrder['BlindId']) || empty($sageOrder['OrderNo']) || empty($sageOrder['Customer']) || empty($sageOrder['Quantity']) || empty($sageOrder['OrderEnteredBy']) || empty($sageOrder['SerialID'])) {
+            return false;
+        }
 
-        $order->save();
+        $order['blind_id'] = $sageOrder['BlindId'];
+        $order['order_no'] = $sageOrder['OrderNo'];
+        $order['customer'] = $sageOrder['Customer'];
+        $order['customer_order_no'] = $sageOrder['CustOrdNo'];
+        $order['quantity'] = $sageOrder['Quantity'];
+        $order['blind_type'] = $sageOrder['BlindType'] ?? '';
+        $order['blind_status'] = $sageOrder['BlindStatus'] ?? '';
+        $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
+        $order['despatched_at'] = !empty($sageOrder['DespatchDate']) ? Carbon::parse($sageOrder['DespatchDate'])->format('Y-m-d H:i:s') : null;
+        $order['ordered_at'] = !empty($sageOrder['Ordered']) ? Carbon::parse($sageOrder['Ordered'])->format('Y-m-d H:i:s') : null;
+        $order['serial_id'] = $sageOrder['SerialID'];
+        $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
+
+        return $order;
     }
 }

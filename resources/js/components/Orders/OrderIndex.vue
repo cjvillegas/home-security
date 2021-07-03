@@ -1,8 +1,20 @@
 <template>
-    <el-card class="box-card">
+    <el-card
+        class="box-card"
+        v-loading="loading">
+        <el-input
+            placeholder="Press enter to search orders..."
+            clearable
+            style="width: 250px"
+            v-model="filters.searchString"
+            @keyup.enter.native="applySearch">
+
+        </el-input>
+
         <el-table
             fit
-            :data="orders">
+            :data="orders"
+            class="mt-3">
             <el-table-column
                 v-for="column in columns"
                 :key="column.key"
@@ -11,12 +23,18 @@
                 :show-overflow-tooltip="column.show_overflow_tooltip"
                 sortable>
                 <template slot-scope="scope">
-                    <span>Googke is the key</span>
+                    <span>{{ scope.row[column.key] }}</span>
                 </template>
             </el-table-column>
 
             <el-table-column label='Actions'>
-
+                <template slot-scope="scope">
+                    <el-button
+                        @click="viewOrder(scope.row)"
+                        size="mini">
+                        <i class="fas fa-eye"></i> View
+                    </el-button>
+                </template>
             </el-table-column>
         </el-table>
 
@@ -63,12 +81,39 @@
                 }
             }
         },
-        methods: {
+        created() {
+            this.functionName = 'fetch'
 
+            this.fetch()
+        },
+        methods: {
+            applySearch() {
+                this.filters.page = 1
+
+                this.fetch()
+            },
+            fetch() {
+                this.loading = true
+
+                this.$API.Orders.fetch(
+                    this.filters.size,
+                    this.filters.page,
+                    this.filters.searchString
+                )
+                .then(res => {
+                    this.orders = cloneDeep(res.data.data || [])
+                    this.filters.total = res.data.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+            },
+            viewOrder(order) {
+                this.$router.push({name: 'Order View', params: {orderNo: order.order_no}})
+            }
         }
     }
 </script>
-
-<style scoped>
-
-</style>

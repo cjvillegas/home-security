@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // fetches new orders from SAGE
-        $schedule->command('orders:populate-orders-from-sage')->everyFiveMinutes();
+        $schedule->command('orders:populate-orders-from-sage')->everyThirtyMinutes()->when(false);
     }
 
     /**
