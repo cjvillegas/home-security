@@ -26,6 +26,7 @@ class RecreateOrdersTable extends Migration
             $table->unsignedInteger('serial_id')->nullable();
             $table->dateTime('despatched_at')->nullable();
             $table->dateTime('ordered_at')->nullable();
+            $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
         });
