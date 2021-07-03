@@ -61,6 +61,14 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // Explicitly enable specific modes, overriding strict setting
+            'modes' => [
+                'NO_ZERO_IN_DATE',
+                'NO_ZERO_DATE',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+                'STRICT_TRANS_TABLES',
+            ],
         ],
 
         'pgsql' => [
@@ -81,11 +89,11 @@ return [
         'sqlsrv' => [
             'driver' => 'sqlsrv',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => env('SAGE_DB_HOST', 'localhost'),
+            'port' => env('SAGE_DB_PORT', '1433'),
+            'database' => env('SAGE_DB_DATABASE', 'forge'),
+            'username' => env('SAGE_DB_USERNAME', 'forge'),
+            'password' => env('SAGE_DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,

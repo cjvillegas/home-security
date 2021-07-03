@@ -6,6 +6,7 @@ use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Scanner extends Model
@@ -55,5 +56,31 @@ class Scanner extends Model
     {
         return $date->format('Y-m-d H:i:s');
     }
+
+    /********************
+    * R E L A T I O N S *
+    ********************/
+    /**
+     * Retrieve employee
+     *
+     * @return BelongsTo
+     */
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class, 'employeeid', 'barcode');
+    }
+
+    /**
+     * Retrieve process
+     *
+     * @return BelongsTo
+     */
+    public function process()
+    {
+        return $this->belongsTo(Process::class, 'processid', 'barcode');
+    }
+    /********************************
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 
 }

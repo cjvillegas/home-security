@@ -14,7 +14,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'blindid',
+        'blind_id',
         'order_no',
         'customer',
         'customer_order_no',
@@ -75,4 +75,16 @@ class Order extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    /********************
+    * R E L A T I O N S *
+    ********************/
+    public function scanners()
+    {
+        return $this->hasMany(Scanner::class, 'blindid', 'serial_id');
+    }
+
+
+    /********************************
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 }

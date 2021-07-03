@@ -5,6 +5,7 @@ namespace App\Models;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -32,15 +33,31 @@ class Employee extends Model
         'deleted_at',
     ];
 
+    /********************
+     * R E L A T I O N S *
+     ********************/
+    /**
+     * Retrieve employee's shift
+     *
+     * @return BelongsTo
+     */
     public function shift()
     {
         return $this->belongsTo(Shift::class, 'shift_id');
     }
 
+    /**
+     * Retrieves employee's team
+     *
+     * @return BelongsTo
+     */
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id');
     }
+    /********************************
+     * E N D  O F  R E L A T I O N S *
+     ********************************/
 
     protected function serializeDate(DateTimeInterface $date)
     {

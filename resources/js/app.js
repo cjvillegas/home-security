@@ -18,16 +18,23 @@ import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/display.css'
 import locale from 'element-ui/lib/locale/lang/en'
 
+// import router file
+import router from './router'
+
+import moment from 'moment'
+
 // make element UI globally accessible
 Vue.use(ElementUI, {  locale, size: 'small' })
 
 import API from './api/index.js'
 import EventBus from './services/EventBus'
 import StringGenericService from './services/StringGenericService'
+import DateGenericService from './services/DateGenericService'
 
 Vue.prototype.$API = API
 Vue.prototype.$EventBus = new EventBus()
 Vue.prototype.$StringService = new StringGenericService()
+Vue.prototype.$DateService = new DateGenericService()
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -36,6 +43,7 @@ Vue.prototype.$StringService = new StringGenericService()
  */
 const app = new Vue({
     el: '#app',
+    router,
     data: {},
     created() {
 
