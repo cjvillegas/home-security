@@ -75,6 +75,24 @@ class Order extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
+    /*******************
+    * F U N C T I O N  *
+    *******************/
+
+    /**
+     * Get the most latest blind_id entry in the table
+     *
+     * @return int|null
+     */
+    public static function getLatestBlindId()
+    {
+        return self::orderBy('blind_id', 'desc')->first()->blind_id ?? null;
+    }
+
+    /**************************
+    * E N D  F U N C T I O N  *
+    **************************/
+
     /********************
     * R E L A T I O N S *
     ********************/
@@ -82,8 +100,6 @@ class Order extends Model
     {
         return $this->hasMany(Scanner::class, 'blindid', 'serial_id');
     }
-
-
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

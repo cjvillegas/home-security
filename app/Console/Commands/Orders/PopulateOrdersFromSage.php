@@ -84,7 +84,10 @@ class PopulateOrdersFromSage extends Command
      */
     public function getOrdersData(): Collection
     {
-        $orders = DB::connection('sqlsrv')->select("
+        $latestBlindId = Order::getLatestBlindId();
+
+        // initialize the qeury
+        $query = "
             SELECT
                 OrderDetail.id AS BlindId,
                 [Order].order_id AS OrderNo,
@@ -98,24 +101,35 @@ class PopulateOrdersFromSage extends Command
                 [Order].username AS OrderEnteredBy,
                 SerialDetailLine.id as SerialID
             FROM
-                OrderDetail INNER JOIN
-                [Order] ON OrderDetail.order_id = [Order].id INNER JOIN
-                [User] ON [Order].user_id = [User].id INNER JOIN
-                BlindType ON OrderDetail.blindtype_id = BlindType.id INNER JOIN
-                Fabric ON OrderDetail.fabric_id = Fabric.id INNER JOIN
-                OrderStatus ON [Order].orderstatus_id = OrderStatus.id INNER JOIN
-                DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id INNER JOIN
-                ManLocation ON BlindType.manlocation_id = ManLocation.id INNER JOIN
-                SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id LEFT OUTER JOIN
-                RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
+                OrderDetail
+                INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
+                INNER JOIN [User] ON [Order].user_id = [User].id
+                INNER JOIN BlindType ON OrderDetail.blindtype_id = BlindType.id
+                INNER JOIN Fabric ON OrderDetail.fabric_id = Fabric.id
+                INNER JOIN OrderStatus ON [Order].orderstatus_id = OrderStatus.id
+                INNER JOIN DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id
+                INNER JOIN ManLocation ON BlindType.manlocation_id = ManLocation.id
+                INNER JOIN SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id
+                LEFT OUTER JOIN RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
             WHERE
                 ([Order].order_id IS NOT NULL)
                 AND (OrderStatus.IsOrder = '1')
                 AND (OrderStatus.IsQuotation = '0')
                 AND (OrderStatus.id NOT BETWEEN '5' AND '7')
                 AND (BlindType.id <> '382')
-        ");
 
+        ";
+
+        // if a blind_id present add additional condition to only load
+        // data after this specified blind_id
+        if ($latestBlindId) {
+            $query .= "\n AND (OrderDetail.id > {$latestBlindId})";
+        }
+
+        // execute the query
+        $orders = DB::connection('sqlsrv')->select($query);
+
+        // return data as collection
         return collect($orders);
     }
 
