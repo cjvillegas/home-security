@@ -16,7 +16,7 @@ class PopulateOrdersFromSage extends Command
      *
      * @var string
      */
-    protected $signature = 'orders:populate-orders-from-sage';
+    protected $signature = 'orders:populate-orders-from-sage {--load-all}';
 
     /**
      * The console command description.
@@ -44,8 +44,15 @@ class PopulateOrdersFromSage extends Command
     {
         Log::info('CRON for populating orders table from SAGE is RUNNING!!!');
 
+        $loadAll = $this->option('load-all');
+
+        // if to load all data, truncate the orders table
+        if ($loadAll) {
+            $this->clearTable();
+        }
+
         // retrieve orders from sage
-        $orders = $this->getOrdersData();
+        $orders = $this->getOrdersData($loadAll);
 
         $chunkCounter = 0;
 
@@ -77,13 +84,15 @@ class PopulateOrdersFromSage extends Command
     /**
      * This will retrieve orders from SAGE
      *
+     * @param bool $loadAll
+     *
      * @return Collection
      */
-    public function getOrdersData(): Collection
+    public function getOrdersData($loadAll = false): Collection
     {
         $latestBlindId = Order::getLatestBlindId();
 
-        // initialize the qeury
+        // initialize the query
         $query = "
             SELECT
                 OrderDetail.id AS BlindId,
@@ -118,7 +127,7 @@ class PopulateOrdersFromSage extends Command
 
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
-        if ($latestBlindId) {
+        if ($latestBlindId && !$loadAll) {
             $query .= "\t AND (OrderDetail.id > {$latestBlindId})";
         }
 
@@ -128,6 +137,18 @@ class PopulateOrdersFromSage extends Command
         // return data as collection
         return collect($orders);
     }
+
+    /**
+     * This will clear the data from the **orders** table.
+     * This method will really do truncation on the orders table, not soft deletion.
+     *
+     * @return void
+     */
+    private function clearTable(): void
+    {
+        Order::truncate();
+    }
+
 
     /**
      * Sanitize order item coming from SAGE
