@@ -44,9 +44,6 @@ class PopulateOrdersFromSage extends Command
     {
         Log::info('CRON for populating orders table from SAGE is RUNNING!!!');
 
-        // clear first the orders table
-        $this->clearTable();
-
         // retrieve orders from sage
         $orders = $this->getOrdersData();
 
@@ -117,13 +114,12 @@ class PopulateOrdersFromSage extends Command
                 AND (OrderStatus.IsQuotation = '0')
                 AND (OrderStatus.id NOT BETWEEN '5' AND '7')
                 AND (BlindType.id <> '382')
-
         ";
 
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
         if ($latestBlindId) {
-            $query .= "\n AND (OrderDetail.id > {$latestBlindId})";
+            $query .= "\t AND (OrderDetail.id > {$latestBlindId})";
         }
 
         // execute the query
@@ -131,17 +127,6 @@ class PopulateOrdersFromSage extends Command
 
         // return data as collection
         return collect($orders);
-    }
-
-    /**
-     * This will clear the data from the **orders** table.
-     * This method will really do truncation on the orders table, not soft deletion.
-     *
-     * @return void
-     */
-    private function clearTable(): void
-    {
-        Order::truncate();
     }
 
     /**
