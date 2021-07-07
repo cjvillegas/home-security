@@ -102,7 +102,7 @@
     },
     methods: {
         fetchReports() {
-            let sod = moment('2021-06-21').hour(6).startOf('hour')
+            let sod = moment().hour(6).startOf('hour')
             let eod = sod.clone().add(1, 'day').startOf('hour').format('YYYY-MM-DD HH:mm')
             sod = sod.format('YYYY-MM-DD HH:mm')
 
@@ -146,8 +146,8 @@
             }
 
             // define the SOD and EOD
-            let sod = moment('2021-06-21').hour(shiftStart).startOf('hour')
-            let eod = moment('2021-06-21').hour(shiftEnd).startOf('hour')
+            let sod = moment().hour(shiftStart).startOf('hour')
+            let eod = moment().hour(shiftEnd).startOf('hour')
 
             // if the shift is 3, push the eod to the next day for it's their end of shift
             if (!shift || shift.id === 3) {
