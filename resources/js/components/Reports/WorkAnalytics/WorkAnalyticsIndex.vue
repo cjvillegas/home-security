@@ -102,7 +102,7 @@
     },
     methods: {
         fetchReports() {
-            let sod = moment().hour(6).startOf('hour')
+            let sod = moment('2021-06-21').hour(6).startOf('hour')
             let eod = sod.clone().add(1, 'day').startOf('hour').format('YYYY-MM-DD HH:mm')
             sod = sod.format('YYYY-MM-DD HH:mm')
 
@@ -120,6 +120,19 @@
             })
         },
         getLabels() {
+            let {sod, eod} = this.getSodAndEod()
+
+            let columns = []
+            // get the times of the specified range
+            while (sod <= eod) {
+                columns.push(sod.format('HH:mm'))
+
+                sod = sod.add(1, 'hour')
+            }
+
+            return columns
+        },
+        getSodAndEod() {
             // get the shift or the time frame to which the graph should base
             let shift = this.pageData.shifts.find(shift => shift.id === this.filters.shift)
 
@@ -133,27 +146,17 @@
             }
 
             // define the SOD and EOD
-            let sod = moment().hour(shiftStart).startOf('hour')
-            let eod = moment().hour(shiftEnd).startOf('hour')
-
-            console.log(sod.format('YYYY-MM-DD HH:mm'), eod.format('YYYY-MM-DD HH:mm'))
+            let sod = moment('2021-06-21').hour(shiftStart).startOf('hour')
+            let eod = moment('2021-06-21').hour(shiftEnd).startOf('hour')
 
             // if the shift is 3, push the eod to the next day for it's their end of shift
             if (!shift || shift.id === 3) {
                 eod.add(1, 'day')
             }
 
-            let columns = []
-            // get the times of the specified range
-            while (sod <= eod) {
-                columns.push(sod.format('HH:mm'))
-
-                sod = sod.add(1, 'hour')
-            }
-
-            return columns
-        },
-},
+            return {sod, eod}
+        }
+    },
     computed: {
         myStyles () {
             return {
@@ -167,10 +170,6 @@
                 labels: this.getLabels(),
                 datasets: []
             }
-            // get the shift or the time frame to which the graph should base
-            let shift = this.pageData.shifts.find(shift => shift.id === this.filters.shift)
-            let shiftStart = 6
-            let shiftEnd = 6
             let scanners = cloneDeep(this.scanners)
 
             for (let x of teams) {
@@ -183,28 +182,13 @@
                 }
 
                 let localScanners = scanners.filter(scanner => scanner.employee && scanner.employee.team && scanner.employee.team.id === x.id)
-
+                // filter for specific process
                 if (this.filters.process) {
                     localScanners = localScanners.filter(scanner => scanner.processid === this.filters.process)
                 }
 
                 let data = []
-
-                // sanity check if a shift exist
-                if (shift) {
-                    // get the shift start and end time
-                    shiftStart = this.$DateService.getHoursFromTimeFormat(shift.shift_start)
-                    shiftEnd = this.$DateService.getHoursFromTimeFormat(shift.shift_end)
-                }
-
-                // define the SOD and EOD
-                let sod = moment().hour(shiftStart).startOf('hour')
-                let eod = moment().hour(shiftEnd).startOf('hour')
-
-                // if the shift is 3, push the eod to the next day for it's their end of shift
-                if (!shift || shift.id === 3) {
-                    eod.add(1, 'day')
-                }
+                let {sod, eod} = this.getSodAndEod()
 
                 // get the times of the specified range
                 while (sod <= eod) {
