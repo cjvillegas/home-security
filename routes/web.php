@@ -79,6 +79,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Orderhistory
     Route::delete('orderhistories/destroy', 'OrderhistoryController@massDestroy')->name('orderhistories.massDestroy');
     Route::resource('orderhistories', 'OrderhistoryController');
+
+    require_once base_path('routes/web/reports.php');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

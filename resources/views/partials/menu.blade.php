@@ -170,6 +170,30 @@
                 </ul>
             </li>
         @endcan
+
+        @can('order_management_access')
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon">
+
+                    </i>
+                    {{ trans('cruds.reports.title') }}
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('order_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.work-analytics.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon">
+
+                                </i>
+                                {{ trans('cruds.reports.child.work_analytics.title') }}
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
+        @endcan
+
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
                 <li class="c-sidebar-nav-item">
