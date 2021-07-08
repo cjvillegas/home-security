@@ -31,48 +31,29 @@ class WorkAnalyticsReportController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Retrieve scanners data to be displayed in a work analytics
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function getHourlyAnalytics(Request $request)
     {
-        //
-    }
+        $start = $request->get('start');
+        $end = $request->get('end');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
+            ->with(['employee' => function ($query) {
+                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id')
+                    ->with(['team' => function ($query) {
+                        $query->select('id', 'name');
+                    }, 'shift' => function ($query) {
+                        $query->select('id', 'name');
+                    }]);
+            }, 'process' => function ($query) {
+                $query->select('id', 'name', 'barcode');
+            }])
+            ->get();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return response()->json($scanners);
     }
 
     /**
@@ -80,7 +61,7 @@ class WorkAnalyticsReportController extends Controller
      *
      * @return JsonResponse
      */
-    public function getHourlyAnalytics(Request $request)
+    public function getDailyAnalytics(Request $request)
     {
         $start = $request->get('start');
         $end = $request->get('end');
