@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ColorAttributeTrait;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,7 @@ class Employee extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use ColorAttributeTrait;
 
     public $table = 'employees';
 
@@ -32,6 +34,16 @@ class Employee extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    /**
+     * Appends custom attribute every model instance
+     *
+     * @var array
+     */
+    protected $appends = [
+        'color',
+    ];
+
 
     /********************
      * R E L A T I O N S *

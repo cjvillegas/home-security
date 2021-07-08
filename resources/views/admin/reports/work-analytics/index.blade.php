@@ -5,6 +5,7 @@
         $pageData->teams = $teams;
         $pageData->processes = $processes;
         $pageData->shifts = $shifts;
+        $pageData->employees = $employees;
 
         $pageData = json_encode($pageData);
     ?>

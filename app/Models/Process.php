@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ColorAttributeTrait;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ class Process extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use ColorAttributeTrait;
 
     public $table = 'processes';
 
@@ -26,6 +28,15 @@ class Process extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    /**
+     * Appends custom attribute every model instance
+     *
+     * @var array
+     */
+    protected $appends = [
+        'color',
     ];
 
     protected function serializeDate(DateTimeInterface $date)

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Process;
 use App\Models\Scanner;
 use App\Models\Shift;
@@ -22,9 +23,10 @@ class WorkAnalyticsReportController extends Controller
         $teams = Team::get();
         $processes = Process::get();
         $shifts = Shift::get();
+        $employees = Employee::get();
 
         return view('admin/reports/work-analytics/index', compact(
-            'teams', 'processes', 'shifts'
+            'teams', 'processes', 'shifts', 'employees'
         ));
     }
 
@@ -91,6 +93,8 @@ class WorkAnalyticsReportController extends Controller
                     }, 'shift' => function ($query) {
                         $query->select('id', 'name');
                     }]);
+            }, 'process' => function ($query) {
+                $query->select('id', 'name', 'barcode');
             }])
             ->get();
 

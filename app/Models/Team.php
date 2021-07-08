@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Helpers\StringGenericHelper;
+use App\Traits\ColorAttributeTrait;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +12,7 @@ class Team extends Model
 {
     use SoftDeletes;
     use HasFactory;
+    use ColorAttributeTrait;
 
     public $table = 'teams';
 
@@ -37,24 +38,6 @@ class Team extends Model
     protected $appends = [
         'color',
     ];
-
-    /***********************************
-    * C U S T O M  P R O P E R T I E S *
-    ************************************/
-    /**
-     * Sets a custom RGBA color for a team
-     * This is mainly used for visuals
-     *
-     * @return string
-     */
-    public function getColorAttribute()
-    {
-        return StringGenericHelper::generateRgbaString(1);
-    }
-    /******************************************
-    * E N D  C U S T O M  P R O P E R T I E S *
-    ******************************************/
-
 
     protected function serializeDate(DateTimeInterface $date)
     {
