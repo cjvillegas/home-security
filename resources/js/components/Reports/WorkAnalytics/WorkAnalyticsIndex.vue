@@ -127,7 +127,7 @@
                 processes: [null],
                 employees: [null],
                 legend: 'process',
-                date: '2021-06-21'
+                date: moment().format('YYYY-MM-DD')
             },
             options: {
                 title: {
