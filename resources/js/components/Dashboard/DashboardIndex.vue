@@ -1,5 +1,6 @@
 <template>
     <div>
+        <h2>Welcome to Style</h2>
         <el-card
             class="box-card"
             v-loading="loading">
