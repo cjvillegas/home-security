@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
         // run this CRON only when in production
         if (\App::environment('production')) {
             // fetches new orders from SAGE
-            $schedule->command('orders:populate-orders-from-sage --load-all')->everyThirtyMinutes();
+            $schedule->command('orders:populate-orders-from-sage --load-all')->hourly();
         }
     }
 

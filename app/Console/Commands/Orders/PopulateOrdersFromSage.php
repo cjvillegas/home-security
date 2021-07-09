@@ -121,7 +121,7 @@ class PopulateOrdersFromSage extends Command
                 ([Order].order_id IS NOT NULL)
                 AND (OrderStatus.IsOrder = '1')
                 AND (OrderStatus.IsQuotation = '0')
-                AND (OrderStatus.id NOT BETWEEN '5' AND '7')
+                AND (OrderStatus.id NOT LIKE '7')
                 AND (BlindType.id <> '382')
         ";
 
