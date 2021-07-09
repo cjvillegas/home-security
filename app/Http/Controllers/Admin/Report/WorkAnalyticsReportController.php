@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
-use App\Models\Employee;
-use App\Models\Process;
-use App\Models\Scanner;
-use App\Models\Shift;
-use App\Models\Team;
+use App\Models\{Employee, Process, Shift, Scanner, Team};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class WorkAnalyticsReportController extends Controller
 {
@@ -75,5 +72,33 @@ class WorkAnalyticsReportController extends Controller
             ->get();
 
         return response()->json($scanners);
+    }
+
+    /**
+     * Get the daily manufacture reports by shift and the total manufactured blinds
+     *
+     * @return JsonResponse
+     */
+    public function manufacturedBlindsAnalytics()
+    {
+        $today = now()->format('Y-m-d');
+        $yesterday = now()->subDay()->format('Y-m-d');
+        $todayAddOne = now()->addDay()->format('Y-m-d');
+
+        // create the query
+        $counter = Scanner::select(
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' and '{$yesterday} 13:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS yesterday_shift_1"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 14:00:00' and '{$yesterday} 21:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS yesterday_shift_2"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 22:00:00' and '{$today} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS yesterday_shift_3"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' and '{$today} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS yesterday_shift_total"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' and '{$today} 13:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_1"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 14:00:00' and '{$today} 21:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_2"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 22:00:00' and '{$todayAddOne} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_3"),
+                DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' and '{$todayAddOne} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_total"),
+            )
+            ->whereRaw("`processid` IN ('P1002', 'P5688737')")
+            ->first();
+
+        return response()->json($counter);
     }
 }

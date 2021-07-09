@@ -32,6 +32,10 @@ export default {
             if (pathname === '/admin/reports/work-analytics' && hash === '#/') {
                 this.$router.push({name: 'Work Analytics', params: {}})
             }
+
+            if (pathname === '/admin' && hash === '#/') {
+                this.$router.push({name: 'Dashboard Index', params: {}})
+            }
         }
     }
 }

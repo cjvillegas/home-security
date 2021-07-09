@@ -26,9 +26,11 @@
         "cross-env": "^7.0.3",
         "element-ui": "^2.15.2",
         "moment": "^2.29.1",
+        "numeral": "^2.0.6",
         "resolve-url-loader": "^4.0.0",
         "vue": "^2.6.14",
         "vue-chartjs": "^3.5.1",
+        "vue-filter-number-format": "^3.0.1",
         "vue-router": "^3.5.2",
         "vue-template-compiler": "^2.6.14"
     }

@@ -36,6 +36,14 @@ Vue.prototype.$EventBus = new EventBus()
 Vue.prototype.$StringService = new StringGenericService()
 Vue.prototype.$DateService = new DateGenericService()
 
+// vue filter
+import numeral from 'numeral';
+import numFormat from 'vue-filter-number-format'
+
+// use the filter
+Vue.filter('numFormat', numFormat(numeral));
+
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
