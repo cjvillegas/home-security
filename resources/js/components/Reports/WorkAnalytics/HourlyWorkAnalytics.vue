@@ -315,7 +315,7 @@
 
                     // get the times of the specified range
                     let index = 0
-                    while (sod <= eod) {
+                    while (sodCopy <= eod) {
                         let count = localScanners.filter((scanner, index) => {
                             return moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')
                         }).length
