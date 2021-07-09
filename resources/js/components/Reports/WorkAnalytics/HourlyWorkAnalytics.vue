@@ -101,7 +101,7 @@
             :options="options">
         </line-chart>
 
-        <div class="mt-3 text-center font-weight-bolder">Total Blinds From The Selected Shift: {{ shiftTotal }}</div>
+        <div class="mt-3 text-center font-weight-bolder">Total Blinds From The Selected Filters: {{ shiftTotal }}</div>
     </el-card>
 </template>
 
@@ -280,7 +280,8 @@
                         data: [],
                         fill: false,
                         backgroundColor: x.color,
-                        borderColor: x.color
+                        borderColor: x.color,
+                        ids: []
                     }
 
                     let localScanners = []
@@ -317,7 +318,11 @@
                     let index = 0
                     while (sodCopy <= eod) {
                         let count = localScanners.filter((scanner, index) => {
-                            return moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')
+                            if (moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')) {
+                                dataset.ids.push(scanner.id)
+
+                                return true
+                            }
                         }).length
 
                         data.push(count)

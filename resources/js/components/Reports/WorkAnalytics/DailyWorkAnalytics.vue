@@ -101,7 +101,7 @@
             :options="options">
         </line-chart>
 
-        <div class="mt-3 text-center font-weight-bolder">Total Blinds From The Selected Shift: {{ shiftTotal }}</div>
+        <div class="mt-3 text-center font-weight-bolder">Total Blinds From The Selected Filters: {{ shiftTotal }}</div>
     </el-card>
 </template>
 

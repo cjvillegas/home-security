@@ -41,16 +41,14 @@ class WorkAnalyticsReportController extends Controller
         $end = $request->get('end');
 
         $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
+            ->select('scanners.id', 'scanners.scannedtime', 'scanners.employeeid', 'scanners.processid', 'scanners.blindid')
+            ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
             ->with(['employee' => function ($query) {
-                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id')
-                    ->with(['team' => function ($query) {
-                        $query->select('id', 'name');
-                    }, 'shift' => function ($query) {
-                        $query->select('id', 'name');
-                    }]);
+                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id');
             }, 'process' => function ($query) {
                 $query->select('id', 'name', 'barcode');
             }])
+            ->groupBy('scanners.id')
             ->get();
 
         return response()->json($scanners);
@@ -67,13 +65,10 @@ class WorkAnalyticsReportController extends Controller
         $end = $request->get('end');
 
         $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
+            ->select('scanners.id', 'scanners.scannedtime', 'scanners.employeeid', 'scanners.processid', 'scanners.blindid')
+            ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
             ->with(['employee' => function ($query) {
-                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id')
-                    ->with(['team' => function ($query) {
-                        $query->select('id', 'name');
-                    }, 'shift' => function ($query) {
-                        $query->select('id', 'name');
-                    }]);
+                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id');
             }, 'process' => function ($query) {
                 $query->select('id', 'name', 'barcode');
             }])
