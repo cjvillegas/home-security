@@ -59,7 +59,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('orders/vieworderno/{id}', [OrdersController::class, 'vieworderno'])->name('orders.vieworderno');
     Route::get('orders/fetch', 'OrdersController@fetch')->name('orders.fetch');
     Route::get('orders/search-orders-by-field', 'OrdersController@searchOrdersByField')->name('orders.search-orders-by-field');
-    Route::get('/orders/{order_no}/order-list', 'OrdersController@showOrderList')->name('orders.order-list');
+    Route::get('/orders/{to_search}/order-list', 'OrdersController@showOrderList')->name('orders.order-list');
     Route::resource('orders', 'OrdersController');
 
     // Teams

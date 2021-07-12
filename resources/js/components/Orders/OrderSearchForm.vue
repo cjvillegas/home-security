@@ -8,7 +8,7 @@
                     v-model="searchForm.field"
                     class="w-100">
                     <el-option label="Order No." value="order_no"></el-option>
-                    <el-option label="Blind No." value="blind_id"></el-option>
+                    <el-option label="Blind No." value="serial_id"></el-option>
                 </el-select>
             </el-form-item>
 
@@ -59,7 +59,7 @@ export default {
             .finally(_ => {})
         },
         selectOrder(order) {
-            this.$router.push({name: 'Order View', params: {orderNo: order.order_no}})
+            this.$router.push({name: 'Order View', params: {toSearch: order[this.searchForm.field], field: this.searchForm.field}})
         },
     },
     computed: {

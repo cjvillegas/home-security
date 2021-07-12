@@ -32,7 +32,7 @@ export default new VueRouter({
             props: true
         },
         {
-            path: '/order-list/:orderNo',
+            path: '/order-list/:toSearch',
             name: 'Order View',
             component: OrderView,
             props: true

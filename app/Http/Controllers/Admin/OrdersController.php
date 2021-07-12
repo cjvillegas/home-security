@@ -140,7 +140,14 @@ class OrdersController extends Controller
      */
     public function searchOrdersByField(Request $request)
     {
-        return response()->json($this->repository->searchOrdersByField($request->get('field'), $request->get('searchString')));
+        $field = $request->get('field');
+        $searchString = $request->get('searchString');
+
+        if (!$field || !$searchString) {
+            return response()->json([]);
+        }
+
+        return response()->json($this->repository->searchOrdersByField($field, $searchString));
     }
 
     /**
@@ -150,9 +157,10 @@ class OrdersController extends Controller
      *
      * @return JsonResponse
      */
-    public function showOrderList($order_no): JsonResponse
+    public function showOrderList(Request $request, $to_search): JsonResponse
     {
-        $orders= Order::where('order_no', $order_no)
+//        dd($request->get('field'), $to_search);
+        $orders= Order::where($request->get('field'), $to_search)
             ->with(['scanners' => function ($query) {
                 $query->with(['employee' => function ($query) {
                     $query->with(['shift', 'team']);

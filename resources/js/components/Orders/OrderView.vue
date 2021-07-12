@@ -61,8 +61,12 @@ export default {
     name: "OrderIndex",
     mixins: [pagination],
     props: {
-        orderNo: {
+        toSearch: {
             required: true
+        },
+        field: {
+            required: true,
+            type: String
         }
     },
     data() {
@@ -100,7 +104,7 @@ export default {
         getOrderDetails() {
             this.loading = true
 
-            this.$API.Orders.getOrderDetails(this.orderNo)
+            this.$API.Orders.getOrderDetails(this.field, this.toSearch)
                 .then(res => {
                     this.orders = cloneDeep(res.data || [])
                     this.filters.total = this.orders.length
@@ -148,6 +152,16 @@ export default {
 
             return orders
         }
+    },
+    beforeRouteEnter(to, from, next) {
+        // if the route is loaded from the URL section and not from the
+        // search page, redirect it directly to the search page
+        if (to.params && !to.params.field) {
+            next({replace: true, name: "Order List"})
+        }
+
+        // proceed if else
+        next()
     }
 }
 </script>

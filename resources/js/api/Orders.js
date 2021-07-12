@@ -32,11 +32,12 @@ export default {
     /**
      * Retrieve orders with same order_no
      *
-     * @param orderNo
+     * @param toSearch
+     * @param field
      *
      * @return Promise
      */
-    getOrderDetails(orderNo) {
-        return axios.get(`/admin/orders/${orderNo}/order-list`);
+    getOrderDetails(field, toSearch) {
+        return axios.get(`/admin/orders/${toSearch}/order-list?field=${field}`);
     }
 }
