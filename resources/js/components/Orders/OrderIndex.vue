@@ -2,54 +2,54 @@
     <el-card
         class="box-card"
         v-loading="loading">
-        <el-input
-            placeholder="Press enter to search orders..."
-            clearable
-            style="width: 250px"
-            v-model="filters.searchString"
-            @keyup.enter.native="applySearch">
+        <order-search-form></order-search-form>
+<!--        <el-input-->
+<!--            placeholder="Press enter to search orders..."-->
+<!--            clearable-->
+<!--            style="width: 250px"-->
+<!--            v-model="filters.searchString"-->
+<!--            @keyup.enter.native="applySearch">-->
+<!--        </el-input>-->
 
-        </el-input>
+<!--        <el-table-->
+<!--            fit-->
+<!--            :data="orders"-->
+<!--            class="mt-3">-->
+<!--            <el-table-column-->
+<!--                v-for="column in columns"-->
+<!--                :key="column.key"-->
+<!--                :prop="column.key"-->
+<!--                :label="column.label"-->
+<!--                :show-overflow-tooltip="column.show_overflow_tooltip"-->
+<!--                sortable>-->
+<!--                <template slot-scope="scope">-->
+<!--                    <span>{{ scope.row[column.key] }}</span>-->
+<!--                </template>-->
+<!--            </el-table-column>-->
 
-        <el-table
-            fit
-            :data="orders"
-            class="mt-3">
-            <el-table-column
-                v-for="column in columns"
-                :key="column.key"
-                :prop="column.key"
-                :label="column.label"
-                :show-overflow-tooltip="column.show_overflow_tooltip"
-                sortable>
-                <template slot-scope="scope">
-                    <span>{{ scope.row[column.key] }}</span>
-                </template>
-            </el-table-column>
+<!--            <el-table-column label='Actions'>-->
+<!--                <template slot-scope="scope">-->
+<!--                    <el-button-->
+<!--                        @click="viewOrder(scope.row)"-->
+<!--                        size="mini">-->
+<!--                        <i class="fas fa-eye"></i> View-->
+<!--                    </el-button>-->
+<!--                </template>-->
+<!--            </el-table-column>-->
+<!--        </el-table>-->
 
-            <el-table-column label='Actions'>
-                <template slot-scope="scope">
-                    <el-button
-                        @click="viewOrder(scope.row)"
-                        size="mini">
-                        <i class="fas fa-eye"></i> View
-                    </el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-
-        <div class="text-right mt-3">
-            <el-pagination
-                background
-                layout="total, sizes, prev, pager, next"
-                :total="filters.total"
-                :page-size="filters.size"
-                :page-sizes="[10, 25, 50, 100]"
-                :current-page="filters.page"
-                @size-change="handleSize"
-                @current-change="handlePage">
-            </el-pagination>
-        </div>
+<!--        <div class="text-right mt-3">-->
+<!--            <el-pagination-->
+<!--                background-->
+<!--                layout="total, sizes, prev, pager, next"-->
+<!--                :total="filters.total"-->
+<!--                :page-size="filters.size"-->
+<!--                :page-sizes="[10, 25, 50, 100]"-->
+<!--                :current-page="filters.page"-->
+<!--                @size-change="handleSize"-->
+<!--                @current-change="handlePage">-->
+<!--            </el-pagination>-->
+<!--        </div>-->
     </el-card>
 </template>
 
@@ -83,8 +83,6 @@
         },
         created() {
             this.functionName = 'fetch'
-
-            this.fetch()
         },
         methods: {
             applySearch() {

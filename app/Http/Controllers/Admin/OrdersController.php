@@ -8,6 +8,7 @@ use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use App\Repositories\Orders\OrderRepository;
 use Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,14 @@ use Illuminate\Support\Facades\DB;
 class OrdersController extends Controller
 {
     use CsvImportTrait;
+
+    /**
+     * OrdersController constructor.
+     */
+    public function __construct(OrderRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index()
     {
@@ -120,6 +129,18 @@ class OrdersController extends Controller
 
 
         return response()->json($orders);
+    }
+
+    /**
+     * Searches orders based on the passed field name
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function searchOrdersByField(Request $request)
+    {
+        return response()->json($this->repository->searchOrdersByField($request->get('field'), $request->get('searchString')));
     }
 
     /**
