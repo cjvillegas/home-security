@@ -279,8 +279,6 @@
                     return acc
                 }, [])
 
-                data.push([])
-
                 data.push([].concat(['', 'Total'], this.plottedData.setTotal))
 
                 this.$API.Exports.exportHourlyWorkAnalyticsReport(headers, data)

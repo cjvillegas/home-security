@@ -263,6 +263,7 @@
                 return acc
             }, [])
 
+            data.push([].concat(['', 'Total'], this.plottedData.setTotal))
 
             this.$API.Exports.exportDailyWorkAnalyticsReport(headers, data)
                 .then(res => {
