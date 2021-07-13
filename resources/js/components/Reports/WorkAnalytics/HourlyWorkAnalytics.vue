@@ -60,12 +60,18 @@
                 </el-option>
             </el-select>
 
-            <el-button
-                class="pull-right"
-                @click="fetchReports">
-                <i v-if="!loading" class="fas fa-sync-alt"></i>
-                <i v-else class="el-icon-loading"></i>
-            </el-button>
+            <div class="pull-right">
+                <el-button
+                    type="success"
+                    @click="exportToFile">
+                    <i class="fas fa-file-export"></i> Export
+                </el-button>
+
+                <el-button @click="fetchReports">
+                    <i v-if="!loading" class="fas fa-sync-alt"></i>
+                    <i v-else class="el-icon-loading"></i>
+                </el-button>
+            </div>
         </div>
 
         <div class="mt-3">
@@ -76,6 +82,11 @@
                 @change="fetchReports"
                 :clearable="false"
                 v-model="filters.date"
+                :picker-options="{
+                    disabledDate(time) {
+                        return time.getTime() > Date.now();
+                    }
+                }"
                 type="date"
                 placeholder="Pick a day">
             </el-date-picker>
@@ -106,10 +117,12 @@
 </template>
 
 <script>
-    import cloneDeep from "lodash/cloneDeep";
+    import cloneDeep from "lodash/cloneDeep"
+    import fileExporter from '../../../mixins/fileExporter'
 
     export default {
         name: "HourlyWorkAnalytics",
+        mixins: [fileExporter],
         props: {
             pageData: {
                 required: true,
@@ -255,7 +268,32 @@
                 }
 
                 return legends
-            }
+            },
+            exportToFile() {
+                this.loading = true
+
+                let headers = [].concat(this.filters.legend === 'process' ? ['Process Name', 'Process Barcode'] : ['Employee Name', 'Employee Barcode'], this.getLabels())
+                let data = this.plottedData.datasets.reduce((acc, cur) => {
+                    acc.push([].concat([cur.label, cur.barcode], cur.data))
+
+                    return acc
+                }, [])
+
+                data.push([])
+
+                data.push([].concat(['', 'Total'], this.plottedData.setTotal))
+
+                this.$API.Exports.exportHourlyWorkAnalyticsReport(headers, data)
+                    .then(res => {
+                        this.exporter('xlsx', `Hourly Work Analytics Report`, res.data)
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                    .finally(_ => {
+                        this.loading = false
+                    })
+            },
         },
         computed: {
             myStyles () {
@@ -269,7 +307,8 @@
                 let legends = this.getLegends()
                 let dataSet = {
                     labels: this.getLabels(),
-                    datasets: []
+                    datasets: [],
+                    setTotal: [],
                 }
                 let setTotal = []
                 let scanners = cloneDeep(this.scanners)
@@ -277,11 +316,11 @@
                 for (let x of legends) {
                     let dataset = {
                         label: x.label,
+                        barcode: x.barcode,
                         data: [],
                         fill: false,
                         backgroundColor: x.color,
                         borderColor: x.color,
-                        ids: []
                     }
 
                     let localScanners = []
@@ -316,20 +355,16 @@
 
                     // get the times of the specified range
                     let index = 0
-                    while (sodCopy <= eod) {
+                    while (sodCopy <= eod && sod <= eod) {
                         let count = localScanners.filter((scanner, index) => {
-                            if (moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')) {
-                                dataset.ids.push(scanner.id)
-
-                                return true
-                            }
+                            return moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')
                         }).length
 
                         data.push(count)
                         setTotal[index] = setTotal[index] !== undefined ? setTotal[index] + count : count
 
                         sod = sod.add(1, 'hour')
-                        sodCopy = sodCopy.add(1, 'hour')
+                        sodCopy = sodCopy.unix() === eod.unix() ? sodCopy : sodCopy.add(1, 'hour')
 
                         index++
                     }
@@ -343,6 +378,7 @@
 
                     return label
                 })
+                dataSet.setTotal = setTotal
 
                 return dataSet
             },
