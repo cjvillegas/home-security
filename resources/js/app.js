@@ -63,16 +63,23 @@ window.axios.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     if (error.response) {
-        if ([401, 419].includes(error.response.status)) {
-            app.$alert('Opss! Your session may have been expired. Please login.', 'UNAUTHENTICATED', {
+        if (error.response.status === 419) {
+            app.$alert('Ops! Your session may have been expired. Please login.', 'UNAUTHENTICATED', {
                 confirmButtonText: 'OK',
                 callback: action => {
                     location.reload()
                 }
             });
         }
+        else if (error.response.status === 401) {
+            app.$alert('Ops! You don\'t have the right permission to do this action. If you think that this is a problem please contact your administrator.', 'UNAUTHORIZED', {
+                confirmButtonText: 'OK',
+                callback: action => {
+                }
+            });
+        }
         else if (error.response.status === 403) {
-            app.$alert('Opss! You do not have enough permission or your session may have expired. Refresh the page to know if you need to login again.', 'FORBIDDEN', {
+            app.$alert('Ops! You do not have enough permission or your session may have expired. Refresh the page to know if you need to login again.', 'FORBIDDEN', {
                 confirmButtonText: 'OK',
                 callback: action => {
                     location.reload()
@@ -80,7 +87,7 @@ window.axios.interceptors.response.use((response) => {
             });
         }
         else if (error.response.status >= 500) {
-            app.$alert('Opss! Something went wrong. Please report this to your technical support.', 'SERVER ERROR', {
+            app.$alert('Ops! Something went wrong. Please report this to your technical support.', 'SERVER ERROR', {
                 confirmButtonText: 'OK',
                 callback: action => {}
             });

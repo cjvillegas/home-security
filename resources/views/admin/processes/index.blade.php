@@ -35,6 +35,7 @@
                         <th>
                             {{ trans('cruds.process.fields.barcode') }}
                         </th>
+                        <th>Process Categories</th>
                         <th>
                             &nbsp;
                         </th>
@@ -54,6 +55,11 @@
                             </td>
                             <td>
                                 {{ $process->barcode ?? '' }}
+                            </td>
+                            <td>
+                                @foreach($process->processCategories as $processCategory)
+                                    <span class="badge badge-info">{{ ucwords($processCategory->name) }}</span>
+                                @endforeach
                             </td>
                             <td>
                                 @can('process_show')

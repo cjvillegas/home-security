@@ -6,6 +6,7 @@ use App\Traits\ColorAttributeTrait;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Process extends Model
@@ -38,6 +39,24 @@ class Process extends Model
     protected $appends = [
         'color',
     ];
+
+    /********************
+    * R E L A T I O N S *
+    ********************/
+    /**
+     * Retrieve list of this process' process categories.
+     * This method queries from a junction table named category_processes
+     * since the relationship is defined by many-to-many
+     *
+     * @return BelongsToMany
+     */
+    public function processCategories()
+    {
+        return $this->belongsToMany(ProcessCategory::class,'category_processes');
+    }
+    /********************************
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 
     protected function serializeDate(DateTimeInterface $date)
     {

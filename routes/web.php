@@ -86,6 +86,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // route collection for exports
     require_once base_path('routes/web/exports.php');
+
+    // settings
+    Route::get('/settings', 'Settings\SettingController@index')->name('settings.index')->middleware('can:settings_access');
+
+    // Process Category
+    Route::prefix('settings')->as('settings.')->group(function () {
+        Route::post('/process-category/get-list', 'Settings\ProcessCategoryController@getList')->name('process-category.get-list');
+        Route::apiResource('process-category', 'Settings\ProcessCategoryController')->only(['store', 'show', 'update', 'destroy']);
+    });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

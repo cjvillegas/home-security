@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Gate;
 
 class User extends Authenticatable
 {
@@ -83,5 +84,80 @@ class User extends Authenticatable
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * Retrieve list of permissions of the current user.
+     * This is useful to our Vue application if we want to
+     * implement permissions in that level.
+     *
+     * @param string $args
+     *
+     * @return array
+     */
+    public function getPermissions(string ...$permissions): array
+    {
+        $can = [];
+
+        // loop through any given permissions
+        foreach ($permissions as $permission) {
+            $can[$permission] = Gate::allows($permission);
+        }
+
+        return $can;
+    }
+
+    /**
+     * Retrieve list of permissions of the current user by module names.
+     * This is useful when you want to retrieve permissions of different modules ie. users, settings.
+     * This will automatically generate permission names for that given module ie. user_access.
+     * Typically used in our frontend when we want to have permission checking in that level.
+     *
+     * @param string $args
+     *
+     * @return array
+     */
+    public function getPermissionsPerModules(string ...$args)
+    {
+        $permissions = [];
+
+        // loop through the passed module names
+        // Note* it will not check if the permission exist or not, it will just check if
+        // the current user have permission to that name permission
+        foreach ($args as $arg) {
+            // build the permission module names
+            $permissions = array_merge($permissions, $this->getPermissionNameByModule($arg));
+        }
+
+        return $permissions;
+    }
+
+    /**
+     * Retrieve list of permissions of the current user by module name.
+     * This is useful when you want to retrieve permissions by module name.
+     * This will automatically generate permission names for that given module ie. user_access.
+     * Typically used in our frontend when we want to have permission checking in that level.
+     *
+     * @param string $args
+     *
+     * @return array
+     */
+    public function getPermissionNameByModule(string $moduleName): array
+    {
+        // list of actions that the application permission supports
+        $actions = ['access', 'create', 'edit', 'show', 'delete'];
+
+        $permissionNames = [];
+
+        // loop through the supported actions to create the permission name ie. user_access
+        foreach ($actions as $action) {
+            // build the permission name
+            $name = "{$moduleName}_$action";
+
+            // do permission check
+            $permissionNames[$name] = Gate::allows($name);
+        }
+
+        return $permissionNames;
     }
 }
