@@ -15,8 +15,8 @@ class CreateProcessCategoriesTable extends Migration
     {
         Schema::create('process_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 500);
-            $table->string('name', 500);
+            $table->string('code', 255);
+            $table->string('name', 255);
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->dateTime('created_at')->nullable();
