@@ -96,7 +96,7 @@ class WorkAnalyticsReportController extends Controller
                 DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 22:00:00' and '{$todayAddOne} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_3"),
                 DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' and '{$todayAddOne} 05:59:59' THEN 1 ELSE 0 END) AS SIGNED) AS today_shift_total"),
             )
-            ->whereIn('processid', ['P1002', 'P5688737', 'P1021', 'P1024'])
+            ->whereIn('processid', ['P1002', 'P5688737', 'P1021', 'P1024', 'P1025'])
             ->first();
 
         return response()->json($counter);
