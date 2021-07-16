@@ -165,6 +165,15 @@
                             </a>
                         </li>
                     @endcan
+
+                    @can('order_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.data-export.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-file-export c-sidebar-nav-icon"></i>
+                                Data Export
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endcan
