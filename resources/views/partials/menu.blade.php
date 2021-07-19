@@ -68,14 +68,14 @@
             </li>
         @endcan
         @can('user_alert_access')
-            <li class="c-sidebar-nav-item">
+            {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.user-alerts.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/user-alerts") || request()->is("admin/user-alerts/*") ? "c-active" : "" }}">
                     <i class="fa-fw fas fa-bell c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('cruds.userAlert.title') }}
                 </a>
-            </li>
+            </li> --}}
         @endcan
         @can('employee_access')
             <li class="c-sidebar-nav-item">
@@ -118,14 +118,14 @@
             </li>
         @endcan
         @can('scanner_access')
-            <li class="c-sidebar-nav-item">
+            {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.scanners.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/scanners") || request()->is("admin/scanners/*") ? "c-active" : "" }}">
                     <i class="fa-fw fas fa-barcode c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('cruds.scanner.title') }}
                 </a>
-            </li>
+            </li> --}}
         @endcan
         @can('order_management_access')
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders*") ? "c-show" : "" }} {{ request()->is("admin/orderhistories*") ? "c-show" : "" }}">
