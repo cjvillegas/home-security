@@ -190,7 +190,7 @@
 
             this.loading = true
 
-            this.$API.Reports.fetchDailyAnalytics(sod, eod)
+            this.$API.Reports.fetchWorkAnalytics(sod, eod)
                 .then(res => {
                     this.scanners = cloneDeep(res.data)
                     if (this.$refs.lineChart) {
@@ -311,7 +311,7 @@
                         let isByEmployee = true
 
                         if (!this.filters.employees.some(em => em === null)) {
-                            isByEmployee = this.filters.employees.some(em => scanner.employee && scanner.employee.id === em)
+                            isByEmployee = this.filters.employees.some(em => scanner.employee_id === em)
                         }
 
                         return isInProcess && isByEmployee
@@ -323,7 +323,7 @@
                         let isInProcess = true
 
                         if (!this.filters.processes.some(prc => prc === null)) {
-                            isInProcess = this.filters.processes.some(prc => scanner.process && scanner.process.id === prc)
+                            isInProcess = this.filters.processes.some(prc => scanner.process_id === prc)
                         }
 
                         return isByEmployee && isInProcess

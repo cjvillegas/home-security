@@ -32,43 +32,27 @@ class WorkAnalyticsReportController extends Controller
      *
      * @return JsonResponse
      */
-    public function getHourlyAnalytics(Request $request)
+    public function getWorkAnalytics(Request $request)
     {
         $start = $request->get('start');
         $end = $request->get('end');
 
         $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
-            ->select('scanners.id', 'scanners.scannedtime', 'scanners.employeeid', 'scanners.processid', 'scanners.blindid')
+            ->select(
+                'scanners.id',
+                'scanners.scannedtime',
+                'scanners.employeeid',
+                'scanners.processid',
+                'scanners.blindid',
+                'e.id AS employee_id',
+                'e.fullname AS fullname',
+                'e.team_id',
+                'e.shift_id',
+                'p.barcode AS process_barcode',
+                'p.id AS process_id'
+            )
             ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
-            ->with(['employee' => function ($query) {
-                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id');
-            }, 'process' => function ($query) {
-                $query->select('id', 'name', 'barcode');
-            }])
-            ->groupBy('scanners.id')
-            ->get();
-
-        return response()->json($scanners);
-    }
-
-    /**
-     * Retrieve scanners data to be displayed in a work analytics
-     *
-     * @return JsonResponse
-     */
-    public function getDailyAnalytics(Request $request)
-    {
-        $start = $request->get('start');
-        $end = $request->get('end');
-
-        $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
-            ->select('scanners.id', 'scanners.scannedtime', 'scanners.employeeid', 'scanners.processid', 'scanners.blindid')
-            ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
-            ->with(['employee' => function ($query) {
-                $query->select('id', 'fullname', 'barcode', 'team_id', 'shift_id');
-            }, 'process' => function ($query) {
-                $query->select('id', 'name', 'barcode');
-            }])
+            ->join('employees AS e', 'e.barcode', '=', 'scanners.employeeid')
             ->get();
 
         return response()->json($scanners);
