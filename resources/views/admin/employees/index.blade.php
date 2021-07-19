@@ -41,15 +41,15 @@
                         <th>
                             {{ trans('cruds.employee.fields.target') }}
                         </th>
+                        <th>Working Hours</th>
+                        <th>Clock No.</th>
                         <th>
                             {{ trans('cruds.employee.fields.shift') }}
                         </th>
                         <th>
                             {{ trans('cruds.employee.fields.team') }}
                         </th>
-                        <th>
-                            &nbsp;
-                        </th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +72,12 @@
                             </td>
                             <td>
                                 {{ $employee->target ?? '' }}
+                            </td>
+                            <td>
+                                {{ $employee->standard_working_hours }}
+                            </td>
+                            <td>
+                                {{ $employee->clock_num }}
                             </td>
                             <td>
                                 {{ $employee->shift->name ?? '' }}

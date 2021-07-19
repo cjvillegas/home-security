@@ -23,11 +23,20 @@ class Employee extends Model
         'deleted_at',
     ];
 
+    /**
+     * The mass assignable attributes of this model.
+     * If you want to make a field mass assignable during
+     * create or update, declare it here.
+     *
+     * @var array
+     */
     protected $fillable = [
         'fullname',
         'barcode',
         'pin_code',
         'target',
+        'standard_working_hours',
+        'clock_num',
         'shift_id',
         'team_id',
         'created_at',

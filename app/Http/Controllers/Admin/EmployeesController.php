@@ -81,7 +81,15 @@ class EmployeesController extends Controller
     {
         abort_if(Gate::denies('employee_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $employee->delete();
+        if ($employee->delete()) {
+            // modify the deleted clock_num so that it will not cause conflict
+            // to the newly created process category.
+            // This is useful because the code clock_num is unique in the DB level and we are only soft deleting
+            // data in the employees table
+            $now = now()->unix();
+            $employee->clock_num = null;
+            $employee->save();
+        }
 
         return back();
     }

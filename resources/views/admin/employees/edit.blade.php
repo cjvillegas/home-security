@@ -40,6 +40,37 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.employee.fields.target_helper') }}</span>
             </div>
+
+            <div class="form-group">
+                <label class="required" for="target">Working Hours</label>
+                <input
+                    class="form-control {{ $errors->has('standard_working_hours') ? 'is-invalid' : '' }}"
+                    type="number"
+                    name="standard_working_hours"
+                    id="standard_working_hours"
+                    value="{{ old('standard_working_hours', $employee->standard_working_hours) }}"
+                    step="1"
+                    required>
+                @if($errors->has('standard_working_hours'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('standard_working_hours') }}
+                    </div>
+                @endif
+                <span class="help-block">The standard working hours of employees per shift.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="clock_num">Clock No.</label>
+                <input class="form-control {{ $errors->has('clock_num') ? 'is-invalid' : '' }}" type="number" name="clock_num" id="clock_num" value="{{ old('clock_num', $employee->clock_num) }}" step="1">
+                @if($errors->has('clock_num'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('clock_num') }}
+                    </div>
+                @endif
+                <span class="help-block">An employee's clock number.</span>
+            </div>
+
+
             <div class="form-group">
                 <label class="required" for="shift_id">{{ trans('cruds.employee.fields.shift') }}</label>
                 <select class="form-control select2 {{ $errors->has('shift') ? 'is-invalid' : '' }}" name="shift_id" id="shift_id" required>
