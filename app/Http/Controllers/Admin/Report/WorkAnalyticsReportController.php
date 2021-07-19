@@ -34,28 +34,34 @@ class WorkAnalyticsReportController extends Controller
      */
     public function getWorkAnalytics(Request $request)
     {
-        $start = $request->get('start');
-        $end = $request->get('end');
+        try {
+            $start = $request->get('start');
+            $end = $request->get('end');
 
-        $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
-            ->select(
-                'scanners.id',
-                'scanners.scannedtime',
-                'scanners.employeeid',
-                'scanners.processid',
-                'scanners.blindid',
-                'e.id AS employee_id',
-                'e.fullname AS fullname',
-                'e.team_id',
-                'e.shift_id',
-                'p.barcode AS process_barcode',
-                'p.id AS process_id'
-            )
-            ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
-            ->join('employees AS e', 'e.barcode', '=', 'scanners.employeeid')
-            ->get();
+            $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
+                ->select(
+                    'scanners.id',
+                    'scanners.scannedtime',
+                    'scanners.employeeid',
+                    'scanners.processid',
+                    'scanners.blindid',
+                    'e.id AS employee_id',
+                    'e.fullname AS fullname',
+                    'e.team_id',
+                    'e.shift_id',
+                    'p.barcode AS process_barcode',
+                    'p.id AS process_id'
+                )
+                ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
+                ->join('employees AS e', 'e.barcode', '=', 'scanners.employeeid')
+                ->get();
 
-        return response()->json($scanners);
+            return response()->json($scanners);
+        } catch (\Exception $e) {
+            \Log::error('Get Work Analytics Error', [
+                'error ' . $e
+            ]);
+        }
     }
 
     /**
