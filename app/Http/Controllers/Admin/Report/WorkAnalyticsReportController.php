@@ -7,6 +7,8 @@ use App\Models\{Employee, Process, Shift, Scanner, Team};
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
 class WorkAnalyticsReportController extends Controller
 {
@@ -17,6 +19,8 @@ class WorkAnalyticsReportController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('work_analytics_reports_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $teams = Team::get();
         $processes = Process::get();
         $shifts = Shift::get();
