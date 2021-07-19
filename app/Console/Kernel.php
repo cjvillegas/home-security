@@ -24,8 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // fetches new orders from SAGE
-        $schedule->command('orders:populate-orders-from-sage')->everyThirtyMinutes();
+        // run this CRON only when in production
+        if (\App::environment('production')) {
+            // fetches new orders from SAGE
+            $schedule->command('orders:populate-orders-from-sage --load-all')->hourly();
+        }
     }
 
     /**

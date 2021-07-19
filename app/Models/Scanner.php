@@ -33,6 +33,12 @@ class Scanner extends Model
         'deleted_at',
     ];
 
+    /**
+     * Custom properties that will appended to all instances
+     * and data collection of this scanners
+     *
+     * @var array
+     */
     protected $appends = [
         'is_checked'
     ];

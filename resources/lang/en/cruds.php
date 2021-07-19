@@ -271,6 +271,14 @@ return [
         'title'          => 'Order Management',
         'title_singular' => 'Order Management',
     ],
+    'reports' => [
+        'title' => 'Reports',
+        'child' => [
+            'work_analytics' => [
+                'title' => 'Work Analytics'
+            ]
+        ]
+    ],
     'orderhistory' => [
         'title'          => 'Order History',
         'title_singular' => 'Order History',

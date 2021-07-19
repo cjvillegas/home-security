@@ -2,10 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Employee;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class StoreEmployeeRequest extends FormRequest
 {
@@ -31,6 +30,19 @@ class StoreEmployeeRequest extends FormRequest
                 'integer',
                 'min:-2147483648',
                 'max:2147483647',
+            ],
+            'standard_working_hours' => [
+                'required',
+                'integer',
+                'min:-2147483648',
+                'max:2147483647',
+            ],
+            'clock_num' => [
+                'nullable',
+                'integer',
+                'min:-2147483648',
+                'max:2147483647',
+                Rule::unique('employees'),
             ],
             'shift_id' => [
                 'required',

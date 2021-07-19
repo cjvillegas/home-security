@@ -15,6 +15,12 @@ Vue.use(VueRouter)
 const OrderList = () => import('../components/Orders/OrderIndex')
 const OrderView = () => import('../components/Orders/OrderView')
 
+// Dashboard Components
+const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
+
+// Settings Components
+const SettingsIndex = () => import('../components/Settings/SettingsIndex')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -29,9 +35,21 @@ export default new VueRouter({
             props: true
         },
         {
-            path: '/order-list/:orderNo',
+            path: '/order-list/:toSearch',
             name: 'Order View',
             component: OrderView,
+            props: true
+        },
+        {
+            path: '/dashboard',
+            name: 'Dashboard Index',
+            component: DashboardIndex,
+            props: true
+        },
+        {
+            path: '/settings-list',
+            name: 'Settings Index',
+            component: SettingsIndex,
             props: true
         },
     ]

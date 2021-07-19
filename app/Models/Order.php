@@ -78,7 +78,6 @@ class Order extends Model
     /*******************
     * F U N C T I O N  *
     *******************/
-
     /**
      * Get the most latest blind_id entry in the table
      *

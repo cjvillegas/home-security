@@ -8,6 +8,7 @@ use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use App\Repositories\Orders\OrderRepository;
 use Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,14 @@ use Illuminate\Support\Facades\DB;
 class OrdersController extends Controller
 {
     use CsvImportTrait;
+
+    /**
+     * OrdersController constructor.
+     */
+    public function __construct(OrderRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
     public function index()
     {
@@ -123,15 +132,35 @@ class OrdersController extends Controller
     }
 
     /**
+     * Searches orders based on the passed field name
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function searchOrdersByField(Request $request)
+    {
+        $field = $request->get('field');
+        $searchString = $request->get('searchString');
+
+        if (!$field || !$searchString) {
+            return response()->json([]);
+        }
+
+        return response()->json($this->repository->searchOrdersByField($field, $searchString));
+    }
+
+    /**
      * Retrieve orders with same order_no
      *
      * @param string $order_no
      *
      * @return JsonResponse
      */
-    public function showOrderList($order_no): JsonResponse
+    public function showOrderList(Request $request, $to_search): JsonResponse
     {
-        $orders= Order::where('order_no', $order_no)
+//        dd($request->get('field'), $to_search);
+        $orders= Order::where($request->get('field'), $to_search)
             ->with(['scanners' => function ($query) {
                 $query->with(['employee' => function ($query) {
                     $query->with(['shift', 'team']);

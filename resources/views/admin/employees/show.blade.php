@@ -57,6 +57,22 @@
                     </tr>
                     <tr>
                         <th>
+                            Working Hours
+                        </th>
+                        <td>
+                            {{ $employee->standard_working_hours }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            Clock No.
+                        </th>
+                        <td>
+                            {{ $employee->clock_num }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             {{ trans('cruds.employee.fields.shift') }}
                         </th>
                         <td>

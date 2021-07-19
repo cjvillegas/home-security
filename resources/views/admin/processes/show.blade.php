@@ -39,6 +39,14 @@
                             {{ $process->barcode }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>Process Categories</th>
+                        <td>
+                            @foreach($process->processCategories as $processCategory)
+                                <span class="badge badge-info">{{ ucwords($processCategory->name) }}</span>
+                            @endforeach
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <div class="form-group">

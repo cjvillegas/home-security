@@ -28,16 +28,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('users', 'UsersController');
 
     // User Alerts
-    Route::delete('user-alerts/destroy', 'UserAlertsController@massDestroy')->name('user-alerts.massDestroy');
-    Route::get('user-alerts/read', 'UserAlertsController@read');
-    Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
+    // Route::delete('user-alerts/destroy', 'UserAlertsController@massDestroy')->name('user-alerts.massDestroy');
+    // Route::get('user-alerts/read', 'UserAlertsController@read');
+    // Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
 
     // Scanners
-    Route::delete('scanners/destroy', 'ScannersController@massDestroy')->name('scanners.massDestroy');
-    Route::post('scanners/parse-csv-import', 'ScannersController@parseCsvImport')->name('scanners.parseCsvImport');
-    Route::post('scanners/process-csv-import', 'ScannersController@processCsvImport')->name('scanners.processCsvImport');
-    Route::match(['post', 'get'], 'scanners/fetch-scanners', 'ScannersController@fetchScanners')->name('scanners.fetch-scanners');
-    Route::resource('scanners', 'ScannersController');
+    // Route::delete('scanners/destroy', 'ScannersController@massDestroy')->name('scanners.massDestroy');
+    // Route::post('scanners/parse-csv-import', 'ScannersController@parseCsvImport')->name('scanners.parseCsvImport');
+    // Route::post('scanners/process-csv-import', 'ScannersController@processCsvImport')->name('scanners.processCsvImport');
+    // Route::match(['post', 'get'], 'scanners/fetch-scanners', 'ScannersController@fetchScanners')->name('scanners.fetch-scanners');
+    // Route::resource('scanners', 'ScannersController');
 
     // Employees
     Route::delete('employees/destroy', 'EmployeesController@massDestroy')->name('employees.massDestroy');
@@ -58,7 +58,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('orders/process-csv-import', 'OrdersController@processCsvImport')->name('orders.processCsvImport');
     Route::get('orders/vieworderno/{id}', [OrdersController::class, 'vieworderno'])->name('orders.vieworderno');
     Route::get('orders/fetch', 'OrdersController@fetch')->name('orders.fetch');
-    Route::get('/orders/{order_no}/order-list', 'OrdersController@showOrderList')->name('orders.order-list');
+    Route::get('orders/search-orders-by-field', 'OrdersController@searchOrdersByField')->name('orders.search-orders-by-field');
+    Route::get('/orders/{to_search}/order-list', 'OrdersController@showOrderList')->name('orders.order-list');
     Route::resource('orders', 'OrdersController');
 
     // Teams
@@ -79,6 +80,21 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Orderhistory
     Route::delete('orderhistories/destroy', 'OrderhistoryController@massDestroy')->name('orderhistories.massDestroy');
     Route::resource('orderhistories', 'OrderhistoryController');
+
+    // route collection for reports
+    require_once base_path('routes/web/reports.php');
+
+    // route collection for exports
+    require_once base_path('routes/web/exports.php');
+
+    // settings
+    Route::get('/settings', 'Settings\SettingController@index')->name('settings.index')->middleware('can:settings_access');
+
+    // Process Category
+    Route::prefix('settings')->as('settings.')->group(function () {
+        Route::post('/process-category/get-list', 'Settings\ProcessCategoryController@getList')->name('process-category.get-list');
+        Route::apiResource('process-category', 'Settings\ProcessCategoryController')->only(['store', 'show', 'update', 'destroy']);
+    });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

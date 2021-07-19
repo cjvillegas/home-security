@@ -30,6 +30,35 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.process.fields.barcode_helper') }}</span>
             </div>
+
+            <div class="form-group">
+                <label for="process-categories">Process Categories</label>
+                <div style="padding-bottom: 4px">
+                    <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
+                    <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
+                </div>
+                <select
+                    class="form-control select2 {{ $errors->has('process_categories') ? 'is-invalid' : '' }}"
+                    name="process_categories[]"
+                    id="process-categories"
+                    multiple>
+                    @foreach($processCategories as $id => $processCategory)
+                        <option
+                            value="{{ $processCategory->id }}"
+                            {{ (in_array($id, old('process_categories', [])) || $process->processCategories->contains($processCategory->id)) ? 'selected' : '' }}>
+                            {{ ucwords($processCategory->name) }}
+                        </option>
+                    @endforeach
+                </select>
+                @if($errors->has('process_categories'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('process_categories') }}
+                    </div>
+                @endif
+                <span class="help-block">{{ trans('cruds.role.fields.permissions_helper') }}</span>
+            </div>
+
+
             <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}

@@ -24,4 +24,25 @@ export default class StringGenericService {
 
         return moment(datetime, baseFormat).format(format)
     }
+
+    /**
+     * Get the hour portion of the provided time string format
+     *
+     * @param time
+     *
+     * @return string|null
+     */
+    getHoursFromTimeFormat(time) {
+        // sanity check if a valid time is supplied
+        if (!time && typeof time !== 'string') {
+            return null;
+        }
+
+        // split the string and only retrieve the first element
+        // which is the hour section of the time string format
+        let exploded = time.split(':', 1)
+
+        // returns the first value from the exploded time format, null if not present
+        return exploded[0] || null
+    }
 }

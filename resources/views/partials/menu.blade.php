@@ -68,14 +68,14 @@
             </li>
         @endcan
         @can('user_alert_access')
-            <li class="c-sidebar-nav-item">
+            {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.user-alerts.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/user-alerts") || request()->is("admin/user-alerts/*") ? "c-active" : "" }}">
                     <i class="fa-fw fas fa-bell c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('cruds.userAlert.title') }}
                 </a>
-            </li>
+            </li> --}}
         @endcan
         @can('employee_access')
             <li class="c-sidebar-nav-item">
@@ -118,21 +118,19 @@
             </li>
         @endcan
         @can('scanner_access')
-            <li class="c-sidebar-nav-item">
+            {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.scanners.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/scanners") || request()->is("admin/scanners/*") ? "c-active" : "" }}">
                     <i class="fa-fw fas fa-barcode c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('cruds.scanner.title') }}
                 </a>
-            </li>
+            </li> --}}
         @endcan
         @can('order_management_access')
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders*") ? "c-show" : "" }} {{ request()->is("admin/orderhistories*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
-                    <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
-
-                    </i>
+                    <i class="fa-fw fas fa-boxes c-sidebar-nav-icon"></i>
                     {{ trans('cruds.orderManagement.title') }}
                 </a>
                 <ul class="c-sidebar-nav-dropdown-items">
@@ -146,30 +144,49 @@
                             </a>
                         </li>
                     @endcan
-
-{{--                    @can('order_access')--}}
-{{--                        <li class="c-sidebar-nav-item">--}}
-{{--                            <a href="#" class="c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">--}}
-{{--                                <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon">--}}
-
-{{--                                </i>--}}
-{{--                                {{ trans('cruds.order.title') }}--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    @endcan--}}
-{{--                    @can('orderhistory_access')--}}
-{{--                        <li class="c-sidebar-nav-item">--}}
-{{--                            <a href="#" class="c-disabled c-sidebar-nav-link {{ request()->is("admin/orderhistories") || request()->is("admin/orderhistories/*") ? "c-active" : "" }}">--}}
-{{--                                <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">--}}
-
-{{--                                </i>--}}
-{{--                                {{ trans('cruds.orderhistory.title') }}--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    @endcan--}}
                 </ul>
             </li>
         @endcan
+
+        @can('order_management_access')
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon"></i>
+                    {{ trans('cruds.reports.title') }}
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('order_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.work-analytics.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon">
+
+                                </i>
+                                {{ trans('cruds.reports.child.work_analytics.title') }}
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('order_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.data-export.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-file-export c-sidebar-nav-icon"></i>
+                                Data Export
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
+        @endcan
+
+        @can('settings_access')
+            <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">
+                <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
+                    <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
+                    Settings
+                </a>
+            </li>
+        @endcan
+
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
                 <li class="c-sidebar-nav-item">
