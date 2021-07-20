@@ -131,7 +131,7 @@ return [
         ],
     ],
     'process' => [
-        'title'          => 'Processes',
+        'title'          => 'Process Management',
         'title_singular' => 'Process',
         'fields'         => [
             'id'                => 'ID',
@@ -147,6 +147,9 @@ return [
             'deleted_at'        => 'Deleted at',
             'deleted_at_helper' => ' ',
         ],
+    ],
+    'categoryManagement' => [
+        'title' => 'Categories'
     ],
     'order' => [
         'order_list'     => 'Orders',

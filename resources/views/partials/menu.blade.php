@@ -77,44 +77,82 @@
                 </a>
             </li> --}}
         @endcan
-        @can('employee_access')
-            <li class="c-sidebar-nav-item">
-                <a href="{{ route("admin.employees.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/employees") || request()->is("admin/employees/*") ? "c-active" : "" }}">
-                    <i class="fa-fw fas fa-users c-sidebar-nav-icon">
-
-                    </i>
-                    {{ trans('cruds.employee.title') }}
+        @can(['employee_access', 'team_access', 'shift_access'])
+            <li class="c-sidebar-nav-dropdown  {{ request()->is("admin/employees*") || request()->is("admin/teams*") || request()->is("admin/shifts*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
+                    Employee Management
                 </a>
+                <ul  class="c-sidebar-nav-dropdown-items">
+                    @can('employee_access')
+                        <li class="c-sidebar-nav-item">
+                                <a href="{{ route("admin.employees.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/employees") || request()->is("admin/employees/*") ? "c-active" : "" }}">
+                                    <i class="fa-fw fas fa-users c-sidebar-nav-icon">
+
+                                    </i>
+                                    {{ trans('cruds.employee.title') }}
+                                </a>
+                        </li>
+                    @endcan
+                    @can('team_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.teams.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/teams") || request()->is("admin/teams/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
+
+                                </i>
+                                {{ trans('cruds.team.title') }}
+                            </a>
+                        </li>
+                    @endcan
+                    @can('shift_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.shifts.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/shifts") || request()->is("admin/shifts/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
+
+                                </i>
+                                {{ trans('cruds.shift.title') }}
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
             </li>
         @endcan
-        @can('team_access')
-            <li class="c-sidebar-nav-item">
-                <a href="{{ route("admin.teams.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/teams") || request()->is("admin/teams/*") ? "c-active" : "" }}">
-                    <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
-                    </i>
-                    {{ trans('cruds.team.title') }}
-                </a>
-            </li>
-        @endcan
-        @can('shift_access')
-            <li class="c-sidebar-nav-item">
-                <a href="{{ route("admin.shifts.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/shifts") || request()->is("admin/shifts/*") ? "c-active" : "" }}">
-                    <i class="fa-fw fas fa-cogs c-sidebar-nav-icon">
 
-                    </i>
-                    {{ trans('cruds.shift.title') }}
-                </a>
-            </li>
-        @endcan
         @can('process_access')
-            <li class="c-sidebar-nav-item">
+            {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.processes.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/processes") || request()->is("admin/processes/*") ? "c-active" : "" }}">
                     <i class="fa-fw fas fa-people-carry c-sidebar-nav-icon">
 
                     </i>
                     {{ trans('cruds.process.title') }}
                 </a>
+            </li> --}}
+
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/processes*") || request()->is("admin/settings*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-people-carry c-sidebar-nav-icon"></i>
+                    {{ trans('cruds.process.title') }}
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route("admin.processes.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/processes") || request()->is("admin/processes/*") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-people-carry c-sidebar-nav-icon">
+
+                            </i>
+                            {{ trans('cruds.process.title_singular') }}
+                        </a>
+                    </li>
+                </ul>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
+                            <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
+                            </i>
+                            {{ trans('cruds.categoryManagement.title') }}
+                        </a>
+                    </li>
+                </ul>
             </li>
         @endcan
         @can('scanner_access')
@@ -178,14 +216,14 @@
             </li>
         @endcan
 
-        @can('settings_access')
-            <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">
+        {{-- @can('settings_access') --}}
+            {{-- <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">
                 <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
                     <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
                     Settings
                 </a>
-            </li>
-        @endcan
+            </li> --}}
+        {{-- @endcan --}}
 
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
