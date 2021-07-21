@@ -18,6 +18,6 @@ class SettingController extends Controller
         $user = auth()->user();
         $user->permissions = $user->getPermissionNameByModule('process_categories');
 
-        return view('admin.settings.index', compact('user'));
+        return view('admin.process-category.index', compact('user'));
     }
 }

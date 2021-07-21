@@ -111,7 +111,7 @@
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import pagination from '../../../mixins/pagination'
+    import pagination from '../../mixins/pagination'
     export default {
         name: "SettingsProcessCategories",
         mixins: [pagination],
