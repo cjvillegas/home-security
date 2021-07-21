@@ -7,7 +7,5 @@
         $pageData = json_encode($pageData);
     @endphp
 
-    <app
-        :page-data="{{ $pageData }}">
-    </app>
+    <settings-process-categories :user="{{ $user }}" />
 @endsection
