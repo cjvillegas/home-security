@@ -123,7 +123,7 @@
                         </a>
                     </li>
                 </ul>
-                @can('category_access')
+                @can('process_categories_access')
                     <ul class="c-sidebar-nav-dropdown-items">
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route("admin.process-categories.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
