@@ -33,7 +33,7 @@ class UpdateEmployeeRequest extends FormRequest
             ],
             'standard_working_hours' => [
                 'required',
-                'integer',
+                'numeric',
                 'min:-2147483648',
                 'max:2147483647',
             ],
