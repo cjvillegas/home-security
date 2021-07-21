@@ -88,7 +88,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     require_once base_path('routes/web/exports.php');
 
     // settings
-    Route::get('/settings', 'Settings\SettingController@index')->name('settings.index');
+    Route::get('/process-categories', 'Settings\SettingController@index')->name('process-categories.index')->middleware('can:process_categories_access');
 
     // Process Category
     Route::prefix('settings')->as('settings.')->group(function () {
