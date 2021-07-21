@@ -30,6 +30,11 @@ class Team extends Model
         'deleted_at',
     ];
 
+    public function machineCounters()
+    {
+        return $this->hasMany(MachineCounter::class);
+    }
+
     /**
      * Appends custom attribute every model instance
      *

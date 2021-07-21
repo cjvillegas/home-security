@@ -44,6 +44,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('employees/parse-csv-import', 'EmployeesController@parseCsvImport')->name('employees.parseCsvImport');
     Route::post('employees/process-csv-import', 'EmployeesController@processCsvImport')->name('employees.processCsvImport');
     Route::get('employees/{employee}/print-barcode', 'EmployeesController@printBarcode')->name('employees.print-barcode');
+
+    Route::get('employees/list', 'EmployeesController@fetch');
     Route::resource('employees', 'EmployeesController');
 
     // Processes
@@ -72,6 +74,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('shifts/destroy', 'ShiftsController@massDestroy')->name('shifts.massDestroy');
     Route::post('shifts/parse-csv-import', 'ShiftsController@parseCsvImport')->name('shifts.parseCsvImport');
     Route::post('shifts/process-csv-import', 'ShiftsController@processCsvImport')->name('shifts.processCsvImport');
+    Route::get('shifts/list', 'ShiftsController@fetch');
     Route::resource('shifts', 'ShiftsController');
 
     // Audit Logs
@@ -94,6 +97,24 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::prefix('settings')->as('settings.')->group(function () {
         Route::post('/process-category/get-list', 'Settings\ProcessCategoryController@getList')->name('process-category.get-list');
         Route::apiResource('process-category', 'Settings\ProcessCategoryController')->only(['store', 'show', 'update', 'destroy']);
+    });
+
+    //Machine
+    Route::prefix('machines')->as('machines')->group(function () {
+        Route::get('/', 'MachineController@index');
+        Route::get('machines-list', 'MachineController@fetchMachines');
+
+        Route::post('store', 'MachineController@store')->name('machine.store');
+        Route::patch('{id}/update', 'MachineController@update')->name('machine.update');
+    });
+
+    //Machine Counter
+    Route::prefix('machine-counters')->as('machine-counters')->group(function () {
+        Route::get('/', 'MachineCounterController@index')->name('machine-counters.index');
+
+        //api
+        Route::get('/list', 'MachineCounterController@fetch');
+        Route::post('store', 'MachineCounterController@store');
     });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {

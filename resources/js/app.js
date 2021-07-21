@@ -36,6 +36,10 @@ Vue.prototype.$EventBus = new EventBus()
 Vue.prototype.$StringService = new StringGenericService()
 Vue.prototype.$DateService = new DateGenericService()
 
+//Sweelater
+import Swal from 'sweetalert2'
+window.Swal = Swal;
+
 // vue filter
 import numeral from 'numeral';
 import numFormat from 'vue-filter-number-format'
@@ -43,7 +47,8 @@ import numFormat from 'vue-filter-number-format'
 // use the filter
 Vue.filter('numFormat', numFormat(numeral));
 
-
+Vue.component('machines', require('./components/Machines/MachineIndex.vue').default);
+Vue.component('machine-counters', require('./components/MachineCounters/MachineCounterIndex.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

@@ -27,6 +27,13 @@ class EmployeesController extends Controller
         return view('admin.employees.index', compact('employees'));
     }
 
+    public function fetch()
+    {
+        $employees = Employee::all();
+
+        return response()->json(['employees' => $employees], 200);
+    }
+
     public function create()
     {
         abort_if(Gate::denies('employee_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');

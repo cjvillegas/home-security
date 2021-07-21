@@ -25,6 +25,12 @@ class ShiftsController extends Controller
         return view('admin.shifts.index', compact('shifts'));
     }
 
+    public function fetch()
+    {
+        $shifts = Shift::all();
+        return response()->json(['shifts' => $shifts], 200);
+    }
+
     public function create()
     {
         abort_if(Gate::denies('shift_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');

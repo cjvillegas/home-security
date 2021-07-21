@@ -68,6 +68,16 @@ class Employee extends Model
     }
 
     /**
+     * Relation to Machine Counters
+     *
+     * @return hasMany
+     */
+    public function machineCounters()
+    {
+        return $this->hasOne(MachineCounter::class);
+    }
+
+    /**
      * Retrieves employee's team
      *
      * @return BelongsTo

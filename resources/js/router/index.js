@@ -21,6 +21,9 @@ const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
 // Settings Components
 const SettingsIndex = () => import('../components/Settings/SettingsIndex')
 
+// Machine Components
+const MachineIndex = () => import('../components/Machines/MachineIndex')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
