@@ -125,7 +125,7 @@
                 </ul>
                 <ul class="c-sidebar-nav-dropdown-items">
                     <li class="c-sidebar-nav-item">
-                        <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
+                        <a href="{{ route("admin.process-categories.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
                             <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
                             Categories
                         </a>

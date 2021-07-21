@@ -47,7 +47,7 @@ export default new VueRouter({
             props: true
         },
         {
-            path: '/settings-list',
+            path: '/',
             name: 'Settings Index',
             component: SettingsIndex,
             props: true
