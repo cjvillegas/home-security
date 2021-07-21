@@ -165,36 +165,12 @@ export default {
 
             axios.get(apiUrl).then( (response) => {
                 console.log(response)
-                this.machineCounters = response.data.machineCounters
-            })
-        },
-
-        fetchMachines() {
-            this.$API.Machine.fetch()
-            .then ( (response) => {
                 this.machines = response.data.machines
-            })
-            .catch(err => {
-                console.log(err)
-            })
-        },
-
-        // fetchShifts() {
-        //     let apiUrl = `/admin/shifts/list`
-
-        //     axios.get(apiUrl).then( (response) => {
-        //         this.shifts = response.data.shifts
-        //     })
-        // },
-
-        fetchEmployees() {
-            let apiUrl = `/admin/employees/list`
-
-            axios.get(apiUrl).then( (response) => {
+                this.machineCounters = response.data.machineCounters
                 this.employees = response.data.employees
+                //this.teams = response.data.teams
             })
         },
-
 
         selectShift() {
             console.log(this.form)
@@ -226,9 +202,6 @@ export default {
 
     mounted() {
         this.fetchMachineCounters();
-        this.fetchMachines();
-        //this.fetchShifts();
-        this.fetchEmployees();
     }
 }
 </script>

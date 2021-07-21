@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
+use App\Models\Machine;
 use App\Models\MachineCounter;
+use App\Models\Team;
 use Illuminate\Http\Request;
 
 class MachineCounterController extends Controller
@@ -21,9 +24,15 @@ class MachineCounterController extends Controller
     public function fetch()
     {
         $machineCounters = MachineCounter::all();
+        $machines = Machine::all();
+        $employees = Employee::all();
+        $teams = Team::all();
 
         return response()->json(
             [
+                'employees' => $employees,
+                'teams' => $teams,
+                'machines' => $machines,
                 'machineCounters' => $machineCounters
             ], 200
         );
