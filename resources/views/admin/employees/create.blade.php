@@ -41,7 +41,7 @@
             </div>
             <div class="form-group">
                 <label for="target">{{ trans('cruds.employee.fields.target') }}</label>
-                <input class="form-control {{ $errors->has('target') ? 'is-invalid' : '' }}" type="number" name="target" id="target" value="{{ old('target', '') }}" step="1">
+                <input class="form-control {{ $errors->has('target') ? 'is-invalid' : '' }}" type="number" name="target" id="target" value="{{ old('target', '') }}">
                 @if($errors->has('target'))
                     <div class="invalid-feedback">
                         {{ $errors->first('target') }}

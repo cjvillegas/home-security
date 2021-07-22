@@ -25,6 +25,11 @@ class UpdateEmployeeRequest extends FormRequest
                 'required',
                 'unique:employees,barcode,' . request()->route('employee')->id,
             ],
+            'pin_code' => [
+                'string',
+                'required',
+                'unique:employees,pin_code,' . request()->route('employee')->id,
+            ],
             'target' => [
                 'nullable',
                 'integer',
