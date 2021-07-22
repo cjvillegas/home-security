@@ -49,7 +49,7 @@
                     name="standard_working_hours"
                     id="standard_working_hours"
                     value="{{ old('standard_working_hours', $employee->standard_working_hours) }}"
-                    step="1"
+                    step=".1"
                     required>
                 @if($errors->has('standard_working_hours'))
                     <div class="invalid-feedback">

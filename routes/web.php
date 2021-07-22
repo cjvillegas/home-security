@@ -32,11 +32,13 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Route::get('user-alerts/read', 'UserAlertsController@read');
     // Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
 
-    // Scanners
+     //Scanners
     // Route::delete('scanners/destroy', 'ScannersController@massDestroy')->name('scanners.massDestroy');
     // Route::post('scanners/parse-csv-import', 'ScannersController@parseCsvImport')->name('scanners.parseCsvImport');
     // Route::post('scanners/process-csv-import', 'ScannersController@processCsvImport')->name('scanners.processCsvImport');
     // Route::match(['post', 'get'], 'scanners/fetch-scanners', 'ScannersController@fetchScanners')->name('scanners.fetch-scanners');
+    Route::get('scanners/get-scanners-by-field', 'ScannersController@getScannersByField')->name('scanners.get-scanners-by-field');
+    Route::get('scanners/search-scanners-by-field', 'ScannersController@searchScannersByField')->name('orders.search-scanners-by-field');
     // Route::resource('scanners', 'ScannersController');
 
     // Employees

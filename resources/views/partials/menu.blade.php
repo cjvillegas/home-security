@@ -164,14 +164,14 @@
             </li>
         @endcan
 
-        @can('order_management_access')
+        @if (auth()->user()->can('reports_access') && auth()->user()->canAny(['work_analytics_reports_access', 'data_export_reports_access']))
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon"></i>
                     Reports
                 </a>
                 <ul class="c-sidebar-nav-dropdown-items">
-                    @can('order_access')
+                    @can('work_analytics_reports_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.reports.work-analytics.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
@@ -180,7 +180,7 @@
                         </li>
                     @endcan
 
-                    @can('order_access')
+                    @can('data_export_reports_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.reports.data-export.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-file-export c-sidebar-nav-icon"></i>
@@ -190,7 +190,7 @@
                     @endcan
                 </ul>
             </li>
-        @endcan
+        @endif
 
         {{-- @can('settings_access') --}}
             {{-- <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">
