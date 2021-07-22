@@ -106,6 +106,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
         Route::post('store', 'MachineController@store')->name('machine.store');
         Route::patch('{id}/update', 'MachineController@update')->name('machine.update');
+        Route::delete('{id}/destroy', 'MachineController@destroy');
     });
 
     //Machine Counter
@@ -115,6 +116,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         //api
         Route::get('/list', 'MachineCounterController@fetch');
         Route::post('store', 'MachineCounterController@store');
+        Route::patch('{id}/update', 'MachineCounterController@update');
+        Route::delete('{id}/destroy', 'MachineCounterController@destroy');
     });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {

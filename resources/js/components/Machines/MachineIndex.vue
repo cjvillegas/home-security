@@ -2,7 +2,7 @@
 <div>
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
-            <a class="btn btn-success" @click="formDialogVisible = true, edit = false, clearForm()">
+            <a class="btn btn-success" @click="formDialogVisible = true, addNew()">
                 Add New
             </a>
         </div>
@@ -83,24 +83,39 @@
             label="Status">
             </el-table-column>
             <el-table-column
-            label="Action">
-            <template slot-scope="scope">
-                <el-button class="btn-link">
-                    <i class="el-icon-view"></i>
-                </el-button>
-                <el-button class="btn-link" @click="openEditDialog(scope.row)">
-                    <i class="el-icon-edit-outline"></i>
-                </el-button>
-                <el-button class="btn-link">
-                    <i class="el-icon-delete"></i>
-                </el-button>
-            </template>
+            label="Action"
+            class-name="table-action-button">
+                <template slot-scope="scope">
+                    <template>
+                        <el-tooltip
+                            class="item"
+                            effect="dark"
+                            content="Edit"
+                            placement="top"
+                            :open-delay="1000">
+                            <el-button
+                                 @click="openEditDialog(scope.row), formDialogVisible = true"
+                                class="text-secondary"
+                                type="text">
+                                <i class="fas fa-pen"></i>
+                            </el-button>
+                        </el-tooltip>
+                        <el-tooltip
+                            class="item"
+                            effect="dark"
+                            content="Delete"
+                            placement="top"
+                            :open-delay="1000">
+                            <el-button
+                                @click="deleteMachine(scope.row.id)"
+                                type="text">
+                                <i class="fas fa-trash-alt text-red-500"></i>
+                            </el-button>
+                        </el-tooltip>
+                    </template>
+                </template>
             </el-table-column>
         </el-table>
-
-        <el-pagination>
-
-        </el-pagination>
     </div>
 </div>
 
@@ -127,6 +142,12 @@ export default {
     },
 
     methods: {
+        addNew() {
+            if (this.edit) {
+                this.clearForm()
+            }
+            this.edit = false
+        },
         fetchMachines() {
             this.$API.Machine.fetch()
             .then ( (response) => {
@@ -176,8 +197,32 @@ export default {
                         })
                     })
                 }else {
-                    console.log(this.form)
                     this.formDialogVisible = true
+                }
+            })
+        },
+
+        deleteMachine(id) {
+             Swal.fire({
+                title: 'Confirm Delete',
+                text: 'You are about to delete this Counter',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, delete it.'
+            }).then( async(result) => {
+                if(result.isConfirmed) {
+                    let apiUrl = `/admin/machines/${id}/destroy`
+
+                    axios.delete(apiUrl)
+                    .then( (response) => {
+                        Swal.fire(
+                            'Deleted',
+                            response.data.message,
+                            'success'
+                        ).then( () => {
+                            this.fetchMachines();
+                        })
+                    })
                 }
             })
         },
@@ -205,3 +250,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .el-input, .el-select {
+        width: 320px !important;
+    }
+</style>

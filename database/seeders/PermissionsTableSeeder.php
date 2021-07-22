@@ -246,6 +246,38 @@ class PermissionsTableSeeder extends Seeder
                 'id'    => 59,
                 'title' => 'profile_password_edit',
             ],
+            [
+                'id' => 60,
+                'title' => 'machine_access'
+            ],
+            [
+                'id' => 61,
+                'title' => 'machine_create'
+            ],
+            [
+                'id' => 62,
+                'title' => 'machine_update'
+            ],
+            [
+                'id' => 63,
+                'title' => 'machine_delete'
+            ],
+            [
+                'id' => 64,
+                'title' => 'machine_counter_access'
+            ],
+            [
+                'id' => 65,
+                'title' => 'machine_counter_create'
+            ],
+            [
+                'id' => 66,
+                'title' => 'machine_counter_update'
+            ],
+            [
+                'id' => 66,
+                'title' => 'machinecounters_delete'
+            ],
         ];
 
         Permission::insert($permissions);

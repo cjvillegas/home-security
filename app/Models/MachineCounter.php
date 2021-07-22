@@ -15,6 +15,11 @@ class MachineCounter extends Model
         return $this->belongsTo(Machine::class);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
     public function team()
     {
         return $this->belongsTo(Team::class);
