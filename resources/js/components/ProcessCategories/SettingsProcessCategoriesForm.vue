@@ -56,8 +56,8 @@
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import { dialog } from '../../../mixins/dialog'
-    import { formHelper } from '../../../mixins/formHelper'
+    import { dialog } from '../../mixins/dialog'
+    import { formHelper } from '../../mixins/formHelper'
 
     export default {
         name: "SettingsProcessCategoriesForm",

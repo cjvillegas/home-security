@@ -18,8 +18,6 @@ const OrderView = () => import('../components/Orders/OrderView')
 // Dashboard Components
 const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
 
-// Settings Components
-const SettingsIndex = () => import('../components/Settings/SettingsIndex')
 
 export default new VueRouter({
     linkActiveClass: 'active',
@@ -44,12 +42,6 @@ export default new VueRouter({
             path: '/dashboard',
             name: 'Dashboard Index',
             component: DashboardIndex,
-            props: true
-        },
-        {
-            path: '/settings-list',
-            name: 'Settings Index',
-            component: SettingsIndex,
             props: true
         },
     ]
