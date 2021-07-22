@@ -58,7 +58,7 @@
 import cloneDeep from 'lodash/cloneDeep'
 import pagination from '../../mixins/pagination'
 export default {
-    name: "OrderIndex",
+    name: "OrderView",
     mixins: [pagination],
     props: {
         toSearch: {
@@ -94,12 +94,21 @@ export default {
         }
     },
     created() {
-        this.getOrderDetails()
+        this.loadData()
     },
     methods: {
         applySearch() {
             this.filters.page = 1
             this.filters.searchString = cloneDeep(this.search)
+        },
+        loadData() {
+            if (this.field === 'order_no') {
+                this.getOrderDetails()
+
+                return false
+            }
+
+            this.getScannersData()
         },
         getOrderDetails() {
             this.loading = true
@@ -109,6 +118,22 @@ export default {
                     this.orders = cloneDeep(res.data || [])
                     this.filters.total = this.orders.length
                     this.scanners = this.orders.reduce((acc, cur) => acc = [...acc, ...cur.scanners], [])
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+        },
+        getScannersData() {
+            this.loading = true
+
+            this.$API.Scanners.getScannersByField(this.field, this.toSearch)
+                .then(res => {
+                    this.scanners = cloneDeep(res.data || [])
+                    this.filters.total = this.orders.length
+                    this.orders = this.scanners.reduce((acc, cur) => acc = [...acc, ...(cur.order && !acc.some(o => o.id === cur.order.id)) ? [cur.order] : []], [])
                 })
                 .catch(err => {
                     console.log(err)
