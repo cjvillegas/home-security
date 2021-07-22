@@ -12,6 +12,7 @@ export default {
     Orders,
     Reports,
     Exports,
+    Scanners,
     ProcessCategory,
 
     // employee dedicated endpoints
