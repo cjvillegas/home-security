@@ -9,54 +9,81 @@
     </div>
 
     <el-dialog
-    :visible.sync="formDialogVisible"
-    width="20%">
-        <span slot="title" v-show="!edit"> Add New Machine </span>
-        <span slot="title" v-show="edit">Edit Machine</span>
-        <el-form ref="form" :model="form">
-            <el-form-item>
-                <el-input
-                placeholder="Machine Name"
-                v-model="form.name"
-                clearable>
-                </el-input>
-            </el-form-item>
+        :visible.sync="formDialogVisible"
+        width="20%">
+        <span
+            slot="title"
+            v-show="!edit">
+            Add New Machine
+        </span>
+        <span
+            slot="title"
+            v-show="edit">
+            Edit Machine
+        </span>
+        <el-form
+            ref="form"
+            :model="form">
+                <el-form-item>
+                    <el-input
+                    placeholder="Machine Name"
+                    v-model="form.name"
+                    clearable>
+                    </el-input>
+                </el-form-item>
 
-            <el-form-item>
-                <el-input
-                placeholder="Serial No."
-                v-model="form.serial_no"
-                clearable>
-                </el-input>
-            </el-form-item>
+                <el-form-item>
+                    <el-input
+                    placeholder="Serial No."
+                    v-model="form.serial_no"
+                    clearable>
+                    </el-input>
+                </el-form-item>
 
-            <el-form-item>
-                 <el-input
-                placeholder="Location"
-                v-model="form.location"
-                clearable>
-                </el-input>
-            </el-form-item>
+                <el-form-item>
+                    <el-input
+                    placeholder="Location"
+                    v-model="form.location"
+                    clearable>
+                    </el-input>
+                </el-form-item>
 
-            <el-form-item cenetered>
-                <el-select v-model="form.status" placeholder="Status">
-                    <el-option
-                    label="Active"
-                    value=1>
-                    </el-option>
+                <el-form-item cenetered>
+                    <el-select
+                        v-model="form.status"
+                        placeholder="Status">
+                            <el-option
+                            label="Active"
+                            value=1>
+                            </el-option>
 
-                    <el-option
-                    label="Inactive"
-                    value=0>
-                    </el-option>
-                </el-select>
-            </el-form-item>
+                            <el-option
+                            label="Inactive"
+                            value=0>
+                            </el-option>
+                    </el-select>
+                </el-form-item>
         </el-form>
 
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="formDialogVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="saveMachine()" v-show="!edit">Save</el-button>
-            <el-button type="primary" @click="updateMachine()" v-show="edit">Update</el-button>
+        <span
+            slot="footer"
+            class="dialog-footer">
+                <el-button
+                    @click="formDialogVisible = false">
+                    Cancel
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="saveMachine()"
+                    v-show="!edit">
+                    Save
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="updateMachine()"
+                    v-show="edit">
+                    Update
+                </el-button>
         </span>
     </el-dialog>
 
@@ -64,57 +91,57 @@
 
     <div class="card">
         <el-table
-        :data="machines"
-        style="width: 100%">
-            <el-table-column
-            prop="name"
-            label="Name">
-            </el-table-column>
-            <el-table-column
-            prop="serial_no"
-            label="Serial No.">
-            </el-table-column>
-            <el-table-column
-            prop="location"
-            label="Location">
-            </el-table-column>
-            <el-table-column
-            prop="status"
-            label="Status">
-            </el-table-column>
-            <el-table-column
-            label="Action"
-            class-name="table-action-button">
-                <template slot-scope="scope">
-                    <template>
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="Edit"
-                            placement="top"
-                            :open-delay="1000">
-                            <el-button
-                                 @click="openEditDialog(scope.row), formDialogVisible = true"
-                                class="text-secondary"
-                                type="text">
-                                <i class="fas fa-pen"></i>
-                            </el-button>
-                        </el-tooltip>
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="Delete"
-                            placement="top"
-                            :open-delay="1000">
-                            <el-button
-                                @click="deleteMachine(scope.row.id)"
-                                type="text">
-                                <i class="fas fa-trash-alt text-red-500"></i>
-                            </el-button>
-                        </el-tooltip>
+            :data="machines"
+            style="width: 100%">
+                <el-table-column
+                prop="name"
+                label="Name">
+                </el-table-column>
+                <el-table-column
+                prop="serial_no"
+                label="Serial No.">
+                </el-table-column>
+                <el-table-column
+                prop="location"
+                label="Location">
+                </el-table-column>
+                <el-table-column
+                prop="status"
+                label="Status">
+                </el-table-column>
+                <el-table-column
+                label="Action"
+                class-name="table-action-button">
+                    <template slot-scope="scope">
+                        <template>
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="Edit"
+                                placement="top"
+                                :open-delay="1000">
+                                <el-button
+                                    @click="openEditDialog(scope.row), formDialogVisible = true"
+                                    class="text-secondary"
+                                    type="text">
+                                    <i class="fas fa-pen"></i>
+                                </el-button>
+                            </el-tooltip>
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="Delete"
+                                placement="top"
+                                :open-delay="1000">
+                                <el-button
+                                    @click="deleteMachine(scope.row.id)"
+                                    type="text">
+                                    <i class="fas fa-trash-alt text-red-500"></i>
+                                </el-button>
+                            </el-tooltip>
+                        </template>
                     </template>
-                </template>
-            </el-table-column>
+                </el-table-column>
         </el-table>
     </div>
 </div>
@@ -139,6 +166,10 @@ export default {
             },
             formDialogVisible: false
         }
+    },
+
+    mounted() {
+        this.fetchMachines()
     },
 
     methods: {
@@ -244,10 +275,6 @@ export default {
             this.form.status = ''
         },
     },
-
-    mounted() {
-        this.fetchMachines()
-    }
 }
 </script>
 

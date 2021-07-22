@@ -25,10 +25,15 @@ class ShiftsController extends Controller
         return view('admin.shifts.index', compact('shifts'));
     }
 
-    public function fetch()
+    /**
+     * Fetch Shifts. API
+     *
+     * @return void
+     */
+    public function fetchShifts()
     {
         $shifts = Shift::all();
-        return response()->json(['shifts' => $shifts], 200);
+        return response()->json(['shifts' => $shifts]);
     }
 
     public function create()

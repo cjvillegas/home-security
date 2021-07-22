@@ -45,7 +45,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('employees/process-csv-import', 'EmployeesController@processCsvImport')->name('employees.processCsvImport');
     Route::get('employees/{employee}/print-barcode', 'EmployeesController@printBarcode')->name('employees.print-barcode');
 
-    Route::get('employees/list', 'EmployeesController@fetch');
+    Route::get('employees/list', 'EmployeesController@fetchEmployees');
     Route::resource('employees', 'EmployeesController');
 
     // Processes
@@ -74,7 +74,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('shifts/destroy', 'ShiftsController@massDestroy')->name('shifts.massDestroy');
     Route::post('shifts/parse-csv-import', 'ShiftsController@parseCsvImport')->name('shifts.parseCsvImport');
     Route::post('shifts/process-csv-import', 'ShiftsController@processCsvImport')->name('shifts.processCsvImport');
-    Route::get('shifts/list', 'ShiftsController@fetch');
+    Route::get('shifts/list', 'ShiftsController@fetchShifts');
     Route::resource('shifts', 'ShiftsController');
 
     // Audit Logs
@@ -105,8 +105,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('machines-list', 'MachineController@fetchMachines');
 
         Route::post('store', 'MachineController@store')->name('machine.store');
-        Route::patch('{id}/update', 'MachineController@update')->name('machine.update');
-        Route::delete('{id}/destroy', 'MachineController@destroy');
+        Route::patch('{machine}/update', 'MachineController@update')->name('machine.update');
+        Route::delete('{machine}/destroy', 'MachineController@destroy');
     });
 
     //Machine Counter
@@ -114,10 +114,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('/', 'MachineCounterController@index')->name('machine-counters.index');
 
         //api
-        Route::get('/list', 'MachineCounterController@fetch');
+        Route::get('/list', 'MachineCounterController@fetchMachineCounters');
         Route::post('store', 'MachineCounterController@store');
-        Route::patch('{id}/update', 'MachineCounterController@update');
-        Route::delete('{id}/destroy', 'MachineCounterController@destroy');
+        Route::patch('{machineCounter}/update', 'MachineCounterController@update');
+        Route::delete('{machineCounter}/destroy', 'MachineCounterController@destroy');
     });
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {

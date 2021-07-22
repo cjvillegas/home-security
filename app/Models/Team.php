@@ -30,6 +30,11 @@ class Team extends Model
         'deleted_at',
     ];
 
+    /**
+     * Relation to Machine Counter's Model
+     *
+     * @return void
+     */
     public function machineCounters()
     {
         return $this->hasMany(MachineCounter::class);

@@ -37,17 +37,4 @@ class MachineCounterRequest extends FormRequest
             'stop_counter_time' => 'required'
         ];
     }
-
-
-    /**
-     * Failed validation function
-     *
-     * @param Validator $validator
-     *
-     * @return void
-     */
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json(['errors' => $validator->errors()], 422));
-    }
 }

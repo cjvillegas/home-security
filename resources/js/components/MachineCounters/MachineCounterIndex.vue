@@ -9,199 +9,224 @@
     </el-row>
 
     <el-dialog
-    :visible.sync="formDialogVisible"
-    width="500px">
-        <span slot="title" v-show="!edit"> Add Machine Counter </span>
-        <span slot="title" v-show="edit">Edit Machine Counter</span>
+        :visible.sync="formDialogVisible"
+        width="500px">
+            <span
+                slot="title"
+                v-show="!edit">
+                    Add Machine Counter
+            </span>
+            <span
+                slot="title"
+                v-show="edit">
+                    Edit Machine Counter
+            </span>
 
-        <el-form :inline="true" ref="form" v-model="form">
-            <div class="row">
-                <div class="col-md-4">
-                    <label>Machine</label>
-                </div>
-                <div class="col-md-8">
-                     <el-select v-model="form.machine_id">
-                        <el-option
-                        v-for="(machine, machineKey) in machines"
-                        :key="machineKey"
-                        :label="machine.name"
-                        :value="machine.id">
+            <el-form
+                :inline="true"
+                ref="form"
+                v-model="form">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Machine</label>
+                        </div>
+                        <div class="col-md-8">
+                            <el-select v-model="form.machine_id">
+                                <el-option
+                                v-for="machine in machines"
+                                :key="machine.id"
+                                :label="machine.name"
+                                :value="machine.id">
 
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Employees</label>
-                </div>
-                <div class="col-md-8">
-                     <el-select v-model="form.employee_id">
-                       <el-option
-                        v-for="(employee, employeeKey) in employees"
-                        :key="employeeKey"
-                        :label="employee.fullname"
-                        :value="employee.id">
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Employees</label>
+                        </div>
+                        <div class="col-md-8">
+                            <el-select v-model="form.employee_id">
+                            <el-option
+                                v-for="employee in employees"
+                                :key="employee.id"
+                                :label="employee.fullname"
+                                :value="employee.id">
 
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Shift</label>
-                </div>
-                <div class="col-md-8">
-                     <el-select v-model="form.shift_id" @change="selectShift()">
-                        <el-option
-                        v-for="(shift, shiftKey) in shifts"
-                        :key="shiftKey"
-                        :selected="shift.isSelected"
-                        :label="shift.name"
-                        :value="shift.id">
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Shift</label>
+                        </div>
+                        <div class="col-md-8">
+                            <el-select v-model="form.shift_id" @change="selectShift()">
+                                <el-option
+                                v-for="shift in shifts"
+                                :key="shift.id"
+                                :selected="shift.isSelected"
+                                :label="shift.name"
+                                :value="shift.id">
 
-                        </el-option>
-                    </el-select>
-                </div>
-            </div>
+                                </el-option>
+                            </el-select>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Start Counter</label>
-                </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Start Counter</label>
+                        </div>
 
-                <div class="col-md-8">
-                    <el-input
-                    v-model="form.start_counter"
-                    clearable>
-                    </el-input>
-                </div>
-            </div>
+                        <div class="col-md-8">
+                            <el-input
+                            v-model="form.start_counter"
+                            clearable>
+                            </el-input>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Start Date Time</label>
-                </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Start Date Time</label>
+                        </div>
 
-                <div class="col-md-8">
-                    <el-date-picker
-                    v-model="form.start_counter_time"
-                    type="datetime"
-                    placeholder="Select date and time"
-                    >
-                    </el-date-picker>
-                </div>
-            </div>
+                        <div class="col-md-8">
+                            <el-date-picker
+                            v-model="form.start_counter_time"
+                            type="datetime"
+                            placeholder="Select date and time"
+                            >
+                            </el-date-picker>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Stop Counter</label>
-                </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Stop Counter</label>
+                        </div>
 
-                <div class="col-md-8">
-                    <el-input
-                    v-model="form.stop_counter"
-                    clearable>
-                    </el-input>
-                </div>
-            </div>
+                        <div class="col-md-8">
+                            <el-input
+                            v-model="form.stop_counter"
+                            clearable>
+                            </el-input>
+                        </div>
+                    </div>
 
-            <div class="row mt-2">
-                <div class="col-md-4">
-                    <label>Stop Date Time</label>
-                </div>
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Stop Date Time</label>
+                        </div>
 
-                <div class="col-md-8">
-                    <el-date-picker
-                    v-model="form.stop_counter_time"
-                    type="datetime"
-                    placeholder="Select date and time"
-                    >
-                    </el-date-picker>
-                </div>
-            </div>
-        </el-form>
-        <span slot="footer" class="dialog-footer">
-            <el-button @click="formDialogVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="saveMachineCounter()" v-show="!edit">Save</el-button>
-            <el-button type="primary" @click="updateMachineCounter()" v-show="edit">Update</el-button>
-        </span>
+                        <div class="col-md-8">
+                            <el-date-picker
+                                v-model="form.stop_counter_time"
+                                type="datetime"
+                                placeholder="Select date and time">
+                            </el-date-picker>
+                        </div>
+                    </div>
+            </el-form>
+            <span
+                slot="footer"
+                class="dialog-footer">
+                    <el-button
+                        @click="formDialogVisible = false">
+                            Cancel
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="saveMachineCounter()"
+                        v-show="!edit">
+                            Save
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="updateMachineCounter()"
+                        v-show="edit">
+                            Update
+                    </el-button>
+            </span>
     </el-dialog>
 
     <el-card class="card">
         <el-table
-        :data="machineCounters"
-        style="width: 100%">
-            <el-table-column
-            prop="machine.name"
-            label="Machine Name">
-            </el-table-column>
+            :data="machineCounters"
+            style="width: 100%">
+                <el-table-column
+                prop="machine.name"
+                label="Machine Name">
+                </el-table-column>
 
-            <el-table-column
-            prop="employee.fullname"
-            label="Employee Name">
-            </el-table-column>
+                <el-table-column
+                prop="employee.fullname"
+                label="Employee Name">
+                </el-table-column>
 
-            <el-table-column
-            prop="shift.name"
-            label="Shift Name">
-            </el-table-column>
+                <el-table-column
+                prop="shift.name"
+                label="Shift Name">
+                </el-table-column>
 
-            <el-table-column
-            prop="start_counter"
-            label="Start Counter">
-            </el-table-column>
+                <el-table-column
+                prop="start_counter"
+                label="Start Counter">
+                </el-table-column>
 
-            <el-table-column
-            prop="start_counter_time"
-            label="Start Counter Time">
-            </el-table-column>
+                <el-table-column
+                prop="start_counter_time"
+                label="Start Counter Time">
+                </el-table-column>
 
-            <el-table-column
-            prop="stop_counter"
-            label="Stop Counter">
-            </el-table-column>
+                <el-table-column
+                prop="stop_counter"
+                label="Stop Counter">
+                </el-table-column>
 
-            <el-table-column
-            prop="stop_counter_time"
-            label="Stop Counter Time">
-            </el-table-column>
+                <el-table-column
+                prop="stop_counter_time"
+                label="Stop Counter Time">
+                </el-table-column>
 
-            <el-table-column
-            label="Action"
-            class-name="table-action-button">
-                <template slot-scope="scope">
-                    <template>
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="Edit"
-                            placement="top"
-                            :open-delay="1000">
-                            <el-button
-                                @click="editMachineCounter(scope.row), formDialogVisible = true"
-                                class="text-secondary"
-                                type="text">
-                                <i class="fas fa-pen"></i>
-                            </el-button>
-                        </el-tooltip>
-                        <el-tooltip
-                            class="item"
-                            effect="dark"
-                            content="Delete"
-                            placement="top"
-                            :open-delay="1000">
-                            <el-button
-                                @click="deleteMachineCounter(scope.row.id)"
-                                type="text">
-                                <i class="fas fa-trash-alt text-red-500"></i>
-                            </el-button>
-                        </el-tooltip>
+                <el-table-column
+                label="Action"
+                class-name="table-action-button">
+                    <template slot-scope="scope">
+                        <template>
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="Edit"
+                                placement="top"
+                                :open-delay="1000">
+                                <el-button
+                                    @click="editMachineCounter(scope.row), formDialogVisible = true"
+                                    class="text-secondary"
+                                    type="text">
+                                    <i class="fas fa-pen"></i>
+                                </el-button>
+                            </el-tooltip>
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content="Delete"
+                                placement="top"
+                                :open-delay="1000">
+                                <el-button
+                                    @click="deleteMachineCounter(scope.row.id)"
+                                    type="text">
+                                    <i class="fas fa-trash-alt text-red-500"></i>
+                                </el-button>
+                            </el-tooltip>
+                        </template>
                     </template>
-                </template>
-            </el-table-column>
+                </el-table-column>
         </el-table>
     </el-card>
 </div>
@@ -223,7 +248,6 @@ export default {
                 start_counter_time: '',
                 stop_counter_time: ''
             },
-
             machines: [],
             shifts: [
                 { id: '1', name: 'Shift 1', start: '06:00', stop: '14:00' },
@@ -236,6 +260,10 @@ export default {
         }
     },
 
+    mounted() {
+        this.fetchMachineCounters()
+    },
+
     methods: {
         addNew() {
             if (this.edit) {
@@ -243,6 +271,7 @@ export default {
             }
             this.edit = false
         },
+
         fetchMachineCounters() {
             let apiUrl = `/admin/machine-counters/list`
 
@@ -257,16 +286,16 @@ export default {
         selectShift() {
             switch(this.form.shift_id) {
                 case "1":
-                    this.form.start_counter_time = new Date().toISOString().slice(0,10) + ' ' + '06:00'
-                    this.form.stop_counter_time = new Date().toISOString().slice(0,10) + ' ' + '14:00'
+                    this.form.start_counter_time = moment().set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
+                    this.form.stop_counter_time = moment().set('hour', '14').set('minute', '00').format('YYYY-MM-DD HH:mm')
                     break
                 case "2":
-                    this.form.start_counter_time = new Date().toISOString().slice(0,10) + ' ' + '14:00'
-                    this.form.stop_counter_time = new Date().toISOString().slice(0,10) + ' ' + '22:00'
+                    this.form.start_counter_time = moment().set('hour', '14').set('minute', '00').format('YYYY-MM-DD HH:mm')
+                    this.form.stop_counter_time = moment().set('hour', '22').set('minute', '00').format('YYYY-MM-DD HH:mm')
                     break
                 case "3":
-                    this.form.start_counter_time = new Date().toISOString().slice(0,10) + ' ' + '22:00'
-                    this.form.stop_counter_time = new Date().toISOString().slice(0,10) + ' ' + '06:00'
+                    this.form.start_counter_time = moment().set('hour', '22').set('minute', '00').format('YYYY-MM-DD HH:mm')
+                    this.form.stop_counter_time = moment().set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
                     break
             }
         },
@@ -361,11 +390,6 @@ export default {
             }
         }
     },
-
-    mounted() {
-        this.fetchMachineCounters()
-
-    }
 }
 </script>
 

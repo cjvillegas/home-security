@@ -27,7 +27,7 @@ class EmployeesController extends Controller
         return view('admin.employees.index', compact('employees'));
     }
 
-    public function fetch()
+    public function fetchEmployees()
     {
         $employees = Employee::all();
 

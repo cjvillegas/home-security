@@ -29,7 +29,7 @@ class MachineCounterController extends Controller
         return view('admin.machine-counters.index');
     }
 
-    public function fetch()
+    public function fetchMachineCounters()
     {
         $machineCounters = MachineCounter::with('machine')
             ->with('employee')->with('team')
@@ -49,16 +49,6 @@ class MachineCounterController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -70,11 +60,7 @@ class MachineCounterController extends Controller
         try {
             MachineCounter::create($request->all());
             DB::commit();
-            return response()->json(
-                [
-                    'message' => 'Successfully Saved!'
-                ], 200
-            );
+            return response()->json(['message' => 'Successfully Saved!']);
         }
         catch ( Exception $e ) {
             DB::rollBack();
@@ -84,41 +70,19 @@ class MachineCounterController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, MachineCounter $machineCounter)
     {
         DB::beginTransaction();
         try {
-            MachineCounter::find($id)->update($request->all());
+            $machineCounter->update($request->all());
             DB::commit();
-            return response()->json(['message' => 'Successfully Updated'], 200);
+            return response()->json(['message' => 'Successfully Updated']);
         }
         catch ( Exception $e) {
             DB::rollBack();
@@ -131,14 +95,13 @@ class MachineCounterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(MachineCounter $machineCounter)
     {
         DB::beginTransaction();
         try {
-            MachineCounter::find($id)->delete();
+            $machineCounter->delete();
             DB::commit();
-
-            return response()->json(['message' => 'Successfully Deleted!'], 200);
+            return response()->json(['message' => 'Successfully Deleted!']);
         }
         catch ( Exception $e ) {
             DB::rollBack();

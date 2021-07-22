@@ -7,7 +7,7 @@ use App\Models\Machine;
 use Exception;
 use Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB; // Database Manager
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,7 +27,7 @@ class MachineController extends Controller
     public function fetchMachines()
     {
         $machines = Machine::all();
-        return response()->json(['machines' => $machines], 200);
+        return response()->json(['machines' => $machines]);
     }
 
     /**
@@ -44,7 +44,7 @@ class MachineController extends Controller
         try {
             Machine::create($request->all());
             DB::commit();
-            return response()->json(['message' => 'Successfully Saved'], 200);
+            return response()->json(['message' => 'Successfully Saved']);
         }
         catch ( Exception $e ) {
             DB::rollBack();
@@ -59,13 +59,13 @@ class MachineController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Machine $machine)
     {
         DB::beginTransaction();
         try {
-            Machine::find($id)->update($request->all());
+            $machine->update($request->all());
             DB::commit();
-            return response()->json(['message' => 'Successfully Updated!'], 200);
+            return response()->json(['message' => 'Successfully Updated!']);
         }
         catch ( Exception $e ) {
             DB::rollBack();
@@ -74,19 +74,18 @@ class MachineController extends Controller
     }
 
     /**
-     * Destroy
+     * Destroy machine data
      *
      * @param  mixed $id
      * @return void
      */
-    public function destroy($id)
+    public function destroy(Machine $machine)
     {
         DB::beginTransaction();
         try {
-            Machine::find($id)->delete();
+            $machine->delete();
             DB::commit();
-
-            return response()->json(['message' => 'Successfully Deleted!'], 200);
+            return response()->json(['message' => 'Successfully Deleted!']);
         }
         catch ( Exception $e ) {
             DB::rollBack();
