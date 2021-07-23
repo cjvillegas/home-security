@@ -12,6 +12,7 @@ use App\Models\Shift;
 use App\Models\Team;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class EmployeesController extends Controller
@@ -111,5 +112,18 @@ class EmployeesController extends Controller
     public function printBarcode(Employee $employee)
     {
         return view('admin.employees.print-barcode')->with('employee', $employee);;
+    }
+
+    /**
+     * Search Employee API
+     *
+     * @return void
+     */
+    public function searchEmployee()
+    {
+        $searchString = request()->input('searchString');
+        $employees = DB::table('employees')
+            ->where('fullname', 'like', "%$searchString%")->take(15)->get();
+        return response()->json(['employees' => $employees]);
     }
 }

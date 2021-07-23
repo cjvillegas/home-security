@@ -7,8 +7,8 @@ export default {
      *
      * @return Promise
      */
-    fetch() {
-        let apiUrl = `/admin/machines/machines-list`
+    fetch(data) {
+        let apiUrl = `/admin/machines/machines-list?page=${data.page}&size=${data.size}`
 
         return axios.get(apiUrl)
     },

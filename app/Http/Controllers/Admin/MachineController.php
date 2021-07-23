@@ -26,7 +26,8 @@ class MachineController extends Controller
      */
     public function fetchMachines()
     {
-        $machines = Machine::all();
+        $machines = Machine::paginate(request()->size);
+
         return response()->json(['machines' => $machines]);
     }
 

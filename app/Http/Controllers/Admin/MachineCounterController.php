@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 class MachineCounterController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return view for Machine Counter page
      *
      * @return \Illuminate\Http\Response
      */
@@ -29,13 +29,18 @@ class MachineCounterController extends Controller
         return view('admin.machine-counters.index');
     }
 
+    /**
+     * Fetch All Machine Counters
+     *
+     * @return void
+     */
     public function fetchMachineCounters()
     {
         $machineCounters = MachineCounter::with('machine')
             ->with('employee')->with('team')
-            ->with('shift')->orderBy('id', 'DESC')->get();
+            ->with('shift')->orderBy('id', 'DESC')->paginate(request()->size);
         $machines = Machine::all();
-        $employees = Employee::all();
+        $employees = Employee::orderBy('id', 'DESC')->get()->take(10);
         $teams = Team::all();
 
         return response()->json(

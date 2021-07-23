@@ -47,6 +47,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     Route::get('employees/list', 'EmployeesController@fetchEmployees');
     Route::resource('employees', 'EmployeesController');
+    Route::post('employees/search', 'EmployeesController@searchEmployee');
 
     // Processes
     Route::delete('processes/destroy', 'ProcessesController@massDestroy')->name('processes.massDestroy');

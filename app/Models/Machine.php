@@ -26,4 +26,22 @@ class Machine extends Model
     {
         return $this->hasMany(MachineCounter::class);
     }
+
+    /**
+     * Set Machine's Status
+     *
+     * @param  mixed $value
+     * @return void
+     */
+    public function getStatusAttribute( $value)
+    {
+        switch( $value ) {
+            case 1:
+                return "Active";
+                break;
+            case 0:
+                return "Inactive";
+                break;
+        }
+    }
 }

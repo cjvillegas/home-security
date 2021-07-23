@@ -11,85 +11,85 @@
     <el-dialog
         :visible.sync="formDialogVisible"
         width="20%">
-        <span
-            slot="title"
-            v-show="!edit">
-            Add New Machine
-        </span>
-        <span
-            slot="title"
-            v-show="edit">
-            Edit Machine
-        </span>
-        <el-form
-            ref="form"
-            :model="form">
-                <el-form-item>
-                    <el-input
-                    placeholder="Machine Name"
-                    v-model="form.name"
-                    clearable>
-                    </el-input>
-                </el-form-item>
+            <span
+                slot="title"
+                v-show="!edit">
+                Add New Machine
+            </span>
+            <span
+                slot="title"
+                v-show="edit">
+                Edit Machine
+            </span>
+            <el-form
+                ref="form"
+                :model="form">
+                    <el-form-item>
+                        <el-input
+                        placeholder="Machine Name"
+                        v-model="form.name"
+                        clearable>
+                        </el-input>
+                    </el-form-item>
 
-                <el-form-item>
-                    <el-input
-                    placeholder="Serial No."
-                    v-model="form.serial_no"
-                    clearable>
-                    </el-input>
-                </el-form-item>
+                    <el-form-item>
+                        <el-input
+                        placeholder="Serial No."
+                        v-model="form.serial_no"
+                        clearable>
+                        </el-input>
+                    </el-form-item>
 
-                <el-form-item>
-                    <el-input
-                    placeholder="Location"
-                    v-model="form.location"
-                    clearable>
-                    </el-input>
-                </el-form-item>
+                    <el-form-item>
+                        <el-input
+                        placeholder="Location"
+                        v-model="form.location"
+                        clearable>
+                        </el-input>
+                    </el-form-item>
 
-                <el-form-item cenetered>
-                    <el-select
-                        v-model="form.status"
-                        placeholder="Status">
-                            <el-option
-                            label="Active"
-                            value=1>
-                            </el-option>
+                    <el-form-item cenetered>
+                        <el-select
+                            v-model="form.status"
+                            placeholder="Status">
+                                <el-option
+                                label="Active"
+                                value=1>
+                                </el-option>
 
-                            <el-option
-                            label="Inactive"
-                            value=0>
-                            </el-option>
-                    </el-select>
-                </el-form-item>
-        </el-form>
+                                <el-option
+                                label="Inactive"
+                                value=0>
+                                </el-option>
+                        </el-select>
+                    </el-form-item>
+            </el-form>
 
-        <span
-            slot="footer"
-            class="dialog-footer">
-                <el-button
-                    @click="formDialogVisible = false">
-                    Cancel
-                </el-button>
-                <el-button
-                    type="primary"
-                    @click="saveMachine()"
-                    v-show="!edit">
-                    Save
-                </el-button>
-                <el-button
-                    type="primary"
-                    @click="updateMachine()"
-                    v-show="edit">
-                    Update
-                </el-button>
-        </span>
+            <span
+                slot="footer"
+                class="dialog-footer">
+                    <el-button
+                        @click="formDialogVisible = false">
+                        Cancel
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="saveMachine()"
+                        v-show="!edit">
+                        Save
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="updateMachine()"
+                        v-show="edit">
+                        Update
+                    </el-button>
+            </span>
     </el-dialog>
 
 
 
-    <div class="card">
+    <el-card class="card">
         <el-table
             :data="machines"
             style="width: 100%">
@@ -110,6 +110,7 @@
                 label="Status">
                 </el-table-column>
                 <el-table-column
+                width="100%"
                 label="Action"
                 class-name="table-action-button">
                     <template slot-scope="scope">
@@ -143,7 +144,19 @@
                     </template>
                 </el-table-column>
         </el-table>
-    </div>
+
+        <el-pagination
+            class="custom-pagination-class  mt-3 float-right"
+            background
+            layout="total, sizes, prev, pager, next"
+            :total="filters.total"
+            :page-size="filters.size"
+            :page-sizes="[10, 25, 50, 100]"
+            :current-page="filters.page"
+            @size-change="handleSize"
+            @current-change="handlePage">
+        </el-pagination>
+    </el-card>
 </div>
 
 </template>
@@ -153,7 +166,9 @@
 </style>
 
 <script>
+import pagination from '../../mixins/pagination'
 export default {
+    mixins: [pagination],
     data() {
         return {
             edit: false,
@@ -164,7 +179,9 @@ export default {
                 location: '',
                 status: '',
             },
-            formDialogVisible: false
+            formDialogVisible: false,
+            filters: {
+            }
         }
     },
 
@@ -172,17 +189,22 @@ export default {
         this.fetchMachines()
     },
 
+    created() {
+        this.filters.size = 10
+        this.functionName = 'fetchMachines'
+    },
+
     methods: {
         addNew() {
-            if (this.edit) {
-                this.clearForm()
-            }
+            this.clearForm()
             this.edit = false
         },
         fetchMachines() {
-            this.$API.Machine.fetch()
+            this.$API.Machine.fetch(this.filters)
             .then ( (response) => {
-                this.machines = response.data.machines
+                console.log(response.data)
+                this.machines = response.data.machines.data
+                this.filters.total = response.data.machines.total
             })
             .catch(err => {
                 console.log(err)
@@ -195,67 +217,61 @@ export default {
                  switch(response.status){
                     case 200:
                         this.formDialogVisible = false
-                        Swal.fire(
-                            'Success!',
-                            response.data.message,
-                            'success'
-                        ).then(() => {
-                            this.fetchMachines()
+                        this.$notify({
+                            title: 'Success',
+                            message: response.data.message,
+                            type: 'success'
                         })
+                        this.fetchMachines()
                 }
             })
         },
 
         updateMachine() {
             this.formDialogVisible = false
-            Swal.fire({
-                title: 'Confirm Edit Machine',
-                text: 'You are about to edit this Machine Information',
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, update it.'
-            }).then( async(result) => {
-                if (result.isConfirmed) {
-                    let apiUrl = `/admin/machines/${this.form.id}/update`
-                    axios.patch(apiUrl, this.form)
-                    .then( (response) => {
-                        Swal.fire(
-                            'Updated',
-                            response.data.message,
-                            'success'
-                        ).then( () => {
-                            this.fetchMachines();
-                        })
-                    })
-                }else {
-                    this.formDialogVisible = true
-                }
+
+            this.$confirm('You are about to edit this Machine. Continue?', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'info'
+            }).then( () => {
+                let apiUrl = `/admin/machines/${this.form.id}/update`
+                axios.patch(apiUrl, this.form)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Success!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+
+                    this.fetchMachines()
+                })
+            }).catch( () => {
+                this.formDialogVisible = true
             })
         },
 
         deleteMachine(id) {
-             Swal.fire({
-                title: 'Confirm Delete',
-                text: 'You are about to delete this Counter',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it.'
-            }).then( async(result) => {
-                if(result.isConfirmed) {
-                    let apiUrl = `/admin/machines/${id}/destroy`
 
-                    axios.delete(apiUrl)
-                    .then( (response) => {
-                        Swal.fire(
-                            'Deleted',
-                            response.data.message,
-                            'success'
-                        ).then( () => {
-                            this.fetchMachines();
-                        })
-                    })
-                }
+            this.$confirm('You are about to delete this Machine', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then( () => {
+                let apiUrl = `/admin/machines/${id}/destroy`
+                axios.delete(apiUrl)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Deleted!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                    this.fetchMachines()
+                })
+            }).catch( () => {
+
             })
+
         },
 
         openEditDialog(item) {

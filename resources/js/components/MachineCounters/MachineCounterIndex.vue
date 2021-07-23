@@ -43,7 +43,7 @@
                         </div>
                     </div>
 
-                    <div class="row mt-2">
+                    <!-- <div class="row mt-2">
                         <div class="col-md-4">
                             <label>Employees</label>
                         </div>
@@ -57,6 +57,21 @@
 
                                 </el-option>
                             </el-select>
+                        </div>
+                    </div> -->
+
+                    <div class="row mt-2">
+                        <div class="col-md-4">
+                            <label>Employee</label>
+                        </div>
+                        <div class="col-md-8">
+                            <el-autocomplete
+                                v-model="employee_name"
+                                :fetch-suggestions="querySeach"
+                                value-key="fullname"
+                                @select="selectItem">
+
+                            </el-autocomplete>
                         </div>
                     </div>
 
@@ -228,13 +243,27 @@
                     </template>
                 </el-table-column>
         </el-table>
+
+        <el-pagination
+            class="custom-pagination-class  mt-3 float-right"
+            background
+            layout="total, sizes, prev, pager, next"
+            :total="filters.total"
+            :page-size="filters.size"
+            :page-sizes="[10, 25, 50, 100]"
+            :current-page="filters.page"
+            @size-change="handleSize"
+            @current-change="handlePage">
+        </el-pagination>
     </el-card>
 </div>
 
 </template>
 
 <script>
+import pagination from '../../mixins/pagination'
 export default {
+    mixins: [pagination],
     data() {
         return {
             formDialogVisible: false,
@@ -255,13 +284,21 @@ export default {
                 { id: '3', name: 'Shift 3', start: '22:00', stop: '06:00' }
             ],
             employees: [],
+            employee_name: '',
             teams: [],
-            machineCounters: []
+            machineCounters: [],
+            filters: {
+            }
         }
     },
 
     mounted() {
         this.fetchMachineCounters()
+    },
+
+    created() {
+        this.filters.size = 10
+        this.functionName = 'fetchMachineCounters'
     },
 
     methods: {
@@ -273,13 +310,13 @@ export default {
         },
 
         fetchMachineCounters() {
-            let apiUrl = `/admin/machine-counters/list`
+            let apiUrl = `/admin/machine-counters/list?page=${this.filters.page}&size=${this.filters.size}`
 
             axios.get(apiUrl).then( (response) => {
                 this.machines = response.data.machines
-                this.machineCounters = response.data.machineCounters
+                this.machineCounters = response.data.machineCounters.data
                 this.employees = response.data.employees
-                //this.teams = response.data.teams
+                this.filters.total = response.data.machineCounters.total
             })
         },
 
@@ -308,44 +345,49 @@ export default {
                 switch(response.status){
                     case 200:
                         this.formDialogVisible = false
-                        Swal.fire(
-                            'Success!',
-                            response.data.message,
-                            'success'
-                        ).then(() => {
-                            this.fetchMachineCounters()
+                        this.$notify({
+                            title: 'Success',
+                            message: response.data.message,
+                            type: 'success'
                         })
+                        this.fetchMachineCounters()
                 }
             }).catch( err => {
-                console.log(err.response.data.errors)
             })
         },
 
         updateMachineCounter() {
-            let apiUrl = `/admin/machine-counters/${this.form.id}/update`
 
-            axios.patch(apiUrl, this.form)
-            .then( (response) => {
-                switch(response.status){
-                    case 200:
-                        this.formDialogVisible = false
-                        Swal.fire(
-                            'Success!',
-                            response.data.message,
-                            'success'
-                        ).then(() => {
-                            this.fetchMachineCounters()
-                        })
-                }
+            this.formDialogVisible = false
+
+            this.$confirm('You are about to edit this Machine Counter. Continue?', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'info'
+            }).then( () => {
+                let apiUrl = `/admin/machine-counters/${this.form.id}/update`
+                axios.patch(apiUrl, this.form)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Success!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+
+                    this.fetchMachineCounters()
+                })
+            }).catch( () => {
+                this.formDialogVisible = true
             })
         },
 
         editMachineCounter(item) {
             this.edit = true
-
+            console.log(item)
             this.form.id = item.id
             this.form.machine_id = item.machine_id
             this.form.employee_id = item.employee_id
+            this.employee_name = item.employee.fullname
             this.form.shift_id = item.shift_id
             this.form.start_counter = item.start_counter
             this.form.start_counter_time = item.start_counter_time
@@ -354,31 +396,55 @@ export default {
         },
 
         deleteMachineCounter(id) {
-            Swal.fire({
-                title: 'Confirm Delete',
-                text: 'You are about to delete this Counter',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it.'
-            }).then( async(result) => {
-                if(result.isConfirmed) {
-                    let apiUrl = `/admin/machine-counters/${id}/destroy`
+            this.$confirm('You are about to delete this Machine', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then( () => {
+                let apiUrl = `/admin/machine-counters/${id}/destroy`
+                axios.delete(apiUrl)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Deleted!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                    this.fetchMachineCounters()
+                })
+            }).catch( () => {
 
-                    axios.delete(apiUrl)
-                    .then( (response) => {
-                        Swal.fire(
-                            'Deleted',
-                            response.data.message,
-                            'success'
-                        ).then( () => {
-                            this.fetchMachineCounters();
-                        })
-                    })
-                }
             })
+
+        },
+
+        querySeach(queryString, cb) {
+            let apiUrl = `/admin/employees/search`
+            var employees = []
+
+            axios.post(apiUrl, {searchString: queryString})
+            .then( (response) => {
+                employees = response.data.employees
+
+                var results = queryString ? employees.filter(this.createFilter(queryString)) : employees
+                console.log(results)
+                cb(results)
+            })
+
+        },
+
+        createFilter(queryString) {
+            return (employee) => {
+                return (employee.fullname.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+            };
+        },
+
+        selectItem(item) {
+            this.form.employee_id = item.id
+            console.log(this.form.employee_id)
         },
 
         clearForm() {
+            this.employee_name = ''
             this.form = {
                 machine_id: '',
                 employee_id: '',
@@ -394,7 +460,7 @@ export default {
 </script>
 
 <style scoped>
-    .el-input, .el-select {
+    .el-input, .el-select, .el-autocomplete {
         width: 200px !important;
     }
 </style>
