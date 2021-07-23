@@ -13,6 +13,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class MachineController extends Controller
 {
+    /**
+     * Return view for Machine Page
+     *
+     * @return void
+     */
     public function index()
     {
         abort_if(Gate::denies('machine_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -82,6 +87,7 @@ class MachineController extends Controller
      */
     public function destroy(Machine $machine)
     {
+        abort_if(Gate::denies('machine_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         DB::beginTransaction();
         try {
             $machine->delete();
