@@ -101,7 +101,7 @@ class PopulateOrdersFromSage extends Command
                 [User].company AS Customer,
                 [Order].cust_no AS CustOrdNo,
                 OrderDetail.quantity AS Quantity,
-                BlindType.description AS BlindType,
+                BlindType.description AS BlindCode,
                 DetailStatus.name AS BlindStatus,
                 [Order].dat_delivery AS DespatchDate,
                 [Order].dat_order AS Ordered,
@@ -174,12 +174,13 @@ class PopulateOrdersFromSage extends Command
         $order['customer'] = $sageOrder['Customer'];
         $order['customer_order_no'] = $sageOrder['CustOrdNo'];
         $order['quantity'] = $sageOrder['Quantity'];
-        $order['blind_type'] = $sageOrder['BlindType'] ?? '';
+        $order['blind_type'] = $sageOrder['BlindCode'] ?? '';
         $order['blind_status'] = $sageOrder['BlindStatus'] ?? '';
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
         $order['despatched_at'] = !empty($sageOrder['DespatchDate']) ? Carbon::parse($sageOrder['DespatchDate'])->format('Y-m-d H:i:s') : null;
         $order['ordered_at'] = !empty($sageOrder['Ordered']) ? Carbon::parse($sageOrder['Ordered'])->format('Y-m-d H:i:s') : null;
         $order['serial_id'] = $sageOrder['SerialID'];
+        $order['category_name'] = $sageOrder['CategoryName'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $order;
