@@ -14,26 +14,31 @@
                 <h4>Today's Manufactured Blinds</h4>
             </div>
 
-            <div class="d-flex justify-content-around">
-                <global-gauge
-                    title="Shift 1"
-                    :count="total.today_shift_1">
-                </global-gauge>
-
-                <global-gauge
-                    title="Shift 2"
-                    :count="total.today_shift_2">
-                </global-gauge>
-
-                <global-gauge
-                    title="Shift 3"
-                    :count="total.today_shift_3">
-                </global-gauge>
-
-                <global-gauge
-                    title="Total"
-                    :count="total.today_shift_total">
-                </global-gauge>
+            <div class="row">
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 1"
+                        :count="total.today_shift_1">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 2"
+                        :count="total.today_shift_2">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 3"
+                        :count="total.today_shift_3">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Total"
+                        :count="total.today_shift_total">
+                    </global-gauge>
+                </div>
             </div>
         </el-card>
 
@@ -42,26 +47,31 @@
                 <h4>Yesterday's Manufactured Blinds</h4>
             </div>
 
-            <div class="d-flex justify-content-around">
-                <global-gauge
-                    title="Shift 1"
-                    :count="total.yesterday_shift_1">
-                </global-gauge>
-
-                <global-gauge
-                    title="Shift 2"
-                    :count="total.yesterday_shift_2">
-                </global-gauge>
-
-                <global-gauge
-                    title="Shift 3"
-                    :count="total.yesterday_shift_3">
-                </global-gauge>
-
-                <global-gauge
-                    title="Total"
-                    :count="total.yesterday_shift_total">
-                </global-gauge>
+            <div class="row">
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 1"
+                        :count="total.yesterday_shift_1">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 2"
+                        :count="total.yesterday_shift_2">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Shift 3"
+                        :count="total.yesterday_shift_3">
+                    </global-gauge>
+                </div>
+                <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
+                    <global-gauge
+                        title="Total"
+                        :count="total.yesterday_shift_total">
+                    </global-gauge>
+                </div>
             </div>
         </el-card>
     </div>

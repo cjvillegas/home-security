@@ -97,7 +97,8 @@ class WorkAnalyticsReportController extends Controller
     }
 
     /**
-     * Get the daily manufacture reports by shift and the total manufactured blinds
+     * Get the daily despatch reports of three processes ['P1012', 'P1013', 'P1014']
+     * in between three shifts
      *
      * @return JsonResponse
      */
