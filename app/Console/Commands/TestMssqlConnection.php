@@ -44,7 +44,7 @@ class TestMssqlConnection extends Command
         try {
             DB::connection('sqlsrv')->getPdo();
 
-            $test = DB::connection('sqlsrv')->select($this->testQuery());
+            $test = DB::connection('sqlsrv')->select($this->getQueryWithSerialId());
 
             $test = collect($test);
 

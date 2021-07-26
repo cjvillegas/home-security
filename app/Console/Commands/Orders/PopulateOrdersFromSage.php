@@ -6,7 +6,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Log;
+use Illuminate\Support\Facades\Log;
 use \Illuminate\Support\Collection;
 
 class PopulateOrdersFromSage extends Command
@@ -95,6 +95,7 @@ class PopulateOrdersFromSage extends Command
         // initialize the query
         $query = "
             SELECT
+                TOP 1000
                 OrderDetail.id AS BlindId,
                 [Order].order_id AS OrderNo,
                 [User].company AS Customer,
@@ -130,7 +131,7 @@ class PopulateOrdersFromSage extends Command
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
         if ($latestSerialId && !$loadAll) {
-            $query .= "\t AND (OrderDetail.id > {$latestSerialId})";
+            $query .= "\t AND (SerialDetailLine.id > {$latestSerialId})";
         }
 
         // execute the query
