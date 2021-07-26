@@ -61,6 +61,7 @@ class TestMssqlConnection extends Command
         // initialize the query
         $query = "
             SELECT
+                TOP 10
                 OrderDetail.id AS BlindId,
                 [Order].order_id AS OrderNo,
                 [User].company AS Customer,
@@ -107,6 +108,7 @@ class TestMssqlConnection extends Command
     {
         return "
             SELECT
+                TOP 10
                 OrderDetail.id AS BlindId,
                 [Order].order_id AS OrderNo,
                 [User].company AS Customer,
