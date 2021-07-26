@@ -2,7 +2,7 @@
     <el-card
         class="box-card"
         v-loading="loading">
-        <order-search-form></order-search-form>
+        <order-search-form :type="pageData.type"></order-search-form>
     </el-card>
 </template>
 
@@ -12,6 +12,9 @@
     export default {
         name: "OrderIndex",
         mixins: [pagination],
+        props: {
+            pageData: {}
+        },
         data() {
             return {
                 loading: false,

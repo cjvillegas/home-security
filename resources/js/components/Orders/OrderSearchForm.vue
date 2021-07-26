@@ -5,6 +5,7 @@
                 label="Search Order By"
                 prop="field">
                 <el-select
+                    disabled
                     v-model="searchForm.field"
                     class="w-100">
                     <el-option label="Order No." value="order_no"></el-option>
@@ -39,10 +40,15 @@
 <script>
 export default {
     name: "OrderSearchForm",
+    props: {
+        type: {
+            type: String
+        }
+    },
     data() {
         return {
             searchForm: {
-                field: 'order_no',
+                field: this.type,
                 searchString: null
             }
         }
