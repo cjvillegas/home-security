@@ -4,9 +4,9 @@ namespace App\Console\Commands\Orders;
 
 use App\Models\Order;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Console\Command;
-use Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use \Illuminate\Support\Collection;
 
 class PopulateOrdersFromSage extends Command
@@ -90,22 +90,25 @@ class PopulateOrdersFromSage extends Command
      */
     public function getOrdersData($loadAll = false): Collection
     {
-        $latestBlindId = Order::getLatestBlindId();
+        $latestSerialId = Order::getLatestSerialId();
 
         // initialize the query
         $query = "
             SELECT
+                TOP 1000
                 OrderDetail.id AS BlindId,
                 [Order].order_id AS OrderNo,
                 [User].company AS Customer,
                 [Order].cust_no AS CustOrdNo,
                 OrderDetail.quantity AS Quantity,
-                BlindType.description AS BlindType,
+                BlindType.description AS BlindCode,
                 DetailStatus.name AS BlindStatus,
                 [Order].dat_delivery AS DespatchDate,
                 [Order].dat_order AS Ordered,
                 [Order].username AS OrderEnteredBy,
-                SerialDetailLine.id as SerialID
+                SerialDetailLine.id AS SerialID,
+                [Category].name AS CategoryName,
+                [Category].id AS CategoryID
             FROM
                 OrderDetail
                 INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
@@ -116,6 +119,7 @@ class PopulateOrdersFromSage extends Command
                 INNER JOIN DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id
                 INNER JOIN ManLocation ON BlindType.manlocation_id = ManLocation.id
                 INNER JOIN SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id
+                INNER JOIN [Category] ON BlindType.category_id = [Category].id
                 LEFT OUTER JOIN RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
             WHERE
                 ([Order].order_id IS NOT NULL)
@@ -127,8 +131,8 @@ class PopulateOrdersFromSage extends Command
 
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
-        if ($latestBlindId && !$loadAll) {
-            $query .= "\t AND (OrderDetail.id > {$latestBlindId})";
+        if ($latestSerialId && !$loadAll) {
+            $query .= "\t AND (SerialDetailLine.id > {$latestSerialId})";
         }
 
         // execute the query
@@ -171,11 +175,13 @@ class PopulateOrdersFromSage extends Command
         $order['customer'] = $sageOrder['Customer'];
         $order['customer_order_no'] = $sageOrder['CustOrdNo'];
         $order['quantity'] = $sageOrder['Quantity'];
-        $order['blind_type'] = $sageOrder['BlindType'] ?? '';
+        $order['blind_type'] = $sageOrder['BlindCode'] ?? '';
         $order['blind_status'] = $sageOrder['BlindStatus'] ?? '';
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
         $order['despatched_at'] = !empty($sageOrder['DespatchDate']) ? Carbon::parse($sageOrder['DespatchDate'])->format('Y-m-d H:i:s') : null;
         $order['ordered_at'] = !empty($sageOrder['Ordered']) ? Carbon::parse($sageOrder['Ordered'])->format('Y-m-d H:i:s') : null;
+        $order['category_id'] = $sageOrder['CategoryID'] ?? null;
+        $order['category_name'] = $sageOrder['CategoryName'] ?? '';
         $order['serial_id'] = $sageOrder['SerialID'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 

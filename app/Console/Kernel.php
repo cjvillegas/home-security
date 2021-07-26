@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\App;
 
 class Kernel extends ConsoleKernel
 {
@@ -25,9 +26,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // run this CRON only when in production
-        if (\App::environment('production')) {
+        if (App::environment(['production', 'staging'])) {
             // fetches new orders from SAGE
-            $schedule->command('orders:populate-orders-from-sage --load-all')->hourly();
+            $schedule->command('orders:populate-orders-from-sage')->everyThirtyMinutes();
         }
     }
 
