@@ -118,4 +118,58 @@ class ScannersController extends Controller
             'draw' => $draw,
         ]);
     }
+
+    /**
+     * Searches scanners based on the passed field name
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function searchScannersByField(Request $request)
+    {
+        $field = $request->get('field');
+        $searchString = $request->get('searchString');
+
+        if (!$field || !$searchString) {
+            return response()->json([]);
+        }
+
+        // do the actual query
+        $scanners = Scanner::where($field, 'like', "%$searchString%")
+            ->limit(25)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->toArray();
+
+        return response()->json($scanners);
+    }
+
+    /**
+     * Retrieve all scanners based on the passed field name
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getScannersByField(Request $request)
+    {
+        $field = $request->get('field');
+        $toSearch = $request->get('toSearch');
+
+        if (!$field || !$toSearch) {
+            return response()->json([]);
+        }
+
+        // do the actual query
+        $scanners = Scanner::where($field, 'like', "%$toSearch%")
+            ->with(['employee' => function ($query) {
+                $query->withTrashed()->with(['shift', 'team']);
+            }, 'process', 'order'])
+            ->orderBy('id', 'desc')
+            ->get()
+            ->toArray();
+
+        return response()->json($scanners);
+    }
 }

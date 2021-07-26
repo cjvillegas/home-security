@@ -1,5 +1,6 @@
 <template>
-    <div v-loading="loading">
+    <el-card class="box-card">
+        <div v-loading="loading">
         <div class="d-flex">
             <div>
                 <el-input
@@ -107,11 +108,12 @@
             @close="closeForm">
         </settings-process-categories-form>
     </div>
+    </el-card>
 </template>
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import pagination from '../../../mixins/pagination'
+    import pagination from '../../mixins/pagination'
     export default {
         name: "SettingsProcessCategories",
         mixins: [pagination],

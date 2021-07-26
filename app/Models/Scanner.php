@@ -67,6 +67,16 @@ class Scanner extends Model
     * R E L A T I O N S *
     ********************/
     /**
+     * Retrieve order of this scanner
+     *
+     * @return BelongsTo
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class, 'blindid', 'serial_id');
+    }
+
+    /**
      * Retrieve employee
      *
      * @return BelongsTo

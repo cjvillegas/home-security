@@ -123,14 +123,16 @@
                         </a>
                     </li>
                 </ul>
-                <ul class="c-sidebar-nav-dropdown-items">
-                    <li class="c-sidebar-nav-item">
-                        <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
-                            <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
-                            Categories
-                        </a>
-                    </li>
-                </ul>
+                @can('process_categories_access')
+                    <ul class="c-sidebar-nav-dropdown-items">
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.process-categories.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
+                                <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
+                                Categories
+                            </a>
+                        </li>
+                    </ul>
+                @endcan
             </li>
         @endcan
         @can('scanner_access')
@@ -163,41 +165,41 @@
         @endcan
 
         @if (auth()->user()->canAny(['machine_access', 'machine_counter_access']))
-        <li class="c-sidebar-nav-dropdown {{ request()->is("admin/machines*") ? "c-show" : "" }} {{ request()->is("admin/machine-counters*") ? "c-show" : "" }}">
-            <a class="c-sidebar-nav-dropdown-toggle" href="#">
-                <i class="fa-fw fas fa-rocket c-sidebar-nav-icon"></i>
-                Machine Management
-            </a>
-            <ul class="c-sidebar-nav-dropdown-items">
-                @can('machine_access')
-                    <li class="c-sidebar-nav-item">
-                        <a href="{{ url('/admin/machines/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machines") || request()->is("admin/orders/*") ? "c-active" : "" }}">
-                            <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon"></i>
-                            Packing Machine
-                        </a>
-                    </li>
-                @endcan
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/machines*") ? "c-show" : "" }} {{ request()->is("admin/machine-counters*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-rocket c-sidebar-nav-icon"></i>
+                    Machine Management
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('machine_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ url('/admin/machines/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machines") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon"></i>
+                                Packing Machine
+                            </a>
+                        </li>
+                    @endcan
 
-                @can('machine_counter_access')
-                    <li class="c-sidebar-nav-item">
-                        <a href="{{ url('/admin/machine-counters/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machine-counters") || request()->is("admin/orders/*") ? "c-active" : "" }}">
-                            <i class="fa-fw fas fa-area-chart c-sidebar-nav-icon"></i>
-                            Machine Statistics
-                        </a>
-                    </li>
-                @endcan
-            </ul>
-        </li>
+                    @can('machine_counter_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ url('/admin/machine-counters/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machine-counters") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-area-chart c-sidebar-nav-icon"></i>
+                                Machine Statistics
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
         @endif
 
-        @can('order_management_access')
+        @if (auth()->user()->can('reports_access') && auth()->user()->canAny(['work_analytics_reports_access', 'data_export_reports_access']))
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon"></i>
                     Reports
                 </a>
                 <ul class="c-sidebar-nav-dropdown-items">
-                    @can('order_access')
+                    @can('work_analytics_reports_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.reports.work-analytics.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
@@ -206,7 +208,7 @@
                         </li>
                     @endcan
 
-                    @can('order_access')
+                    @can('data_export_reports_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.reports.data-export.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-file-export c-sidebar-nav-icon"></i>
@@ -216,7 +218,7 @@
                     @endcan
                 </ul>
             </li>
-        @endcan
+        @endif
 
         {{-- @can('settings_access') --}}
             {{-- <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">

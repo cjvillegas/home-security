@@ -11,7 +11,7 @@ export default class StringGenericService
 
         if (!(typeof str === 'string')) return ''
 
-        return (str + '')
+        return (str.toLowerCase() + '')
             .replace(/^(.)|\s+(.)/g, function ($1) {
                 return $1.toUpperCase()
             })
