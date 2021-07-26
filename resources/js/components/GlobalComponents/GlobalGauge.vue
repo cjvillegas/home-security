@@ -25,30 +25,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-    .gauge-container {
-        height: 150px;
-        width: 200px;
-
-        .el-card__body {
-            padding: 10px !important;
-        }
-
-        .gauge-counter {
-            height: 115px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 900;
-            font-size: 30px;
-        }
-
-        .gauge-title {
-            font-size: 16px;
-            text-align: center;
-            font-weight: 900;
-            line-height: 15px;
-        }
-    }
-</style>
