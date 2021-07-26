@@ -4,8 +4,8 @@ namespace App\Console\Commands\Orders;
 
 use App\Models\Order;
 use Carbon\Carbon;
-use DB;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Log;
 use \Illuminate\Support\Collection;
 
@@ -90,7 +90,7 @@ class PopulateOrdersFromSage extends Command
      */
     public function getOrdersData($loadAll = false): Collection
     {
-        $latestBlindId = Order::getLatestBlindId();
+        $latestSerialId = Order::getLatestSerialId();
 
         // initialize the query
         $query = "
@@ -105,7 +105,8 @@ class PopulateOrdersFromSage extends Command
                 [Order].dat_delivery AS DespatchDate,
                 [Order].dat_order AS Ordered,
                 [Order].username AS OrderEnteredBy,
-                SerialDetailLine.id as SerialID
+                SerialDetailLine.id AS SerialID,
+                [Category].name AS CategoryName
             FROM
                 OrderDetail
                 INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
@@ -116,6 +117,7 @@ class PopulateOrdersFromSage extends Command
                 INNER JOIN DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id
                 INNER JOIN ManLocation ON BlindType.manlocation_id = ManLocation.id
                 INNER JOIN SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id
+                INNER JOIN [Category] ON BlindType.category_id = [Category].id
                 LEFT OUTER JOIN RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
             WHERE
                 ([Order].order_id IS NOT NULL)
@@ -127,8 +129,8 @@ class PopulateOrdersFromSage extends Command
 
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
-        if ($latestBlindId && !$loadAll) {
-            $query .= "\t AND (OrderDetail.id > {$latestBlindId})";
+        if ($latestSerialId && !$loadAll) {
+            $query .= "\t AND (OrderDetail.id > {$latestSerialId})";
         }
 
         // execute the query
