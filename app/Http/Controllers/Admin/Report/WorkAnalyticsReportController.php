@@ -95,4 +95,52 @@ class WorkAnalyticsReportController extends Controller
 
         return response()->json($counter);
     }
+
+    /**
+     * Get the daily manufacture reports by shift and the total manufactured blinds
+     *
+     * @return JsonResponse
+     */
+    public function despatchDepartmentAnalytics()
+    {
+        $today = now()->format('Y-m-d');
+        $yesterday = now()->subDay()->format('Y-m-d');
+        $todayAddOne = now()->addDay()->format('Y-m-d');
+
+        $today = \Carbon\Carbon::parse('2021-07-15')->format('Y-m-d');
+        $yesterday = \Carbon\Carbon::parse('2021-07-14')->subDay()->format('Y-m-d');
+        $todayAddOne = \Carbon\Carbon::parse('2021-07-16')->addDay()->format('Y-m-d');
+
+        // create the query
+        $counter = Scanner::select(
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$yesterday} 13:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1012_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 14:00:00' AND '{$yesterday} 21:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1012_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 22:00:00' AND '{$today} 05:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1012_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$today} 05:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1012_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$yesterday} 13:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1013_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 14:00:00' AND '{$yesterday} 21:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1013_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 22:00:00' AND '{$today} 05:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1013_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$today} 05:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1013_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$yesterday} 13:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1014_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 14:00:00' AND '{$yesterday} 21:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1014_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 22:00:00' AND '{$today} 05:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1014_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$today} 05:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1014_yesterday"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$today} 13:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1012_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 14:00:00' AND '{$today} 21:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1012_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 22:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1012_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1012_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$today} 13:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1013_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 14:00:00' AND '{$today} 21:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1013_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 22:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1013_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1013' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1013_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$today} 13:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1014_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 14:00:00' AND '{$today} 21:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_2_P1014_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 22:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS shift_3_P1014_today"),
+            DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1014_today"),
+        )
+            ->whereIn('processid', ['P1012', 'P1013', 'P1014'])
+            ->first();
+
+        return response()->json($counter);
+    }
 }
