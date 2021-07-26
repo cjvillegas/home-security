@@ -17,6 +17,8 @@ class CreateTimeClocksTable extends Migration
             $table->id();
             $table->unsignedBigInteger('employee_id');
             $table->integer('clock_num');
+            $table->dateTime('clock_in')->nullable();
+            $table->dateTime('clock_out')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
