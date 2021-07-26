@@ -8,11 +8,11 @@ use App\Models\Employee;
 use App\Models\Machine;
 use App\Models\MachineCounter;
 use App\Models\Team;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 use Exception;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Log;
 
@@ -21,18 +21,19 @@ class MachineCounterController extends Controller
     /**
      * Return view for Machine Counter page
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
         abort_if(Gate::denies('machine_counter_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.machine-counters.index');
     }
 
     /**
      * Fetch All Machine Counters
      *
-     * @return void
+     * @return JsonResponse
      */
     public function fetchMachineCounters()
     {
@@ -49,15 +50,16 @@ class MachineCounterController extends Controller
                 'teams' => $teams,
                 'machines' => $machines,
                 'machineCounters' => $machineCounters
-            ], 200
+            ]
         );
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  MachineCounterRequest  $request
+     *
+     * @return JsonResponse
      */
     public function store(MachineCounterRequest $request)
     {
@@ -65,9 +67,10 @@ class MachineCounterController extends Controller
         try {
             MachineCounter::create($request->all());
             DB::commit();
+
             return response()->json(['message' => 'Successfully Saved!']);
         }
-        catch ( Exception $e ) {
+        catch (Exception $e) {
             DB::rollBack();
             Log::info($e);
         }
@@ -77,9 +80,10 @@ class MachineCounterController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @param  MachineCounter  $machineCounter
+     *
+     * @return JsonResponse
      */
     public function update(Request $request, MachineCounter $machineCounter)
     {
@@ -87,9 +91,10 @@ class MachineCounterController extends Controller
         try {
             $machineCounter->update($request->all());
             DB::commit();
+
             return response()->json(['message' => 'Successfully Updated']);
         }
-        catch ( Exception $e) {
+        catch (Exception $e) {
             DB::rollBack();
         }
     }
@@ -97,8 +102,9 @@ class MachineCounterController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  MachineCounter $machineCounter
+     *
+     * @return JsonResponse
      */
     public function destroy(MachineCounter $machineCounter)
     {
@@ -106,12 +112,11 @@ class MachineCounterController extends Controller
         try {
             $machineCounter->delete();
             DB::commit();
+
             return response()->json(['message' => 'Successfully Deleted!']);
         }
-        catch ( Exception $e ) {
+        catch (Exception $e) {
             DB::rollBack();
         }
-
-
     }
 }
