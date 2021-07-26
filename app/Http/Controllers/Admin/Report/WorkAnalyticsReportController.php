@@ -102,7 +102,7 @@ class WorkAnalyticsReportController extends Controller
      *
      * @return JsonResponse
      */
-    public function despatchDepartmentAnalytics()
+    public function getDespatchDepartmentAnalytics()
     {
         $today = now()->format('Y-m-d');
         $yesterday = now()->subDay()->format('Y-m-d');
