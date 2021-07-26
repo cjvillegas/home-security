@@ -67,6 +67,7 @@
                                 <el-autocomplete
                                     v-model="employee_name"
                                     :fetch-suggestions="querySearch"
+                                    placeholder="Employee Name"
                                     value-key="fullname"
                                     @select="selectItem">
                                 </el-autocomplete>
@@ -98,6 +99,7 @@
                             <div class="col-md-8">
                                 <el-input
                                     v-model="form.start_counter"
+                                    placeholder="Digits only (Ex. 1234)"
                                     clearable>
                                 </el-input>
                             </div>
@@ -125,6 +127,7 @@
                             <div class="col-md-8">
                                 <el-input
                                     v-model="form.stop_counter"
+                                    placeholder="Digits only (Ex. 1234)"
                                     clearable>
                                 </el-input>
                             </div>

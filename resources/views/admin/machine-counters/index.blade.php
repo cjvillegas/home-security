@@ -1,4 +1,4 @@
 @extends('layouts.admin')
 @section('content')
-    <machine-counters> </machine-counters>
+    <machine-counter-index> </machine-counter-index>
 @endsection
