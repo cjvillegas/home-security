@@ -21,7 +21,7 @@ class MachineCounterController extends Controller
     /**
      * Return view for Machine Counter page
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\View
      */
     public function index()
     {

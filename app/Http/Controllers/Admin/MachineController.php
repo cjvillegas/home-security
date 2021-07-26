@@ -17,7 +17,7 @@ class MachineController extends Controller
     /**
      * Return view for Machine Page
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|void
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory
      */
     public function index()
     {
