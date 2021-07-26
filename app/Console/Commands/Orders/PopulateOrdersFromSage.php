@@ -108,7 +108,7 @@ class PopulateOrdersFromSage extends Command
                 [Order].username AS OrderEnteredBy,
                 SerialDetailLine.id AS SerialID,
                 [Category].name AS CategoryName,
-                BlindType.category_id AS CategoryID
+                [Category].id AS CategoryID
             FROM
                 OrderDetail
                 INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
