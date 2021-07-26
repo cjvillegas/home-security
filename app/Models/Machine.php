@@ -25,7 +25,7 @@ class Machine extends Model
      *
      * @return string
      */
-    public function getStatusAttribute( $value): string
+    public function getStatusAttribute($value): string
     {
         return $value === 1 ? 'Active' : 'Inactive';
     }
@@ -35,7 +35,7 @@ class Machine extends Model
      *
      * @return HasMany
      */
-    public function machineCounters()
+    public function machineCounters(): HasMany
     {
         return $this->hasMany(MachineCounter::class);
     }
