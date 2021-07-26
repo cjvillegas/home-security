@@ -66,7 +66,7 @@ class TestMssqlConnection extends Command
                 [User].company AS Customer,
                 [Order].cust_no AS CustOrdNo,
                 OrderDetail.quantity AS Quantity,
-                BlindType.description AS BlindType,
+                BlindType.description AS BlindCode,
                 DetailStatus.name AS BlindStatus,
                 [Order].dat_delivery AS DespatchDate,
                 [Order].dat_order AS Ordered,
