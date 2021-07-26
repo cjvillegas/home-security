@@ -101,6 +101,7 @@
                         <div class="col-md-8">
                             <el-input
                             v-model="form.start_counter"
+                            placeholder="Start Counter. Ex. 1234"
                             clearable>
                             </el-input>
                         </div>
@@ -123,12 +124,13 @@
 
                     <div class="row mt-2">
                         <div class="col-md-4">
-                            <label>Stop Counter</label>
+                            <label>Stop Counterzz</label>
                         </div>
 
                         <div class="col-md-8">
                             <el-input
                             v-model="form.stop_counter"
+                            placeholder="Stop Counter. Ex. 1234"
                             clearable>
                             </el-input>
                         </div>
@@ -305,8 +307,8 @@ export default {
         addNew() {
             if (this.edit) {
                 this.clearForm()
+                this.edit = false
             }
-            this.edit = false
         },
 
         fetchMachineCounters() {
@@ -443,6 +445,16 @@ export default {
             console.log(this.form.employee_id)
         },
 
+        isNumber(evt) {
+            console.log('zxczxc')
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+                evt.preventDefault();;
+            } else {
+                return true;
+            }
+        },
         clearForm() {
             this.employee_name = ''
             this.form = {

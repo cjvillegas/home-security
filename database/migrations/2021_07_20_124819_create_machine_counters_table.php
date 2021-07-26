@@ -22,9 +22,9 @@ class CreateMachineCountersTable extends Migration
             $table->integer('stop_counter')->nullable();
             $table->dateTime('start_counter_time')->nullable();
             $table->dateTime('stop_counter_time')->nullable();
-            $table->dateTime('created_at');
-            $table->dateTime('updated_at');
-            $table->dateTime('deleted_at');
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 

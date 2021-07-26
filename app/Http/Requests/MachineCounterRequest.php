@@ -31,9 +31,9 @@ class MachineCounterRequest extends FormRequest
             'machine_id' => 'required',
             'employee_id' => 'required',
             'shift_id' => 'required',
-            'start_counter' => 'nullable',
+            'start_counter' => 'numeric|nullable',
             'start_counter_time' => 'required',
-            'stop_counter' => 'nullable',
+            'stop_counter' => 'numeric|nullable',
             'stop_counter_time' => 'required'
         ];
     }

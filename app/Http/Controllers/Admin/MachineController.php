@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\MachineRequest;
 use App\Models\Machine;
 use Exception;
 use Gate;
@@ -44,7 +45,7 @@ class MachineController extends Controller
      *
      * @return void
      */
-    public function store(Request $request)
+    public function store(MachineRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -65,8 +66,9 @@ class MachineController extends Controller
      * @param  mixed $id
      * @return void
      */
-    public function update(Request $request, Machine $machine)
+    public function update(MachineRequest $request, Machine $machine)
     {
+        abort_if(Gate::denies('machine_update'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         DB::beginTransaction();
         try {
             $machine->update($request->all());

@@ -196,18 +196,18 @@ export default {
 
     methods: {
         addNew() {
-            this.clearForm()
-            this.edit = false
+            if (this.edit) {
+                this.clearForm()
+                this.edit = false
+            }
         },
         fetchMachines() {
             this.$API.Machine.fetch(this.filters)
             .then ( (response) => {
-                console.log(response.data)
                 this.machines = response.data.machines.data
                 this.filters.total = response.data.machines.total
             })
             .catch(err => {
-                console.log(err)
             })
         },
         saveMachine() {
@@ -223,6 +223,7 @@ export default {
                             type: 'success'
                         })
                         this.fetchMachines()
+                        break
                 }
             })
         },

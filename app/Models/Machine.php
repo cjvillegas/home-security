@@ -20,7 +20,7 @@ class Machine extends Model
     /**
      * Relation to Machine Counter's model
      *
-     * @return void
+     * @return HasMany
      */
     public function machineCounters()
     {
@@ -31,7 +31,7 @@ class Machine extends Model
      * Set Machine's Status
      *
      * @param  mixed $value
-     * @return void
+     * @return status value
      */
     public function getStatusAttribute( $value)
     {

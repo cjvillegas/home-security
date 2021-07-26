@@ -19,9 +19,9 @@ class CreateMachinesTable extends Migration
             $table->string('serial_no');
             $table->string('location');
             $table->tinyInteger('status')->default(true); // true 1 -> active . false 0 -> inactive
-            $table->dateTime('created_at');
-            $table->dateTime('updated_at');
-            $table->dateTime('deleted_at');
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
+            $table->dateTime('deleted_at')->nullable();
         });
     }
 
