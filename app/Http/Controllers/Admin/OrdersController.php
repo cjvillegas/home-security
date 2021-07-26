@@ -31,7 +31,7 @@ class OrdersController extends Controller
     {
         abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.orders.index');
+        return view('admin.orders.index', ['type' => request()->get('type')]);
     }
 
     public function vieworderno($order_no)
