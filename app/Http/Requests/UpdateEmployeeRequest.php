@@ -25,6 +25,11 @@ class UpdateEmployeeRequest extends FormRequest
                 'required',
                 'unique:employees,barcode,' . request()->route('employee')->id,
             ],
+            'pin_code' => [
+                'string',
+                'required',
+                'unique:employees,pin_code,' . request()->route('employee')->id,
+            ],
             'target' => [
                 'nullable',
                 'integer',
@@ -33,7 +38,7 @@ class UpdateEmployeeRequest extends FormRequest
             ],
             'standard_working_hours' => [
                 'required',
-                'integer',
+                'numeric',
                 'min:-2147483648',
                 'max:2147483647',
             ],

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MachineCounter extends Model
 {
@@ -17,9 +18,9 @@ class MachineCounter extends Model
     /**
      * Relation to Machine's Model
      *
-     * @return belongsTo
+     * @return BelongsTo
      */
-    public function machine()
+    public function machine(): BelongsTo
     {
         return $this->belongsTo(Machine::class);
     }
@@ -27,9 +28,9 @@ class MachineCounter extends Model
     /**
      * Relation to Employee's Model
      *
-     * @return belongsTo
+     * @return BelongsTo
      */
-    public function employee()
+    public function employee(): BelongsTo
     {
         return $this->belongsTo(Employee::class);
     }
@@ -37,9 +38,9 @@ class MachineCounter extends Model
     /**
      * Relation to Team's model
      *
-     * @return belongsTo
+     * @return BelongsTo
      */
-    public function team()
+    public function team(): BelongsTo
     {
         return $this->belongsTo(Team::class);
     }
@@ -47,9 +48,9 @@ class MachineCounter extends Model
     /**
      * Relation to Shift's model
      *
-     * @return belongsTo
+     * @return BelongsTo
      */
-    public function shift()
+    public function shift(): BelongsTo
     {
         return $this->belongsTo(Shift::class);
     }

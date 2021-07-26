@@ -7,6 +7,7 @@ use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -31,6 +32,7 @@ class Employee extends Model
      * @var array
      */
     protected $fillable = [
+        'user_id',
         'fullname',
         'barcode',
         'pin_code',
@@ -53,6 +55,18 @@ class Employee extends Model
         'color',
     ];
 
+    /**
+     * The "booted" method of the model.
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::created(function (self $employee) {
+            // when a new employee is created, generate a new user
+            $employee->generateUser();
+        });
+    }
 
     /********************
      * R E L A T I O N S *
@@ -70,7 +84,7 @@ class Employee extends Model
     /**
      * Relation to Machine Counters
      *
-     * @return hasMany
+     * @return HasMany
      */
     public function machineCounters()
     {
@@ -85,6 +99,16 @@ class Employee extends Model
     public function team()
     {
         return $this->belongsTo(Team::class, 'team_id');
+    }
+
+    /**
+     * Retrieves employee's user
+     *
+     * @return BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
     /********************************
      * E N D  O F  R E L A T I O N S *
@@ -122,6 +146,43 @@ class Employee extends Model
         }
 
         return "E{$code}";
+    }
+
+    /**
+     * This method will create a new user when a new employee is created.
+     *
+     * @return mixed
+     */
+    public function generateUser()
+    {
+        // sanity check if employee already has user, cancel execution
+        if ($this->user_id && $this->user) {
+            return false;
+        }
+
+        $user = new User;
+        $user->name = $this->fullname ?: $this->barcode;
+        $user->email = "{$this->barcode}@stylebyglobal.com";
+        $user->barcode = $this->barcode;
+        $user->password = bcrypt($this->pin_code);
+        $user->created_at = now();
+        $saved = $user->save();
+
+        // when a user is successfully created, link it to the employee
+        if ($saved) {
+            $this->user_id = $user->id;
+            $this->save();
+
+            $user->assignToRoleByTitle('Employee');
+        }
+
+        return $this;
+    }
+
+    public function updateUser()
+    {
+        $this->user->name = $this->fullname;
+        $this->user->name = $this->fullname;
     }
 
     /****************************

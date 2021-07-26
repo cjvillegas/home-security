@@ -31,6 +31,16 @@
                 <span class="help-block">{{ trans('cruds.employee.fields.barcode_helper') }}</span>
             </div>
             <div class="form-group">
+                <label class="required" for="pin_code">{{ trans('cruds.employee.fields.pin_code') }}</label>
+                <input class="form-control {{ $errors->has('pin_code') ? 'is-invalid' : '' }}" type="text" name="pin_code" id="pin_code" value="{{ old('pin_code', $employee->pin_code) }}" required>
+                @if($errors->has('pin_code'))
+                    <div class="invalid-feedback">
+                        {{ $errors->first('pin_code') }}
+                    </div>
+                @endif
+                <span class="help-block">{{ trans('cruds.employee.fields.barcode_helper') }}</span>
+            </div>
+            <div class="form-group">
                 <label for="target">{{ trans('cruds.employee.fields.target') }}</label>
                 <input class="form-control {{ $errors->has('target') ? 'is-invalid' : '' }}" type="number" name="target" id="target" value="{{ old('target', $employee->target) }}" step="1">
                 @if($errors->has('target'))
@@ -49,7 +59,7 @@
                     name="standard_working_hours"
                     id="standard_working_hours"
                     value="{{ old('standard_working_hours', $employee->standard_working_hours) }}"
-                    step="1"
+                    step=".1"
                     required>
                 @if($errors->has('standard_working_hours'))
                     <div class="invalid-feedback">

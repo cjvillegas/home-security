@@ -8,7 +8,7 @@
                     v-model="searchForm.field"
                     class="w-100">
                     <el-option label="Order No." value="order_no"></el-option>
-                    <el-option label="Blind No." value="serial_id"></el-option>
+                    <el-option label="Blind No." value="blindid"></el-option>
                 </el-select>
             </el-form-item>
 
@@ -27,7 +27,7 @@
                         <div class="d-flex align-items-center">
                             <span class="font-base font-bold">{{ item[searchForm.field] }}</span>
                             <span class="ml-2 mr-2">|</span>
-                            <span class="text-gray-400">{{ item.customer_order_no }}</span><br>
+                            <span class="text-gray-400">{{ item.customer_order_no || item.processid }}</span><br>
                         </div>
                     </template>
                 </el-autocomplete>
@@ -49,14 +49,16 @@ export default {
     },
     methods: {
         querySearch(searchString, cb) {
-            this.$API.Orders.searchOrderByField(this.searchForm.field, searchString)
-            .then(res => {
-                cb(res.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-            .finally(_ => {})
+            let request = this.searchForm.field === 'order_no' ? this.$API.Orders.searchOrderByField(this.searchForm.field, searchString) : this.$API.Scanners.searchScannerByField(this.searchForm.field, searchString)
+
+            request
+                .then(res => {
+                    cb(res.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {})
         },
         selectOrder(order) {
             this.$router.push({name: 'Order View', params: {toSearch: order[this.searchForm.field], field: this.searchForm.field}})
@@ -64,9 +66,7 @@ export default {
     },
     computed: {
         toSearchLabel() {
-            let label = this.searchForm.field.split('_')
-
-            return `Search ${this.$StringService.ucwords(label[0])} No.`
+            return `Search ${this.searchForm.field === 'order_no' ? 'Order No.' : 'Blind ID'}`
         }
     }
 }

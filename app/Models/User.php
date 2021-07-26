@@ -8,10 +8,12 @@ use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable
 {
@@ -87,6 +89,20 @@ class User extends Authenticatable
     }
 
     /**
+     * Get employee of this user
+     *
+     * @return HasOne
+     */
+    public function employee()
+    {
+        return $this->hasOne(Employee::class, 'user_id');
+    }
+
+    /*********************
+    * F U N C T I O N S  *
+    *********************/
+
+    /**
      * Retrieve list of permissions of the current user.
      * This is useful to our Vue application if we want to
      * implement permissions in that level.
@@ -160,4 +176,31 @@ class User extends Authenticatable
 
         return $permissionNames;
     }
+
+    /**
+     * Assign the user to a specific role based on the given role name
+     *
+     * @param string $title
+     *
+     * @return bool
+     */
+    public function assignToRoleByTitle(string $title): bool
+    {
+        // search for a role with the given title
+        $employeeRole = Role::where('title', $title)->first();
+
+        // checks if the provided role is present
+        if (!$employeeRole) {
+            Log::info("No role title {$title} found.");
+            return false;
+        }
+
+        // assign the role to the user
+        $this->roles()->sync([$employeeRole->id]);
+
+        return true;
+    }
+    /****************************
+    * F U N C T I O N S  E N D *
+    ****************************/
 }
