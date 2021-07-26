@@ -9,6 +9,7 @@ class PermissionsTableSeeder extends Seeder
 {
     public function run()
     {
+        Permission::truncate();
         $permissions = [
             [
                 'id'    => 1,

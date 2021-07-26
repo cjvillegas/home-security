@@ -25,6 +25,17 @@ class ShiftsController extends Controller
         return view('admin.shifts.index', compact('shifts'));
     }
 
+    /**
+     * Fetch Shifts. API
+     *
+     * @return void
+     */
+    public function fetchShifts()
+    {
+        $shifts = Shift::all();
+        return response()->json(['shifts' => $shifts]);
+    }
+
     public function create()
     {
         abort_if(Gate::denies('shift_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');

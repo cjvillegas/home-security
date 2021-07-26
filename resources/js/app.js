@@ -43,7 +43,6 @@ import numFormat from 'vue-filter-number-format'
 // use the filter
 Vue.filter('numFormat', numFormat(numeral));
 
-
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -83,6 +82,13 @@ window.axios.interceptors.response.use((response) => {
                 confirmButtonText: 'OK',
                 callback: action => {
                     location.reload()
+                }
+            });
+        }
+        else if (error.response.status === 422) {
+            app.$alert('Ops! Please double check your input. If you think that this is a problem please contact your administrator.', 'FORBIDDEN', {
+                confirmButtonText: 'OK',
+                callback: action => {
                 }
             });
         }

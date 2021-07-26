@@ -19,6 +19,9 @@ const OrderView = () => import('../components/Orders/OrderView')
 const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
 
 
+// Machine Components
+const MachineIndex = () => import('../components/Machines/MachineIndex')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',

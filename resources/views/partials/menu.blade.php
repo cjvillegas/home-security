@@ -172,6 +172,34 @@
             </li>
         @endcan
 
+        @if (auth()->user()->canAny(['machine_access', 'machine_counter_access']))
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/machines*") ? "c-show" : "" }} {{ request()->is("admin/machine-counters*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-rocket c-sidebar-nav-icon"></i>
+                    Machine Management
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('machine_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ url('/admin/machines/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machines") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon"></i>
+                                Packing Machine
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('machine_counter_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ url('/admin/machine-counters/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machine-counters") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-area-chart c-sidebar-nav-icon"></i>
+                                Machine Statistics
+                            </a>
+                        </li>
+                    @endcan
+                </ul>
+            </li>
+        @endif
+
         @if (auth()->user()->can('reports_access') && auth()->user()->canAny(['work_analytics_reports_access', 'data_export_reports_access']))
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
