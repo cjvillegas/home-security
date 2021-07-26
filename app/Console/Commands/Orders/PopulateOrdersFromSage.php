@@ -107,7 +107,8 @@ class PopulateOrdersFromSage extends Command
                 [Order].dat_order AS Ordered,
                 [Order].username AS OrderEnteredBy,
                 SerialDetailLine.id AS SerialID,
-                [Category].name AS CategoryName
+                [Category].name AS CategoryName,
+                BlindType.category_id AS CategoryID
             FROM
                 OrderDetail
                 INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
@@ -179,8 +180,9 @@ class PopulateOrdersFromSage extends Command
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
         $order['despatched_at'] = !empty($sageOrder['DespatchDate']) ? Carbon::parse($sageOrder['DespatchDate'])->format('Y-m-d H:i:s') : null;
         $order['ordered_at'] = !empty($sageOrder['Ordered']) ? Carbon::parse($sageOrder['Ordered'])->format('Y-m-d H:i:s') : null;
+        $order['category_id'] = $sageOrder['CategoryID'] ?? null;
+        $order['category_name'] = $sageOrder['CategoryName'] ?? '';
         $order['serial_id'] = $sageOrder['SerialID'];
-        $order['category_name'] = $sageOrder['CategoryName'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $order;
