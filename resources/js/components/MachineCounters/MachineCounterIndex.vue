@@ -341,6 +341,7 @@
                                 type: 'success'
                             })
                             this.fetchMachineCounters()
+                            this.clearForm()
                     }
                 }).catch( err => {})
             },
@@ -413,7 +414,6 @@
                     employees = response.data.employees
 
                     var results = queryString ? employees.filter(this.createFilter(queryString)) : employees
-                    console.log(results)
                     cb(results)
                 })
             },
@@ -426,7 +426,6 @@
 
             selectItem(item) {
                 this.form.employee_id = item.id
-                console.log(this.form.employee_id)
             },
 
             clearForm() {
