@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkAnalyticsReportController extends Controller
@@ -62,7 +63,7 @@ class WorkAnalyticsReportController extends Controller
 
             return response()->json($scanners);
         } catch (\Exception $e) {
-            \Log::error('Get Work Analytics Error', [
+            Log::error('Get Work Analytics Error', [
                 'error ' . $e
             ]);
         }
