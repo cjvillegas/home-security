@@ -322,7 +322,7 @@
                         break
                     case "3":
                         this.form.start_counter_time = moment().set('hour', '22').set('minute', '00').format('YYYY-MM-DD HH:mm')
-                        this.form.stop_counter_time = moment().set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
+                        this.form.stop_counter_time = moment().add(1, 'days').set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
                         break
                 }
             },
