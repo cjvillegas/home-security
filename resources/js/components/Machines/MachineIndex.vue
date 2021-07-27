@@ -195,7 +195,6 @@
             fetchMachines() {
                 this.$API.Machine.fetch(this.filters)
                 .then ( (response) => {
-                    console.log(response.data)
                     this.machines = response.data.machines.data
                     this.filters.total = response.data.machines.total
                 })
@@ -216,6 +215,7 @@
                                 type: 'success'
                             })
                             this.fetchMachines()
+                            this.clearForm()
                     }
                 })
             },
