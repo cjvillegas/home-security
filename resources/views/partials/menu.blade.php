@@ -183,7 +183,7 @@
                         <li class="c-sidebar-nav-item">
                             <a href="{{ url('/admin/machines/') }}" class="c-sidebar-nav-link {{ request()->is("admin/machines") || request()->is("admin/orders/*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-shopping-cart c-sidebar-nav-icon"></i>
-                                Packing Machine
+                                Machines
                             </a>
                         </li>
                     @endcan
