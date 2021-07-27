@@ -88,6 +88,16 @@ class Order extends Model
         return self::orderBy('blind_id', 'desc')->first()->blind_id ?? null;
     }
 
+    /**
+     * Get the most latest blind_id entry in the table
+     *
+     * @return int|null
+     */
+    public static function getLatestSerialId()
+    {
+        return self::orderBy('serial_id', 'desc')->first()->serial_id ?? null;
+    }
+
     /**************************
     * E N D  F U N C T I O N  *
     **************************/

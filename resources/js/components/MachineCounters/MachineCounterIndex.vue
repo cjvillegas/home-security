@@ -67,6 +67,7 @@
                                 <el-autocomplete
                                     v-model="employee_name"
                                     :fetch-suggestions="querySearch"
+                                    placeholder="Employee Name"
                                     value-key="fullname"
                                     @select="selectItem">
                                 </el-autocomplete>
@@ -98,6 +99,7 @@
                             <div class="col-md-8">
                                 <el-input
                                     v-model="form.start_counter"
+                                    placeholder="Digits only (Ex. 1234)"
                                     clearable>
                                 </el-input>
                             </div>
@@ -125,6 +127,7 @@
                             <div class="col-md-8">
                                 <el-input
                                     v-model="form.stop_counter"
+                                    placeholder="Digits only (Ex. 1234)"
                                     clearable>
                                 </el-input>
                             </div>
@@ -319,7 +322,7 @@
                         break
                     case "3":
                         this.form.start_counter_time = moment().set('hour', '22').set('minute', '00').format('YYYY-MM-DD HH:mm')
-                        this.form.stop_counter_time = moment().set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
+                        this.form.stop_counter_time = moment().add(1, 'days').set('hour', '06').set('minute', '00').format('YYYY-MM-DD HH:mm')
                         break
                 }
             },
@@ -338,6 +341,7 @@
                                 type: 'success'
                             })
                             this.fetchMachineCounters()
+                            this.clearForm()
                     }
                 }).catch( err => {})
             },
@@ -410,7 +414,6 @@
                     employees = response.data.employees
 
                     var results = queryString ? employees.filter(this.createFilter(queryString)) : employees
-                    console.log(results)
                     cb(results)
                 })
             },
@@ -423,7 +426,6 @@
 
             selectItem(item) {
                 this.form.employee_id = item.id
-                console.log(this.form.employee_id)
             },
 
             clearForm() {
