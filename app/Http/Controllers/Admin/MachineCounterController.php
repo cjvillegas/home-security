@@ -72,7 +72,10 @@ class MachineCounterController extends Controller
         }
         catch (Exception $e) {
             DB::rollBack();
+
             Log::info($e);
+
+            return response()->json(['message' => "Something went wrong when creating a new machine counter."], 500);
         }
 
     }
@@ -85,7 +88,7 @@ class MachineCounterController extends Controller
      *
      * @return JsonResponse
      */
-    public function update(Request $request, MachineCounter $machineCounter)
+    public function update(MachineCounterRequest $request, MachineCounter $machineCounter)
     {
         DB::beginTransaction();
         try {
@@ -96,6 +99,10 @@ class MachineCounterController extends Controller
         }
         catch (Exception $e) {
             DB::rollBack();
+
+            Log::info($e);
+
+            return response()->json(['message' => "Something went wrong when updating machine counter."], 500);
         }
     }
 

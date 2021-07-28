@@ -1,121 +1,5 @@
 <template>
     <div>
-        <el-dialog
-            :visible.sync="formDialogVisible"
-            :title="dialogTitle"
-            top="5vh"
-            width="40%">
-            <el-form
-                ref="form"
-                v-model="form">
-                <el-form-item
-                    label="Machine"
-                    prop="machine_id"
-                    :error="hasError('machine_id')">
-                    <el-select v-model="form.machine_id">
-                        <el-option
-                            v-for="machine in machines"
-                            :key="machine.id"
-                            :label="machine.name"
-                            :value="machine.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item
-                    label="Employee"
-                    prop="employee_id"
-                    :error="hasError('employee_id')">
-                    <el-autocomplete
-                        v-model="employee_name"
-                        :fetch-suggestions="querySearch"
-                        placeholder="Employee Name"
-                        value-key="fullname"
-                        @select="selectItem">
-                    </el-autocomplete>
-                </el-form-item>
-
-                <el-form-item
-                    label="Shift"
-                    prop="shift_id"
-                    :error="hasError('shift_id')">
-                    <el-select v-model="form.shift_id" @change="selectShift()">
-                        <el-option
-                            v-for="shift in shifts"
-                            :key="shift.id"
-                            :selected="shift.isSelected"
-                            :label="shift.name"
-                            :value="shift.id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-
-                <el-form-item
-                    label="Start Counter"
-                    prop="start_counter"
-                    :error="hasError('start_counter')">
-                    <el-input
-                        v-model="form.start_counter"
-                        placeholder="Digits only (Ex. 1234)"
-                        clearable>
-                    </el-input>
-                </el-form-item>
-
-                <el-form-item
-                    label="Start Date Time"
-                    prop="start_counter_time"
-                    :error="hasError('start_counter_time')">
-                    <el-date-picker
-                        v-model="form.start_counter_time"
-                        type="datetime"
-                        placeholder="Select date and time">
-                    </el-date-picker>
-                </el-form-item>
-
-                <el-form-item
-                    label="Stop Counter"
-                    prop="stop_counter"
-                    :error="hasError('stop_counter')">
-                    <el-input
-                        v-model="form.stop_counter"
-                        placeholder="Digits only (Ex. 1234)"
-                        clearable>
-                    </el-input>
-                </el-form-item>
-
-                <el-form-item
-                    label="Stop Counter Time"
-                    prop="stop_counter_time"
-                    :error="hasError('stop_counter_time')">
-                    <el-date-picker
-                            v-model="form.stop_counter_time"
-                            type="datetime"
-                            placeholder="Select date and time">
-                    </el-date-picker>
-                </el-form-item>
-
-            </el-form>
-            <span
-                slot="footer"
-                class="dialog-footer">
-                    <el-button @click="formDialogVisible = false">
-                        Cancel
-                    </el-button>
-                    <el-button
-                        type="primary"
-                        @click="saveMachineCounter()"
-                        v-show="!edit">
-                        Save
-                    </el-button>
-                    <el-button
-                        type="primary"
-                        @click="updateMachineCounter()"
-                        v-show="edit">
-                        Update
-                    </el-button>
-            </span>
-        </el-dialog>
-
         <el-card class="card">
             <div v-loading="loading">
                 <div class="d-flex">
@@ -131,7 +15,7 @@
                     <div class="ml-auto">
                         <el-button
                             type="primary"
-                            @click="formDialogVisible = true, addNew()">
+                            @click="addNew">
                             <i class="fas fa-plus"></i> Add Machine Counter
                         </el-button>
                     </div>
@@ -223,6 +107,127 @@
                 </el-pagination>
             </div>
         </el-card>
+
+        <el-dialog
+            :visible.sync="formDialogVisible"
+            :title="dialogTitle"
+            top="5vh"
+            width="40%"
+            @close="clearForm">
+            <el-form
+                v-loading="loading"
+                ref="form"
+                :model="form"
+                :rules="rules">
+                <el-form-item
+                    label="Machine"
+                    prop="machine_id"
+                    :error="hasError('machine_id')">
+                    <el-select v-model="form.machine_id">
+                        <el-option
+                            v-for="machine in machines"
+                            :key="machine.id"
+                            :label="machine.name"
+                            :value="machine.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item
+                    label="Employee"
+                    prop="employee_id"
+                    :error="hasError('employee_id')">
+                    <el-autocomplete
+                        v-model="employee_name"
+                        :fetch-suggestions="querySearch"
+                        placeholder="Employee Name"
+                        value-key="fullname"
+                        @select="selectItem">
+                    </el-autocomplete>
+                </el-form-item>
+
+                <el-form-item
+                    label="Shift"
+                    prop="shift_id"
+                    :error="hasError('shift_id')">
+                    <el-select v-model="form.shift_id" @change="selectShift()">
+                        <el-option
+                            v-for="shift in shifts"
+                            :key="shift.id"
+                            :selected="shift.isSelected"
+                            :label="shift.name"
+                            :value="shift.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item
+                    label="Start Counter"
+                    prop="start_counter"
+                    :error="hasError('start_counter')">
+                    <el-input
+                        v-model="form.start_counter"
+                        placeholder="Digits only (Ex. 1234)"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Start Date Time"
+                    prop="start_counter_time"
+                    :error="hasError('start_counter_time')">
+                    <el-date-picker
+                        v-model="form.start_counter_time"
+                        type="datetime"
+                        placeholder="Select date and time"
+                        value-format="yyyy-MM-dd HH:mm">
+                    </el-date-picker>
+                </el-form-item>
+
+                <el-form-item
+                    label="Stop Counter"
+                    prop="stop_counter"
+                    :error="hasError('stop_counter')">
+                    <el-input
+                        v-model="form.stop_counter"
+                        placeholder="Digits only (Ex. 1234)"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Stop Counter Time"
+                    prop="stop_counter_time"
+                    :error="hasError('stop_counter_time')">
+                    <el-date-picker
+                            v-model="form.stop_counter_time"
+                            type="datetime"
+                            placeholder="Select date and time"
+                            value-format="yyyy-MM-dd HH:mm">
+                    </el-date-picker>
+                </el-form-item>
+
+            </el-form>
+            <span
+                slot="footer"
+                class="dialog-footer">
+                    <el-button @click="formDialogVisible = false">
+                        Cancel
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="validate"
+                        v-show="!edit">
+                        Save
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="validate"
+                        v-show="edit">
+                        Update
+                    </el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -244,6 +249,13 @@
                     stop_counter: '',
                     start_counter_time: '',
                     stop_counter_time: ''
+                },
+                rules: {
+                    machine_id: {required: true, message: 'Machine is required', trigger: 'change'},
+                    employee_id: {required: true, message: 'Employee is required', trigger: 'change'},
+                    shift_id: {required: true, message: 'Shift is required', trigger: 'change'},
+                    start_counter_time: {required: true, message: 'Start Counter Time is Required', trigger: ['blur', 'change']},
+                    stop_counter_time: {required: true, message: 'Stop Counter Time is Required', trigger: ['blur', 'change']},
                 },
                 machines: [],
                 shifts: [
@@ -277,6 +289,7 @@
                 if (this.edit) {
                     this.clearForm()
                 }
+                this.formDialogVisible = true,
                 this.dialogTitle = 'Add New Machine Counter'
                 this.edit = false
             },
@@ -310,7 +323,23 @@
                 }
             },
 
+            validate() {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        this.resetErrors()
+                        if (this.edit) {
+                            this.updateMachineCounter()
+
+                            return
+                        }
+
+                        this.saveMachineCounter()
+                    }
+                })
+            },
             saveMachineCounter() {
+                this.loading = true
+
                 let apiUrl = `/admin/machine-counters/store`
                 axios.post(apiUrl, this.form)
                 .then( (response) => {
@@ -329,6 +358,8 @@
                     if (err.response.status === 422) {
                         this.setErrors(err.response.data.errors)
                     }
+                }).finally(_ => {
+                    this.loading = false
                 })
             },
 
@@ -339,8 +370,9 @@
                     type: 'info'
                 })
                     .then( () => {
-                        let apiUrl = `/admin/machine-counters/${this.form.id}/update`
                         this.loading = true
+
+                        let apiUrl = `/admin/machine-counters/${this.form.id}/update`
                         axios.patch(apiUrl, this.form)
                         .then( (response) => {
                             this.$notify({
@@ -348,14 +380,22 @@
                                 message: response.data.message,
                                 type: 'success'
                             });
-                            this.formDialogVisible = false
                             this.fetchMachineCounters()
+                            this.clearForm()
+
+                            this.formDialogVisible = false
+                        })
+                        .catch( err => {
+                            if (err.response.status === 422) {
+                                this.setErrors(err.response.data.errors)
+                            }
                         })
                     })
                     .catch( err => {
-                        if (err.response.status === 422) {
-                            this.setErrors(err.response.data.errors)
-                        }
+
+                    })
+                    .finally(_ => {
+                        this.loading = false
                     })
             },
 
@@ -410,6 +450,9 @@
             },
 
             clearForm() {
+                if (this.$refs.form) {
+                    this.$refs.form.clearValidate()
+                }
                 this.employee_name = ''
                 this.form = {
                     machine_id: '',
