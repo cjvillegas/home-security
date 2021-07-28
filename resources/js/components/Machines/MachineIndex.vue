@@ -9,7 +9,8 @@
                     :model="form">
                         <el-form-item
                             label="Machine Name"
-                            prop="name">
+                            prop="name"
+                            :error="hasError('name')">
                             <el-input
                                 v-model="form.name"
                                 clearable
@@ -19,7 +20,8 @@
 
                         <el-form-item
                             label="Serial No."
-                            prop="serial_no">
+                            prop="serial_no"
+                            :error="hasError('serial_no')">
                             <el-input
                                 v-model="form.serial_no"
                                 clearable
@@ -29,7 +31,8 @@
 
                         <el-form-item
                             label="Location"
-                            prop="location">
+                            prop="location"
+                            :error="hasError('location')">
                             <el-input
                                 placeholder="Location"
                                 v-model="form.location"
@@ -40,7 +43,8 @@
 
                         <el-form-item
                             label="Status"
-                            prop="status">
+                            prop="status"
+                            :error="hasError('status')">
                             <el-select
                                 v-model="form.status"
                                 placeholder="Status"
@@ -180,8 +184,10 @@
 
 <script>
     import pagination from '../../mixins/pagination'
+    import { formHelper } from '../../mixins/formHelper'
+
     export default {
-        mixins: [pagination],
+        mixins: [pagination, formHelper],
         data() {
             return {
                 edit: false,
@@ -247,12 +253,12 @@
                     }
                 })
                 .catch(err => {
-                    console.log(err)
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
                 })
             },
             updateMachine() {
-                this.formDialogVisible = false
-
                 this.$confirm('You are about to edit this Machine. Continue?', {
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'Cancel',
@@ -266,11 +272,13 @@
                             message: response.data.message,
                             type: 'success'
                         });
-
+                        this.formDialogVisible = false
                         this.fetchMachines()
+                    }).catch(err => {
+                        if (err.response.status === 422) {
+                            this.setErrors(err.response.data.errors)
+                        }
                     })
-                }).catch( () => {
-                    this.formDialogVisible = true
                 })
             },
             deleteMachine(id) {
@@ -287,6 +295,7 @@
             },
 
             openEditDialog(item) {
+                this.setErrors([])
                 this.edit = true,
                 this.dialogTitle = 'Edit Machine'
                 this.formDialogVisible = true

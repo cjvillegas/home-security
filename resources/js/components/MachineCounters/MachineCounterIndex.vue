@@ -3,131 +3,97 @@
         <el-dialog
             :visible.sync="formDialogVisible"
             :title="dialogTitle"
+            top="5vh"
             width="40%">
             <el-form
-                :inline="true"
                 ref="form"
                 v-model="form">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label>Machine</label>
-                        </div>
-                        <div class="col-md-9">
-                            <el-select v-model="form.machine_id">
-                                <el-option
-                                    v-for="machine in machines"
-                                    :key="machine.id"
-                                    :label="machine.name"
-                                    :value="machine.id">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
+                <el-form-item
+                    label="Machine"
+                    prop="machine_id"
+                    :error="hasError('machine_id')">
+                    <el-select v-model="form.machine_id">
+                        <el-option
+                            v-for="machine in machines"
+                            :key="machine.id"
+                            :label="machine.name"
+                            :value="machine.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
-                    <!-- <div class="row mt-2">
-                        <div class="col-md-4">
-                            <label>Employees</label>
-                        </div>
-                        <div class="col-md-8">
-                            <el-select v-model="form.employee_id">
-                            <el-option
-                                v-for="employee in employees"
-                                :key="employee.id"
-                                :label="employee.fullname"
-                                :value="employee.id">
+                <el-form-item
+                    label="Employee"
+                    prop="employee_id"
+                    :error="hasError('employee_id')">
+                    <el-autocomplete
+                        v-model="employee_name"
+                        :fetch-suggestions="querySearch"
+                        placeholder="Employee Name"
+                        value-key="fullname"
+                        @select="selectItem">
+                    </el-autocomplete>
+                </el-form-item>
 
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div> -->
+                <el-form-item
+                    label="Shift"
+                    prop="shift_id"
+                    :error="hasError('shift_id')">
+                    <el-select v-model="form.shift_id" @change="selectShift()">
+                        <el-option
+                            v-for="shift in shifts"
+                            :key="shift.id"
+                            :selected="shift.isSelected"
+                            :label="shift.name"
+                            :value="shift.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Employee</label>
-                        </div>
-                        <div class="col-md-9">
-                            <el-autocomplete
-                                v-model="employee_name"
-                                :fetch-suggestions="querySearch"
-                                placeholder="Employee Name"
-                                value-key="fullname"
-                                @select="selectItem">
-                            </el-autocomplete>
-                        </div>
-                    </div>
+                <el-form-item
+                    label="Start Counter"
+                    prop="start_counter"
+                    :error="hasError('start_counter')">
+                    <el-input
+                        v-model="form.start_counter"
+                        placeholder="Digits only (Ex. 1234)"
+                        clearable>
+                    </el-input>
+                </el-form-item>
 
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Shift</label>
-                        </div>
-                        <div class="col-md-9">
-                            <el-select v-model="form.shift_id" @change="selectShift()">
-                                <el-option
-                                    v-for="shift in shifts"
-                                    :key="shift.id"
-                                    :selected="shift.isSelected"
-                                    :label="shift.name"
-                                    :value="shift.id">
-                                </el-option>
-                            </el-select>
-                        </div>
-                    </div>
+                <el-form-item
+                    label="Start Date Time"
+                    prop="start_counter_time"
+                    :error="hasError('start_counter_time')">
+                    <el-date-picker
+                        v-model="form.start_counter_time"
+                        type="datetime"
+                        placeholder="Select date and time">
+                    </el-date-picker>
+                </el-form-item>
 
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Start Counter</label>
-                        </div>
+                <el-form-item
+                    label="Stop Counter"
+                    prop="stop_counter"
+                    :error="hasError('stop_counter')">
+                    <el-input
+                        v-model="form.stop_counter"
+                        placeholder="Digits only (Ex. 1234)"
+                        clearable>
+                    </el-input>
+                </el-form-item>
 
-                        <div class="col-md-9">
-                            <el-input
-                                v-model="form.start_counter"
-                                placeholder="Digits only (Ex. 1234)"
-                                clearable>
-                            </el-input>
-                        </div>
-                    </div>
+                <el-form-item
+                    label="Stop Counter Time"
+                    prop="stop_counter_time"
+                    :error="hasError('stop_counter_time')">
+                    <el-date-picker
+                            v-model="form.stop_counter_time"
+                            type="datetime"
+                            placeholder="Select date and time">
+                    </el-date-picker>
+                </el-form-item>
 
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Start Date Time</label>
-                        </div>
-
-                        <div class="col-md-9">
-                            <el-date-picker
-                                v-model="form.start_counter_time"
-                                type="datetime"
-                                placeholder="Select date and time">
-                            </el-date-picker>
-                        </div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Stop Counter</label>
-                        </div>
-
-                        <div class="col-md-9">
-                            <el-input
-                                v-model="form.stop_counter"
-                                placeholder="Digits only (Ex. 1234)"
-                                clearable>
-                            </el-input>
-                        </div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-md-3">
-                            <label>Stop Date Time</label>
-                        </div>
-
-                        <div class="col-md-9">
-                            <el-date-picker
-                                    v-model="form.stop_counter_time"
-                                    type="datetime"
-                                    placeholder="Select date and time">
-                            </el-date-picker>
-                        </div>
-                    </div>
             </el-form>
             <span
                 slot="footer"
@@ -262,8 +228,10 @@
 
 <script>
     import pagination from '../../mixins/pagination'
+    import { formHelper } from '../../mixins/formHelper'
+
     export default {
-        mixins: [pagination],
+        mixins: [pagination, formHelper],
         data() {
             return {
                 formDialogVisible: false,
@@ -357,7 +325,11 @@
                             this.fetchMachineCounters()
                             this.clearForm()
                     }
-                }).catch( err => {})
+                }).catch( err => {
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
+                })
             },
 
             updateMachineCounter() {
@@ -380,8 +352,10 @@
                             this.fetchMachineCounters()
                         })
                     })
-                    .catch( () => {
-                        this.formDialogVisible = true
+                    .catch( err => {
+                        if (err.response.status === 422) {
+                            this.setErrors(err.response.data.errors)
+                        }
                     })
             },
 
