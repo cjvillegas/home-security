@@ -8,9 +8,9 @@ export default {
      * @return Promise
      */
     fetch(data) {
-        let apiUrl = `/admin/machines/machines-list`
+        let apiUrl = `/admin/machines/machines-list?page=${data.page}&size=${data.size}`
 
-        return axios.post(apiUrl, data)
+        return axios.get(apiUrl)
     },
 
     /**

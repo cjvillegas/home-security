@@ -85,6 +85,13 @@ window.axios.interceptors.response.use((response) => {
                 }
             });
         }
+        else if (error.response.status === 422) {
+            app.$alert('Ops! Please double check your input. If you think that this is a problem please contact your administrator.', 'FORBIDDEN', {
+                confirmButtonText: 'OK',
+                callback: action => {
+                }
+            });
+        }
         else if (error.response.status >= 500) {
             app.$alert('Ops! Something went wrong. Please report this to your technical support.', 'SERVER ERROR', {
                 confirmButtonText: 'OK',

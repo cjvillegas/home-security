@@ -32,19 +32,9 @@ class MachineController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchMachines(Request $request)
+    public function fetchMachines()
     {
-        $searchString = $request->searchString;
-        $size = $request->size;
-
-        $machines = Machine::orderBy('created_at', 'desc')
-            ->when($searchString, function ($query) use ($searchString) {
-                $query->where('name', 'like', "%{$searchString}%")
-                    ->orWhere('serial_no', 'like', "%{$searchString}%")
-                    ->orWhere('location', 'like', "%{$searchString}%")
-                    ->orWhere('status', 'like', "%{$searchString}%");
-            });
-        $machines = $machines->paginate($size);
+        $machines = Machine::paginate(request()->size);
 
         return response()->json(['machines' => $machines]);
     }
@@ -68,10 +58,7 @@ class MachineController extends Controller
         }
         catch (Exception $e) {
             DB::rollBack();
-
             Log::info($e);
-
-            return response()->json(['message' => "Something went wrong when creating a new machine."], 500);
         }
     }
 
@@ -96,8 +83,6 @@ class MachineController extends Controller
         catch (Exception $e) {
             DB::rollBack();
             Log::info($e);
-
-            return response()->json(['message' => "Something went wrong when updating machine."], 500);
         }
     }
 
