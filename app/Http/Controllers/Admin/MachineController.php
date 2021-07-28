@@ -32,9 +32,19 @@ class MachineController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchMachines()
+    public function fetchMachines(Request $request)
     {
-        $machines = Machine::paginate(request()->size);
+        $searchString = $request->searchString;
+        $size = $request->size;
+
+        $machines = Machine::orderBy('created_at', 'desc')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('name', 'like', "%{$searchString}%")
+                    ->orWhere('serial_no', 'like', "%{$searchString}%")
+                    ->orWhere('location', 'like', "%{$searchString}%")
+                    ->orWhere('status', 'like', "%{$searchString}%");
+            });
+        $machines = $machines->paginate($size);
 
         return response()->json(['machines' => $machines]);
     }
