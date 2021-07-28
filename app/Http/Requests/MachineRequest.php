@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class MachineRequest extends FormRequest
 {
@@ -26,7 +25,7 @@ class MachineRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', Rule::unique('machines')->ignore($this->id)],
+            'name' => 'required',
             'serial_no' => 'required',
             'location' => 'required',
             'status' => 'required'
