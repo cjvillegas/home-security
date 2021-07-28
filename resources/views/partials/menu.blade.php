@@ -200,6 +200,21 @@
             </li>
         @endif
 
+        <li class="c-sidebar-nav-dropdown {{ request()->is("admin/in-house*") ? "c-show" : "" }}">
+            <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon"></i>
+                InHouse
+            </a>
+            <ul class="c-sidebar-nav-dropdown-items">
+                <li class="c-sidebar-nav-item">
+                    <a href="{{ route('admin.in-house.stocks.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stocks.index") ? "c-active" : "" }}">
+                        <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
+                        Stock Items
+                    </a>
+                </li>
+            </ul>
+        </li>
+
         @if (auth()->user()->can('reports_access') && auth()->user()->canAny(['work_analytics_reports_access', 'data_export_reports_access']))
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">

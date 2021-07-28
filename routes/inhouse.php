@@ -1,7 +1,5 @@
 <?php
 
-Route::namespace('InHouse')->prefix('in-house')->group( function() {
-    Route::prefix('stocks')->group( function () {
-
-    });
+Route::namespace('InHouse')->as('in-house.')->prefix('in-house')->group( function() {
+    Route::apiResource('stocks', 'StockItemController')->only(['index']);
 });
