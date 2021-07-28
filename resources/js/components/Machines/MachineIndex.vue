@@ -1,89 +1,5 @@
 <template>
     <div>
-        <el-dialog
-            :visible.sync="formDialogVisible"
-            :title="dialogTitle"
-            width="40%">
-                <el-form
-                    ref="form"
-                    :model="form">
-                        <el-form-item
-                            label="Machine Name"
-                            prop="name"
-                            :error="hasError('name')">
-                            <el-input
-                                v-model="form.name"
-                                clearable
-                                class="w-100">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item
-                            label="Serial No."
-                            prop="serial_no"
-                            :error="hasError('serial_no')">
-                            <el-input
-                                v-model="form.serial_no"
-                                clearable
-                                class="w-100">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item
-                            label="Location"
-                            prop="location"
-                            :error="hasError('location')">
-                            <el-input
-                                placeholder="Location"
-                                v-model="form.location"
-                                clearable
-                                class="w-100">
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item
-                            label="Status"
-                            prop="status"
-                            :error="hasError('status')">
-                            <el-select
-                                v-model="form.status"
-                                placeholder="Status"
-                                class="w-100">
-                                <el-option
-                                    label="Active"
-                                    value=1>
-                                </el-option>
-
-                                <el-option
-                                    label="Inactive"
-                                    value=0>
-                                </el-option>
-                            </el-select>
-                        </el-form-item>
-                </el-form>
-
-                <span
-                    slot="footer"
-                    class="dialog-footer">
-                        <el-button
-                            @click="formDialogVisible = false">
-                            Cancel
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="saveMachine()"
-                            v-show="!edit">
-                            Save
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="updateMachine()"
-                            v-show="edit">
-                            Update
-                        </el-button>
-                </span>
-        </el-dialog>
-
         <el-card class="card">
             <div v-loading="loading">
                 <div class="d-flex">
@@ -100,7 +16,7 @@
                     <div class="ml-auto">
                         <el-button
                             type="primary"
-                            @click="formDialogVisible = true, addNew()">
+                            @click="addNew">
                             <i class="fas fa-plus"></i> Add Machine
                         </el-button>
                     </div>
@@ -178,8 +94,94 @@
                 @current-change="handlePage">
             </el-pagination>
         </el-card>
-    </div>
 
+        <el-dialog
+            :visible.sync="formDialogVisible"
+            :title="dialogTitle"
+            width="40%"
+            @close="clearForm">
+            <el-form
+                v-loading="loading"
+                ref="form"
+                :model="form"
+                :rules="rules">
+                <el-form-item
+                    label="Machine Name"
+                    prop="name"
+                    :error="hasError('name')">
+                    <el-input
+                        v-model="form.name"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Serial No."
+                    prop="serial_no"
+                    :error="hasError('serial_no')">
+                    <el-input
+                        v-model="form.serial_no"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Location"
+                    prop="location"
+                    :error="hasError('location')">
+                    <el-input
+                        placeholder="Location"
+                        v-model="form.location"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Status"
+                    prop="status"
+                    :error="hasError('status')">
+                    <el-select
+                        v-model="form.status"
+                        placeholder="Status"
+                        class="w-100">
+                        <el-option
+                            label="Active"
+                            value=1>
+                        </el-option>
+
+                        <el-option
+                            label="Inactive"
+                            value=0>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+
+            <span
+                slot="footer"
+                class="dialog-footer">
+            <el-button
+                @click="clearForm">
+                Cancel
+            </el-button>
+            <el-button
+                type="primary"
+                @click="validate"
+                v-show="!edit">
+                Save
+            </el-button>
+            <el-button
+                type="primary"
+                @click="validate"
+                v-show="edit">
+                Update
+            </el-button>
+        </span>
+        </el-dialog>
+    </div>
 </template>
 
 <script>
@@ -198,11 +200,17 @@
                     location: '',
                     status: '',
                 },
+                rules: {
+                    name: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
+                    serial_no: {required: true, message: 'Serial No. is required', trigger: ['blur', 'change']},
+                    location: {required: true, message: 'Location is required', trigger: ['blur', 'change']},
+                    status: {required: true, message: 'Status is required', trigger: 'change'}
+                },
                 formDialogVisible: false,
                 filters: {
                     searchString: ''
                 },
-                loading:false,
+                loading: false,
                 dialogTitle: ''
             }
         },
@@ -219,6 +227,7 @@
         methods: {
             addNew() {
                 this.clearForm()
+                this.formDialogVisible = true
                 this.edit = false
                 this.dialogTitle = 'Add Machine'
             },
@@ -236,27 +245,44 @@
                     this.loading = false
                 })
             },
+            validate() {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        this.resetErrors()
+                        if (this.edit) {
+                            this.updateMachine()
+
+                            return
+                        }
+
+                        this.saveMachine()
+                    }
+                })
+            },
             saveMachine() {
-                this.$API.Machine.save(
-                    this.form
-                ).then( (response) => {
-                     switch(response.status){
-                        case 200:
-                            this.formDialogVisible = false
-                            this.$notify({
-                                title: 'Success',
-                                message: response.data.message,
-                                type: 'success'
-                            })
-                            this.fetchMachines()
-                            this.clearForm()
-                    }
-                })
-                .catch(err => {
-                    if (err.response.status === 422) {
-                        this.setErrors(err.response.data.errors)
-                    }
-                })
+                this.loading = true
+
+                this.$API.Machine.save(this.form)
+                    .then((response) => {
+                         switch(response.status){
+                            case 200:
+                                this.$notify({
+                                    title: 'Success',
+                                    message: response.data.message,
+                                    type: 'success'
+                                })
+                                this.fetchMachines()
+                                this.clearForm()
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response.status === 422) {
+                            this.setErrors(err.response.data.errors)
+                        }
+                    })
+                    .finally(_ => {
+                        this.loading = false
+                    })
             },
             updateMachine() {
                 this.$confirm('You are about to edit this Machine. Continue?', {
@@ -264,21 +290,27 @@
                     cancelButtonText: 'Cancel',
                     type: 'info'
                 }).then( () => {
+                    this.loading = true
+
                     let apiUrl = `/admin/machines/${this.form.id}/update`
                     axios.patch(apiUrl, this.form)
-                    .then( (response) => {
-                        this.$notify({
-                            title: 'Success!',
-                            message: response.data.message,
-                            type: 'success'
-                        });
-                        this.formDialogVisible = false
-                        this.fetchMachines()
-                    }).catch(err => {
-                        if (err.response.status === 422) {
-                            this.setErrors(err.response.data.errors)
-                        }
-                    })
+                        .then((response) => {
+                            this.$notify({
+                                title: 'Success!',
+                                message: response.data.message,
+                                type: 'success'
+                            });
+
+                            this.fetchMachines()
+                        })
+                        .catch(err => {
+                            if (err.response.status === 422) {
+                                this.setErrors(err.response.data.errors)
+                            }
+                        })
+                        .finally(_ => {
+                            this.loading = false
+                        })
                 })
             },
             deleteMachine(id) {
@@ -307,10 +339,15 @@
             },
 
             clearForm() {
+                if (this.$refs.form) {
+                    this.$refs.form.clearValidate()
+                }
+
                 this.form.name = ''
                 this.form.serial_no = ''
                 this.form.location = ''
                 this.form.status = ''
+                this.formDialogVisible = false
             },
         },
     }

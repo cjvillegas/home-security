@@ -68,7 +68,10 @@ class MachineController extends Controller
         }
         catch (Exception $e) {
             DB::rollBack();
+
             Log::info($e);
+
+            return response()->json(['message' => "Something went wrong when creating a new machine."], 500);
         }
     }
 
