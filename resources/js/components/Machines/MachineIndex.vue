@@ -1,149 +1,87 @@
 <template>
     <div>
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" @click="formDialogVisible = true, addNew()">
-                    Add New
-                </a>
-            </div>
-        </div>
-
-        <el-dialog
-            :visible.sync="formDialogVisible"
-            width="20%">
-                <span
-                    slot="title"
-                    v-show="!edit">
-                    Add New Machine
-                </span>
-                <span
-                    slot="title"
-                    v-show="edit">
-                    Edit Machine
-                </span>
-                <el-form
-                    ref="form"
-                    :model="form">
-                        <el-form-item>
-                            <el-input
-                            placeholder="Machine Name"
-                            v-model="form.name"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item>
-                            <el-input
-                            placeholder="Serial No."
-                            v-model="form.serial_no"
-                            clearable>
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item>
-                            <el-input
-                                placeholder="Location"
-                                v-model="form.location"
-                                clearable>
-                            </el-input>
-                        </el-form-item>
-
-                        <el-form-item cenetered>
-                            <el-select
-                                v-model="form.status"
-                                placeholder="Status">
-                                    <el-option
-                                        label="Active"
-                                        value=1>
-                                    </el-option>
-
-                                    <el-option
-                                        label="Inactive"
-                                        value=0>
-                                    </el-option>
-                            </el-select>
-                        </el-form-item>
-                </el-form>
-
-                <span
-                    slot="footer"
-                    class="dialog-footer">
-                        <el-button
-                            @click="formDialogVisible = false">
-                            Cancel
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="saveMachine()"
-                            v-show="!edit">
-                            Save
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="updateMachine()"
-                            v-show="edit">
-                            Update
-                        </el-button>
-                </span>
-        </el-dialog>
-
         <el-card class="card">
-            <el-table
-                :data="machines"
-                class="w-100"
-                fit>
-                    <el-table-column
-                        prop="name"
-                        label="Name">
-                    </el-table-column>
-                    <el-table-column
-                        prop="serial_no"
-                        label="Serial No.">
-                    </el-table-column>
-                    <el-table-column
-                        prop="location"
-                        label="Location">
-                    </el-table-column>
-                    <el-table-column
-                        prop="status"
-                        label="Status">
-                    </el-table-column>
-                    <el-table-column
-                        width="100%"
-                        label="Action"
-                        class-name="table-action-button">
-                        <template slot-scope="scope">
-                            <template>
-                                <el-tooltip
-                                    class="item"
-                                    effect="dark"
-                                    content="Edit"
-                                    placement="top"
-                                    :open-delay="1000">
-                                    <el-button
-                                        @click="openEditDialog(scope.row), formDialogVisible = true"
-                                        class="text-secondary"
-                                        type="text">
-                                        <i class="fas fa-pen"></i>
-                                    </el-button>
-                                </el-tooltip>
-                                <el-tooltip
-                                    class="item"
-                                    effect="dark"
-                                    content="Delete"
-                                    placement="top"
-                                    :open-delay="1000">
-                                    <el-button
-                                        @click="deleteMachine(scope.row.id)"
-                                        type="text">
-                                        <i class="fas fa-trash-alt text-red-500"></i>
-                                    </el-button>
-                                </el-tooltip>
-                            </template>
-                        </template>
-                    </el-table-column>
-            </el-table>
+            <div v-loading="loading">
+                <div class="d-flex">
+                    <div>
+                        <el-input
+                            v-model="filters.searchString"
+                            clearable
+                            placeholder="Search Machines..."
+                            @keyup.enter.native.prevent="fetchMachines"
+                            style="width: 250px">
+                        </el-input>
+                    </div>
 
+                    <div class="ml-auto">
+                        <el-button
+                            type="primary"
+                            @click="addNew">
+                            <i class="fas fa-plus"></i> Add Machine
+                        </el-button>
+                    </div>
+                </div>
+                <el-table
+                    :data="machines"
+                    class="w-100"
+                    fit>
+                        <el-table-column
+                            prop="name"
+                            label="Name"
+                            sortable>
+                        </el-table-column>
+                        <el-table-column
+                            prop="serial_no"
+                            label="Serial No."
+                            sortable>
+                        </el-table-column>
+                        <el-table-column
+                            prop="location"
+                            label="Location"
+                            sortable>
+                        </el-table-column>
+                        <el-table-column
+                            prop="status"
+                            label="Status"
+                            sortable>
+                        </el-table-column>
+                        <el-table-column
+                            width="100%"
+                            label="Action"
+                            class-name="table-action-button">
+                            <template slot-scope="scope">
+                                <template>
+                                    <el-tooltip
+                                        class="item"
+                                        effect="dark"
+                                        content="Edit"
+                                        placement="top"
+                                        :open-delay="1000">
+                                        <el-button
+                                            @click="openEditDialog(scope.row), formDialogVisible = true"
+                                            type="text">
+                                            <i class="fas fa-pen"></i>
+                                        </el-button>
+                                    </el-tooltip>
+                                    <el-popconfirm
+                                        @confirm="deleteMachine(scope.row.id)"
+                                        confirm-button-text='OK'
+                                        cancel-button-text='No, Thanks'
+                                        icon="el-icon-info"
+                                        icon-color="red"
+                                        title="Are you sure to delete this?">
+                                        <el-button
+                                            type="text"
+                                            class="text-danger ml-2"
+                                            slot="reference">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </el-button>
+                                    </el-popconfirm>
+                                </template>
+                            </template>
+                        </el-table-column>
+                </el-table>
+            </div>
             <el-pagination
                 class="custom-pagination-class  mt-3 float-right"
                 background
@@ -156,13 +94,102 @@
                 @current-change="handlePage">
             </el-pagination>
         </el-card>
+
+        <el-dialog
+            :visible.sync="formDialogVisible"
+            :title="edit ? 'Edit Machine' : 'Add Machine'"
+            width="40%"
+            @close="clearForm">
+            <el-form
+                v-loading="loading"
+                ref="form"
+                :model="form"
+                :rules="rules">
+                <el-form-item
+                    label="Machine Name"
+                    prop="name"
+                    :error="hasError('name')">
+                    <el-input
+                        v-model="form.name"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Serial No."
+                    prop="serial_no"
+                    :error="hasError('serial_no')">
+                    <el-input
+                        v-model="form.serial_no"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Location"
+                    prop="location"
+                    :error="hasError('location')">
+                    <el-input
+                        placeholder="Location"
+                        v-model="form.location"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Status"
+                    prop="status"
+                    :error="hasError('status')">
+                    <el-select
+                        v-model="form.status"
+                        placeholder="Status"
+                        class="w-100">
+                        <el-option
+                            label="Active"
+                            value=1>
+                        </el-option>
+
+                        <el-option
+                            label="Inactive"
+                            value=0>
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+
+            <span
+                slot="footer"
+                class="dialog-footer">
+            <el-button
+                @click="clearForm">
+                Cancel
+            </el-button>
+            <el-button
+                type="primary"
+                @click="validate"
+                v-show="!edit">
+                Save
+            </el-button>
+            <el-button
+                type="primary"
+                @click="validate"
+                v-show="edit">
+                Update
+            </el-button>
+        </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
     import pagination from '../../mixins/pagination'
+    import { formHelper } from '../../mixins/formHelper'
+
     export default {
-        mixins: [pagination],
+        mixins: [pagination, formHelper],
         data() {
             return {
                 edit: false,
@@ -173,8 +200,17 @@
                     location: '',
                     status: '',
                 },
+                rules: {
+                    name: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
+                    serial_no: {required: true, message: 'Serial No. is required', trigger: ['blur', 'change']},
+                    location: {required: true, message: 'Location is required', trigger: ['blur', 'change']},
+                    status: {required: true, message: 'Status is required', trigger: 'change'}
+                },
                 formDialogVisible: false,
-                filters: {}
+                filters: {
+                    searchString: ''
+                },
+                loading: false
             }
         },
 
@@ -190,9 +226,11 @@
         methods: {
             addNew() {
                 this.clearForm()
+                this.formDialogVisible = true
                 this.edit = false
             },
             fetchMachines() {
+                this.loading = true
                 this.$API.Machine.fetch(this.filters)
                 .then ( (response) => {
                     this.machines = response.data.machines.data
@@ -201,55 +239,81 @@
                 .catch(err => {
                     console.log(err)
                 })
+                .finally(_ => {
+                    this.loading = false
+                })
             },
-            saveMachine() {
-                this.$API.Machine.save(
-                    this.form
-                ).then( (response) => {
-                     switch(response.status){
-                        case 200:
-                            this.formDialogVisible = false
-                            this.$notify({
-                                title: 'Success',
-                                message: response.data.message,
-                                type: 'success'
-                            })
-                            this.fetchMachines()
-                            this.clearForm()
+            validate() {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        this.resetErrors()
+                        if (this.edit) {
+                            this.updateMachine()
+
+                            return
+                        }
+
+                        this.saveMachine()
                     }
                 })
             },
-            updateMachine() {
-                this.formDialogVisible = false
+            saveMachine() {
+                this.loading = true
 
+                this.$API.Machine.save(this.form)
+                    .then((response) => {
+                         switch(response.status){
+                            case 200:
+                                this.$notify({
+                                    title: 'Success',
+                                    message: response.data.message,
+                                    type: 'success'
+                                })
+                                this.fetchMachines()
+                                this.clearForm()
+                        }
+                    })
+                    .catch(err => {
+                        if (err.response.status === 422) {
+                            this.setErrors(err.response.data.errors)
+                        }
+                    })
+                    .finally(_ => {
+                        this.loading = false
+                    })
+            },
+            updateMachine() {
                 this.$confirm('You are about to edit this Machine. Continue?', {
                     confirmButtonText: 'Yes',
                     cancelButtonText: 'Cancel',
                     type: 'info'
                 }).then( () => {
+                    this.loading = true
+
                     let apiUrl = `/admin/machines/${this.form.id}/update`
                     axios.patch(apiUrl, this.form)
-                    .then( (response) => {
-                        this.$notify({
-                            title: 'Success!',
-                            message: response.data.message,
-                            type: 'success'
-                        });
+                        .then((response) => {
+                            this.$notify({
+                                title: 'Success!',
+                                message: response.data.message,
+                                type: 'success'
+                            });
 
-                        this.fetchMachines()
-                    })
-                }).catch( () => {
-                    this.formDialogVisible = true
+                            this.fetchMachines()
+                        })
+                        .catch(err => {
+                            if (err.response.status === 422) {
+                                this.setErrors(err.response.data.errors)
+                            }
+                        })
+                        .finally(_ => {
+                            this.loading = false
+                        })
                 })
             },
             deleteMachine(id) {
-                this.$confirm('You are about to delete this Machine', {
-                    confirmButtonText: 'Yes',
-                    cancelButtonText: 'Cancel',
-                    type: 'warning'
-                }).then( () => {
-                    let apiUrl = `/admin/machines/${id}/destroy`
-                    axios.delete(apiUrl)
+                let apiUrl = `/admin/machines/${id}/destroy`
+                axios.delete(apiUrl)
                     .then( (response) => {
                         this.$notify({
                             title: 'Deleted!',
@@ -258,11 +322,11 @@
                         });
                         this.fetchMachines()
                     })
-                }).catch( () => {})
             },
 
             openEditDialog(item) {
-                this.edit = true,
+                this.setErrors([])
+                this.edit = true
                 this.formDialogVisible = true
                 this.form.id = item.id
                 this.form.name = item.name
@@ -272,17 +336,16 @@
             },
 
             clearForm() {
+                if (this.$refs.form) {
+                    this.$refs.form.clearValidate()
+                }
+
                 this.form.name = ''
                 this.form.serial_no = ''
                 this.form.location = ''
                 this.form.status = ''
+                this.formDialogVisible = false
             },
         },
     }
 </script>
-
-<style scoped>
-    .el-input, .el-select {
-        width: 320px !important;
-    }
-</style>
