@@ -97,7 +97,7 @@
 
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="dialogTitle"
+            :title="edit ? 'Edit Machine' : 'Add Machine'"
             width="40%"
             @close="clearForm">
             <el-form
@@ -210,8 +210,7 @@
                 filters: {
                     searchString: ''
                 },
-                loading: false,
-                dialogTitle: ''
+                loading: false
             }
         },
 
@@ -229,7 +228,6 @@
                 this.clearForm()
                 this.formDialogVisible = true
                 this.edit = false
-                this.dialogTitle = 'Add Machine'
             },
             fetchMachines() {
                 this.loading = true
@@ -316,20 +314,19 @@
             deleteMachine(id) {
                 let apiUrl = `/admin/machines/${id}/destroy`
                 axios.delete(apiUrl)
-                .then( (response) => {
-                    this.$notify({
-                        title: 'Deleted!',
-                        message: response.data.message,
-                        type: 'success'
-                    });
-                    this.fetchMachines()
-                })
+                    .then( (response) => {
+                        this.$notify({
+                            title: 'Deleted!',
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                        this.fetchMachines()
+                    })
             },
 
             openEditDialog(item) {
                 this.setErrors([])
-                this.edit = true,
-                this.dialogTitle = 'Edit Machine'
+                this.edit = true
                 this.formDialogVisible = true
                 this.form.id = item.id
                 this.form.name = item.name
@@ -352,9 +349,3 @@
         },
     }
 </script>
-
-<style scoped>
-    /* .el-input, .el-select {
-        width: 320px !important;
-    } */
-</style>
