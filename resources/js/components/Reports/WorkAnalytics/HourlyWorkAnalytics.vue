@@ -84,7 +84,7 @@
                 v-model="filters.date"
                 :picker-options="{
                     disabledDate(time) {
-                        return time.getTime() > Date.now();
+                        return time.getTime() > Date.now() || time.getDay() === 0
                     }
                 }"
                 type="date"

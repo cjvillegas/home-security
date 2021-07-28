@@ -87,7 +87,7 @@
                 v-model="filters.dates"
                 :picker-options="{
                     disabledDate(time) {
-                        return time.getTime() > Date.now();
+                        return time.getTime() > Date.now()
                     }
                 }"
                 placeholder="Pick a day">
