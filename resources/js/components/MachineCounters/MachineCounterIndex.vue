@@ -261,11 +261,11 @@
                     machine_id: '',
                     employee_id: '',
                     shift_id: '',
-                    start_counter: '',
-                    stop_counter: '',
+                    start_counter: null,
+                    stop_counter: null,
                     start_counter_time: '',
                     stop_counter_time: '',
-                    total_boxes: ''
+                    total_boxes: null
                 },
                 rules: {
                     machine_id: {required: true, message: 'Machine is required', trigger: 'change'},
@@ -476,11 +476,11 @@
                     machine_id: '',
                     employee_id: '',
                     shift_id: '',
-                    start_counter: '',
-                    stop_counter: '',
+                    start_counter: null,
+                    stop_counter: null,
                     start_counter_time: '',
                     stop_counter_time: '',
-                    total_boxes: ''
+                    total_boxes: null
                 }
             }
         },
