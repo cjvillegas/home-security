@@ -2,9 +2,38 @@
     <el-card>
         <h1>{{ formTitle }}</h1>
         <el-form>
-            <el-form-item>
-                <el-input></el-input>
-            </el-form-item>
+            <el-row :gutter="20">
+                <el-col
+                    :span="12"
+                    >
+                    <el-form-item
+                        label="Stock Code">
+                        <el-input></el-input>
+                    </el-form-item>
+                </el-col>
+
+                <el-col
+                    :span="12">
+                    <el-form-item
+                        label="Stock Code">
+                        <el-input></el-input>
+                    </el-form-item>
+                </el-col>
+
+                <el-col
+                    :span="24">
+                    <el-form-item
+                        label="Description">
+                        <el-input
+                            type="textarea"
+                            :rows="2"
+                            placeholder="Please input.."
+                            v-model="form.description">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
         </el-form>
 
         <div class="d-flex">
@@ -24,7 +53,8 @@ export default {
     data() {
         return {
             form: {
-                name: 'Louise'
+                name: 'Louise',
+                description: ''
             }
         }
     },
