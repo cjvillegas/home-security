@@ -59,6 +59,11 @@
                             sortable>
                         </el-table-column>
                         <el-table-column
+                            prop="total_boxes"
+                            label="Total Boxes"
+                            sortable>
+                        </el-table-column>
+                        <el-table-column
                             label="Action"
                             class-name="table-action-button">
                             <template slot-scope="scope">
@@ -207,6 +212,17 @@
                     </el-date-picker>
                 </el-form-item>
 
+                <el-form-item
+                    label="Total Boxes"
+                    prop="total_boxes"
+                    :error="hasError('total_boxes')">
+                    <el-input
+                        v-model="form.total_boxes"
+                        placeholder="Total Boxes"
+                        clearable>
+                    </el-input>
+                </el-form-item>
+
             </el-form>
             <span
                 slot="footer"
@@ -248,7 +264,8 @@
                     start_counter: '',
                     stop_counter: '',
                     start_counter_time: '',
-                    stop_counter_time: ''
+                    stop_counter_time: '',
+                    total_boxes: ''
                 },
                 rules: {
                     machine_id: {required: true, message: 'Machine is required', trigger: 'change'},
@@ -411,6 +428,7 @@
                 this.form.start_counter_time = item.start_counter_time
                 this.form.stop_counter = item.stop_counter
                 this.form.stop_counter_time = item.stop_counter_time
+                this.form.total_boxes = item.total_boxes
             },
 
             deleteMachineCounter(id) {
@@ -461,7 +479,8 @@
                     start_counter: '',
                     stop_counter: '',
                     start_counter_time: '',
-                    stop_counter_time: ''
+                    stop_counter_time: '',
+                    total_boxes: ''
                 }
             }
         },
