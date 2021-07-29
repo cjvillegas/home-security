@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\InHouse;
 
 use App\Http\Controllers\Controller;
+use App\Models\InHouse\StockItems;
 use Illuminate\Http\Request;
 
 class StockItemController extends Controller
@@ -15,18 +16,20 @@ class StockItemController extends Controller
     public function index()
     {
         $user = auth()->user();
+
         $user->permissions = $user->getPermissionNameByModule('process_categories');
         return view('admin.inhouse.stocks-item', compact('user'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Fetching Stocks
      *
-     * @return \Illuminate\Http\Response
+     * @return response
      */
-    public function create()
+    public function fetchStocks(Request $request)
     {
-        //
+        $stockItems = StockItems::paginate($request->size);
+        return response()->json(['stockItems' => $stockItems]);
     }
 
     /**
