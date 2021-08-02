@@ -109,10 +109,6 @@ class WorkAnalyticsReportController extends Controller
         $yesterday = now()->subDay()->format('Y-m-d');
         $todayAddOne = now()->addDay()->format('Y-m-d');
 
-        $today = \Carbon\Carbon::parse('2021-07-15')->format('Y-m-d');
-        $yesterday = \Carbon\Carbon::parse('2021-07-14')->subDay()->format('Y-m-d');
-        $todayAddOne = \Carbon\Carbon::parse('2021-07-16')->addDay()->format('Y-m-d');
-
         // create the query
         $counter = Scanner::select(
             DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$yesterday} 06:00:00' AND '{$yesterday} 13:59:59' AND processid = 'P1012' THEN 1 ELSE 0 END) AS SIGNED) AS shift_1_P1012_yesterday"),
