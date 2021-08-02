@@ -8,6 +8,7 @@ use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use App\Models\Process;
 use App\Repositories\Orders\OrderRepository;
 use Gate;
 use Illuminate\Http\JsonResponse;
@@ -31,7 +32,9 @@ class OrdersController extends Controller
     {
         abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.orders.index', ['type' => request()->get('type')]);
+        return view('admin.orders.index', [
+            'type' => request()->get('type')
+        ]);
     }
 
     public function vieworderno($order_no)
@@ -159,12 +162,12 @@ class OrdersController extends Controller
      */
     public function showOrderList(Request $request, $to_search): JsonResponse
     {
-//        dd($request->get('field'), $to_search);
         $orders= Order::where($request->get('field'), $to_search)
             ->with(['scanners' => function ($query) {
                 $query->with(['employee' => function ($query) {
                     $query->with(['shift', 'team']);
-                }, 'process']);
+                }, 'process'])
+                ->orderBy('scannedtime', 'asc');
             }])
             ->get();
 

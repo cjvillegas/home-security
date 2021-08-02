@@ -55,6 +55,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('processes/destroy', 'ProcessesController@massDestroy')->name('processes.massDestroy');
     Route::post('processes/parse-csv-import', 'ProcessesController@parseCsvImport')->name('processes.parseCsvImport');
     Route::post('processes/process-csv-import', 'ProcessesController@processCsvImport')->name('processes.processCsvImport');
+    Route::post('processes/get-all', 'ProcessesController@getAllProcesses')->name('processes.get-all');
     Route::resource('processes', 'ProcessesController');
 
     // Orders
