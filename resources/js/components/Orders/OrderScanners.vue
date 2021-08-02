@@ -61,6 +61,7 @@
         },
         data() {
             let columns = [
+                {label: 'ID', key: 'id', show_overflow_tooltip: true},
                 {label: 'Employee', key: 'employee_name', show_overflow_tooltip: true},
                 {label: 'Operation', key: 'operation', show_overflow_tooltip: true},
                 {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
@@ -120,7 +121,7 @@
                             || blindStatus.indexOf(query) > -1 || serialId.indexOf(query) > -1
                     })
                 }
-
+                this.filters.total = scanners.length
                 // do local pagination
                 // this retrieve scanners in between the current offset and the limit
                 scanners = scanners.filter((item, index) => (index + 1) > offset && (index + 1) <= size)
