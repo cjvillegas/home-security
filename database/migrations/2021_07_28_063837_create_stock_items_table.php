@@ -16,7 +16,7 @@ class CreateStockItemsTable extends Migration
         Schema::create('stock_items', function (Blueprint $table) {
             $table->id();
             $table->string('stock_code');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('range')->nullable();
             $table->string('colour')->nullable();
             $table->string('size')->nullable();
@@ -34,7 +34,7 @@ class CreateStockItemsTable extends Migration
             $table->string('parameter3')->nullable();
             $table->string('parameter4')->nullable();
             $table->string('parameter5')->nullable();
-            $table->tinyInteger('status');
+            $table->tinyInteger('status')->default(false);
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
