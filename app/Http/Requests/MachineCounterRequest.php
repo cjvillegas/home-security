@@ -35,7 +35,6 @@ class MachineCounterRequest extends FormRequest
             'start_counter_time' => 'required',
             'stop_counter' => 'numeric|nullable',
             'stop_counter_time' => 'required',
-            'total_boxes' => 'numeric|nullable',
         ];
     }
 }
