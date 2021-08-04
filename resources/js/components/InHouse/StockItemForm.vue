@@ -517,32 +517,6 @@ export default {
             this.loading = false
         },
 
-        uploadProductPicture(value) {
-            let form = new FormData()
-            let productFile = document.getElementsByName("product")
-            let productImg = productFile[0].files[0]
-            form.append('product_picture', (productImg ? productImg : ''))
-            console.log(this.model)
-            let apiUrl = `/admin/in-house/stocks/${this.model.id}/changePicture`
-            this.loading = true
-            axios.post(apiUrl, form)
-            .then( (response) => {
-                 this.$notify({
-                    title: 'Success!',
-                    message: response.data.message,
-                    type: 'success'
-                });
-                this.form.product_picture = response.data.product_picture
-                this.productImageUrl = response.data.product_picture
-            })
-            .catch( (err) => {
-                console.log(err)
-            })
-            .finally( () => {
-                this.loading = false
-            })
-        },
-
         uploadMainLocationPicture(value) {
             let form = new FormData()
             let mainFile = document.getElementsByName("main")
