@@ -65,7 +65,9 @@ class MachineCounterController extends Controller
     {
         DB::beginTransaction();
         try {
-            MachineCounter::create($request->all());
+            $machineCounter = MachineCounter::create($request->all());
+            $machineCounter->total_boxes = ($machineCounter->stop_counter - $machineCounter->start_counter);
+            $machineCounter->save();
             DB::commit();
 
             return response()->json(['message' => 'Successfully Saved!']);
@@ -93,6 +95,8 @@ class MachineCounterController extends Controller
         DB::beginTransaction();
         try {
             $machineCounter->update($request->all());
+            $machineCounter->total_boxes = ($machineCounter->stop_counter - $machineCounter->start_counter);
+            $machineCounter->save();
             DB::commit();
 
             return response()->json(['message' => 'Successfully Updated']);
