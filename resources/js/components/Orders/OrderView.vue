@@ -5,17 +5,15 @@
             <i class="fas fa-arrow-circle-left"></i> Back
         </el-button>
 
+        <order-progress
+            :orders="orders"
+            :processes="processes">
+        </order-progress>
+
         <el-card
             class="box-card mt-3"
             v-loading="loading">
             <h4>Orders</h4>
-            <el-input
-                placeholder="Press enter to search order details..."
-                clearable
-                style="width: 250px"
-                v-model="search"
-                @keyup.enter.native="applySearch">
-            </el-input>
 
             <el-table
                 fit
@@ -51,11 +49,6 @@
         <order-scanners
             :scanners-list="scanners">
         </order-scanners>
-
-        <order-progress
-            :orders="orders"
-            :processes="processes">
-        </order-progress>
     </div>
 </template>
 
@@ -97,7 +90,6 @@
                 filters: {
                     searchString: null
                 },
-                search: null,
                 processes: []
             }
         },
@@ -106,10 +98,6 @@
             this.loadData()
         },
         methods: {
-            applySearch() {
-                this.filters.page = 1
-                this.filters.searchString = cloneDeep(this.search)
-            },
             loadData() {
                 if (this.field === 'order_no') {
                     this.getOrderDetails()
@@ -175,24 +163,6 @@
                 let offset = (page - 1) * this.filters.size
                 let size = this.filters.size * page
 
-                // checks if the search query is present
-                if (this.search) {
-                    let query = this.search.toLowerCase()
-
-                    // do the local searching
-                    orders = orders.filter(order => {
-                        let blindId = order.blind_id ? order.blind_id.toString().toLowerCase() : ''
-                        let customer = order.customer ? order.customer.toString().toLowerCase() : ''
-                        let quantity = order.quantity ? order.quantity.toString().toLowerCase() : ''
-                        let blindType = order.blind_type ? order.blind_type.toString().toLowerCase() : ''
-                        let blindStatus = order.blind_status ? order.blind_status.toString().toLowerCase() : ''
-                        let serialId = order.serial_id ? order.serial_id.toString().toLowerCase() : ''
-
-                        return blindId.indexOf(query) > -1 || customer.indexOf(query) > -1 || quantity.indexOf(query) > -1 || blindType.indexOf(query) > -1
-                            || blindStatus.indexOf(query) > -1 || serialId.indexOf(query) > -1
-                    })
-                }
-
                 this.filters.total = orders.length
 
                 // do local pagination
@@ -206,7 +176,7 @@
             // if the route is loaded from the URL section and not from the
             // search page, redirect it directly to the search page
             if (to.params && !to.params.field) {
-                // next({replace: true, name: "Order List"})
+                next({replace: true, name: "Order List"})
             }
 
             // proceed if else

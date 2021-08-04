@@ -1,23 +1,22 @@
 <template>
     <el-card class="box-card mt-3">
-        <h4>{{ getProductName }} Order Progress Status</h4>
+        <div
+            v-for="product in getProcessListWithCount"
+            :key="product.product">
+            <el-divider>{{ product.name }}</el-divider>
 
-        <el-timeline class="mt-4">
-            <el-timeline-item
-                v-for="process in getProcessListWithCount"
-                :key="process.id"
-                :timestamp="process.label"
-                placement="top"
-                size="large"
-                :icon="getStepIcon(process.count)"
-                :type="getStepType(process.count)">
-                <el-card>
-                    <p v-if="process.count === totalOrderCount">All {{ process.count }} item/s are done with this step.</p>
-                    <p v-else>There are {{ process.count }} item/s in this process.</p>
-                </el-card>
-            </el-timeline-item>
-        </el-timeline>
-
+            <div class="d-flex">
+                <el-tag
+                    v-for="process in product.processes"
+                    :key="process.id"
+                    :type="process.type"
+                    effect="dark"
+                    size="medium"
+                    class="mr-2">
+                    <b>{{ process.label }}: {{ process.count }}</b>
+                </el-tag>
+            </div>
+        </div>
     </el-card>
 </template>
 
@@ -41,7 +40,6 @@
                 ProductBlindTypes,
                 timelineProcesses: [],
                 isTimelineEvaluated: false,
-                activeProduct: null
             }
         },
         created() {
@@ -60,10 +58,11 @@
                         let codes = this.ProductBlindTypes[x]
                         let fromBlindType = codes.find(code => this.orders.some(or => or.blind_type === code))
                         if (fromBlindType) {
-                            this.activeProduct = x
-                            this.timelineProcesses = this.findAndSort(x)
-
-                            return
+                            this.timelineProcesses.push({
+                                productName: x,
+                                processes: this.findAndSort(x),
+                                blindTypes: codes
+                            })
                         }
                     }
                 }
@@ -81,48 +80,43 @@
                 }
 
                 return processes
-            },
-            getStepType(stepCount) {
-                if (stepCount === 0) {
-                    return ''
-                }
-                else if (stepCount < this.totalOrderCount) {
-                    return 'primary'
-                }
-                else if (stepCount === this.totalOrderCount) {
-                    return 'success'
-                }
-
-                return ''
-            },
-            getStepIcon(stepCount) {
-                if (stepCount === 0) {
-                    return 'fas fa-angle-double-right'
-                }
-                else if (stepCount < this.totalOrderCount) {
-                    return 'fas fa-cogs'
-                }
-                else if (stepCount === this.totalOrderCount) {
-                    return 'fas fa-check-double'
-                }
-
-                return 'fas fa-angle-double-right'
             }
         },
         computed: {
             getProcessListWithCount() {
                 let processes = []
 
-                if (this.timelineProcesses && this.timelineProcesses.length) {
+                if (this.timelineProcesses && this.timelineProcesses) {
                     let ordersInProcess = this.orders.filter(or => or.scanners.length)
-                    for (let x of this.timelineProcesses) {
+                    for (let [index, x] of this.timelineProcesses.entries()) {
                         processes.push({
-                            label: x.name,
-                            key: x.id,
-                            count: ordersInProcess.filter(or => {
-                                return or.scanners.some(sc => sc.processid === x.barcode)
-                            }).length
+                            product: x.productName,
+                            name: this.$StringService.ucwords(x.productName.replace(/_/g, ' ')),
+                            totalCount: this.orders.filter(or => x.blindTypes.some(bt => bt === or.blind_type)).length,
+                            processes: []
                         })
+                        for (let y of x.processes) {
+                            let count = ordersInProcess.filter(or => {
+                                return or.scanners.some(sc => sc.processid === y.barcode)
+                            }).length
+
+                            let type = 'danger'
+                            if (count > 1 && count < processes[index].totalCount) {
+                                type = 'warning'
+                            }
+
+                            if (count === processes[index].totalCount) {
+                                type = 'success'
+                            }
+
+                            processes[index].processes.push({
+                                label: this.$StringService.ucwords(y.name),
+                                key: y.id,
+                                count,
+                                type
+                            })
+                        }
+
                     }
                 }
 
@@ -134,13 +128,6 @@
                 }
 
                 return 0
-            },
-            getProductName() {
-                if (this.activeProduct) {
-                    return this.$StringService.ucwords(this.activeProduct.replace(/_/g, ' '))
-                }
-
-                return ''
             }
         },
         watch: {
