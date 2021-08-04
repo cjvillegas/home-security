@@ -55,6 +55,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('processes/destroy', 'ProcessesController@massDestroy')->name('processes.massDestroy');
     Route::post('processes/parse-csv-import', 'ProcessesController@parseCsvImport')->name('processes.parseCsvImport');
     Route::post('processes/process-csv-import', 'ProcessesController@processCsvImport')->name('processes.processCsvImport');
+    Route::post('processes/get-all', 'ProcessesController@getAllProcesses')->name('processes.get-all');
     Route::resource('processes', 'ProcessesController');
 
     // Orders
@@ -105,7 +106,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     //Machine
     Route::prefix('machines')->as('machines')->group(function () {
         Route::get('/', 'MachineController@index');
-        Route::get('machines-list', 'MachineController@fetchMachines');
+        Route::post('machines-list', 'MachineController@fetchMachines');
 
         Route::post('store', 'MachineController@store')->name('machine.store');
         Route::patch('{machine}/update', 'MachineController@update')->name('machine.update');
@@ -117,7 +118,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('/', 'MachineCounterController@index')->name('machine-counters.index');
 
         //api
-        Route::get('/list', 'MachineCounterController@fetchMachineCounters');
+        Route::post('/list', 'MachineCounterController@fetchMachineCounters');
         Route::post('store', 'MachineCounterController@store');
         Route::patch('{machineCounter}/update', 'MachineCounterController@update');
         Route::delete('{machineCounter}/destroy', 'MachineCounterController@destroy');

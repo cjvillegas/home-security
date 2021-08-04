@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkAnalyticsReportController extends Controller
@@ -62,7 +63,7 @@ class WorkAnalyticsReportController extends Controller
 
             return response()->json($scanners);
         } catch (\Exception $e) {
-            \Log::error('Get Work Analytics Error', [
+            Log::error('Get Work Analytics Error', [
                 'error ' . $e
             ]);
         }
@@ -107,10 +108,6 @@ class WorkAnalyticsReportController extends Controller
         $today = now()->format('Y-m-d');
         $yesterday = now()->subDay()->format('Y-m-d');
         $todayAddOne = now()->addDay()->format('Y-m-d');
-
-        $today = \Carbon\Carbon::parse('2021-07-15')->format('Y-m-d');
-        $yesterday = \Carbon\Carbon::parse('2021-07-14')->subDay()->format('Y-m-d');
-        $todayAddOne = \Carbon\Carbon::parse('2021-07-16')->addDay()->format('Y-m-d');
 
         // create the query
         $counter = Scanner::select(

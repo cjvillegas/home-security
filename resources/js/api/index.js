@@ -2,6 +2,7 @@ import Orders from './Orders'
 import Reports from './Reports'
 import Exports from './Exports'
 import Scanners from './Scanners'
+import Processes from './Processes'
 import ProcessCategory from './ProcessCategory'
 import Machine from './Machine'
 
@@ -13,6 +14,7 @@ export default {
     Orders,
     Reports,
     Exports,
+    Processes,
     ProcessCategory,
     Machine,
     Scanners,

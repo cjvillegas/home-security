@@ -11,6 +11,7 @@ use App\Models\CategoryProcess;
 use App\Models\Process;
 use App\Models\ProcessCategory;
 use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -127,5 +128,15 @@ class ProcessesController extends Controller
         Process::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Return all not deleted processes
+     *
+     * @return JsonResponse
+     */
+    public function getAllProcesses()
+    {
+        return response()->json(Process::get());
     }
 }

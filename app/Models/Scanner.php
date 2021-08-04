@@ -34,6 +34,15 @@ class Scanner extends Model
     ];
 
     /**
+     * Casts a DB column data type to a specified datatype in PHP
+     *
+     * @var array
+     */
+    protected $casts = [
+        'blindid' => 'integer'
+    ];
+
+    /**
      * Custom properties that will appended to all instances
      * and data collection of this scanners
      *
