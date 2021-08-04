@@ -13,7 +13,7 @@
                     effect="dark"
                     size="medium"
                     class="mr-2">
-                    <b>{{ process.label }}: {{ process.count }}</b>
+                    <b>{{ process.label }}: {{ process.count }} / {{ totalOrderCount }}</b>
                 </el-tag>
             </div>
         </div>
@@ -123,8 +123,8 @@
                 return processes
             },
             totalOrderCount() {
-                if (this.orders && this.orders.length) {
-                    return this.orders.length
+                if (this.getProcessListWithCount && this.getProcessListWithCount.length) {
+                    return this.getProcessListWithCount.reduce((acc, cur) => acc += cur.totalCount , 0)
                 }
 
                 return 0
