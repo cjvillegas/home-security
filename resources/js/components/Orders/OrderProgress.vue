@@ -89,6 +89,7 @@
                 if (this.timelineProcesses && this.timelineProcesses) {
                     let ordersInProcess = this.orders.filter(or => or.scanners.length)
                     for (let [index, x] of this.timelineProcesses.entries()) {
+                        let ordersInBlindType = ordersInProcess.filter(or => x.blindTypes.includes(or.blind_type))
                         processes.push({
                             product: x.productName,
                             name: this.$StringService.ucwords(x.productName.replace(/_/g, ' ')),
@@ -96,7 +97,7 @@
                             processes: []
                         })
                         for (let y of x.processes) {
-                            let count = ordersInProcess.filter(or => {
+                            let count = ordersInBlindType.filter(or => {
                                 return or.scanners.some(sc => sc.processid === y.barcode)
                             }).length
 
