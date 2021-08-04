@@ -437,6 +437,7 @@ export default {
             let secondaryImg = ''
             let otherImg = ''
 
+            //this is to check if <el-upload> has File in it.
             if(this.$refs.product.uploadFiles.length > 0) {
                 productImg = this.$refs.product.uploadFiles[0].raw
             }else {
