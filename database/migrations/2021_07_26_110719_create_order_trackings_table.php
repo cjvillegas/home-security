@@ -17,7 +17,7 @@ class CreateOrderTrackingsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('order_no')->nullable();
             $table->string('cust_ref')->nullable();
-            $table->unsignedBigInteger('tracking_no')->nullable();
+            $table->string('tracking_no')->nullable();
             $table->string('courier')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
