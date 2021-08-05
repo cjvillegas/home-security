@@ -410,11 +410,14 @@ export default {
                         this.populateForm()
                     })
                     .catch((err) => {
-                        console.log(err)
+                        if (err.response.status === 422) {
+                            this.setErrors(err.response.data.errors)
+                        }
                     })
                     .finally( () => {
                         this.loading = false
                     })
+
                 }
             })
         },

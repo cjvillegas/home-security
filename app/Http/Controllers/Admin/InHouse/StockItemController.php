@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Admin\InHouse;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StockItemImageRequest;
 use App\Http\Requests\StockItemRequest;
 use App\Models\InHouse\StockItems;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,40 +59,47 @@ class StockItemController extends Controller
      */
     public function store(StockItemRequest $request)
     {
-        $stockItem = StockItems::create($request->all());
-        $folder = "/uploads/images/stocks";
+        DB::beginTransaction();
+        try {
+            $stockItem = StockItems::create($request->all());
+            $folder = "/uploads/images/stocks";
 
-        if($request->hasFile('product_picture')) {
-            $productLink = $request->file('product_picture')
-                ->store($folder, 'public');
-            Storage::disk('public_uploads')->delete($stockItem->product_picture);
-            $stockItem->product_picture = '/storage/' . $productLink;
-            $stockItem->save();
+            if($request->hasFile('product_picture')) {
+                $productLink = $request->file('product_picture')
+                    ->store($folder, 'public');
+                Storage::disk('public_uploads')->delete($stockItem->product_picture);
+                $stockItem->product_picture = '/storage/' . $productLink;
+                $stockItem->save();
+            }
+            if($request->hasFile('main_location_picture')) {
+                $mainLink = $request->file('main_location_picture')
+                    ->store($folder, 'public');
+                Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
+                $stockItem->main_location_picture = '/storage/' . $mainLink;
+                $stockItem->save();
+            }
+            if($request->hasFile('secondary_location_picture')) {
+                $secondaryLink = $request->file('secondary_location_picture')
+                    ->store($folder, 'public');
+                Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
+                $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
+                $stockItem->save();
+            }
+            if($request->hasFile('other_location_picture')) {
+                $otherLink = $request->file('other_location_picture')
+                    ->store($folder, 'public');
+                Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
+                $stockItem->other_location_picture = '/storage/' . $otherLink;
+                $stockItem->save();
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Stock Item successfully saved!']);
         }
-        if($request->hasFile('main_location_picture')) {
-            $mainLink = $request->file('main_location_picture')
-                ->store($folder, 'public');
-            Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-            $stockItem->main_location_picture = '/storage/' . $mainLink;
-            $stockItem->save();
-        }
-        if($request->hasFile('secondary_location_picture')) {
-            $secondaryLink = $request->file('secondary_location_picture')
-                ->store($folder, 'public');
-            Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-            $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
-            $stockItem->save();
-        }
-        if($request->hasFile('other_location_picture')) {
-            $otherLink = $request->file('other_location_picture')
-                ->store($folder, 'public');
-            Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
-            $stockItem->other_location_picture = '/storage/' . $otherLink;
-            $stockItem->save();
+        catch ( Exception $e ) {
+            DB::rollBack();
         }
 
-
-        return response()->json(['message' => 'Stock Item successfully saved!']);
     }
 
     /**
@@ -114,13 +121,18 @@ class StockItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StockItemRequest $request, StockItems $stockItem)
+    public function update(Request $request, StockItems $stockItem)
     {
+        $validated = $request->validate(
+            [
+                'stock_code' => ['required', Rule::unique('stock_items')->ignore($stockItem->id)]
+            ]
+        );
         DB::beginTransaction();
         $folder = "/uploads/images/stocks";
         try {
             $stockItem->update($request->except(['product_picture', 'main_location_picture', 'secondary_location_picture', 'other_location_picture']));
-            Log::info($request->hasFile('product_picture'));
+
             if($request->hasFile('product_picture')) {
                 $productLink = $request->file('product_picture')
                     ->store($folder, 'public');
@@ -188,7 +200,7 @@ class StockItemController extends Controller
         catch (Exception $e)
         {
             DB::rollBack();
-            Log::info($e);
+            return response()->json(['errors' => $e]);
         }
 
     }

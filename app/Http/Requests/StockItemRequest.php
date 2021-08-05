@@ -4,7 +4,6 @@ namespace App\Http\Requests;
 
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class StockItemRequest extends FormRequest
@@ -27,7 +26,7 @@ class StockItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'stock_code' => ['required'],
+            'stock_code' => ['required', Rule::unique('stock_items')->ignore($this->id)],
         ];
     }
 }
