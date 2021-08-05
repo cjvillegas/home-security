@@ -23,7 +23,7 @@ class PopulateOrdersFromSage extends Command
      *
      * @var string
      */
-    protected $description = 'This will populate the data of the orders table from SAGE. Note* This method will clear the orders table first then re-populate it with the fetched data from SAGE';
+    protected $description = 'This will populate the data of the orders table from SAGE. Note* This method will clear the orders table first if load-all flag is true then re-populate it with the fetched data from SAGE';
 
     /**
      * Create a new command instance.

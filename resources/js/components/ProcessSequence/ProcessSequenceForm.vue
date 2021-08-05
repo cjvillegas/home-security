@@ -3,36 +3,30 @@
         :visible.sync="showDialog"
         :title="dialogTitle"
         @close="closeForm"
-        width="40%">
+        width="30%">
         <el-form
-            :model="processCategoryForm"
+            :model="processSequenceForm"
             :rules="rules"
-            ref="processCategoryForm">
-            <el-form-item
-                label="Code"
-                prop="code"
-                :error="hasError('code')">
-                <el-input
-                    v-model="processCategoryForm.code"
-                    :disabled="this.mode === 'view'"
-                    clearable
-                    placeholder="CODE-1997"
-                    class="w-100">
-                </el-input>
-            </el-form-item>
-
+            v-loading="loading"
+            ref="processSequenceForm">
             <el-form-item
                 label="Name"
                 prop="name"
                 :error="hasError('name')">
                 <el-input
-                    v-model="processCategoryForm.name"
+                    @keyup.enter.prevent.native="validate"
+                    v-model="processSequenceForm.name"
                     :disabled="this.mode === 'view'"
                     clearable
-                    placeholder="Roller"
+                    placeholder="Roller Sequence"
                     class="w-100">
                 </el-input>
             </el-form-item>
+
+            <el-input
+                hidden
+                class="w-100">
+            </el-input>
         </el-form>
 
         <span
@@ -50,17 +44,16 @@
 		    	Save
 		    </el-button>
 		</span>
-
     </el-dialog>
 </template>
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import { dialog } from '../../mixins/dialog'
-    import { formHelper } from '../../mixins/formHelper'
+    import {dialog} from "../../mixins/dialog";
+    import {formHelper} from "../../mixins/formHelper";
 
     export default {
-        name: "SettingsProcessCategoriesForm",
+        name: "ProcessSequenceForm",
         mixins: [dialog, formHelper],
         props: {
             model: {},
@@ -71,42 +64,40 @@
         },
         data() {
             return {
-                processCategoryForm: {
+                processSequenceForm: {
                     id: null,
-                    code: null,
                     name: null
                 },
                 rules: {
-                    code: {required: true, message: 'Code is required', trigger: 'blur'},
-                    name: {required: true, message: 'Name is required', trigger: 'blur'},
+                    name: {required: true, message: 'Name is required', trigger: 'blur'}
                 },
                 loading: false
             }
         },
         methods: {
             validate() {
-                this.$refs.processCategoryForm.validate(valid => {
+                this.$refs.processSequenceForm.validate(valid => {
                     if (valid) {
                         this.resetErrors()
-                        
+
                         if (this.hasModel) {
-                            this.updateProcessCategory()
+                            this.updateProcessSequence()
 
                             return
                         }
 
-                        this.createNewProcessCategory()
+                        this.createNewProcessSequence()
                     }
                 })
             },
-            createNewProcessCategory() {
+            createNewProcessSequence() {
                 this.loading = true
 
-                let postData = cloneDeep(this.processCategoryForm)
+                let postData = cloneDeep(this.processSequenceForm)
 
-                this.$API.ProcessCategory.store(postData)
+                this.$API.ProcessSequence.store(postData)
                     .then(res => {
-                        this.$EventBus.fire('SETTINGS_PROCESS_CATEGORIES_CREATE')
+                        this.$EventBus.fire('SETTINGS_PROCESS_SEQUENCES_CREATE')
                         setTimeout(_ => {
                             this.closeForm()
                         }, 300)
@@ -120,14 +111,14 @@
                         this.loading = false
                     })
             },
-            updateProcessCategory() {
+            updateProcessSequence() {
                 this.loading = true
 
-                let postData = cloneDeep(this.processCategoryForm)
+                let postData = cloneDeep(this.processSequenceForm)
 
-                this.$API.ProcessCategory.update(postData, postData.id)
+                this.$API.ProcessSequence.update(postData, postData.id)
                     .then(res => {
-                        this.$EventBus.fire('SETTINGS_PROCESS_CATEGORIES_UPDATE')
+                        this.$EventBus.fire('SETTINGS_PROCESS_SEQUENCES_UPDATE')
 
                         setTimeout(_ => {
                             this.closeForm()
@@ -148,16 +139,14 @@
                 this.closeModal()
             },
             resetForm() {
-                this.processCategoryForm = {
+                this.processSequenceForm = {
                     id: null,
-                    code: null,
                     name: null
                 }
             },
             populateForm() {
-                this.processCategoryForm = {
+                this.processSequenceForm = {
                     id: this.model.id,
-                    code: this.model.code,
                     name: this.model.name,
                 }
             }
@@ -167,7 +156,7 @@
                 return this.model && this.model.id
             },
             dialogTitle() {
-                return this.model && this.model.id ? 'Update Process Category' : 'Create New Process Category'
+                return this.model && this.model.id ? 'Update Process Sequence' : 'Create New Process Sequence'
             }
         },
         watch: {
@@ -179,11 +168,12 @@
                 },
                 deep: true,
                 immediate: true
+            },
+            visible() {
+                if (this.$refs.processSequenceForm) {
+                    this.$refs.processSequenceForm.clearValidate()
+                }
             }
         }
     }
 </script>
-
-<style scoped>
-
-</style>
