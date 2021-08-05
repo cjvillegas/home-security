@@ -92,6 +92,7 @@
                             label="Product Picture">
                             <div v-loading="loading">
                                 <el-upload
+                                    :disabled="this.type === 'view'"
                                     ref="product"
                                     class="avatar-uploader avatar-round"
                                     name="product"
@@ -142,6 +143,7 @@
                             <el-form-item
                                 label="Main Location Picture">
                                 <el-upload
+                                    :disabled="this.type === 'view'"
                                     ref="main"
                                     class="upload-demo"
                                     name="main"
@@ -186,6 +188,7 @@
                             <el-form-item
                                 label="Secondary Location Picture">
                                 <el-upload
+                                    :disabled="this.type === 'view'"
                                     ref="secondary"
                                     class="upload-demo"
                                     name="secondary"
@@ -230,6 +233,7 @@
                             <el-form-item
                                 label="Other Location Picture">
                                 <el-upload
+                                    :disabled="this.type === 'view'"
                                     ref="other"
                                     class="upload-demo"
                                     name="other"
@@ -617,41 +621,6 @@ export default {
                 this.form.other_location_picture = null
                 this.otherLocationImageUrl = null
             }
-            // if(this.type == 'edit') {
-            //     let apiUrl = `/admin/in-house/stocks/${this.model.id}/removePhoto`
-            //     this.loading = true
-            //     axios.post(apiUrl, {field: value})
-            //     .then( (response) => {
-            //         if(value == 'product') {
-            //             this.form.product_picture = null
-            //             this.productImageUrl = null
-            //         }
-            //         else if(value == 'main') {
-            //             this.form.main_location_picture = null
-            //             this.mainLocationImageUrl = null
-            //         }
-            //         else if(value == 'secondary') {
-            //             this.form.secondary_location_picture = null
-            //             this.secondaryLocationImageUrl = null
-            //         }
-            //         else if(value == 'other') {
-            //             this.form.other_location_picture = null
-            //             this.otherLocationImageUrl = null
-            //         }
-            //         this.$notify({
-            //             title: 'Success!',
-            //             message: response.data.message,
-            //             type: 'success'
-            //         });
-
-            //     }).catch( () => {
-
-            //     }).finally( () => {
-            //         this.loading = false
-            //     })
-            // }else {
-
-            // }
         },
 
         populateForm() {
@@ -667,6 +636,10 @@ export default {
 
                 this.loading = false
             })
+        },
+
+        cancelForm() {
+            this.$emit('toggle', 'back')
         },
 
         clearForm() {

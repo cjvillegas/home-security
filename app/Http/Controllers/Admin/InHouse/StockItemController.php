@@ -37,7 +37,17 @@ class StockItemController extends Controller
      */
     public function fetchStocks(Request $request)
     {
-        $stockItems = StockItems::orderBy('id', 'DESC')->paginate($request->size);
+        $searchString = $request->searchString;
+        $stockItems = StockItems::orderBy('id', 'DESC')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('stock_code', 'like', "%{$searchString}%")
+                    ->orWhere('range', 'like', "%{$searchString}%")
+                    ->orWhere('size', 'like', "%{$searchString}%")
+                    ->orWhere('colour', 'like', "%{$searchString}%")
+                    ->orWhere('length', 'like', "%{$searchString}%")
+                    ->orWhere('status', 'like', "%{$searchString}%");
+            });
+        $stockItems = $stockItems->paginate($request->size);
         return response()->json(['stockItems' => $stockItems]);
     }
 
@@ -54,30 +64,30 @@ class StockItemController extends Controller
 
         if($request->hasFile('product_picture')) {
             $productLink = $request->file('product_picture')
-                ->store($folder, 'public_uploads');
-            Storage::disk('public')->delete($stockItem->product_picture);
-            $stockItem->product_picture = '/' . $productLink;
+                ->store($folder, 'public');
+            Storage::disk('public_uploads')->delete($stockItem->product_picture);
+            $stockItem->product_picture = '/storage/' . $productLink;
             $stockItem->save();
         }
         if($request->hasFile('main_location_picture')) {
             $mainLink = $request->file('main_location_picture')
-                ->store($folder, 'public_uploads');
-            Storage::disk('public')->delete($stockItem->main_location_picture);
-            $stockItem->main_location_picture = '/' . $mainLink;
+                ->store($folder, 'public');
+            Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
+            $stockItem->main_location_picture = '/storage/' . $mainLink;
             $stockItem->save();
         }
         if($request->hasFile('secondary_location_picture')) {
             $secondaryLink = $request->file('secondary_location_picture')
-                ->store($folder, 'public_uploads');
-            Storage::disk('public')->delete($stockItem->secondary_location_picture);
-            $stockItem->secondary_location_picture = '/' . $secondaryLink;
+                ->store($folder, 'public');
+            Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
+            $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
             $stockItem->save();
         }
         if($request->hasFile('other_location_picture')) {
             $otherLink = $request->file('other_location_picture')
-                ->store($folder, 'public_uploads');
-            Storage::disk('public')->delete($stockItem->other_location_picture);
-            $stockItem->other_location_picture = '/' . $otherLink;
+                ->store($folder, 'public');
+            Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
+            $stockItem->other_location_picture = '/storage/' . $otherLink;
             $stockItem->save();
         }
 
@@ -113,10 +123,10 @@ class StockItemController extends Controller
             Log::info($request->hasFile('product_picture'));
             if($request->hasFile('product_picture')) {
                 $productLink = $request->file('product_picture')
-                    ->store($folder, 'public_uploads');
+                    ->store($folder, 'public');
 
-                \Storage::disk('public_uploads')->delete( $stockItem->product_picture);
-                $stockItem->product_picture = '/' . $productLink;
+                \Storage::disk('public_uploads')->delete($stockItem->product_picture);
+                $stockItem->product_picture = '/storage/' . $productLink;
                 $stockItem->save();
             }else{
                 //Check if value has changed -> delete file
@@ -129,10 +139,10 @@ class StockItemController extends Controller
 
             if($request->hasFile('main_location_picture')) {
                 $mainLink = $request->file('main_location_picture')
-                    ->store($folder, 'public_uploads');
+                    ->store($folder, 'public');
 
                 \Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-                $stockItem->main_location_picture = '/' . $mainLink;
+                $stockItem->main_location_picture = '/storage/' . $mainLink;
                 $stockItem->save();
             }else{
                 //Check if value has changed -> delete file
@@ -145,9 +155,9 @@ class StockItemController extends Controller
 
             if($request->hasFile('secondary_location_picture')) {
                 $secondaryLink = $request->file('secondary_location_picture')
-                    ->store($folder, 'public_uploads');
+                    ->store($folder, 'public');
                 \Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-                $stockItem->secondary_location_picture = '/' . $secondaryLink;
+                $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
                 $stockItem->save();
             }else{
                 //Check if value has changed -> delete file
@@ -160,9 +170,9 @@ class StockItemController extends Controller
 
             if($request->hasFile('other_location_picture')) {
                 $otherLink = $request->file('other_location_picture')
-                    ->store($folder, 'public_uploads');
+                    ->store($folder, 'public');
                 \Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
-                $stockItem->other_location_picture = '/' . $otherLink;
+                $stockItem->other_location_picture = '/storage/' . $otherLink;
                 $stockItem->save();
             }else{
                 //Check if value has changed -> delete file

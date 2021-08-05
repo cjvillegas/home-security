@@ -9,6 +9,16 @@
         </el-card>
         <el-card class="box-card">
             <div class="d-flex">
+                <div v-show="!isForm">
+                    <el-input
+                        v-model="filters.searchString"
+                        clearable
+                        placeholder="Search Stock Item..."
+                        @keyup.enter.native.prevent="fetchStocks"
+                        style="width: 250px">
+                    </el-input>
+                </div>
+
                 <div class="ml-auto">
                     <el-button v-if="!isForm"
                         type="primary"
@@ -23,31 +33,38 @@
                     v-show="!isForm">
                     <el-table-column
                         prop="stock_code"
-                        label="Stock Code">
+                        label="Stock Code"
+                        sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="range"
-                        label="Range">
+                        label="Range"
+                        sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="colour"
-                        label="Colour">
+                        label="Colour"
+                        sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="size"
-                        label="Size">
+                        label="Size"
+                        sortable>
                     </el-table-column>
+
                     <el-table-column
                         prop="length"
-                        label="Length">
+                        label="Length"
+                        sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="status"
-                        label="Status">
+                        label="Status"
+                        sortable>
                     </el-table-column>
 
                     <el-table-column
@@ -92,13 +109,26 @@
                     </el-table-column>
                 </el-table>
             </div>
+            <el-pagination
+                v-show="!isForm"
+                class="custom-pagination-class  mt-3 float-right"
+                background
+                layout="total, sizes, prev, pager, next"
+                :total="filters.total"
+                :page-size="filters.size"
+                :page-sizes="[1, 2, 10, 25, 50, 100]"
+                :current-page="filters.page"
+                @size-change="handleSize"
+                @current-change="handlePage">
+            </el-pagination>
             <stock-item-form
                 :formTitle="formTitle"
                 :model="model"
                 :type="type"
                 v-show="isForm"
                 ref="stockItemForm"
-                @saved="saveStockItem">
+                @saved="saveStockItem"
+                @toggle="toggleForm">
             </stock-item-form>
         </el-card>
 
@@ -108,10 +138,13 @@
 </template>
 
 <script>
+import pagination from '../../mixins/pagination'
+import { formHelper } from '../../mixins/formHelper'
 import cloneDeep from 'lodash/cloneDeep'
 import StockItemForm from './StockItemForm.vue';
 export default {
-  components: { StockItemForm },
+  components: {StockItemForm },
+  mixins: [pagination, formHelper],
     props: {
         user: {
             required: true,
@@ -121,7 +154,9 @@ export default {
     data() {
         return {
             loading: false,
-            filters: {},
+            filters: {
+                searchString: ''
+            },
             form: {
             },
             model: null,
@@ -133,7 +168,8 @@ export default {
     },
 
     mounted() {
-        this.filters.size = 20
+        this.filters.size = 10
+        this.functionName = 'fetchStocks'
         this.fetchStocks();
     },
 
@@ -144,6 +180,7 @@ export default {
             axios.post(apiUrl, this.filters)
             .then((response) => {
                 this.stockItems = response.data.stockItems.data
+                this.filters.total = response.data.stockItems.total
             })
             .catch( () => {})
             .finally( () => {
