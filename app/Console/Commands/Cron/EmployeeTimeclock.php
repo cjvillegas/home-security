@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Cron;
 
 use App\Models\TimeClock;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -45,8 +44,9 @@ class EmployeeTimeclock extends Command
         // logs the execution
         $this->logExecution();
 
+        dd($this->getTimeClockTotalCount());
+
         $timeClockData = $this->getTimeclockData();
-        dd($timeClockData);
 
         $chunkCounter = 0;
 
@@ -85,12 +85,12 @@ class EmployeeTimeclock extends Command
     private function sanitize(array $timeClock)
     {
         // do a sanity check of the required data
-        if (empty($timeClock['BlindId']) || empty($timeClock['OrderNo'])) {
+        if (empty($timeClock['ClockNum']) || empty($timeClock['SwipeDateTime'])) {
             return false;
         }
 
-        $sanitizedTimeClock['clock_num'] = $timeClock['BlindId'];
-        $sanitizedTimeClock['swiped_at'] = $timeClock['BlindId'];
+        $sanitizedTimeClock['clock_num'] = $timeClock['ClockNum'];
+        $sanitizedTimeClock['swiped_at'] = $timeClock['SwipeDateTime'];
 
         return $sanitizedTimeClock;
     }
@@ -107,6 +107,29 @@ class EmployeeTimeclock extends Command
                 TOP 10
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime
+            FROM
+                dbo.ClockTransactions
+            INNER JOIN
+                dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
+        ";
+
+        // execute the query
+        $timeClocks = DB::connection('time_clock_sql')->select($query);
+
+        // return data as collection
+        return collect($timeClocks);
+    }
+
+    /**
+     * Returns the total count of the queried results without restricting conditions
+     *
+     * @return int
+     */
+    private function getTimeClockTotalCount(): int
+    {
+        $query = "
+            SELECT
+                COUNT(dbo.ClockTransactions.id)
             FROM
                 dbo.ClockTransactions
             INNER JOIN
