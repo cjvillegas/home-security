@@ -153,7 +153,6 @@ class PopulateOrdersFromSage extends Command
         Order::truncate();
     }
 
-
     /**
      * Sanitize order item coming from SAGE
      * This will ensure that we will only be saving item
