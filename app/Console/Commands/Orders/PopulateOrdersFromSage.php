@@ -19,7 +19,7 @@ class PopulateOrdersFromSage extends Command
     protected $signature = 'orders:populate-orders-from-sage {--load-all}';
 
     /**
-     * The console command description. Test
+     * The console command description.
      *
      * @var string
      */
