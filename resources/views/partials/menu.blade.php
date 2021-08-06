@@ -110,7 +110,7 @@
 
 
         @can('process_access')
-            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/processes*") || request()->is("admin/settings*") ? "c-show" : "" }}">
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/processes*") || request()->is("admin/process-categories") || request()->is('admin/process-sequence') ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-people-carry c-sidebar-nav-icon"></i>
                     Process Management
@@ -133,6 +133,14 @@
                         </li>
                     </ul>
                 @endcan
+                <ul class="c-sidebar-nav-dropdown-items">
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route("admin.process-sequence.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/process-sequence") ? "c-active" : "" }}">
+                            <i class="fas fa-bezier-curve fa-fw c-sidebar-nav-icon"></i>
+                            Process Sequence
+                        </a>
+                    </li>
+                </ul>
             </li>
         @endcan
         @can('scanner_access')

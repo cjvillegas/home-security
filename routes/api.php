@@ -19,12 +19,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.', 'namespace' => 'Api\V1\Admin', '
     // Processes
     Route::apiResource('processes', 'ProcessesApiController');
 
-    //Machines
-    Route::apiResource('machines', 'MachineApiController');
-
-    //Machine Couinters
-    Route::apiResource('machine-counter', 'MachineCounterApiController');
-
     // Orders
     Route::apiResource('orders', 'OrdersApiController');
 

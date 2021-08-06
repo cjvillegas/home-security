@@ -35,3 +35,14 @@
         line-height: 15px;
     }
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.process-steps-item {
+    &:hover {
+        background: lightgray;
+        border: 1px solid;
+    }
+}

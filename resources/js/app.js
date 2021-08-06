@@ -21,6 +21,9 @@ import locale from 'element-ui/lib/locale/lang/en'
 // import router file
 import router from './router'
 
+// vue filters
+import filters from './filters'
+
 import moment from 'moment'
 
 // make element UI globally accessible

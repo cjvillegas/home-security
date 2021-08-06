@@ -6,16 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProcessCategory\StoreProcessCategory;
 use App\Http\Requests\Settings\ProcessCategory\UpdateProcessCategory;
 use App\Models\ProcessCategory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ProcessCategoryController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function index()
+    {
+        $user = auth()->user();
+        $user->permissions = $user->getPermissionNameByModule('process_categories');
+
+        return view('admin.process-category.index', compact('user'));
+    }
+
+    /**
      * Fetch list of process categories
      *
-     * @param  StoreProcessCategory  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param  Request  $request
+     *
+     * @return JsonResponse
      */
     public function getList(Request $request)
     {

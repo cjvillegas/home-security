@@ -94,13 +94,24 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // route collection for exports
     require_once base_path('routes/web/exports.php');
 
-    // settings
-    Route::get('/process-categories', 'Settings\SettingController@index')->name('process-categories.index')->middleware('can:process_categories_access');
-
+    Route::get('/process-categories', 'Settings\ProcessCategoryController@index')->name('process-categories.index')->middleware('can:process_categories_access');
     // Process Category
     Route::prefix('settings')->as('settings.')->group(function () {
         Route::post('/process-category/get-list', 'Settings\ProcessCategoryController@getList')->name('process-category.get-list');
         Route::apiResource('process-category', 'Settings\ProcessCategoryController')->only(['store', 'show', 'update', 'destroy']);
+    });
+
+    // Process Sequence
+    Route::prefix('/process-sequence')->namespace('Sequence')->as('process-sequence.')->group(function () {
+        Route::post('get-list', 'ProcessSequenceController@getList')->name('get-list');
+        Route::resource('', 'ProcessSequenceController')->parameters([
+           '' => 'process-sequence'
+        ]);
+
+        Route::post('{id}/add-new-step', 'ProcessSequenceLinkController@store')->name('process-sequence-link.store');
+        Route::put('{process_sequence}/move-step-order/{process_sequence_link}', 'ProcessSequenceLinkController@moveStepOrder')->name('process-sequence-link.move-step-order');
+        Route::get('{process_sequence}/steps', 'ProcessSequenceLinkController@index')->name('process-sequence-link.index');
+        Route::delete('{process_sequence}/delete-step/{process_sequence_link}', 'ProcessSequenceLinkController@destroy')->name('process-sequence-link.index');
     });
 
     //Machine
