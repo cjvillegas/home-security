@@ -422,10 +422,6 @@ export default {
             })
         },
 
-        uploadPicture(type) {
-
-        },
-
         setFormData(type) {
             let form = new FormData()
             form.append('stock_code', (this.form.stock_code ? this.form.stock_code : ''))
@@ -604,26 +600,33 @@ export default {
         },
 
         removePhoto(value) {
-            if(value == 'product') {
+             this.$confirm('You are about to remove this Image. Continue?', {
+                confirmButtonText: 'Yes',
+                cancelButtonText: 'Cancel',
+                type: 'info'
+            }).then( () => {
+                if(value == 'product') {
                 this.$refs.product.clearFiles()
                 this.form.product_picture = null
                 this.productImageUrl = null
-            }
-            else if(value == 'main') {
-                this.$refs.main.clearFiles()
-                this.form.main_location_picture = null
-                this.mainLocationImageUrl = null
-            }
-            else if(value == 'secondary') {
-                this.$refs.secondary.clearFiles()
-                this.form.secondary_location_picture = null
-                this.secondaryLocationImageUrl = null
-            }
-            else if(value == 'other') {
-                this.$refs.other.clearFiles()
-                this.form.other_location_picture = null
-                this.otherLocationImageUrl = null
-            }
+                }
+                else if(value == 'main') {
+                    this.$refs.main.clearFiles()
+                    this.form.main_location_picture = null
+                    this.mainLocationImageUrl = null
+                }
+                else if(value == 'secondary') {
+                    this.$refs.secondary.clearFiles()
+                    this.form.secondary_location_picture = null
+                    this.secondaryLocationImageUrl = null
+                }
+                else if(value == 'other') {
+                    this.$refs.other.clearFiles()
+                    this.form.other_location_picture = null
+                    this.otherLocationImageUrl = null
+                }
+            })
+
         },
 
         populateForm() {
@@ -632,10 +635,10 @@ export default {
             axios.get(apiUrl).then( (response) => {
                 this.form = response.data.stockItem
                 this.form.status = response.data.stockItem.status == 'Active' ? '1' : '0'
-                this.productImageUrl = this.form.product_picture
-                this.mainLocationImageUrl = this.form.main_location_picture
-                this.secondaryLocationImageUrl = this.form.secondary_location_picture
-                this.otherLocationImageUrl = this.form.other_location_picture
+                this.productImageUrl = '/storage/' + this.form.product_picture
+                this.mainLocationImageUrl = '/storage/' + this.form.main_location_picture
+                this.secondaryLocationImageUrl = '/storage/' + this.form.secondary_location_picture
+                this.otherLocationImageUrl = '/storage/' + this.form.other_location_picture
 
                 this.loading = false
             })

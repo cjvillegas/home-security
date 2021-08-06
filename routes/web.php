@@ -124,7 +124,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::delete('{machineCounter}/destroy', 'MachineCounterController@destroy');
     });
 
-    require_once base_path('routes/inhouse.php');
+    require_once base_path('routes/in-house.php');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

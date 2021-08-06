@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin\InHouse;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StockItemRequest;
-use App\Models\InHouse\StockItems;
+use App\Models\InHouse\StockItem;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -38,7 +38,7 @@ class StockItemController extends Controller
     public function fetchStocks(Request $request)
     {
         $searchString = $request->searchString;
-        $stockItems = StockItems::orderBy('id', 'DESC')
+        $StockItems = StockItem::orderBy('id', 'DESC')
             ->when($searchString, function ($query) use ($searchString) {
                 $query->where('stock_code', 'like', "%{$searchString}%")
                     ->orWhere('range', 'like', "%{$searchString}%")
@@ -47,8 +47,40 @@ class StockItemController extends Controller
                     ->orWhere('length', 'like', "%{$searchString}%")
                     ->orWhere('status', 'like', "%{$searchString}%");
             });
-        $stockItems = $stockItems->paginate($request->size);
-        return response()->json(['stockItems' => $stockItems]);
+        $StockItems = $StockItems->paginate($request->size);
+        return response()->json(['stockItems' => $StockItems]);
+    }
+
+    /**
+     * Store Image File
+     *
+     * @param  mixed $request
+     * @param  mixed $stockItem
+     * @param  mixed $type
+     * @return void
+     */
+    private function saveImage($request, $stockItem, $type) {
+
+        $folder = "/uploads/images/stocks";
+
+        $link = $request->file($type)
+            ->store($folder, 'public');
+        Storage::disk('public')->delete($stockItem->{$type});
+        $stockItem->{$type} = $link;
+        $stockItem->save();
+    }
+
+    /**
+     * Delete Image file from storage
+     *
+     * @param  mixed $stockItem
+     * @param  mixed $type
+     * @return void
+     */
+    private function deleteImage($stockItem, $type) {
+        \Storage::disk('public')->delete($stockItem->{$type});
+        $stockItem->{$type} = null;
+        $stockItem->save();
     }
 
     /**
@@ -61,36 +93,19 @@ class StockItemController extends Controller
     {
         DB::beginTransaction();
         try {
-            $stockItem = StockItems::create($request->all());
-            $folder = "/uploads/images/stocks";
+            $stockItem = StockItem::create($request->all());
 
-            if($request->hasFile('product_picture')) {
-                $productLink = $request->file('product_picture')
-                    ->store($folder, 'public');
-                Storage::disk('public_uploads')->delete($stockItem->product_picture);
-                $stockItem->product_picture = '/storage/' . $productLink;
-                $stockItem->save();
+            if ($request->hasFile('product_picture')) {
+                $this->saveImage($request, $stockItem, 'product_picture');
             }
-            if($request->hasFile('main_location_picture')) {
-                $mainLink = $request->file('main_location_picture')
-                    ->store($folder, 'public');
-                Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-                $stockItem->main_location_picture = '/storage/' . $mainLink;
-                $stockItem->save();
+            if ($request->hasFile('main_location_picture')) {
+                $this->saveImage($request, $stockItem, 'main_location_picture');
             }
-            if($request->hasFile('secondary_location_picture')) {
-                $secondaryLink = $request->file('secondary_location_picture')
-                    ->store($folder, 'public');
-                Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-                $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
-                $stockItem->save();
+            if ($request->hasFile('secondary_location_picture')) {
+                $this->saveImage($request, $stockItem, 'secondary_location_picture');
             }
-            if($request->hasFile('other_location_picture')) {
-                $otherLink = $request->file('other_location_picture')
-                    ->store($folder, 'public');
-                Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
-                $stockItem->other_location_picture = '/storage/' . $otherLink;
-                $stockItem->save();
+            if ($request->hasFile('other_location_picture')) {
+                $this->saveImage($request, $stockItem, 'other_location_picture');
             }
 
             DB::commit();
@@ -98,6 +113,7 @@ class StockItemController extends Controller
         }
         catch ( Exception $e ) {
             DB::rollBack();
+            Log::info($e);
         }
 
     }
@@ -108,20 +124,17 @@ class StockItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(StockItems $stockItem)
+    public function show(StockItem $stockItem)
     {
         return response()->json(['stockItem' => $stockItem]);
     }
-
-
     /**
      * Update the specified resource in storage.
-     *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, StockItems $stockItem)
+    public function update(Request $request, StockItem $stockItem)
     {
         $validated = $request->validate(
             [
@@ -134,64 +147,38 @@ class StockItemController extends Controller
             $stockItem->update($request->except(['product_picture', 'main_location_picture', 'secondary_location_picture', 'other_location_picture']));
 
             if($request->hasFile('product_picture')) {
-                $productLink = $request->file('product_picture')
-                    ->store($folder, 'public');
-
-                \Storage::disk('public_uploads')->delete($stockItem->product_picture);
-                $stockItem->product_picture = '/storage/' . $productLink;
-                $stockItem->save();
+                $this->saveImage($request, $stockItem, 'product_picture');
             }else{
                 //Check if value has changed -> delete file
                 if($request->product_picture != $stockItem->product_picture) {
-                    \Storage::disk('public_uploads')->delete($stockItem->product_picture);
-                    $stockItem->product_picture = null;
-                    $stockItem->save();
+                    $this->deleteImage($stockItem, 'product_picture');
                 }
             }
 
             if($request->hasFile('main_location_picture')) {
-                $mainLink = $request->file('main_location_picture')
-                    ->store($folder, 'public');
-
-                \Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-                $stockItem->main_location_picture = '/storage/' . $mainLink;
-                $stockItem->save();
+                $this->saveImage($request, $stockItem, 'main_location_picture');
             }else{
                 //Check if value has changed -> delete file
                 if($request->main_location_picture != $stockItem->main_location_picture) {
-                    \Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-                    $stockItem->main_location_picture = null;
-                    $stockItem->save();
+                    $this->deleteImage($stockItem, 'main_location_picture');
                 }
             }
 
             if($request->hasFile('secondary_location_picture')) {
-                $secondaryLink = $request->file('secondary_location_picture')
-                    ->store($folder, 'public');
-                \Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-                $stockItem->secondary_location_picture = '/storage/' . $secondaryLink;
-                $stockItem->save();
+                $this->saveImage($request, $stockItem, 'secondary_location_picture');
             }else{
                 //Check if value has changed -> delete file
                 if($request->secondary_location_picture != $stockItem->secondary_location_picture) {
-                    \Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-                    $stockItem->secondary_location_picture = null;
-                    $stockItem->save();
+                    $this->deleteImage($stockItem, 'secondary_location_picture');
                 }
             }
 
             if($request->hasFile('other_location_picture')) {
-                $otherLink = $request->file('other_location_picture')
-                    ->store($folder, 'public');
-                \Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
-                $stockItem->other_location_picture = '/storage/' . $otherLink;
-                $stockItem->save();
+                $this->saveImage($request, $stockItem, 'other_location_picture');
             }else{
                 //Check if value has changed -> delete file
                 if($request->other_location_picture != $stockItem->other_location_picture) {
-                    \Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
-                    $stockItem->other_location_picture = null;
-                    $stockItem->save();
+                    $this->deleteImage($stockItem, 'other_location_picture');
                 }
             }
             DB::commit();
@@ -211,13 +198,14 @@ class StockItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StockItems $stockItem)
+    public function destroy(StockItem $stockItem)
     {
         abort_if(Gate::denies('stock_items_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-        \Storage::disk('public_uploads')->delete($stockItem->product_picture);
-        \Storage::disk('public_uploads')->delete($stockItem->main_location_picture);
-        \Storage::disk('public_uploads')->delete($stockItem->secondary_location_picture);
-        \Storage::disk('public_uploads')->delete($stockItem->other_location_picture);
+
+        \Storage::disk('public')->delete($stockItem->product_picture);
+        \Storage::disk('public')->delete($stockItem->main_location_picture);
+        \Storage::disk('public')->delete($stockItem->secondary_location_picture);
+        \Storage::disk('public')->delete($stockItem->other_location_picture);
         $stockItem->delete();
         return response()->json(['message' => 'Successfully Deleted!']);
     }

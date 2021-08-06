@@ -26,7 +26,7 @@ class StockItemRequest extends FormRequest
     public function rules()
     {
         return [
-            'stock_code' => ['required', Rule::unique('stock_items')->ignore($this->id)],
+            'stock_code' => ['required'],
         ];
     }
 }

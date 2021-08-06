@@ -141,9 +141,7 @@
 import pagination from '../../mixins/pagination'
 import { formHelper } from '../../mixins/formHelper'
 import cloneDeep from 'lodash/cloneDeep'
-import StockItemForm from './StockItemForm.vue';
 export default {
-  components: {StockItemForm },
   mixins: [pagination, formHelper],
     props: {
         user: {
@@ -179,6 +177,7 @@ export default {
             this.loading = true
             axios.post(apiUrl, this.filters)
             .then((response) => {
+                console.log(response.data)
                 this.stockItems = response.data.stockItems.data
                 this.filters.total = response.data.stockItems.total
             })
@@ -208,10 +207,6 @@ export default {
             .finally( () => {
                 this.loading = false
             })
-
-        },
-
-        updateStockItem(data, id) {
 
         },
 
@@ -267,7 +262,3 @@ export default {
 
 }
 </script>
-
-<style>
-
-</style>
