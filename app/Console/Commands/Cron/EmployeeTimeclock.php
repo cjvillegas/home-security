@@ -44,8 +44,6 @@ class EmployeeTimeclock extends Command
         // logs the execution
         $this->logExecution();
 
-        dd($this->getTimeClockTotalCount());
-
         $timeClockData = $this->getTimeclockData();
 
         $chunkCounter = 0;
@@ -100,11 +98,12 @@ class EmployeeTimeclock extends Command
      *
      * @return Collection
      */
-    private function getTimeclockData(): Collection
+    public function getTimeclockData(): Collection
     {
+        $latestTimeClock = (new TimeClock)->getLatestData();
+
         $query = "
             SELECT
-                TOP 10
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime
             FROM
@@ -113,28 +112,10 @@ class EmployeeTimeclock extends Command
                 dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
         ";
 
-        // execute the query
-        $timeClocks = DB::connection('time_clock_sql')->select($query);
-
-        // return data as collection
-        return collect($timeClocks);
-    }
-
-    /**
-     * Returns the total count of the queried results without restricting conditions
-     *
-     * @return int
-     */
-    private function getTimeClockTotalCount(): int
-    {
-        $query = "
-            SELECT
-                COUNT(dbo.ClockTransactions.SwipeDateTime)
-            FROM
-                dbo.ClockTransactions
-            INNER JOIN
-                dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
-        ";
+        // if the table is already populated get the most latest timeclock
+        if (!empty($latestTimeClock)) {
+            $query .= "\t WHERE dbo.ClockTransactions.SwipeDateTime > '{$latestTimeClock}'";
+        }
 
         // execute the query
         $timeClocks = DB::connection('time_clock_sql')->select($query);

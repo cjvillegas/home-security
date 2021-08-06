@@ -41,4 +41,17 @@ class TimeClock extends Model
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/
+
+    /**
+     * Get the most recent punch in
+     *
+     * @return mixed
+     */
+    public function getLatestData(): ?string
+    {
+        $timeClock = self::orderBy('swiped_at', 'desc')
+            ->first();
+
+        return optional($timeClock)->swiped_at;
+    }
 }
