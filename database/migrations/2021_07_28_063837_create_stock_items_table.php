@@ -34,7 +34,7 @@ class CreateStockItemsTable extends Migration
             $table->string('parameter3')->nullable();
             $table->string('parameter4')->nullable();
             $table->string('parameter5')->nullable();
-            $table->tinyInteger('status')->default(false);
+            $table->boolean('status')->default(false);
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
