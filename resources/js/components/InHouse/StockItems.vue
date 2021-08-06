@@ -177,7 +177,6 @@ export default {
             this.loading = true
             axios.post(apiUrl, this.filters)
             .then((response) => {
-                console.log(response.data)
                 this.stockItems = response.data.stockItems.data
                 this.filters.total = response.data.stockItems.total
             })
