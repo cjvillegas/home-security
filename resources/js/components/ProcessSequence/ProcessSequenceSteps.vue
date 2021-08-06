@@ -265,7 +265,7 @@
 
                 this.$API.ProcessSequenceLink.moveStepOrder(currentStep.process_sequence_id, currentStep.id, direction)
                     .then(res => {
-                        if (Array.isArra(res.data)) {
+                        if (Array.isArray(res.data)) {
                             this.processSequenceSteps = cloneDeep(res.data)
                         }
                     })
