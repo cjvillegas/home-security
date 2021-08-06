@@ -61,6 +61,7 @@ class TestTimeClockConnection extends Command
     {
         return "
             SELECT
+                TOP 10
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime
             FROM
