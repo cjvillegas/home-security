@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockItem extends Model
 {
+    use SoftDeletes;
     use HasFactory;
     use SoftDeletes;
 
