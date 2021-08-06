@@ -11,7 +11,9 @@
             </div>
         </el-card>
 
-        <el-card class="box-card mt-3">
+        <el-card
+            v-loading="loading"
+            class="box-card mt-3">
             <div class="text-center mr-auto ml-auto w-75">
                 <div>
                     <el-tag
@@ -103,37 +105,38 @@
             title="Add New Step"
             top="5vh"
             custom-class="process-type-selector">
-            <div class="p-2">
-                <el-input
-                    v-model="searchString"
-                    class="w-100"
-                    placeholder="Search processes...">
-                </el-input>
+            <div v-loading="loading">
+                <div class="p-2">
+                    <el-input
+                        v-model="searchString"
+                        class="w-100"
+                        placeholder="Search processes...">
+                    </el-input>
+                </div>
+
+                <el-divider class="p-2"></el-divider>
+
+                <el-alert
+                    title="Please select a process that you want to add in this sequence."
+                    :closable="false"
+                    type="success"
+                    effect="dark"
+                    class="p-2">
+                </el-alert>
+
+                <div class="process-selection-container mt-3 p-2">
+                    <el-card
+                        class="box-card mb-3 cursor-pointer process-steps-item"
+                        v-for="process in filteredProcesses"
+                        :key="process.id"
+                        @click.native="addStep(process)">
+                        <div class="d-flex align-items-center">
+                            <el-avatar icon="el-icon-picture-outline"></el-avatar>
+                            <h5 class="mb-0 ml-2">{{ process.name | ucWords }}</h5>
+                        </div>
+                    </el-card>
+                </div>
             </div>
-
-            <el-divider class="p-2"></el-divider>
-
-            <el-alert
-                title="Please select a process that you want to add in this sequence."
-                :closable="false"
-                type="success"
-                effect="dark"
-                class="p-2">
-            </el-alert>
-
-            <div class="process-selection-container mt-3 p-2">
-                <el-card
-                    class="box-card mb-3 cursor-pointer process-steps-item"
-                    v-for="process in filteredProcesses"
-                    :key="process.id"
-                    @click.native="addStep(process)">
-                    <div class="d-flex align-items-center">
-                        <el-avatar icon="el-icon-picture-outline"></el-avatar>
-                        <h5 class="mb-0 ml-2">{{ process.name | ucWords }}</h5>
-                    </div>
-                </el-card>
-            </div>
-
         </el-dialog>
     </div>
 </template>
@@ -151,7 +154,6 @@
         data() {
             return {
                 loading: false,
-                fetchLoading: false,
                 showProcessSelector: false,
                 searchString: null,
                 processSequenceSteps: [],
@@ -277,7 +279,7 @@
                     })
             },
             fetchProcessSteps(processSequenceId) {
-                this.fetchLoading = true
+                this.loading = true
 
                 this.$API.ProcessSequenceLink.getProcessSequenceSteps(processSequenceId)
                     .then(res => {
@@ -287,7 +289,7 @@
                         console.log(err)
                     })
                     .finally(_ => {
-                        this.fetchLoading = false
+                        this.loading = false
                     })
             },
             closeProcessSelector() {
@@ -341,15 +343,3 @@
         }
     }
 </script>
-
-<style lang="scss">
-    .process-selection-container {
-        max-height: 60vh;
-        overflow: hidden;
-        overflow-y: scroll;
-    }
-
-    .process-type-selector {
-
-    }
-</style>
