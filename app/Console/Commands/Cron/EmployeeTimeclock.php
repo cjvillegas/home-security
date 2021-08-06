@@ -129,7 +129,7 @@ class EmployeeTimeclock extends Command
     {
         $query = "
             SELECT
-                COUNT(dbo.ClockTransactions.id)
+                COUNT(dbo.ClockTransactions.SwipeDateTime)
             FROM
                 dbo.ClockTransactions
             INNER JOIN
