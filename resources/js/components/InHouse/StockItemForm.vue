@@ -103,7 +103,7 @@
                                     list-type="picture"
                                     action=""
                                     :on-change="changeProductPicture">
-                                    <img v-if="productImageUrl" :src="'/storage/'+productImageUrl" class="img-circle rounded-circle">
+                                    <img v-if="productImageUrl" :src="productImageUrl" class="img-circle rounded-circle">
                                     <el-button
                                         :disabled="this.type == 'view'"
                                         v-if="!productImageUrl"
@@ -635,10 +635,18 @@ export default {
             axios.get(apiUrl).then( (response) => {
                 this.form = response.data.stockItem
                 this.form.status = response.data.stockItem.status == 'Active' ? '1' : '0'
-                this.productImageUrl = this.form.product_picture
-                this.mainLocationImageUrl = this.form.main_location_picture
-                this.secondaryLocationImageUrl = this.form.secondary_location_picture
-                this.otherLocationImageUrl = this.form.other_location_picture
+                if(this.form.product_picture != null && this.form.product_picture != '') {
+                    this.productImageUrl = '/storage/' + this.form.product_picture
+                }
+                if(this.form.main_location_picture != null && this.form.main_location_picture != '') {
+                    this.mainLocationImageUrl = '/storage/' + this.form.main_location_picture
+                }
+                if(this.form.secondary_location_picture != null && this.form.secondary_location_picture != '') {
+                    this.secondaryLocationImageUrl = '/storage/' + this.form.secondary_location_picture
+                }
+                if(this.form.other_location_picture != null && this.form.other_location_picture != '') {
+                    this.otherLocationImageUrl = '/storage/' + this.form.other_location_picture
+                }
 
                 this.loading = false
             })
