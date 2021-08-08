@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Cron;
 
+use App\Models\Employee;
 use App\Models\TimeClock;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -46,6 +47,9 @@ class EmployeeTimeclock extends Command
 
         $timeClockData = $this->getTimeclockData();
 
+        $employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
+            ->get();
+
         $chunkCounter = 0;
 
         // chunk the results to save memory
@@ -54,7 +58,7 @@ class EmployeeTimeclock extends Command
             $newTimeclocks = [];
             foreach ($chunk as $timeClock) {
                 // perform data sanitization
-                $newTimeclocks[] = $this->sanitize((array) $timeClock);
+                $newTimeclocks[] = $this->sanitize((array) $timeClock, $employees);
             }
 
             // do the actual insertion of data
@@ -77,16 +81,22 @@ class EmployeeTimeclock extends Command
      * with right information in them
      *
      * @param array $timeClock
+     * @param Collection $employees
      *
      * @return mixed
      */
-    private function sanitize(array $timeClock)
+    private function sanitize(array $timeClock, Collection $employees)
     {
         // do a sanity check of the required data
         if (empty($timeClock['ClockNum']) || empty($timeClock['SwipeDateTime'])) {
             return false;
         }
 
+        // fetch an employee record based on the t&a data's clock_num
+        $employee = $employees->firstWhere('clock_num', $timeClock['ClockNum']);
+
+        // build the data to be saved
+        $sanitizedTimeClock['employee_id'] = optional($employee)->id;
         $sanitizedTimeClock['clock_num'] = $timeClock['ClockNum'];
         $sanitizedTimeClock['swiped_at'] = $timeClock['SwipeDateTime'];
 
@@ -104,6 +114,7 @@ class EmployeeTimeclock extends Command
 
         $query = "
             SELECT
+                TOP 1000
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime
             FROM
