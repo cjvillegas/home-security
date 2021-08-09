@@ -15,7 +15,7 @@ class AlterTimeClocksTable extends Migration
     {
         Schema::table('time_clocks', function (Blueprint $table) {
             $table->unsignedBigInteger('employee_id')->nullable()->default(null)->change();
-            $table->unsignedBigInteger('trans_id')->nullable()->default(null)->change();
+            $table->unsignedBigInteger('trans_id')->nullable()->default(null);
 
             $table->renameColumn('clock_in', 'swiped_at');
 
