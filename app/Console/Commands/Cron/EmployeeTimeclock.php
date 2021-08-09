@@ -118,16 +118,18 @@ class EmployeeTimeclock extends Command
                 TOP 1000
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime,
-                dbo.ClockTransactions.TransID,
+                dbo.ClockTransactions.TransID
             FROM
                 dbo.ClockTransactions
             INNER JOIN
                 dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
+            ORDER BY
+                dbo.ClockTransactions.TransID
         ";
 
         // if the table is already populated get the most latest timeclock
         if (!empty($latestTimeClock)) {
-            $query .= "\t WHERE dbo.ClockTransactions.SwipeDateTime > '{$latestTimeClock}'";
+            $query .= "\t WHERE dbo.ClockTransactions.TransID > '{$latestTimeClock}'";
         }
 
         // execute the query

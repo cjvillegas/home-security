@@ -49,9 +49,9 @@ class TimeClock extends Model
      */
     public function getLatestData(): ?string
     {
-        $timeClock = self::orderBy('swiped_at', 'desc')
+        $timeClock = self::orderBy('trans_id', 'desc')
             ->first();
 
-        return optional($timeClock)->swiped_at;
+        return optional($timeClock)->trans_id;
     }
 }
