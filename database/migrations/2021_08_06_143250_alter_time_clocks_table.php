@@ -32,11 +32,15 @@ class AlterTimeClocksTable extends Migration
     {
         Schema::table('time_clocks', function (Blueprint $table) {
             $table->unsignedBigInteger('employee_id')->change();
-            $table->dropColumn('trans_id');
 
             $table->renameColumn('swiped_at', 'clock_in');
 
             $table->dateTime('clock_out')->nullable()->after('swiped_at');
+
+            // drop if exist
+            if (Schema::hasColumn('time_clocks', 'trans_id')) {
+                $table->dropColumn('trans_id');
+            }
         });
     }
 }
