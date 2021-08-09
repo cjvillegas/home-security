@@ -123,14 +123,14 @@ class EmployeeTimeclock extends Command
                 dbo.ClockTransactions
             INNER JOIN
                 dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
-            ORDER BY
-                dbo.ClockTransactions.TransID
         ";
 
         // if the table is already populated get the most latest timeclock
         if (!empty($latestTransId)) {
             $query .= "\t WHERE dbo.ClockTransactions.TransID > '{$latestTransId}'";
         }
+
+        $query .= "\n ORDER BY dbo.ClockTransactions.TransID";
 
         // execute the query
         $timeClocks = DB::connection('time_clock_sql')->select($query);
