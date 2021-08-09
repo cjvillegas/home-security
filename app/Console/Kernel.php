@@ -29,6 +29,8 @@ class Kernel extends ConsoleKernel
         if (App::environment(['production', 'staging'])) {
             // fetches new orders from SAGE
             $schedule->command('orders:populate-orders-from-sage')->everyThirtyMinutes();
+            // fetches stock level from SAGE
+            $schedule->command('stocks:populate-stockslevel-from-sage')->everyThirtyMinutes();
         }
     }
 
