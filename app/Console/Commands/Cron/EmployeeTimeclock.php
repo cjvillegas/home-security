@@ -115,7 +115,6 @@ class EmployeeTimeclock extends Command
 
         $query = "
             SELECT
-                TOP 1000
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime,
                 dbo.ClockTransactions.TransID
