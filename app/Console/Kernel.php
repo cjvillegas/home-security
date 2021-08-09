@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
 
         // runs a CRON daily to fetch data from the T&A database
         $schedule->command('employees:fetch-timeclock-from-t-and-a')
-            ->dailyAt('06:00')
+            ->dailyAt('00:00')
             ->when(false)
             ->environments(['production', 'staging']);
     }

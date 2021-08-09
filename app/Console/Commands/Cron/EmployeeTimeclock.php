@@ -97,6 +97,7 @@ class EmployeeTimeclock extends Command
 
         // build the data to be saved
         $sanitizedTimeClock['employee_id'] = optional($employee)->id;
+        $sanitizedTimeClock['trans_id'] = $timeClock['TransID'];
         $sanitizedTimeClock['clock_num'] = $timeClock['ClockNum'];
         $sanitizedTimeClock['swiped_at'] = $timeClock['SwipeDateTime'];
 
@@ -116,7 +117,8 @@ class EmployeeTimeclock extends Command
             SELECT
                 TOP 1000
                 dbo.Employee.ClockNum,
-                dbo.ClockTransactions.SwipeDateTime
+                dbo.ClockTransactions.SwipeDateTime,
+                dbo.ClockTransactions.TransID,
             FROM
                 dbo.ClockTransactions
             INNER JOIN
