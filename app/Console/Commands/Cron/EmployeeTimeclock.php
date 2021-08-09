@@ -111,7 +111,7 @@ class EmployeeTimeclock extends Command
      */
     public function getTimeclockData(): Collection
     {
-        $latestTimeClock = (new TimeClock)->getLatestData();
+        $latestTransId = (new TimeClock)->getLatestData();
 
         $query = "
             SELECT
@@ -128,8 +128,8 @@ class EmployeeTimeclock extends Command
         ";
 
         // if the table is already populated get the most latest timeclock
-        if (!empty($latestTimeClock)) {
-            $query .= "\t WHERE dbo.ClockTransactions.TransID > '{$latestTimeClock}'";
+        if (!empty($latestTransId)) {
+            $query .= "\t WHERE dbo.ClockTransactions.TransID > '{$latestTransId}'";
         }
 
         // execute the query
