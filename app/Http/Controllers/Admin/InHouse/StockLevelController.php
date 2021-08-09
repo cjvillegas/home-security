@@ -30,7 +30,16 @@ class StockLevelController extends Controller
      */
     public function fetchStockLevels(Request $request)
     {
-        $stockLevels = StockLevel::paginate($request->size);
+        $searchString = $request->searchString;
+        $size = $request->size;
+
+        $stockLevels = StockLevel::orderBy('created_at', 'DESC')
+            ->when($searchString, function($query) use ($searchString) {
+                $query->where('name', 'like', "%{$searchString}%")
+                    ->orWhere('code', 'like', "%{$searchString}%");
+            });
+
+        $stockLevels = $stockLevels->paginate($size);
 
         return response()->json(['stockLevels' => $stockLevels]);
     }

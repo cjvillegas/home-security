@@ -5,8 +5,8 @@
                 <el-input
                     v-model="filters.searchString"
                     clearable
-                    placeholder="Search Machines..."
-                    @keyup.enter.native.prevent="fetchMachines"
+                    placeholder="Search Stock Level name or code..."
+                    @keyup.enter.native.prevent="fetchStockLevels"
                     style="width: 250px">
                 </el-input>
             </div>
@@ -38,7 +38,7 @@
                     sortable>
                 </el-table-column>
 
-                <el-table-column
+                <!-- <el-table-column
                     label="View"
                     class-name="table-action-button">
                     <template slot-scope="scope">
@@ -51,7 +51,7 @@
                             </el-button>
                         </template>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>
         </div>
         <el-pagination
@@ -106,11 +106,17 @@ export default {
     methods: {
         fetchStockLevels() {
             let apiUrl = `/admin/in-house/stocklevels/list`
-            this.loading = false
+            this.loading = true
             axios.post(apiUrl, this.filters)
             .then((response) => {
                 this.stockLevels = response.data.stockLevels.data
                 this.filters.total = response.data.stockLevels.total
+            })
+            .catch( () => {
+
+            })
+            .finally( () => {
+                this.loading = false
             })
         },
 
