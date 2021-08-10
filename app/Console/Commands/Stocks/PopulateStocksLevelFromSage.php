@@ -15,7 +15,7 @@ class PopulateStocksLevelFromSage extends Command
      *
      * @var string
      */
-    protected $signature = 'stocks:populate-stockslevel-from-sage';
+    protected $signature = 'stocks:populate-stock-levels-from-sage';
 
     /**
      * The console command description.

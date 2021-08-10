@@ -36,8 +36,10 @@ class Kernel extends ConsoleKernel
             ->dailyAt('00:00')
             ->environments(['production', 'staging']);
 
-        $schedule->command('stocks:populate-stockslevel-from-sage')
-            ->everyThirtyMinutes();
+        // runs a CRON daily to fetch data from SAGE database
+        $schedule->command('stocks:populate-stock-levels-from-sage')
+            ->everyThirtyMinutes()
+            ->environments(['production', 'staging']);
     }
 
     /**
