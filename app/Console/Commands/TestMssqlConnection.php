@@ -104,7 +104,12 @@ class TestMssqlConnection extends Command
         return $query;
     }
 
-    public function testQuery()
+    /**
+     * The test query string
+     *
+     * @return string
+     */
+    public function testQuery(): string
     {
         return "
             SELECT

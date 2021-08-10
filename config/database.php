@@ -110,8 +110,20 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
-        ]
+        ],
 
+        'time_clock_sql' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('TIMECLOCK_DB_HOST', 'localhost'),
+            'port' => env('TIMECLOCK_DB_PORT', '1433'),
+            'database' => env('TIMECLOCK_DB_DATABASE', 'forge'),
+            'username' => env('TIMECLOCK_DB_USERNAME', 'forge'),
+            'password' => env('TIMECLOCK_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
     ],
 
     /*

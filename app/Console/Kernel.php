@@ -25,13 +25,19 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // run this CRON only when in production
-        if (App::environment(['production', 'staging'])) {
-            // fetches new orders from SAGE
-            $schedule->command('orders:populate-orders-from-sage')->everyThirtyMinutes();
-            // fetches stock level from SAGE
-            $schedule->command('stocks:populate-stockslevel-from-sage')->everyThirtyMinutes();
-        }
+
+        // fetches new orders from BLINDDATA. This CRON will only run when the env is production or staging
+        $schedule->command('orders:populate-orders-from-sage')
+            ->everyThirtyMinutes()
+            ->environments(['production', 'staging']);
+
+        // runs a CRON daily to fetch data from the T&A database
+        $schedule->command('employees:fetch-timeclock-from-t-and-a')
+            ->dailyAt('00:00')
+            ->environments(['production', 'staging']);
+
+        $schedule->command('stocks:populate-stockslevel-from-sage')
+            ->everyThirtyMinutes();
     }
 
     /**

@@ -61,6 +61,4 @@ export default {
     delete(id) {
         return axios.delete(`/admin/process-sequence/${id}`)
     }
-
-
 }
