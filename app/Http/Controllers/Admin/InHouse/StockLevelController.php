@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\InHouse;
 
 use App\Http\Controllers\Controller;
 use App\Models\StockLevel;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StockLevelController extends Controller
@@ -26,7 +27,8 @@ class StockLevelController extends Controller
      * Fetch Stock Level
      *
      * @param  mixed $request
-     * @return void
+     *
+     * @return JsonResponse
      */
     public function fetchStockLevels(Request $request)
     {
