@@ -77,6 +77,29 @@
                     <el-col
                         :span="12">
                         <el-form-item
+                            label="BD Fabric ID">
+                            <el-input
+                                v-model="form.bd_fabric_id"
+                                :disabled="this.type === 'view'"
+                                clearable>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Weight(kg)">
+                            <el-input
+                                v-model="form.weight"
+                                :disabled="this.type === 'view'"
+                                clearable>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col
+                        :span="12">
+                        <el-form-item
                             label="Length">
                             <el-input
                                 v-model="form.length"
@@ -91,6 +114,7 @@
                         <el-form-item
                             label="Product Picture">
                             <div v-loading="loading">
+                                <img v-if="productImageUrl" :src="productImageUrl" class="img-circle rounded-circle">
                                 <el-upload
                                     :disabled="this.type === 'view'"
                                     ref="product"
@@ -102,8 +126,8 @@
                                     :on-remove="productRemove"
                                     list-type="picture"
                                     action=""
+                                    accept="image/*"
                                     :on-change="changeProductPicture">
-                                    <img v-if="productImageUrl" :src="productImageUrl" class="img-circle rounded-circle">
                                     <el-button
                                         :disabled="this.type == 'view'"
                                         v-if="!productImageUrl"
@@ -142,6 +166,7 @@
 
                             <el-form-item
                                 label="Main Location Picture">
+                                <img v-if="mainLocationImageUrl" :src="mainLocationImageUrl" class="img-circle rounded-circle">
                                 <el-upload
                                     :disabled="this.type === 'view'"
                                     ref="main"
@@ -151,8 +176,8 @@
                                     :auto-upload="false"
                                     :show-file-list="false"
                                     action=""
+                                    accept="image/*"
                                     :on-change="changeMainLocationPicture">
-                                    <img v-if="mainLocationImageUrl" :src="mainLocationImageUrl" class="img-circle rounded-circle">
                                     <el-button
                                         :disabled="this.type == 'view'"
                                         v-if="!mainLocationImageUrl"
@@ -187,6 +212,7 @@
                             </el-form-item>
                             <el-form-item
                                 label="Secondary Location Picture">
+                                <img v-if="secondaryLocationImageUrl" :src="secondaryLocationImageUrl" class="img-circle rounded-circle">
                                 <el-upload
                                     :disabled="this.type === 'view'"
                                     ref="secondary"
@@ -196,8 +222,8 @@
                                     :auto-upload="false"
                                     :show-file-list="false"
                                     action=""
+                                    accept="image/*"
                                     :on-change="changeSecondaryLocationPicture">
-                                    <img v-if="secondaryLocationImageUrl" :src="secondaryLocationImageUrl" class="img-circle rounded-circle">
                                     <el-button
                                         :disabled="this.type == 'view'"
                                         v-if="!secondaryLocationImageUrl"
@@ -232,6 +258,7 @@
                             </el-form-item>
                             <el-form-item
                                 label="Other Location Picture">
+                                <img v-if="otherLocationImageUrl" :src="otherLocationImageUrl" class="img-circle rounded-circle">
                                 <el-upload
                                     :disabled="this.type === 'view'"
                                     ref="other"
@@ -242,7 +269,6 @@
                                     :show-file-list="false"
                                     action=""
                                     :on-change="changeOtherLocationPicture">
-                                    <img v-if="otherLocationImageUrl" :src="otherLocationImageUrl" class="img-circle rounded-circle">
                                     <el-button
                                         :disabled="this.type == 'view'"
                                         v-if="!otherLocationImageUrl"
@@ -352,6 +378,8 @@ export default {
                 range: '',
                 colour: '',
                 size: '',
+                bg_fabric_id: '',
+                weight: '',
                 length: '',
                 product_picture: '',
                 main_location: '',
@@ -429,6 +457,8 @@ export default {
             form.append('range', (this.form.range ? this.form.range : ''))
             form.append('colour', (this.form.colour ? this.form.colour : ''))
             form.append('size', (this.form.size ? this.form.size : ''))
+            form.append('bd_fabric_id', (this.form.bd_fabric_id ? this.form.bd_fabric_id : ''))
+            form.append('weight', (this.form.weight ? this.form.weight : ''))
             form.append('length', (this.form.length ? this.form.length : ''))
             form.append('main_location', (this.form.main_location ? this.form.main_location : ''))
             form.append('secondary_location', (this.form.secondary_location ? this.form.secondary_location : ''))
@@ -494,22 +524,24 @@ export default {
 
         validatePicture(file, fileList, value) {
             this.loading = true
-            const fileSize = file.size / 1024 / 1024 < 2;
-			const fileType = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg'].includes(file.raw.type)
+            const fileSize = file.size / 1024 / 1024 < 10;
+			const fileType = ['image/jpeg', 'image/png', 'image/jpg', 'image/svg', 'image/gif'].includes(file.raw.type)
 
             if (!fileType) {
                 this.$notify.error({
                     title: 'Invalid File',
                     message: 'Not a supported file type (JPEG, JPG, PNG, SVG)'
                 })
+                this.loading = false
                 return
             }
 
             if (!fileSize) {
                 this.$notify.error({
                     title: 'Max Size',
-                    message: 'File size should not exceed 2MB'
+                    message: 'File size should not exceed 10MB'
                 });
+                this.loading = false
                 return
             }
 
@@ -663,6 +695,8 @@ export default {
                 range: '',
                 colour: '',
                 size: '',
+                bd_fabric_id: '',
+                weight: '',
                 length: '',
                 product_picture: '',
                 main_location: '',
