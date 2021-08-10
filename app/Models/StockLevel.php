@@ -14,7 +14,7 @@ class StockLevel extends Model
         'code',
         'name',
         'available_stock',
-        'post_stock',
+        'po_stock',
         'created_at',
         'updated_at',
         'deleted_at',

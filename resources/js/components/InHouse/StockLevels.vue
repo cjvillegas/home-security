@@ -1,76 +1,78 @@
 <template>
-    <el-card>
-        <div class="d-flex">
-            <div>
-                <el-input
-                    v-model="filters.searchString"
-                    clearable
-                    placeholder="Search Stock Level name or code..."
-                    @keyup.enter.native.prevent="fetchStockLevels"
-                    style="width: 250px">
-                </el-input>
+    <div>
+        <el-card class="card">
+            <div class="d-flex">
+                <div>
+                    <el-input
+                        v-model="filters.searchString"
+                        clearable
+                        placeholder="Search Stock Level name or code..."
+                        @keyup.enter.native.prevent="fetchStockLevels"
+                        style="width: 250px">
+                    </el-input>
+                </div>
+                <div class="ml-auto">
+                    <span class="text-muted">
+                        Last Sync: {{ lastSync }}
+                    </span>
+                </div>
             </div>
-            <div class="ml-auto">
-                <span class="text-muted">
-                    Last Sync: {{ lastSync }}
-                </span>
-            </div>
-        </div>
-        <div v-loading="loading">
-            <el-table
-                :data="stockLevels">
-                <el-table-column
-                    prop="code"
-                    label="Code"
-                    sortable>
-                </el-table-column>
+            <div v-loading="loading">
+                <el-table
+                    :data="stockLevels">
+                    <el-table-column
+                        prop="code"
+                        label="Code"
+                        sortable>
+                    </el-table-column>
 
-                <el-table-column
-                    prop="name"
-                    label="Name"
-                    sortable>
-                </el-table-column>
+                    <el-table-column
+                        prop="name"
+                        label="Name"
+                        sortable>
+                    </el-table-column>
 
-                <el-table-column
-                    prop="available_stock"
-                    label="Available Stock"
-                    sortable>
-                </el-table-column>
+                    <el-table-column
+                        prop="available_stock"
+                        label="Available Stock"
+                        sortable>
+                    </el-table-column>
 
-                <el-table-column
-                    prop="post_stock"
-                    label="Post Stock"
-                    sortable>
-                </el-table-column>
+                    <el-table-column
+                        prop="po_stock"
+                        label="Post Stock"
+                        sortable>
+                    </el-table-column>
 
-                <!-- <el-table-column
-                    label="View"
-                    class-name="table-action-button">
-                    <template slot-scope="scope">
-                        <template>
-                            <el-button
-                                @click="viewStockLevel(scope.row)"
-                                type="text"
-                                class="text-info">
-                                <i class="fas fa-eye"></i>
-                            </el-button>
+                    <!-- <el-table-column
+                        label="View"
+                        class-name="table-action-button">
+                        <template slot-scope="scope">
+                            <template>
+                                <el-button
+                                    @click="viewStockLevel(scope.row)"
+                                    type="text"
+                                    class="text-info">
+                                    <i class="fas fa-eye"></i>
+                                </el-button>
+                            </template>
                         </template>
-                    </template>
-                </el-table-column> -->
-            </el-table>
-        </div>
-        <el-pagination
-            class="custom-pagination-class  mt-3 float-right"
-            background
-            layout="total, sizes, prev, pager, next"
-            :total="filters.total"
-            :page-size="filters.size"
-            :page-sizes="[1, 2, 10, 25, 50, 100]"
-            :current-page="filters.page"
-            @size-change="handleSize"
-            @current-change="handlePage">
-        </el-pagination>
-    </el-card>
+                    </el-table-column> -->
+                </el-table>
+            </div>
+            <el-pagination
+                class="custom-pagination-class  mt-3 float-right"
+                background
+                layout="total, sizes, prev, pager, next"
+                :total="filters.total"
+                :page-size="filters.size"
+                :page-sizes="[1, 2, 10, 25, 50, 100]"
+                :current-page="filters.page"
+                @size-change="handleSize"
+                @current-change="handlePage">
+            </el-pagination>
+        </el-card>
+    </div>
 </template>
 
 <script>
