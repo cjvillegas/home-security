@@ -223,13 +223,14 @@
                     </a>
                 </li>
                 @endcan
-
+                @can('stock_level_access')
                 <li class="c-sidebar-nav-item">
                     <a href="{{ route('admin.in-house.stock-levels.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-levels.index") ? "c-active" : "" }}">
                         <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
                         Stock Level
                     </a>
                 </li>
+                @endcan
             </ul>
         </li>
         @endif
