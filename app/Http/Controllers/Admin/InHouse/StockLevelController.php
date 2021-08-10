@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\StockLevel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Gate;
 
 class StockLevelController extends Controller
 {
@@ -16,6 +18,7 @@ class StockLevelController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('stock_level_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
 
         $user->permissions = $user->getPermissionNameByModule('process_categories');
