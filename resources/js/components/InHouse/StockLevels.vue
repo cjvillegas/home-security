@@ -10,6 +10,11 @@
                     style="width: 250px">
                 </el-input>
             </div>
+            <div class="ml-auto">
+                <span class="text-muted">
+                    Last Sync: {{ lastSync }}
+                </span>
+            </div>
         </div>
         <div v-loading="loading">
             <el-table
@@ -93,14 +98,16 @@ export default {
                 searchString: ''
             },
             selected_id: '',
-            viewDialogVisible: false
+            viewDialogVisible: false,
+            lastSync: '',
         }
     },
 
     mounted() {
         this.filters.size = 10
         this.functionName = 'fetchStockLevels'
-        this.fetchStockLevels();
+        this.fetchStockLevels()
+        this.fetchLastSync()
     },
 
     methods: {
@@ -117,6 +124,16 @@ export default {
             })
             .finally( () => {
                 this.loading = false
+            })
+        },
+
+        fetchLastSync() {
+            console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
+            let apiUrl = `/admin/in-house/stocklevels/last-sync`
+            axios.get(apiUrl)
+            .then((response) => {
+                console.log(response.data)
+                this.lastSync = moment(response.data.lastSync.created_at).format('MMMM Do YYYY, h:mm:ss a')
             })
         },
 

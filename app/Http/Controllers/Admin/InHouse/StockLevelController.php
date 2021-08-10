@@ -43,4 +43,16 @@ class StockLevelController extends Controller
 
         return response()->json(['stockLevels' => $stockLevels]);
     }
+
+    /**
+     * Fetch Last Sync
+     *
+     * @return JsonResponse
+     */
+    public function lastSync()
+    {
+        $lastSync = StockLevel::select('created_at')->latest('created_at')->first();
+
+        return response()->json(['lastSync' => $lastSync]);
+    }
 }

@@ -41,9 +41,11 @@ class PopulateStocksLevelFromSage extends Command
      */
     public function handle()
     {
+        Log::info('CRON for populating stock level from SAGE is RUNNING!!!');
+
         $this->clearTable();
         $stockLevels = $this->getStocksLevelData();
-        Log::info(json_encode($stockLevels));
+
         $chunkCounter = 0;
         // chunk the results to save memory
         foreach ($stockLevels->chunk(100) as $chunk) {
@@ -66,7 +68,6 @@ class PopulateStocksLevelFromSage extends Command
                 usleep(100000);
             }
         }
-
         return 0;
     }
 
@@ -78,7 +79,7 @@ class PopulateStocksLevelFromSage extends Command
     public function getStocksLevelData(): Collection
     {
         $query = "
-            SELECT TOP 150
+            SELECT
                 StockItem.Code, StockItem.Name, WarehouseItem.ConfirmedQtyInStock -
                 WarehouseItem.QuantityAllocatedSOP - WarehouseItem.QuantityAllocatedStock AS 'Actual Stock',
                 WarehouseItem.QuantityOnPOPOrder
@@ -107,6 +108,7 @@ class PopulateStocksLevelFromSage extends Command
 
         // execute the query
         $stocklevels = DB::connection('stock_sqlsrv')->select($query);
+
         // return data as collection
         return collect($stocklevels);
     }

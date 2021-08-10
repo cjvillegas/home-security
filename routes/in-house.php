@@ -8,5 +8,6 @@ Route::namespace('InHouse')->as('in-house.')->prefix('in-house')->group( functio
     Route::apiResource('stocks', 'StockItemController')->only(['index', 'store']);
 
     Route::get('stocklevels', 'StockLevelController@index')->name('stocklevels.index');
+    Route::get('stocklevels/last-sync', 'StockLevelController@lastSync');
     Route::post('stocklevels/list', 'StockLevelController@fetchStockLevels');
 });
