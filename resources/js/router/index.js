@@ -18,9 +18,13 @@ const OrderView = () => import('../components/Orders/OrderView')
 // Dashboard Components
 const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
 
-
 // Machine Components
 const MachineIndex = () => import('../components/Machines/MachineIndex')
+
+// Employee Components
+const EmployeeIndex = () => import('../components/Employee/EmployeeIndex')
+const EmployeeList = () => import('../components/Employee/EmployeeList')
+const EmployeeView = () => import('../components/Employee/EmployeeView')
 
 export default new VueRouter({
     linkActiveClass: 'active',
@@ -46,6 +50,26 @@ export default new VueRouter({
             name: 'Dashboard Index',
             component: DashboardIndex,
             props: true
+        },
+        {
+            path: '/employee-index',
+            name: 'Employee Index',
+            component: EmployeeIndex,
+            props: true,
+            children: [
+                {
+                    path: '/employee-index',
+                    name: 'Employee List',
+                    component: EmployeeList,
+                    props: true,
+                },
+                {
+                    path: '/:id',
+                    name: 'Employee View',
+                    component: EmployeeView,
+                    props: true,
+                }
+            ]
         },
     ]
 })

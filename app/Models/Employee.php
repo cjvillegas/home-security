@@ -41,6 +41,7 @@ class Employee extends Model
         'clock_num',
         'shift_id',
         'team_id',
+        'is_active',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -53,6 +54,15 @@ class Employee extends Model
      */
     protected $appends = [
         'color',
+    ];
+
+    /**
+     * Cast variables to specified data types
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     /**

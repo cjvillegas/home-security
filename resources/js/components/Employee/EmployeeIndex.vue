@@ -1,0 +1,15 @@
+<template>
+    <router-view :page-data="pageData"></router-view>
+</template>
+
+<script>
+    export default {
+        name: "EmployeeIndex",
+        props: {
+            pageData: {
+                type: Object,
+                default: () => {}
+            }
+        }
+    }
+</script>

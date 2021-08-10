@@ -8,7 +8,9 @@
 export default {
     name: 'App',
     props: {
-        pageData: {}
+        pageData: {
+            default: () => {}
+        }
     },
     data() {
         return {
@@ -24,6 +26,10 @@ export default {
             let hash = window.location.hash
 
             console.log(pathname, hash)
+
+            if (pathname === '/admin/employees' && hash === '#/') {
+                this.$router.push({name: 'Employee Index', params: {}})
+            }
 
             if (pathname === '/admin/orders' && hash === '#/') {
                 this.$router.push({name: 'Order List', params: {}})

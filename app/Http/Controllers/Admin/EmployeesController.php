@@ -8,9 +8,11 @@ use App\Http\Requests\MassDestroyEmployeeRequest;
 use App\Http\Requests\StoreEmployeeRequest;
 use App\Http\Requests\UpdateEmployeeRequest;
 use App\Models\Employee;
+use App\Models\ProcessSequence\ProcessSequence;
 use App\Models\Shift;
 use App\Models\Team;
 use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,67 +26,67 @@ class EmployeesController extends Controller
         abort_if(Gate::denies('employee_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $employees = Employee::with(['shift', 'team'])->get();
+        $teams = Team::get();
+        $shifts = Shift::get();
 
-        return view('admin.employees.index', compact('employees'));
+        return view('admin.employees.index', compact('employees', 'teams', 'shifts'));
     }
 
-    public function fetchEmployees()
-    {
-        $employees = Employee::all();
-
-        return response()->json(['employees' => $employees], 200);
-    }
-
-    public function create()
-    {
-        abort_if(Gate::denies('employee_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $shifts = Shift::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        $teams = Team::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        return view('admin.employees.create', compact('shifts', 'teams'));
-    }
-
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  StoreEmployeeRequest  $request
+     *
+     * @return JsonResponse
+     */
     public function store(StoreEmployeeRequest $request)
     {
         $attributes = $request->all();
         $attributes['barcode'] = (new Employee())->generateBarcode();
 
-        Employee::create($attributes);
+        $employee = Employee::create($attributes);
 
-        return redirect()->route('admin.employees.index');
+        return response()->json($employee);
     }
 
-    public function edit(Employee $employee)
-    {
-        abort_if(Gate::denies('employee_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $shifts = Shift::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        $teams = Team::all()->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
-        $employee->load('shift', 'team');
-
-        return view('admin.employees.edit', compact('shifts', 'teams', 'employee'));
-    }
-
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  UpdateEmployeeRequest  $request
+     * @param  Employee  $employee
+     *
+     * @return JsonResponse
+     */
     public function update(UpdateEmployeeRequest $request, Employee $employee)
     {
         $employee->update($request->all());
 
-        return redirect()->route('admin.employees.index');
+        return response()->json($employee->refresh()->loadMissing('shift', 'team'));
     }
 
+    /**
+     * Fetch the specified resource.
+     *
+     * @param  Employee  $employee
+     *
+     * @return JsonResponse
+     */
     public function show(Employee $employee)
     {
         abort_if(Gate::denies('employee_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $employee->load('shift', 'team');
 
-        return view('admin.employees.show', compact('employee'));
+        return response()->json($employee);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  Employee $employee
+     *
+     * @return JsonResponse
+     */
     public function destroy(Employee $employee)
     {
         abort_if(Gate::denies('employee_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -96,10 +98,13 @@ class EmployeesController extends Controller
             // data in the employees table
             $now = now()->unix();
             $employee->clock_num = null;
+            $employee->barcode = $employee->barcode . "_$now";
             $employee->save();
+
+            return response()->json(true);
         }
 
-        return back();
+        return response()->json(false);
     }
 
     public function massDestroy(MassDestroyEmployeeRequest $request)
@@ -111,19 +116,73 @@ class EmployeesController extends Controller
 
     public function printBarcode(Employee $employee)
     {
-        return view('admin.employees.print-barcode')->with('employee', $employee);;
+        return view('admin.employees.print-barcode')->with('employee', $employee);
     }
 
     /**
      * Search Employee API
      *
-     * @return void
+     * @return JsonResponse
      */
     public function searchEmployee()
     {
         $searchString = request()->input('searchString');
+
         $employees = DB::table('employees')
             ->where('fullname', 'like', "%$searchString%")->take(15)->get();
+
         return response()->json(['employees' => $employees]);
+    }
+
+    /**
+     * Fetch list of process categories
+     *
+     * @param  Request  $request
+     *
+     * @return JsonResponse
+     */
+    public function getList(Request $request)
+    {
+        $searchString = $request->get('searchString');
+        $status = $request->get('status');
+        $size = $request->get('size');
+
+        $employees = Employee::
+            orderBy('created_at', 'desc')
+            ->with([
+                'shift' => function ($query) {
+                    $query->select(['id', 'name']);
+                },
+                'team' => function ($query) {
+                    $query->select('id', 'name', 'target');
+                }
+            ])
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('fullname', 'like', "%{$searchString}%");
+                $query->orWhere('barcode', 'like', "%{$searchString}%");
+                $query->orWhere('pin_code', 'like', "%{$searchString}%");
+            })
+            ->when($status !== null, function ($query) use ($status) {
+                $query->where('employees.is_active', $status);
+            });
+
+        $employees = $employees->paginate($size);
+
+        return response()->json($employees);
+    }
+
+    /**
+     * Fetch the specified resource.
+     *
+     * @param  Employee  $employee
+     *
+     * @return JsonResponse
+     */
+    public function changeStatus(Employee $employee)
+    {
+        $employee->is_active = !$employee->is_active;
+        $employee->save();
+
+        return response()->json($employee);
     }
 }

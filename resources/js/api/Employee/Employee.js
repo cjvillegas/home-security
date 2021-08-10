@@ -12,5 +12,5 @@ export default {
      */
     getEmployeeByBarcode(barcode) {
         return axios.get(`${basePath}/get-employee-by-barcode?barcode=${barcode}`)
-    },
+    }
 }
