@@ -74,70 +74,70 @@
 </template>
 
 <script>
-import pagination from '../../mixins/pagination'
-export default {
-    mixins: [pagination],
-    props: {
-        user: {
-            required: true,
-            type: Object
-        }
-    },
+    import pagination from '../../mixins/pagination'
+    export default {
+        mixins: [pagination],
+        props: {
+            user: {
+                required: true,
+                type: Object
+            }
+        },
 
-    data() {
-        return {
-            loading: false,
-            stockLevels: [],
-            filters: {
-                searchString: ''
+        data() {
+            return {
+                loading: false,
+                stockLevels: [],
+                filters: {
+                    searchString: ''
+                },
+                selected_id: '',
+                viewDialogVisible: false,
+                lastSync: '',
+            }
+        },
+
+        mounted() {
+            this.filters.size = 10
+            this.functionName = 'fetchStockLevels'
+            this.fetchStockLevels()
+            this.fetchLastSync()
+        },
+
+        methods: {
+            fetchStockLevels() {
+                let apiUrl = `/admin/in-house/stock-levels/list`
+                this.loading = true
+                axios.post(apiUrl, this.filters)
+                .then((response) => {
+                    this.stockLevels = response.data.stockLevels.data
+                    this.filters.total = response.data.stockLevels.total
+                })
+                .catch( (err) => {
+                    console.log(err)
+                })
+                .finally( () => {
+                    this.loading = false
+                })
             },
-            selected_id: '',
-            viewDialogVisible: false,
-            lastSync: '',
-        }
-    },
 
-    mounted() {
-        this.filters.size = 10
-        this.functionName = 'fetchStockLevels'
-        this.fetchStockLevels()
-        this.fetchLastSync()
-    },
+            fetchLastSync() {
+                let apiUrl = `/admin/in-house/stock-levels/last-sync`
+                axios.get(apiUrl)
+                .then((response) => {
+                    console.log(response.data)
+                    this.lastSync = moment(response.data.lastSync.created_at).format('MMMM Do YYYY, h:mm:ss a')
+                })
+            },
 
-    methods: {
-        fetchStockLevels() {
-            let apiUrl = `/admin/in-house/stock-levels/list`
-            this.loading = true
-            axios.post(apiUrl, this.filters)
-            .then((response) => {
-                this.stockLevels = response.data.stockLevels.data
-                this.filters.total = response.data.stockLevels.total
-            })
-            .catch( (err) => {
-                console.log(err)
-            })
-            .finally( () => {
-                this.loading = false
-            })
-        },
+            viewStockLevel(id) {
+                this.selected_id = id
+                this.viewDialogVisible = true
+            },
 
-        fetchLastSync() {
-            let apiUrl = `/admin/in-house/stock-levels/last-sync`
-            axios.get(apiUrl)
-            .then((response) => {
-                console.log(response.data)
-                this.lastSync = moment(response.data.lastSync.created_at).format('MMMM Do YYYY, h:mm:ss a')
-            })
-        },
-
-        viewStockLevel(id) {
-            this.selected_id = id
-            this.viewDialogVisible = true
-        },
-
-        closeForm() {
-            this.viewDialogVisible = false
+            closeForm() {
+                this.viewDialogVisible = false
+            }
         }
     }
-}
 </script>
