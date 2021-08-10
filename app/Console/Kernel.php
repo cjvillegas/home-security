@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+
         // fetches new orders from BLINDDATA. This CRON will only run when the env is production or staging
         $schedule->command('orders:populate-orders-from-sage')
             ->everyThirtyMinutes()
@@ -33,6 +34,11 @@ class Kernel extends ConsoleKernel
         // runs a CRON daily to fetch data from the T&A database
         $schedule->command('employees:fetch-timeclock-from-t-and-a')
             ->dailyAt('00:00')
+            ->environments(['production', 'staging']);
+
+        // runs a CRON daily to fetch data from SAGE database
+        $schedule->command('stocks:populate-stock-levels-from-sage')
+            ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
     }
 
