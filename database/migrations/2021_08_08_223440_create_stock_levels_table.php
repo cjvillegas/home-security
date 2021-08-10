@@ -15,7 +15,7 @@ class CreateStockLevelsTable extends Migration
     {
         Schema::create('stock_levels', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+            $table->string('code')->index();
             $table->string('name');
             $table->integer('available_stock');
             $table->integer('post_stock');
