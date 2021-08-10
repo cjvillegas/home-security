@@ -142,8 +142,8 @@ class PopulateStocksLevelFromSage extends Command
 
         $stockLevel['code'] = $sageStockLevel['Code'];
         $stockLevel['name'] = $sageStockLevel['Name'];
-        $stockLevel['availablestock'] = $sageStockLevel['Actual Stock'];
-        $stockLevel['postock'] = $sageStockLevel['QuantityOnPOPOrder'];
+        $stockLevel['available_stock'] = $sageStockLevel['Actual Stock'];
+        $stockLevel['post_stock'] = $sageStockLevel['QuantityOnPOPOrder'];
         $stockLevel['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $stockLevel;

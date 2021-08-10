@@ -15,7 +15,7 @@ class CreateStockItemsTable extends Migration
     {
         Schema::create('stock_items', function (Blueprint $table) {
             $table->id();
-            $table->string('stock_code');
+            $table->string('stock_code')->unique();
             $table->text('description')->nullable();
             $table->string('range')->nullable();
             $table->string('colour')->nullable();

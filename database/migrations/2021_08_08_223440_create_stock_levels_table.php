@@ -17,8 +17,8 @@ class CreateStockLevelsTable extends Migration
             $table->id();
             $table->string('code');
             $table->string('name');
-            $table->integer('availablestock');
-            $table->integer('postock');
+            $table->integer('available_stock');
+            $table->integer('post_stock');
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();

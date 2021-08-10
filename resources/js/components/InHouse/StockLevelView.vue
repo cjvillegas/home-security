@@ -13,8 +13,7 @@
                     v-model="stock_item"
                     :fetch-suggestions="querySearch"
                     placeholder="Stock Item Name"
-                    value-key="stock_code"
-                    @select="selectItem">
+                    value-key="stock_code">
                 </el-autocomplete>
             </el-form-item>
         </el-form>
@@ -32,9 +31,6 @@ export default {
             stock_item: '',
             dialogTitle: "View Stock Level"
         }
-    },
-
-    mounted() {
     },
 
     methods: {
@@ -67,10 +63,6 @@ export default {
                 return (stockItems.stock_code.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
             };
         },
-
-        selectItem() {
-
-        }
     }
 }
 </script>

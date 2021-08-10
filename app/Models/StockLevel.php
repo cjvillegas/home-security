@@ -10,5 +10,13 @@ class StockLevel extends Model
 {
     use SoftDeletes, HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'code',
+        'name',
+        'available_stock',
+        'post_stock',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 }

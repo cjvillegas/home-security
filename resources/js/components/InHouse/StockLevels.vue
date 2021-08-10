@@ -32,13 +32,13 @@
                 </el-table-column>
 
                 <el-table-column
-                    prop="availablestock"
+                    prop="available_stock"
                     label="Available Stock"
                     sortable>
                 </el-table-column>
 
                 <el-table-column
-                    prop="postock"
+                    prop="post_stock"
                     label="Post Stock"
                     sortable>
                 </el-table-column>
@@ -70,12 +70,6 @@
             @size-change="handleSize"
             @current-change="handlePage">
         </el-pagination>
-
-        <!-- <stock-level-view
-            :visible.sync="viewDialogVisible"
-            :id="selected_id"
-            @close="closeForm">
-        </stock-level-view> -->
     </el-card>
 </template>
 
@@ -112,15 +106,15 @@ export default {
 
     methods: {
         fetchStockLevels() {
-            let apiUrl = `/admin/in-house/stocklevels/list`
+            let apiUrl = `/admin/in-house/stock-levels/list`
             this.loading = true
             axios.post(apiUrl, this.filters)
             .then((response) => {
                 this.stockLevels = response.data.stockLevels.data
                 this.filters.total = response.data.stockLevels.total
             })
-            .catch( () => {
-
+            .catch( (err) => {
+                console.log(err)
             })
             .finally( () => {
                 this.loading = false
@@ -128,8 +122,7 @@ export default {
         },
 
         fetchLastSync() {
-            console.log(moment().format('MMMM Do YYYY, h:mm:ss a'))
-            let apiUrl = `/admin/in-house/stocklevels/last-sync`
+            let apiUrl = `/admin/in-house/stock-levels/last-sync`
             axios.get(apiUrl)
             .then((response) => {
                 console.log(response.data)
@@ -148,7 +141,3 @@ export default {
     }
 }
 </script>
-
-<style>
-
-</style>
