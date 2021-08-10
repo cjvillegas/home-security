@@ -21,7 +21,7 @@ class StockLevelController extends Controller
         abort_if(Gate::denies('stock_level_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $user = auth()->user();
 
-        $user->permissions = $user->getPermissionNameByModule('process_categories');
+        $user->permissions = $user->getPermissionNameByModule('stock_level');
 
         return view('admin.inhouse.stock-level', compact('user'));
     }

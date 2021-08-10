@@ -1,4 +1,4 @@
 @extends('layouts.admin')
 @section('content')
-    <stock-items :user={{ $user }}></stock-items>
+    <stock-items :user="{{ $user }}"></stock-items>
 @endsection
