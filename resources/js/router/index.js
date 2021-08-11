@@ -22,6 +22,7 @@ const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
 const MachineIndex = () => import('../components/Machines/MachineIndex')
 
 // Employee Components
+const EmployeeIndex = () => import('../components/Employee/EmployeeIndex')
 const EmployeeList = () => import('../components/Employee/EmployeeList')
 const EmployeeView = () => import('../components/Employee/EmployeeView')
 
@@ -53,11 +54,17 @@ export default new VueRouter({
         {
             path: '/employee-index',
             name: 'Employee Index',
-            component: EmployeeList,
+            component: EmployeeIndex,
             props: true,
             children: [
                 {
-                    path: '/:id',
+                    path: 'list',
+                    name: 'Employee List',
+                    component: EmployeeList,
+                    props: true,
+                },
+                {
+                    path: ':id',
                     name: 'Employee View',
                     component: EmployeeView,
                     props: true,

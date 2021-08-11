@@ -28,7 +28,7 @@ export default {
             console.log(pathname, hash)
 
             if (pathname === '/admin/employees' && hash === '#/') {
-                this.$router.push({name: 'Employee Index', params: {}})
+                this.$router.push({name: 'Employee List', params: {}})
             }
 
             if (pathname === '/admin/orders' && hash === '#/') {
