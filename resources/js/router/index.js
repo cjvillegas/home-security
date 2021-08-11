@@ -58,7 +58,7 @@ export default new VueRouter({
             props: true,
             children: [
                 {
-                    path: '/employee-index',
+                    path: '/',
                     name: 'Employee List',
                     component: EmployeeList,
                     props: true,
