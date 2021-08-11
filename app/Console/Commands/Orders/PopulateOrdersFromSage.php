@@ -150,7 +150,8 @@ class PopulateOrdersFromSage extends Command
      */
     private function clearTable(): void
     {
-        Order::setConnection('mysql')
+        $model = new Order();
+        $model->setConnection('mysql')
             ->truncate();
     }
 
