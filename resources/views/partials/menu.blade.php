@@ -208,7 +208,7 @@
             </li>
         @endif
 
-        @if (auth()->user()->canAny(['inhouse_access', 'stock_items_access']))
+        @if (auth()->user()->canAny(['inhouse_access', 'stock_items_access', 'stock_level_access']))
         <li class="c-sidebar-nav-dropdown {{ request()->is("admin/in-house*") ? "c-show" : "" }}">
             <a class="c-sidebar-nav-dropdown-toggle" href="#">
                 <i class="fa-fw fas fa-chart-bar c-sidebar-nav-icon"></i>
