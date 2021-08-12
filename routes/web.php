@@ -33,22 +33,19 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Route::resource('user-alerts', 'UserAlertsController', ['except' => ['edit', 'update']]);
 
      //Scanners
-    // Route::delete('scanners/destroy', 'ScannersController@massDestroy')->name('scanners.massDestroy');
-    // Route::post('scanners/parse-csv-import', 'ScannersController@parseCsvImport')->name('scanners.parseCsvImport');
-    // Route::post('scanners/process-csv-import', 'ScannersController@processCsvImport')->name('scanners.processCsvImport');
-    // Route::match(['post', 'get'], 'scanners/fetch-scanners', 'ScannersController@fetchScanners')->name('scanners.fetch-scanners');
     Route::get('scanners/get-scanners-by-field', 'ScannersController@getScannersByField')->name('scanners.get-scanners-by-field');
     Route::get('scanners/search-scanners-by-field', 'ScannersController@searchScannersByField')->name('orders.search-scanners-by-field');
     // Route::resource('scanners', 'ScannersController');
 
     // Employees
     Route::delete('employees/destroy', 'EmployeesController@massDestroy')->name('employees.massDestroy');
+    Route::post('employees/get-list', 'EmployeesController@getList')->name('employees.get-list');
+    Route::patch('employees/{employee}/status-change', 'EmployeesController@changeStatus')->name('employees.status-change');
     Route::post('employees/parse-csv-import', 'EmployeesController@parseCsvImport')->name('employees.parseCsvImport');
     Route::post('employees/process-csv-import', 'EmployeesController@processCsvImport')->name('employees.processCsvImport');
     Route::get('employees/{employee}/print-barcode', 'EmployeesController@printBarcode')->name('employees.print-barcode');
 
-    Route::get('employees/list', 'EmployeesController@fetchEmployees');
-    Route::resource('employees', 'EmployeesController');
+    Route::resource('employees', 'EmployeesController')->only(['index', 'show', 'store', 'update', 'destroy']);
     Route::post('employees/search', 'EmployeesController@searchEmployee');
 
     // Processes

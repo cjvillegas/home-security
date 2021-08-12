@@ -76,8 +76,6 @@
                                     <i class="fas fa-trash-alt"></i>
                                 </el-button>
                             </el-popconfirm>
-
-
                         </template>
                     </el-table-column>
                 </el-table>
@@ -95,7 +93,6 @@
                         @current-change="handlePage">
                     </el-pagination>
                 </div>
-
             </div>
         </div>
 

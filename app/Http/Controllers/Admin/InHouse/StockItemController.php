@@ -27,7 +27,7 @@ class StockItemController extends Controller
     {
         $user = auth()->user();
 
-        $user->permissions = $user->getPermissionNameByModule('process_categories');
+        $user->permissions = $user->getPermissionNameByModule('stock_items');
 
         return view('admin.inhouse.stocks-item', compact('user'));
     }
