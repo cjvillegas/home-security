@@ -148,7 +148,6 @@ class StockItemController extends Controller
      */
     public function update(Request $request, StockItem $stockItem)
     {
-        Log::info($request->all());
         $validated = $request->validate(
             [
                 'stock_code' => ['required', Rule::unique('stock_items')->ignore($stockItem->id)]
