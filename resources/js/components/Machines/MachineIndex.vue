@@ -98,66 +98,241 @@
         <el-dialog
             :visible.sync="formDialogVisible"
             :title="edit ? 'Edit Machine' : 'Add Machine'"
-            width="40%"
+            width="70%"
             @close="clearForm">
             <el-form
                 v-loading="loading"
                 ref="form"
                 :model="form"
                 :rules="rules">
-                <el-form-item
-                    label="Machine Name"
-                    prop="name"
-                    :error="hasError('name')">
-                    <el-input
-                        v-model="form.name"
-                        clearable
-                        class="w-100">
-                    </el-input>
-                </el-form-item>
+                <el-row
+                    :gutter="20">
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Machine Name"
+                            prop="name"
+                            :error="hasError('name')">
+                            <el-input
+                                v-model="form.name"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
 
-                <el-form-item
-                    label="Serial No."
-                    prop="serial_no"
-                    :error="hasError('serial_no')">
-                    <el-input
-                        v-model="form.serial_no"
-                        clearable
-                        class="w-100">
-                    </el-input>
-                </el-form-item>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Serial No."
+                            prop="serial_no"
+                            :error="hasError('serial_no')">
+                            <el-input
+                                v-model="form.serial_no"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
 
-                <el-form-item
-                    label="Location"
-                    prop="location"
-                    :error="hasError('location')">
-                    <el-input
-                        placeholder="Location"
-                        v-model="form.location"
-                        clearable
-                        class="w-100">
-                    </el-input>
-                </el-form-item>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Location"
+                            prop="location"
+                            :error="hasError('location')">
+                            <el-input
+                                placeholder="Location"
+                                v-model="form.location"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
 
-                <el-form-item
-                    label="Status"
-                    prop="status"
-                    :error="hasError('status')">
-                    <el-select
-                        v-model="form.status"
-                        placeholder="Status"
-                        class="w-100">
-                        <el-option
-                            label="Active"
-                            value=1>
-                        </el-option>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Status"
+                            prop="status"
+                            :error="hasError('status')">
+                            <el-select
+                                v-model="form.status"
+                                placeholder="Status"
+                                class="w-100">
+                                <el-option
+                                    label="Active"
+                                    value=1>
+                                </el-option>
 
-                        <el-option
-                            label="Inactive"
-                            value=0>
-                        </el-option>
-                    </el-select>
-                </el-form-item>
+                                <el-option
+                                    label="Inactive"
+                                    value=0>
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Supplier"
+                            prop="supplier"
+                            :error="hasError('supplier')">
+                            <el-input
+                                v-model="form.supplier"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Model"
+                            prop="model"
+                            :error="hasError('model')">
+                            <el-input
+                                v-model="form.model"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 1"
+                            prop="parameter_1"
+                            :error="hasError('parameter_1')">
+                            <el-input
+                                v-model="form.parameter_1"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 2"
+                            prop="parameter_2"
+                            :error="hasError('parameter_2')">
+                            <el-input
+                                v-model="form.parameter_2"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 3"
+                            prop="parameter_3"
+                            :error="hasError('parameter_3')">
+                            <el-input
+                                v-model="form.parameter_3"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 4"
+                            prop="parameter_4"
+                            :error="hasError('parameter_4')">
+                            <el-input
+                                v-model="form.parameter_4"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 5"
+                            prop="parameter_5"
+                            :error="hasError('parameter_5')">
+                            <el-input
+                                v-model="form.parameter_5"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 6"
+                            prop="parameter_6"
+                            :error="hasError('parameter_6')">
+                            <el-input
+                                v-model="form.parameter_6"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 7"
+                            prop="parameter_7"
+                            :error="hasError('parameter_7')">
+                            <el-input
+                                v-model="form.parameter_7"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 8"
+                            prop="parameter_8"
+                            :error="hasError('parameter_8')">
+                            <el-input
+                                v-model="form.parameter_8"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 9"
+                            prop="parameter_9"
+                            :error="hasError('parameter_9')">
+                            <el-input
+                                v-model="form.parameter_9"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Parameter 10"
+                            prop="parameter_10"
+                            :error="hasError('parameter_10')">
+                            <el-input
+                                v-model="form.parameter_10"
+                                clearable
+                                class="w-100">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    {{ form.parameter9 }}
+                </el-row>
             </el-form>
 
             <span
@@ -194,12 +369,7 @@
             return {
                 edit: false,
                 machines: [],
-                form: {
-                    name: '',
-                    serial_no: '',
-                    location: '',
-                    status: '',
-                },
+                form: this.getDefaultFieldValues,
                 rules: {
                     name: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
                     serial_no: {required: true, message: 'Serial No. is required', trigger: ['blur', 'change']},
@@ -210,6 +380,10 @@
                 filters: {
                     searchString: ''
                 },
+                statusOption: [
+                   {  id: 1, value: 'Active' },
+                   {  id: 0, value: 'Inactive' }
+                ],
                 loading: false
             }
         },
@@ -326,13 +500,11 @@
 
             openEditDialog(item) {
                 this.setErrors([])
+                console.log(this.form.name)
                 this.edit = true
                 this.formDialogVisible = true
-                this.form.id = item.id
-                this.form.name = item.name
-                this.form.serial_no = item.serial_no
-                this.form.location = item.location
-                this.form.status = item.status
+                this.form = item
+                this.form.status = item.status == 'Active' ? '1' : '0'
             },
 
             clearForm() {
@@ -340,12 +512,30 @@
                     this.$refs.form.clearValidate()
                 }
 
-                this.form.name = ''
-                this.form.serial_no = ''
-                this.form.location = ''
-                this.form.status = ''
+                this.form = this.getDefaultFieldValues()
                 this.formDialogVisible = false
             },
+
+            getDefaultFieldValues() {
+                return {
+                    name: null,
+                    serial_no: null,
+                    location: null,
+                    status: null,
+                    supplier: null,
+                    model: null,
+                    parameter_1: null,
+                    parameter_2: null,
+                    parameter_3: null,
+                    parameter_4: null,
+                    parameter_5: null,
+                    parameter_6: null,
+                    parameter_7: null,
+                    parameter_8: null,
+                    parameter_9: null,
+                    parameter_10: null
+                }
+            }
         },
     }
 </script>
