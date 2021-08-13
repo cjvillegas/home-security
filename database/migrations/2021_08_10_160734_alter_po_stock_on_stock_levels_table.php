@@ -26,7 +26,7 @@ class AlterPoStockOnStockLevelsTable extends Migration
     public function down()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-            //
+            $table->renameColumn('po_stock', 'post_stock');
         });
     }
 }

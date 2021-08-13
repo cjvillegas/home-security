@@ -14,8 +14,8 @@ class AlterStockFieldsOnSotckLevelsTable extends Migration
     public function up()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-            $table->float('available_stock')->change();
-            $table->float('po_stock')->change();
+            $table->float('available_stock', 8, 2)->change();
+            $table->float('po_stock', 8, 2)->change();
         });
     }
 
