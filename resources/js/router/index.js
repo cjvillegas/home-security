@@ -26,6 +26,11 @@ const EmployeeIndex = () => import('../components/Employee/EmployeeIndex')
 const EmployeeList = () => import('../components/Employee/EmployeeList')
 const EmployeeView = () => import('../components/Employee/EmployeeView')
 
+// User Components
+const UserIndex = () => import('../components/User/UserIndex')
+const UserList = () => import('../components/User/UserList')
+const UserView = () => import('../components/User/UserView')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -67,6 +72,26 @@ export default new VueRouter({
                     path: ':id',
                     name: 'Employee View',
                     component: EmployeeView,
+                    props: true,
+                }
+            ]
+        },
+        {
+            path: '/user-index',
+            name: 'User Index',
+            component: UserIndex,
+            props: true,
+            children: [
+                {
+                    path: 'list',
+                    name: 'User List',
+                    component: UserList,
+                    props: true,
+                },
+                {
+                    path: ':id',
+                    name: 'User View',
+                    component: UserView,
                     props: true,
                 }
             ]

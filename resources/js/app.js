@@ -84,7 +84,7 @@ window.axios.interceptors.response.use((response) => {
             app.$alert('Ops! You do not have enough permission or your session may have expired. Refresh the page to know if you need to login again.', 'FORBIDDEN', {
                 confirmButtonText: 'OK',
                 callback: action => {
-                    location.reload()
+                    location.href = '/admin'
                 }
             });
         }
