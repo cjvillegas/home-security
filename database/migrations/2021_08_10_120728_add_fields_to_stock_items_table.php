@@ -15,7 +15,7 @@ class AddFieldsToStockItemsTable extends Migration
     {
         Schema::table('stock_items', function (Blueprint $table) {
             $table->string('bd_fabric_id')->after('size')->nullable();
-            $table->float('weight')->after('bd_fabric_id')->nullable();
+            $table->float('weight')->after('bd_fabric_id', 8, 2)->nullable();
         });
     }
 

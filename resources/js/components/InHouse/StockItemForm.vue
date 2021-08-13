@@ -113,31 +113,35 @@
                         :span="12">
                         <el-form-item
                             label="Product Picture">
-                            <div v-loading="loading">
-                                <img v-if="productImageUrl" :src="productImageUrl" class="img-circle rounded-circle">
-                                <el-upload
-                                    :disabled="this.type === 'view'"
-                                    ref="product"
-                                    class="avatar-uploader avatar-round"
-                                    name="product"
-                                    :auto-upload="false"
-                                    :show-file-list="false"
-                                    :on-preview="productPreview"
-                                    :on-remove="productRemove"
-                                    list-type="picture"
-                                    action=""
-                                    accept="image/*"
-                                    :on-change="changeProductPicture">
-                                    <el-button
-                                        :disabled="this.type == 'view'"
-                                        v-if="!productImageUrl"
-                                        size="small"
-                                        type="primary">
-                                        <i class="fa fa-upload"></i>
-                                        Upload
-                                    </el-button>
-                                    <div slot="tip" class="el-upload__tip"></div>
-                                </el-upload>
+                            <div
+                                v-loading="loading">
+                                <img
+                                    v-if="productImageUrl"
+                                    :src="productImageUrl"
+                                    class="img-circle rounded-circle">
+                                    <el-upload
+                                        :disabled="this.type === 'view'"
+                                        ref="product"
+                                        class="avatar-uploader avatar-round"
+                                        name="product"
+                                        :auto-upload="false"
+                                        :show-file-list="false"
+                                        :on-preview="productPreview"
+                                        :on-remove="productRemove"
+                                        list-type="picture"
+                                        action=""
+                                        accept="image/*"
+                                        :on-change="changeProductPicture">
+                                        <el-button
+                                            :disabled="this.type == 'view'"
+                                            v-if="!productImageUrl"
+                                            size="small"
+                                            type="primary">
+                                            <i class="fa fa-upload"></i>
+                                            Upload
+                                        </el-button>
+                                        <div slot="tip" class="el-upload__tip"></div>
+                                    </el-upload>
                             </div>
                             <el-button
                                 v-if="productImageUrl"
