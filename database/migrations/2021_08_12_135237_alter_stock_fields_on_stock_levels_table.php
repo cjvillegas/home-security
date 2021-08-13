@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterPoStockOnStockLevelsTable extends Migration
+class AlterStockFieldsOnSotckLevelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class AlterPoStockOnStockLevelsTable extends Migration
     public function up()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-            $table->renameColumn('post_stock', 'po_stock');
+            $table->float('available_stock', 8, 2)->change();
+            $table->float('po_stock', 8, 2)->change();
         });
     }
 
@@ -26,7 +27,7 @@ class AlterPoStockOnStockLevelsTable extends Migration
     public function down()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-            $table->renameColumn('po_stock', 'post_stock');
+            //
         });
     }
 }
