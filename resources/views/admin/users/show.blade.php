@@ -81,7 +81,7 @@
     </ul>
     <div class="tab-content">
         <div class="tab-pane" role="tabpanel" id="user_user_alerts">
-            @includeIf('admin.users.relationships.userUserAlerts', ['userAlerts' => $user->userUserAlerts])
+{{--            @includeIf('admin.users.relationships.userUserAlerts', ['userAlerts' => $user->userUserAlerts])--}}
         </div>
     </div>
 </div>
