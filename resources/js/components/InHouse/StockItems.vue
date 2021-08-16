@@ -1,13 +1,19 @@
 <template>
     <div>
-        <el-card v-if="isForm">
-            <el-button
-                type="text"
-                @click="toggleForm('back')">
-                <i class="fa fa-arrow-left"></i> Return
-            </el-button>
-        </el-card>
         <el-card class="box-card">
+            <h4 class="mb-0">Stock Items</h4>
+        </el-card>
+
+        <el-card class="box-card mt-3">
+
+            <div v-if="isForm">
+                <el-button
+                    type="text"
+                    @click="toggleForm('back')">
+                    <i class="fa fa-arrow-left"></i> Return
+                </el-button>
+            </div>
+
             <div class="d-flex">
                 <div v-show="!isForm">
                     <el-input
