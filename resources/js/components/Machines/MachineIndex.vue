@@ -51,6 +51,12 @@
                             class-name="table-action-button">
                             <template slot-scope="scope">
                                 <template>
+                                    <el-button
+                                    @click="viewMachine(scope.row)"
+                                        type="text"
+                                        class="text-info">
+                                        <i class="fas fa-eye"></i>
+                                    </el-button>
                                     <el-tooltip
                                         class="item"
                                         effect="dark"
@@ -97,7 +103,7 @@
 
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="edit ? 'Edit Machine' : 'Add Machine'"
+            :title="(edit == true) ? 'Edit Machine' : (edit == false) ? 'Add Machine' : 'View Machine'"
             width="70%"
             @close="clearForm">
             <el-form
@@ -115,6 +121,7 @@
                             :error="hasError('name')">
                             <el-input
                                 v-model="form.name"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -129,6 +136,7 @@
                             :error="hasError('serial_no')">
                             <el-input
                                 v-model="form.serial_no"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -143,6 +151,7 @@
                             :error="hasError('location')">
                             <el-input
                                 placeholder="Location"
+                                :disabled="this.edit == 'View'"
                                 v-model="form.location"
                                 clearable
                                 class="w-100">
@@ -159,6 +168,7 @@
                             <el-select
                                 v-model="form.status"
                                 placeholder="Status"
+                                :disabled="this.edit == 'View'"
                                 class="w-100">
                                 <el-option
                                     label="Active"
@@ -181,6 +191,7 @@
                             :error="hasError('supplier')">
                             <el-input
                                 v-model="form.supplier"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -195,6 +206,7 @@
                             :error="hasError('model')">
                             <el-input
                                 v-model="form.model"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -209,6 +221,7 @@
                             :error="hasError('parameter_1')">
                             <el-input
                                 v-model="form.parameter_1"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -222,6 +235,7 @@
                             :error="hasError('parameter_2')">
                             <el-input
                                 v-model="form.parameter_2"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -235,6 +249,7 @@
                             :error="hasError('parameter_3')">
                             <el-input
                                 v-model="form.parameter_3"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -248,6 +263,7 @@
                             :error="hasError('parameter_4')">
                             <el-input
                                 v-model="form.parameter_4"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -261,6 +277,7 @@
                             :error="hasError('parameter_5')">
                             <el-input
                                 v-model="form.parameter_5"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -274,6 +291,7 @@
                             :error="hasError('parameter_6')">
                             <el-input
                                 v-model="form.parameter_6"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -287,6 +305,7 @@
                             :error="hasError('parameter_7')">
                             <el-input
                                 v-model="form.parameter_7"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -300,6 +319,7 @@
                             :error="hasError('parameter_8')">
                             <el-input
                                 v-model="form.parameter_8"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -313,6 +333,7 @@
                             :error="hasError('parameter_9')">
                             <el-input
                                 v-model="form.parameter_9"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
@@ -326,35 +347,36 @@
                             :error="hasError('parameter_10')">
                             <el-input
                                 v-model="form.parameter_10"
+                                :disabled="this.edit == 'View'"
                                 clearable
                                 class="w-100">
                             </el-input>
                         </el-form-item>
                     </el-col>
-                    {{ form.parameter9 }}
                 </el-row>
             </el-form>
 
             <span
                 slot="footer"
-                class="dialog-footer">
-            <el-button
-                @click="clearForm">
-                Cancel
-            </el-button>
-            <el-button
-                type="primary"
-                @click="validate"
-                v-show="!edit">
-                Save
-            </el-button>
-            <el-button
-                type="primary"
-                @click="validate"
-                v-show="edit">
-                Update
-            </el-button>
-        </span>
+                class="dialog-footer"
+                v-if="this.edit != 'View'">
+                <el-button
+                    @click="clearForm">
+                    Cancel
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="validate"
+                    v-show="!edit">
+                    Save
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="validate"
+                    v-show="edit">
+                    Update
+                </el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -498,9 +520,17 @@
                     })
             },
 
+            viewMachine(item) {
+                this.setErrors([])
+                this.edit = 'View'
+                this.formDialogVisible = true
+                this.form = item
+                this.form.status = item.status == 'Active' ? '1' : '0'
+
+            },
+
             openEditDialog(item) {
                 this.setErrors([])
-                console.log(this.form.name)
                 this.edit = true
                 this.formDialogVisible = true
                 this.form = item
