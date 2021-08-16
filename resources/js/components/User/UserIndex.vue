@@ -4,7 +4,7 @@
 
 <script>
     export default {
-        name: "EmployeeIndex",
+        name: "UserIndex",
         props: {
             pageData: {
                 required: true,
