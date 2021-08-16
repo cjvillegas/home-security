@@ -88,12 +88,36 @@
                     <el-col
                         :span="12">
                         <el-form-item
-                            label="Weight(kg)">
-                            <el-input
+                            label="Weight(kg)"
+                            :error="hasError('weight')">
+                            <el-input-number
                                 v-model="form.weight"
+                                :controls="false"
                                 :disabled="this.type === 'view'"
                                 clearable>
-                            </el-input>
+                            </el-input-number>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col
+                        :span="12">
+                        <el-form-item
+                            label="Material ID"
+                            :error="hasError('material_id')">
+                            <el-tooltip
+                                class="item"
+                                effect="dark"
+                                content=""
+                                :open-delay="500"
+                                placement="top">
+                                <el-input-number
+                                    v-model="form.material_id"
+                                    placeholder="This to be used for TS2000 barcode generation"
+                                    :controls="false"
+                                    :disabled="this.type === 'view'"
+                                    clearable>
+                                </el-input-number>
+                            </el-tooltip>
                         </el-form-item>
                     </el-col>
 
@@ -377,13 +401,14 @@ export default {
             loading: false,
             form: {
                 id: '',
-                stock_code:  'hahaha',
+                stock_code:  '',
                 description: '',
                 range: '',
                 colour: '',
                 size: '',
-                bg_fabric_id: '',
-                weight: '',
+                bd_fabric_id: '',
+                weight: undefined,
+                material_id: undefined,
                 length: '',
                 product_picture: '',
                 main_location: '',
@@ -463,6 +488,7 @@ export default {
             form.append('size', (this.form.size ? this.form.size : ''))
             form.append('bd_fabric_id', (this.form.bd_fabric_id ? this.form.bd_fabric_id : ''))
             form.append('weight', (this.form.weight ? this.form.weight : ''))
+            form.append('material_id', (this.form.material_id ? this.form.material_id : ''))
             form.append('length', (this.form.length ? this.form.length : ''))
             form.append('main_location', (this.form.main_location ? this.form.main_location : ''))
             form.append('secondary_location', (this.form.secondary_location ? this.form.secondary_location : ''))
@@ -683,7 +709,7 @@ export default {
                 if(this.form.other_location_picture != null && this.form.other_location_picture != '') {
                     this.otherLocationImageUrl = '/storage/' + this.form.other_location_picture
                 }
-
+                console.log(this.form)
                 this.loading = false
             })
         },
@@ -700,7 +726,8 @@ export default {
                 colour: '',
                 size: '',
                 bd_fabric_id: '',
-                weight: '',
+                weight: undefined,
+                material_id: undefined,
                 length: '',
                 product_picture: '',
                 main_location: '',
@@ -748,6 +775,10 @@ export default {
     }
 
     .el-select {
+        width: 100% !important;
+    }
+
+    .el-input-number {
         width: 100% !important;
     }
 </style>

@@ -100,6 +100,7 @@ class StockItemController extends Controller
      */
     public function store(StoreStockItemRequest $request)
     {
+        Log::info($request->all());
         DB::beginTransaction();
         try {
             $stockItem = StockItem::create($request->all());
@@ -148,6 +149,7 @@ class StockItemController extends Controller
      */
     public function update(Request $request, StockItem $stockItem)
     {
+        Log::info($request->all());
         $validated = $request->validate(
             [
                 'stock_code' => ['required', Rule::unique('stock_items')->ignore($stockItem->id)]
