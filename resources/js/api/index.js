@@ -1,5 +1,6 @@
 import Orders from './Orders'
 import Employee from './Employee'
+import User from './User'
 import Reports from './Reports'
 import Exports from './Exports'
 import Scanners from './Scanners'
@@ -16,6 +17,7 @@ import EmployeeEmployee from './Employee/Employee'
 export default {
     Orders,
     Employee,
+    User,
     Reports,
     Exports,
     Processes,

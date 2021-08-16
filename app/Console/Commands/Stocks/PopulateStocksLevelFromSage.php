@@ -121,7 +121,9 @@ class PopulateStocksLevelFromSage extends Command
      */
     private function clearTable(): void
     {
-        StockLevel::truncate();
+        $model = new StockLevel();
+        $model->setConnection('mysql')
+            ->truncate();
     }
 
     /**

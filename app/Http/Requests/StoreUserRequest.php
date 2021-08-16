@@ -27,6 +27,8 @@ class StoreUserRequest extends FormRequest
             ],
             'password' => [
                 'required',
+                'min:5',
+                'confirmed',
             ],
             'roles.*' => [
                 'integer',

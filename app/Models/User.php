@@ -39,11 +39,21 @@ class User extends Authenticatable
         'name',
         'email',
         'email_verified_at',
+        'is_active',
         'password',
         'remember_token',
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    /**
+     * Cast variables to specified data types
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function getIsAdminAttribute()
@@ -161,7 +171,7 @@ class User extends Authenticatable
     public function getPermissionNameByModule(string $moduleName): array
     {
         // list of actions that the application permission supports
-        $actions = ['access', 'create', 'edit', 'show', 'delete'];
+        $actions = ['access', 'create', 'edit', 'show', 'delete', 'status_change'];
 
         $permissionNames = [];
 
