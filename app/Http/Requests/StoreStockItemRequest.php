@@ -27,6 +27,7 @@ class StoreStockItemRequest extends FormRequest
     {
         return [
             'stock_code' => ['required'],
+            'material_id' => 'numeric'
         ];
     }
 }
