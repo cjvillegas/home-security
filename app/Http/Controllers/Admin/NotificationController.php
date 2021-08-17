@@ -57,7 +57,10 @@ class NotificationController extends Controller
         $searchString = $request->get('searchString');
         $size = $request->get('size');
 
-        $query = new Notification();
+        $query = Notification::
+            when($searchString, function ($query) use ($searchString) {
+                $query->where('data', 'like', "%{$searchString}%");
+            });
 
         $notifications = $query->paginate($size);
 
