@@ -89,64 +89,78 @@
                         </template>
                     </el-table-column>
                 </el-table>
-            </el-card>
 
-            <el-dialog
-                :visible.sync="formDialogVisible"
-                :title="(dialogType == 'Add') ? 'Add Quality Control' : 'Edit Quality Control'"
-                top="5vh"
-                :before-close="handleClose"
-                width="40%"
-                @close="clearForm">
-                <div class="d-flex" v-if="this.dialogType == 'Edit'">
-                    <div class="ml-auto">
-                        <el-switch v-model="form.is_active"></el-switch>
-                    </div>
+                <div class="text-right">
+                    <el-pagination
+                        class="mt-3"
+                        background
+                        layout="total, sizes, prev, pager, next"
+                        :total="filters.total"
+                        :page-size="filters.size"
+                        :page-sizes="[10, 25, 50, 100]"
+                        :current-page="filters.page"
+                        @size-change="handleSize"
+                        @current-change="handlePage">
+                    </el-pagination>
                 </div>
-                <el-form
-                    ref="form"
-                    :model="form"
-                    :rules="rules">
-                    <el-form-item
-                        label="QC Code"
-                        prop="qc_code"
-                        :error="hasError('qc_code')">
-                        <el-input
-                            v-model="form.qc_code">
-                        </el-input>
-                    </el-form-item>
-
-                    <el-form-item
-                        label="Description"
-                        prop="description"
-                        :error="hasError('description')">
-                        <el-input
-                            v-model="form.description">
-                        </el-input>
-                    </el-form-item>
-                </el-form>
-
-                <span
-                    slot="footer"
-                    class="dialog-footer">
-                        <el-button @click="fetchQualityControls">
-                            Cancel
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="validate"
-                            v-show="this.dialogType == 'Add'">
-                            Save
-                        </el-button>
-                        <el-button
-                            type="primary"
-                            @click="validate"
-                            v-show="this.dialogType == 'Edit'">
-                            Update
-                        </el-button>
-                </span>
-            </el-dialog>
+            </el-card>
         </div>
+
+         <el-dialog
+            :visible.sync="formDialogVisible"
+            :title="(dialogType == 'Add') ? 'Add Quality Control' : 'Edit Quality Control'"
+            top="5vh"
+            :before-close="handleClose"
+            width="40%"
+            @close="clearForm">
+            <div class="d-flex" v-if="this.dialogType == 'Edit'">
+                <div class="ml-auto">
+                    <el-switch v-model="form.is_active"></el-switch>
+                </div>
+            </div>
+            <el-form
+                ref="form"
+                :model="form"
+                :rules="rules">
+                <el-form-item
+                    label="QC Code"
+                    prop="qc_code"
+                    :error="hasError('qc_code')">
+                    <el-input
+                        v-model="form.qc_code">
+                    </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Description"
+                    prop="description"
+                    :error="hasError('description')">
+                    <el-input
+                        v-model="form.description">
+                    </el-input>
+                </el-form-item>
+            </el-form>
+
+            <span
+                slot="footer"
+                class="dialog-footer">
+                    <el-button @click="fetchQualityControls">
+                        Cancel
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="validate"
+                        v-show="this.dialogType == 'Add'">
+                        Save
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        @click="validate"
+                        v-show="this.dialogType == 'Edit'">
+                        Update
+                    </el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -182,12 +196,18 @@
         methods: {
             fetchQualityControls() {
                 this.formDialogVisible = false
-                console.log('zxczx')
+
                 let apiUrl = `/admin/quality-control/list`
                 this.loading = true
                 axios.post(apiUrl, this.filters)
                 .then((response) => {
                     this.qualityControls = response.data.qualityControls.data
+                    this.filters.total = response.data.qualityControls.total
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
                     this.loading = false
                 })
             },
