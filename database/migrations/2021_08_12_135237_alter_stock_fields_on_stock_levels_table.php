@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AlterStockFieldsOnSotckLevelsTable extends Migration
+class AlterStockFieldsOnStockLevelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -27,7 +27,8 @@ class AlterStockFieldsOnSotckLevelsTable extends Migration
     public function down()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-            //
+            $table->integer('available_stock')->change();
+            $table->integer('po_stock')->change();
         });
     }
 }
