@@ -24,11 +24,18 @@ class PermissionsController extends Controller
         return view('admin.permissions.index', compact('user'));
     }
 
-    public function create()
+    public function fetchPermissions(Request $request)
     {
-        abort_if(Gate::denies('permission_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $searchString = $request->searchString;
+        $size = $request->size;
 
-        return view('admin.permissions.create');
+        $permissions = Permission::orderBy('created_at', 'desc')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('title', 'like', "%{$searchString}%");
+            });
+        $permissions = $permissions->paginate($size);
+
+        return response()->json(['permissions' => $permissions]);
     }
 
     public function store(StorePermissionRequest $request)
