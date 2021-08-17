@@ -17,9 +17,11 @@ class PermissionsController extends Controller
     {
         abort_if(Gate::denies('permission_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $permissions = Permission::all();
+        $user = auth()->user();
 
-        return view('admin.permissions.index', compact('permissions'));
+        $user->permissions = $user->getPermissionNameByModule('stock_items');
+
+        return view('admin.permissions.index', compact('user'));
     }
 
     public function create()
