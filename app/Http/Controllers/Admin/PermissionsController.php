@@ -29,7 +29,7 @@ class PermissionsController extends Controller
         $searchString = $request->searchString;
         $size = $request->size;
 
-        $permissions = Permission::orderBy('created_at', 'desc')
+        $permissions = Permission::orderBy('id', 'asc')
             ->when($searchString, function ($query) use ($searchString) {
                 $query->where('title', 'like', "%{$searchString}%");
             });
@@ -42,7 +42,7 @@ class PermissionsController extends Controller
     {
         $permission = Permission::create($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return response()->json(['message' => 'Permission Successfully Saved.']);
     }
 
     public function edit(Permission $permission)
@@ -56,7 +56,7 @@ class PermissionsController extends Controller
     {
         $permission->update($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return response()->json(['message' => 'Permission Successfully Updated.']);
     }
 
     public function show(Permission $permission)
@@ -72,7 +72,7 @@ class PermissionsController extends Controller
 
         $permission->delete();
 
-        return back();
+        return response()->json(['message' => 'Permission Successfully Deleted.']);
     }
 
     public function massDestroy(MassDestroyPermissionRequest $request)

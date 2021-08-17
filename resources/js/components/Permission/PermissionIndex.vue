@@ -30,9 +30,45 @@
                     class="w-100"
                     fit>
                     <el-table-column
-                        prop="qc_code"
-                        label="Quality Control code"
+                        prop="title"
+                        label="Title"
                         sortable>
+                    </el-table-column>
+
+                    <el-table-column
+                        width="100%"
+                        label="Action"
+                        class-name="table-action-button">
+                        <template slot-scope="scope">
+                            <template>
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="Edit"
+                                    placement="top"
+                                    :open-delay="1000">
+                                    <el-button
+                                        @click="openEditDialog(scope.row), formDialogVisible = true"
+                                        type="text">
+                                        <i class="fas fa-pen"></i>
+                                    </el-button>
+                                </el-tooltip>
+                                <el-popconfirm
+                                    @confirm="deletePermission(scope.row.id)"
+                                    confirm-button-text='OK'
+                                    cancel-button-text='No, Thanks'
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    title="Are you sure to delete this?">
+                                    <el-button
+                                        type="text"
+                                        class="text-danger ml-2"
+                                        slot="reference">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </el-button>
+                                </el-popconfirm>
+                            </template>
+                        </template>
                     </el-table-column>
 
                 </el-table>
@@ -52,6 +88,52 @@
                 </div>
             </el-card>
         </div>
+        <el-dialog
+            :visible.sync="formDialogVisible"
+            :title="(dialogType == 'Add') ? 'Edit Permission' : (edit == false) ? 'Add Permission' : 'View Permission'"
+            width="40%"
+            @close="clearForm">
+            <el-form
+                v-loading="loading"
+                ref="form"
+                :model="form"
+                :rules="rules">
+                <el-form-item
+                    label="Permission Name"
+                    prop="title"
+                    :error="hasError('title')">
+                    <el-input
+                        v-model="form.title"
+                        :disabled="this.dialogType == 'View'"
+                        clearable
+                        class="w-100">
+                    </el-input>
+                </el-form-item>
+
+            </el-form>
+            <span
+                slot="footer"
+                class="dialog-footer"
+                v-if="this.dialogType != 'View'">
+                <el-button
+                    @click="clearForm">
+                    Cancel
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="validate"
+                    v-show="this.dialogType == 'Add'">
+                    Save
+                </el-button>
+                <el-button
+                    type="primary"
+                    @click="validate"
+                    v-show="this.dialogType == 'Edit'">
+                    Update
+                </el-button>
+            </span>
+
+        </el-dialog>
     </div>
 </template>
 
@@ -63,9 +145,18 @@
         mixins: [pagination, formHelper],
         data() {
             return {
+                formDialogVisible: false,
+                dialogType: 'Add',
                 loading: false,
                 filters: {
                     searchString: null,
+                },
+                form: {
+                    id: null,
+                    title: ''
+                },
+                rules: {
+                    title: {required: true, message: 'Title is required', trigger: ['blur', 'change']},
                 },
                 permissions: []
             }
@@ -87,7 +178,6 @@
 
                 axios.post(apiUrl, this.filters)
                 .then((response) => {
-                    console.log(response.data)
                     this.permissions = response.data.permissions.data
                     this.filters.total = response.data.permissions.total
                 })
@@ -99,8 +189,108 @@
                 })
             },
 
-            addNew() {
+            savePermission() {
+                let apiUrl = `/admin/permissions`
+                this.loading = true
 
+                axios.post(apiUrl, this.form)
+                .then((response) => {
+                    switch(response.status){
+                        case 200:
+                            this.$notify({
+                                title: 'Success',
+                                message: response.data.message,
+                                type: 'success'
+                            })
+                            this.fetchPermissions()
+                            this.clearForm()
+                    }
+                })
+                .catch(err => {
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+            },
+
+            updatePermission() {
+                let apiUrl = `/admin/${this.form.id}/update`
+                this.loading = true
+
+                axios.patch(apiUrl, this.form)
+                .then((response) => {
+                    switch(response.status){
+                        case 200:
+                            this.$notify({
+                                title: 'Success',
+                                message: response.data.message,
+                                type: 'success'
+                            })
+                            this.fetchPermissions()
+                            this.clearForm()
+                    }
+                })
+                .catch(err => {
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+            },
+
+            addNew() {
+                this.dialogType = 'Add'
+                this.formDialogVisible = true
+            },
+
+            openEditDialog(item) {
+                this.form.id = item.id
+                this.form.title = item.title
+            },
+
+            deletePermission(id)
+            {
+                let apiUrl = `/admin/permissions/${id}`
+                axios.delete(apiUrl)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Deleted!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                    this.fetchPermissions()
+                })
+            },
+
+            validate() {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        this.resetErrors()
+                        if (this.edit) {
+                            this.updatePermission()
+
+                            return
+                        }
+
+                        this.savePermission()
+                    }
+                })
+            },
+
+            clearForm() {
+                if (this.$refs.form) {
+                    this.$refs.form.clearValidate()
+                }
+
+                this.form = {
+                    title: null
+                }
+                this.formDialogVisible = false
             }
         }
     }
