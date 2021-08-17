@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f159740e3a46947fd3095081532d27b9",
+    "content-hash": "244e22f1240f1bc652c3d0950ac69065",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1471,6 +1471,63 @@
                 "url"
             ],
             "time": "2021-03-21T16:25:00+00:00"
+        },
+        {
+            "name": "laravel-notification-channels/microsoft-teams",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel-notification-channels/microsoft-teams.git",
+                "reference": "1a41e9b95779f33f170c537ddfa1a687684cee69"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel-notification-channels/microsoft-teams/zipball/1a41e9b95779f33f170c537ddfa1a687684cee69",
+                "reference": "1a41e9b95779f33f170c537ddfa1a687684cee69",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3 || ^7.0",
+                "illuminate/notifications": "~5.5 || ~6.0 || ~7.0 || ^8.0",
+                "illuminate/support": "~5.5 || ~6.0 || ~7.0 || ^8.0",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2.3",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "NotificationChannels\\MicrosoftTeams\\MicrosoftTeamsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "NotificationChannels\\MicrosoftTeams\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tobias Madner",
+                    "email": "tobias.madner@gmx.at",
+                    "homepage": "https://www.pinpoll.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel Notification Channel for Microsoft Teams",
+            "homepage": "https://github.com/laravel-notification-channels/microsoft-teams",
+            "support": {
+                "issues": "https://github.com/laravel-notification-channels/microsoft-teams/issues",
+                "source": "https://github.com/laravel-notification-channels/microsoft-teams/tree/v1.1.0"
+            },
+            "time": "2020-09-09T22:33:30+00:00"
         },
         {
             "name": "laravel/dusk",
@@ -8568,5 +8625,8 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.4"
+    },
     "plugin-api-version": "2.1.0"
 }

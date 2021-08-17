@@ -4,10 +4,13 @@ namespace App\Console\Commands\Cron;
 
 use App\Models\Employee;
 use App\Models\TimeClock;
+use App\Models\User;
+use App\Notifications\CronFailureNotification;
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class EmployeeTimeclock extends Command
 {
@@ -42,36 +45,39 @@ class EmployeeTimeclock extends Command
      */
     public function handle(): void
     {
-        // logs the execution
-        $this->logExecution();
+        try {
+            $timeClockData = $this->getTimeclockData();
 
-        $timeClockData = $this->getTimeclockData();
+            $employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
+                ->get();
 
-        $employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
-            ->get();
+            $chunkCounter = 0;
 
-        $chunkCounter = 0;
+            // chunk the results to save memory
+            foreach ($timeClockData->chunk(100) as $chunk) {
+                // foreach to each instance of retrieved timeclock
+                $newTimeclocks = [];
+                foreach ($chunk as $timeClock) {
+                    // perform data sanitization
+                    $newTimeclocks[] = $this->sanitize((array) $timeClock, $employees);
+                }
 
-        // chunk the results to save memory
-        foreach ($timeClockData->chunk(100) as $chunk) {
-            // foreach to each instance of retrieved timeclock
-            $newTimeclocks = [];
-            foreach ($chunk as $timeClock) {
-                // perform data sanitization
-                $newTimeclocks[] = $this->sanitize((array) $timeClock, $employees);
+                // do the actual insertion of data
+                TimeClock::insert($newTimeclocks);
+
+                // increment the execution counter
+                $chunkCounter++;
+
+                // execution throttling
+                // make the server rest after 10 bulk insert
+                if ($chunkCounter % 10 === 0) {
+                    usleep(100000);
+                }
             }
+        } catch (Exception $err) {
+            $users = (new User)->getUserAdminsWithValidEmails();
 
-            // do the actual insertion of data
-            TimeClock::insert($newTimeclocks);
-
-            // increment the execution counter
-            $chunkCounter++;
-
-            // execution throttling
-            // make the server rest after 10 bulk insert
-            if ($chunkCounter % 10 === 0) {
-                usleep(100000);
-            }
+            Notification::send($users, new CronFailureNotification('Employee Time Clock', $err->getMessage()));
         }
     }
 
@@ -137,22 +143,5 @@ class EmployeeTimeclock extends Command
 
         // return data as collection
         return collect($timeClocks);
-    }
-
-    /**
-     * Logs the execution of this command. This is pretty useful
-     * for bug tracking.
-     *
-     * @return void
-     */
-    private function logExecution(): void
-    {
-        Log::info('CRON for populating time_clocks table from T&A is RUNNING!!!',
-            [
-                'datetime' => now()->format('Y-m-d H:i:s'),
-                'command' => 'employees:fetch-timeclock-from-t-and-a',
-                'file' => 'EmployeeTimeclock'
-            ]);
-
     }
 }

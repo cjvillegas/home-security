@@ -38,7 +38,7 @@ export default {
     },
 
     /**
-     * API endpoint for updating a employee.
+     * API endpoint for updating an employee.
      * This route is under the API collection
      *
      * @param postData
@@ -51,7 +51,7 @@ export default {
     },
 
     /**
-     * API endpoint for deleting a employee.
+     * API endpoint for deleting an employee.
      * This route is under the API collection
      *
      * @param id
