@@ -31,6 +31,11 @@ const UserIndex = () => import('../components/User/UserIndex')
 const UserList = () => import('../components/User/UserList')
 const UserView = () => import('../components/User/UserView')
 
+// Notification Components
+const NotificationIndex = () => import('../components/Notifications/NotificationIndex')
+const NotificationList = () => import('../components/Notifications/NotificationList')
+const NotificationView = () => import('../components/Notifications/NotificationView')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -96,5 +101,25 @@ export default new VueRouter({
                 }
             ]
         },
+        {
+            path: '/notification-index',
+            name: 'Notification Index',
+            component: NotificationIndex,
+            props: true,
+            children: [
+                {
+                    path: 'list',
+                    name: 'Notification List',
+                    component: NotificationList,
+                    props: true,
+                },
+                {
+                    path: ':id',
+                    name: 'Notification View',
+                    component: NotificationView,
+                    props: true,
+                },
+            ]
+        }
     ]
 })

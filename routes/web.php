@@ -17,7 +17,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/', 'HomeController@index')->name('home');
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
-    Route::resource('permissions', 'PermissionsController');
+    Route::post('permissions/list', 'PermissionsController@fetchPermissions');
+    Route::resource('permissions', 'PermissionsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Roles
     Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
@@ -135,6 +136,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     });
 
     require_once base_path('routes/in-house.php');
+    require_once base_path('routes/src/quality-control.php');
+
+    // notifications
+    Route::get('/notifications/get-list', 'NotificationController@getList')->name('notifications.get-list');
+    Route::resource('notifications', 'NotificationController')->only(['index', 'show', 'destroy']);
+
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

@@ -50,6 +50,16 @@
                             </a>
                         </li>
                     @endcan
+                    @can('user_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.notifications.index") }}" class="c-sidebar-nav-link {{ request()->is("admin.notifications.*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-bell c-sidebar-nav-icon">
+
+                                </i>
+                                Notifications
+                            </a>
+                        </li>
+                    @endcan
                     @can('audit_log_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route("admin.audit-logs.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/audit-logs") || request()->is("admin/audit-logs/*") ? "c-active" : "" }}">
@@ -256,6 +266,26 @@
                             <a href="{{ route('admin.reports.data-export.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.work-analytics.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-file-export c-sidebar-nav-icon"></i>
                                 Data Export
+                            </a>
+                        </li>
+                    @endcan
+
+                </ul>
+            </li>
+        @endif
+
+        @if (auth()->user()->canAny(['quality_control_access']))
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/quality-control*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-gavel c-sidebar-nav-icon"></i>
+                    Quality Control
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('quality_control_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.quality-control.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.quality-control.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-list-alt c-sidebar-nav-icon"></i>
+                                QC codes
                             </a>
                         </li>
                     @endcan

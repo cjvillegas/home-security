@@ -30,4 +30,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'teams' => [
+        'dev_cron_failure' => env('TEAMS_DEV_CRON_FAILURE_WEBHOOK'),
+    ],
 ];

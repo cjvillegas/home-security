@@ -26,7 +26,7 @@ export default {
         callFetchFunction() {
             if (this.functionName) {
                 setTimeout(_ => {
-                    this.[this.functionName]()
+                    this[this.functionName]()
                 }, 100)
             }
         }
