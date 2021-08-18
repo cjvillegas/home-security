@@ -113,8 +113,9 @@
             :before-close="handleClose"
             width="40%"
             @close="clearForm">
-            <div class="d-flex" v-if="this.dialogType == 'Edit'">
+            <div class="d-flex">
                 <div class="ml-auto">
+                    Status
                     <el-switch v-model="form.is_active"></el-switch>
                 </div>
             </div>
@@ -195,8 +196,6 @@
 
         methods: {
             fetchQualityControls() {
-                this.formDialogVisible = false
-
                 let apiUrl = `/admin/quality-control/list`
                 this.loading = true
                 axios.post(apiUrl, this.filters)
@@ -293,12 +292,16 @@
             },
 
             handleClose(done) {
-                this.$confirm('Are you sure to close this dialog?')
-                .then(_ => {
-                    this.fetchQualityControls()
-                    done();
-                })
-                .catch(_ => {});
+                if (this.dialogType == 'Edit') {
+                    this.$confirm('Discard all changes?')
+                    .then(_ => {
+                        this.fetchQualityControls()
+                        this.formDialogVisible = false
+                        done();
+                    })
+                    .catch(_ => {});
+                }
+                this.formDialogVisible = false
             },
 
             deleteQualityControl(id) {
