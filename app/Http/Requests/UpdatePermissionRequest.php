@@ -6,6 +6,7 @@ use App\Models\Permission;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class UpdatePermissionRequest extends FormRequest
 {
@@ -20,6 +21,7 @@ class UpdatePermissionRequest extends FormRequest
             'title' => [
                 'string',
                 'required',
+                Rule::unique('permissions')->ignore($this->id)->whereNull('deleted_at')
             ],
         ];
     }
