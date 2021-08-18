@@ -132,6 +132,7 @@
                     <el-input
                         type="textarea"
                         :rows="2"
+                        autosize
                         placeholder="Please input"
                         v-model="form.description">
                     </el-input>
