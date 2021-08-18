@@ -76,7 +76,7 @@ class QualityControlController extends Controller
      */
     public function update(QualityControlRequest $request, QualityControl $qualityControl)
     {
-        abort_if(Gate::denies('quality_control_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('quality_control_update'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         DB::beginTransaction();
         try {
             $qualityControl->update($request->all());
