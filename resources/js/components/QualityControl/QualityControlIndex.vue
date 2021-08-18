@@ -110,7 +110,6 @@
             :visible.sync="formDialogVisible"
             :title="(dialogType == 'Add') ? 'Add Quality Control' : 'Edit Quality Control'"
             top="5vh"
-            :before-close="handleClose"
             width="40%"
             @close="clearForm">
             <div class="d-flex">
@@ -184,7 +183,6 @@
                 rules: {
                     qc_code: {required: true, message: 'Quality Code is required', trigger: 'change'},
                 },
-                editForm: []
             }
         },
 
@@ -285,23 +283,10 @@
                 this.dialogType = 'Edit'
                 this.formDialogVisible = true
                 this.setErrors([])
-                this.form = item
+                this.form.id = item.id
+                this.form.qc_code = item.qc_code
+                this.form.description = item.description
                 this.form.status = item.status == 'Active' ? '1' : '0'
-                this.editForm = this.form
-                console.log(this.editForm)
-            },
-
-            handleClose(done) {
-                if (this.dialogType == 'Edit') {
-                    this.$confirm('Discard all changes?')
-                    .then(_ => {
-                        this.fetchQualityControls()
-                        this.formDialogVisible = false
-                        done();
-                    })
-                    .catch(_ => {});
-                }
-                this.formDialogVisible = false
             },
 
             deleteQualityControl(id) {
