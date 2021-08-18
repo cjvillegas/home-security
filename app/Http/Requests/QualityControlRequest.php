@@ -28,8 +28,7 @@ class QualityControlRequest extends FormRequest
     {
         return [
             'qc_code' => [
-                'required', Rule::unique('quality_controls')->ignore($this->id)
-                        ->whereNull('deleted_at')
+                'required', Rule::unique('quality_controls')->ignore($this->id)->whereNull('deleted_at')
             ],
         ];
     }

@@ -294,7 +294,7 @@
                 axios.delete(apiUrl)
                 .then( (response) => {
                     this.$notify({
-                        title: 'Deleted!',
+                        title: 'QC code Deleted!',
                         message: response.data.message,
                         type: 'success'
                     });

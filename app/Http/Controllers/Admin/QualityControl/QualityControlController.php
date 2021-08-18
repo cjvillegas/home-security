@@ -30,7 +30,7 @@ class QualityControlController extends Controller
 
     /**
      * Fetch Quality Controls' List
-     *
+     * @param Request $request
      * @return JsonResponse
      */
     public function fetchQualityControls(Request $request)
@@ -50,6 +50,7 @@ class QualityControlController extends Controller
 
     /**
      * Store Quality Control Information
+     * @param QualityControlRequest $request
      * @return JsonResponse
      */
     public function store(QualityControlRequest $request)
@@ -69,6 +70,8 @@ class QualityControlController extends Controller
 
     /**
      * Update Quality Control Information
+     * @param QualityControlRequest $request
+     * @param QualityControl $qualityControl
      * @return JsonResponse
      */
     public function update(QualityControlRequest $request, QualityControl $qualityControl)
@@ -85,6 +88,12 @@ class QualityControlController extends Controller
         }
     }
 
+    /**
+     * Delete Quality Control
+     *
+     * @param  QualityControl $qualityControl
+     * @return JsonResponse
+     */
     public function destroy(QualityControl $qualityControl)
     {
         abort_if(Gate::denies('quality_control_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
