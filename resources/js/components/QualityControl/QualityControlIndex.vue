@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card class="box-card">
-            <h4 class="mb-0">Quality Control</h4>
+            <h4 class="mb-0">Quality Codes</h4>
         </el-card>
 
         <div v-loading="loading">
