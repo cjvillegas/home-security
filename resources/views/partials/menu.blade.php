@@ -50,6 +50,16 @@
                             </a>
                         </li>
                     @endcan
+                    @can('user_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.notifications.index") }}" class="c-sidebar-nav-link {{ request()->is("admin.notifications.*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-bell c-sidebar-nav-icon">
+
+                                </i>
+                                Notifications
+                            </a>
+                        </li>
+                    @endcan
                     @can('audit_log_access')
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route("admin.audit-logs.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/audit-logs") || request()->is("admin/audit-logs/*") ? "c-active" : "" }}">

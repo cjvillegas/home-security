@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
     {
 
         // fetches new orders from BLINDDATA. This CRON will only run when the env is production or staging
-        $schedule->command('orders:populate-orders-from-sage')
+        $schedule->command('orders:populate-orders-from-blind-data')
             ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
 
@@ -40,6 +40,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('stocks:populate-stock-levels-from-sage')
             ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
+
+        // runs a cron that will delete a month old or older notifications
+        $schedule->command('notifications:delete-a-month-old-notifications')
+            ->dailyAt('00:00');
     }
 
     /**

@@ -17,53 +17,71 @@ class PermissionsController extends Controller
     {
         abort_if(Gate::denies('permission_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $permissions = Permission::all();
+        $user = auth()->user();
 
-        return view('admin.permissions.index', compact('permissions'));
+        $user->permissions = $user->getPermissionNameByModule('stock_items');
+
+        return view('admin.permissions.index', compact('user'));
     }
 
-    public function create()
+    /**
+     * Fetch Permissions List
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
+    public function fetchPermissions(Request $request)
     {
-        abort_if(Gate::denies('permission_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $searchString = $request->searchString;
+        $size = $request->size;
 
-        return view('admin.permissions.create');
+        $permissions = Permission::orderBy('title', 'asc')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('title', 'like', "%{$searchString}%");
+            });
+        $permissions = $permissions->paginate($size);
+
+        return response()->json(['permissions' => $permissions]);
     }
 
+    /**
+     * Save new Permission
+     * @return JsonResponse
+     */
     public function store(StorePermissionRequest $request)
     {
         $permission = Permission::create($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return response()->json(['message' => 'Permission Successfully Saved.']);
     }
 
-    public function edit(Permission $permission)
-    {
-        abort_if(Gate::denies('permission_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.permissions.edit', compact('permission'));
-    }
-
+    /**
+     * Update Permission's data
+     *
+     * @param  mixed $request
+     * @param  mixed $permission
+     * @return JsonResponse
+     */
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->all());
 
-        return redirect()->route('admin.permissions.index');
+        return response()->json(['message' => 'Permission Successfully Updated.']);
     }
 
-    public function show(Permission $permission)
-    {
-        abort_if(Gate::denies('permission_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.permissions.show', compact('permission'));
-    }
-
+    /**
+     * Delete Permission
+     *
+     * @param  mixed $permission
+     * @return JsonResponse
+     */
     public function destroy(Permission $permission)
     {
         abort_if(Gate::denies('permission_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $permission->delete();
 
-        return back();
+        return response()->json(['message' => 'Permission Successfully Deleted.']);
     }
 
     public function massDestroy(MassDestroyPermissionRequest $request)
