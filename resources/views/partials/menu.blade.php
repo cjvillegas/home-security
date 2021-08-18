@@ -269,6 +269,26 @@
                             </a>
                         </li>
                     @endcan
+
+                </ul>
+            </li>
+        @endif
+
+        @if (auth()->user()->canAny(['quality_control_access']))
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/quality-control*") ? "c-show" : "" }}">
+                <a class="c-sidebar-nav-dropdown-toggle" href="#">
+                    <i class="fa-fw fas fa-gavel c-sidebar-nav-icon"></i>
+                    Quality Control
+                </a>
+                <ul class="c-sidebar-nav-dropdown-items">
+                    @can('quality_control_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.quality-control.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.quality-control.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-list-alt c-sidebar-nav-icon"></i>
+                                QC codes
+                            </a>
+                        </li>
+                    @endcan
                 </ul>
             </li>
         @endif
