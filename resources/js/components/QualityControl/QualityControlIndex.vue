@@ -11,7 +11,7 @@
                         <el-input
                             v-model="filters.searchString"
                             clearable
-                            placeholder="Search QC Code..."
+                            placeholder="Search QC Codes..."
                             style="width: 250px"
                             @keyup.enter.native.prevent="fetchQualityControls">
                         </el-input>
@@ -29,8 +29,14 @@
                     fit
                     :data="qualityControls">
                     <el-table-column
+                        prop="id"
+                        label="ID"
+                        sortable>
+                    </el-table-column>
+
+                    <el-table-column
                         prop="qc_code"
-                        label="QC code"
+                        label="QC Code"
                         sortable>
                     </el-table-column>
 
@@ -139,7 +145,8 @@
                 </el-form-item>
 
                 <el-form-item
-                    label="Status">
+                    label="Status"
+                    prop="is_active">
                     <el-switch v-model="form.is_active"></el-switch>
                 </el-form-item>
             </el-form>
@@ -191,7 +198,7 @@
 
         mounted() {
             this.filters.size = 10
-            this.functionName = 'fetchStocks'
+            this.functionName = 'fetchQualityControls'
             this.fetchQualityControls()
         },
 
@@ -290,7 +297,7 @@
                 this.form.id = item.id
                 this.form.qc_code = item.qc_code
                 this.form.description = item.description
-                this.form.status = item.status == 'Active' ? '1' : '0'
+                this.form.is_active = item.is_active
             },
 
             deleteQualityControl(id) {
@@ -318,7 +325,7 @@
                     id: null,
                     qc_code: null,
                     description: null,
-                    is_active: false,
+                    is_active: true,
                 }
             }
         }
