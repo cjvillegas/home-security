@@ -16,7 +16,7 @@ class CreateQualityControlsTable extends Migration
         Schema::create('quality_controls', function (Blueprint $table) {
             $table->id();
             $table->string('qc_code')->index();
-            $table->text('description')->index()->nullable();
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(false);
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();

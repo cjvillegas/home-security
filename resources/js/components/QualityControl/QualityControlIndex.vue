@@ -11,7 +11,7 @@
                         <el-input
                             v-model="filters.searchString"
                             clearable
-                            placeholder="Search Quality Control..."
+                            placeholder="Search QC Code..."
                             style="width: 250px"
                             @keyup.enter.native.prevent="fetchQualityControls">
                         </el-input>

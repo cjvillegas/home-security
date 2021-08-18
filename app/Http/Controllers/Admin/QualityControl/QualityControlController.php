@@ -39,8 +39,7 @@ class QualityControlController extends Controller
 
         $qualityControls = QualityControl::orderBy('id', 'DESC')
             ->when($searchString, function ($query) use ($searchString) {
-                $query->where('qc_code', 'like', "%{$searchString}%")
-                    ->orWhere('description', 'like', "%{$searchString}%");
+                $query->where('qc_code', 'like', "%{$searchString}%");
             });
 
         $qualityControls = $qualityControls->paginate($request->size);
