@@ -90,7 +90,7 @@
         </div>
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="(dialogType == 'Add') ? 'Edit Permission' : (edit == false) ? 'Add Permission' : 'View Permission'"
+            :title="(dialogType == 'Add') ? 'Add Permission' : (dialogType == 'Edit') ? 'Edit Permission' : 'View Permission'"
             width="40%"
             @close="clearForm">
             <el-form
@@ -217,7 +217,7 @@
             },
 
             updatePermission() {
-                let apiUrl = `/admin/${this.form.id}/update`
+                let apiUrl = `/admin/permissions/${this.form.id}`
                 this.loading = true
 
                 axios.patch(apiUrl, this.form)
@@ -244,11 +244,15 @@
             },
 
             addNew() {
+                if(this.dialogType == 'Edit') {
+                    this.clearForm()
+                }
                 this.dialogType = 'Add'
                 this.formDialogVisible = true
             },
 
             openEditDialog(item) {
+                this.dialogType = 'Edit'
                 this.form.id = item.id
                 this.form.title = item.title
             },
@@ -270,12 +274,11 @@
                 this.$refs.form.validate(valid => {
                     if (valid) {
                         this.resetErrors()
-                        if (this.edit) {
+                        if (this.dialogType == 'Edit') {
                             this.updatePermission()
 
                             return
                         }
-
                         this.savePermission()
                     }
                 })
@@ -286,9 +289,8 @@
                     this.$refs.form.clearValidate()
                 }
 
-                this.form = {
-                    title: null
-                }
+                this.form.title = null
+
                 this.formDialogVisible = false
             }
         }

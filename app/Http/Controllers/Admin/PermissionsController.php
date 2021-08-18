@@ -28,7 +28,7 @@ class PermissionsController extends Controller
      * Fetch Permissions List
      *
      * @param  mixed $request
-     * @return void
+     * @return JsonResponse
      */
     public function fetchPermissions(Request $request)
     {
@@ -46,7 +46,7 @@ class PermissionsController extends Controller
 
     /**
      * Save new Permission
-     * @return JSON
+     * @return JsonResponse
      */
     public function store(StorePermissionRequest $request)
     {
@@ -55,6 +55,13 @@ class PermissionsController extends Controller
         return response()->json(['message' => 'Permission Successfully Saved.']);
     }
 
+    /**
+     * Update Permission's data
+     *
+     * @param  mixed $request
+     * @param  mixed $permission
+     * @return JsonResponse
+     */
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->all());
@@ -62,6 +69,12 @@ class PermissionsController extends Controller
         return response()->json(['message' => 'Permission Successfully Updated.']);
     }
 
+    /**
+     * Delete Permission
+     *
+     * @param  mixed $permission
+     * @return JsonResponse
+     */
     public function destroy(Permission $permission)
     {
         abort_if(Gate::denies('permission_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
