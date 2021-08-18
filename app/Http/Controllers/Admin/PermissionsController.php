@@ -24,6 +24,12 @@ class PermissionsController extends Controller
         return view('admin.permissions.index', compact('user'));
     }
 
+    /**
+     * Fetch Permissions List
+     *
+     * @param  mixed $request
+     * @return void
+     */
     public function fetchPermissions(Request $request)
     {
         $searchString = $request->searchString;
@@ -38,6 +44,10 @@ class PermissionsController extends Controller
         return response()->json(['permissions' => $permissions]);
     }
 
+    /**
+     * Save new Permission
+     * @return JSON
+     */
     public function store(StorePermissionRequest $request)
     {
         $permission = Permission::create($request->all());
@@ -45,25 +55,11 @@ class PermissionsController extends Controller
         return response()->json(['message' => 'Permission Successfully Saved.']);
     }
 
-    public function edit(Permission $permission)
-    {
-        abort_if(Gate::denies('permission_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.permissions.edit', compact('permission'));
-    }
-
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
         $permission->update($request->all());
 
         return response()->json(['message' => 'Permission Successfully Updated.']);
-    }
-
-    public function show(Permission $permission)
-    {
-        abort_if(Gate::denies('permission_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.permissions.show', compact('permission'));
     }
 
     public function destroy(Permission $permission)
