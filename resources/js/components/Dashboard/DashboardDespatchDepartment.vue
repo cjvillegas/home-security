@@ -18,25 +18,29 @@
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 1"
-                        :data="formattedProgress.today_shift_1">
+                        :data="formattedProgress.today_shift_1"
+                        :machines="machines.shift_1">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 2"
-                        :data="formattedProgress.today_shift_2">
+                        :data="formattedProgress.today_shift_2"
+                        :machines="machines.shift_2">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 3"
-                        :data="formattedProgress.today_shift_3">
+                        :data="formattedProgress.today_shift_3"
+                        :machines="machines.shift_3">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Total"
-                        :data="formattedProgress.today_total">
+                        :data="formattedProgress.today_total"
+                        :machines="machines.today">
                     </global-gauge-list>
                 </div>
             </div>
@@ -51,25 +55,29 @@
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 1"
-                        :data="formattedProgress.yesterday_shift_1">
+                        :data="formattedProgress.yesterday_shift_1"
+                        :machines="machines.yesterday_shift_1">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 2"
-                        :data="formattedProgress.yesterday_shift_2">
+                        :data="formattedProgress.yesterday_shift_2"
+                        :machines="machines.yesterday_shift_2">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Shift 3"
-                        :data="formattedProgress.yesterday_shift_3">
+                        :data="formattedProgress.yesterday_shift_3"
+                        :machines="machines.yesterday_shift_3">
                     </global-gauge-list>
                 </div>
                 <div class="mb-3 col-sm-12 col-md-6 col-lg-3 d-flex justify-content-center">
                     <global-gauge-list
                         title="Total"
-                        :data="formattedProgress.yesterday_total">
+                        :data="formattedProgress.yesterday_total"
+                        :machines="machines.shift_1">
                     </global-gauge-list>
                 </div>
             </div>
@@ -110,11 +118,24 @@
                     total_P1013_yesterday: 0,
                     total_P1014_today: 0,
                     total_P1014_yesterday: 0,
-                }
+                },
+                machines: {
+                    shift_1: [],
+                    shift_2: [],
+                    shift_2: [],
+                    yesterday_shift_1: [],
+                    yesterday_shift_2: [],
+                    yesterday_shift_3: [],
+                    todayTotal: [],
+                    yesterDay: [],
+
+                    today: []
+                },
             }
         },
         created() {
             this.getDespatchDepartmentAnalytics()
+            this.fetchMachineStatistics()
         },
         methods: {
             getDespatchDepartmentAnalytics() {
@@ -130,6 +151,21 @@
                     .finally(_ => {
                         this.loading = false
                     })
+            },
+
+            fetchMachineStatistics() {
+                let apiUrl = `/admin/reports/dashboard-machine-statistics`
+
+                axios.get(apiUrl)
+                .then((response) => {
+                    this.machines.shift_1 = response.data.machines_shift_1
+                    this.machines.shift_2 = response.data.machines_shift_2
+                    this.machines.shift_3 = response.data.machines_shift_3
+                    this.machines.yesterday_shift_1 = response.data.yesterday_shift_1
+                    this.machines.yesterday_shift_2 = response.data.yesterday_shift_2
+                    this.machines.yesterday_shift_3 = response.data.yesterday_shift_3
+                    this.machines.today = response.data.todayMachines
+                })
             }
         },
         computed: {

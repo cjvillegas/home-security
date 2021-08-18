@@ -59,4 +59,22 @@ class MachineCounter extends Model
     * E N D  O F  R E L A T I O N S *
     ********************************/
 
+    /**
+     * Get today's Machine Counters
+     * @return query
+     */
+    public function scopeToday($query)
+    {
+        return $query->whereDate('created_at', now());
+    }
+
+    /**
+     * Get yesterday's Machine Counters
+     * @return query
+     */
+    public function scopeYesterday($query)
+    {
+        return $query->whereDate('created_at', date('Y-m-d', strtotime("-1 days")));
+    }
+
 }

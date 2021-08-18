@@ -13,6 +13,14 @@
                     <span class="ml-auto">{{ row.count | numFormat}}</span>
                 </div>
             </div>
+            <div
+                v-for="row in machines"
+                :key="row.key">
+                <div class="d-flex f-size-16">
+                    <span class="font-weight-bolder">{{ row.machine.name }}:</span>
+                    <span class="ml-auto">{{ row.total_boxes | numFormat}}</span>
+                </div>
+            </div>
         </div>
     </el-card>
 </template>
@@ -25,10 +33,14 @@
                 required: true,
                 type: Array
             },
+            machines: {
+                required: true,
+                type: Array
+            },
             title: {
                 required: true,
                 type: String
             }
-        }
+        },
     }
 </script>
