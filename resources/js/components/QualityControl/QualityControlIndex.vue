@@ -143,7 +143,7 @@
             <span
                 slot="footer"
                 class="dialog-footer">
-                    <el-button @click="fetchQualityControls">
+                    <el-button @click="formDialogVisible = false">
                         Cancel
                     </el-button>
                     <el-button
@@ -210,6 +210,7 @@
 
             addNew() {
                 this.dialogType = 'Add'
+                this.clearForm()
                 this.formDialogVisible = true
             },
 
@@ -302,6 +303,9 @@
             },
 
             clearForm() {
+                if (this.$refs.form) {
+                    this.$refs.form.clearValidate()
+                }
                 this.form = this.getDefaultFieldValues()
             },
 
