@@ -59,7 +59,7 @@
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this?">
+                                    title="Are you sure to delete this Permission?">
                                     <el-button
                                         type="text"
                                         class="text-danger ml-2"
