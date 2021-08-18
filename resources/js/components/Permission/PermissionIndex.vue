@@ -253,8 +253,7 @@
                 this.form.title = item.title
             },
 
-            deletePermission(id)
-            {
+            deletePermission(id) {
                 let apiUrl = `/admin/permissions/${id}`
                 axios.delete(apiUrl)
                 .then( (response) => {
@@ -295,7 +294,3 @@
         }
     }
 </script>
-
-<style>
-
-</style>
