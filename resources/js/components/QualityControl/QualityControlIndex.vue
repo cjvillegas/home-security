@@ -130,6 +130,9 @@
                     prop="description"
                     :error="hasError('description')">
                     <el-input
+                        type="textarea"
+                        :rows="2"
+                        placeholder="Please input"
                         v-model="form.description">
                     </el-input>
                 </el-form-item>
