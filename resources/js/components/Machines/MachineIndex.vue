@@ -54,7 +54,7 @@
                                     <el-button
                                     @click="viewMachine(scope.row)"
                                         type="text"
-                                        class="text-info">
+                                        class="ml-2 text-secondary">
                                         <i class="fas fa-eye"></i>
                                     </el-button>
                                     <el-tooltip
