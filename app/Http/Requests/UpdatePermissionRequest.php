@@ -21,7 +21,7 @@ class UpdatePermissionRequest extends FormRequest
             'title' => [
                 'string',
                 'required',
-                Rule::unique('permissions')->ignore($this->id)
+                Rule::unique('permissions')->ignore($this->id)->whereNull('deleted_at')
             ],
         ];
     }

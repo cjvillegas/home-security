@@ -35,7 +35,7 @@ class PermissionsController extends Controller
         $searchString = $request->searchString;
         $size = $request->size;
 
-        $permissions = Permission::orderBy('id', 'asc')
+        $permissions = Permission::orderBy('title', 'asc')
             ->when($searchString, function ($query) use ($searchString) {
                 $query->where('title', 'like', "%{$searchString}%");
             });
