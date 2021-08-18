@@ -112,12 +112,6 @@
             top="5vh"
             width="40%"
             @close="clearForm">
-            <div class="d-flex">
-                <div class="ml-auto">
-                    Status
-                    <el-switch v-model="form.is_active"></el-switch>
-                </div>
-            </div>
             <el-form
                 ref="form"
                 :model="form"
@@ -138,6 +132,11 @@
                     <el-input
                         v-model="form.description">
                     </el-input>
+                </el-form-item>
+
+                <el-form-item
+                    label="Status">
+                    <el-switch v-model="form.is_active"></el-switch>
                 </el-form-item>
             </el-form>
 
