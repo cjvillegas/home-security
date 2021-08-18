@@ -6,7 +6,7 @@ use \DateTimeInterface;
 use Carbon\Carbon;
 use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -111,6 +111,32 @@ class User extends Authenticatable
     /*********************
     * F U N C T I O N S  *
     *********************/
+
+    /**
+     * Retrieve all users where role === Admin
+     *
+     * @return Collection
+     */
+    public function getUserAdmins(): Collection
+    {
+        return self::join('role_user AS ru', 'ru.user_id', 'users.id')
+            ->join('roles', 'roles.id', 'ru.role_id')
+            ->where('roles.title', 'Admin')
+            ->get();
+    }
+
+    /**
+     * Retrieve all emails of users where role = Admin
+     *
+     * @return Collection
+     */
+    public function getUserAdminsWithValidEmails(): Collection
+    {
+        return $this->getUserAdmins()
+            ->filter(function ($user, $key) {
+                return filter_var($user['email'], FILTER_VALIDATE_EMAIL);
+            });
+    }
 
     /**
      * Retrieve list of permissions of the current user.

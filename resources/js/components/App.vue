@@ -27,6 +27,10 @@ export default {
 
             console.log(pathname, hash)
 
+            if (pathname === '/admin/notifications' && hash === '#/') {
+                this.$router.push({name: 'Notification List', params: {}})
+            }
+
             if (pathname === '/admin/users' && hash === '#/') {
                 this.$router.push({name: 'User List', params: {}})
             }
