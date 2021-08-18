@@ -18,6 +18,33 @@
                     </div>
 
                     <div class="ml-auto">
+                        <el-popover
+                            placement="bottom-start"
+                            width="350"
+                            trigger="click"
+                            class="mr-2">
+                            <label>Status</label>
+                            <el-select
+                                v-model="filters.status"
+                                class="w-100">
+                                <el-option label="Active" :value="1"></el-option>
+                                <el-option label="Deactivated" :value="0"></el-option>
+                                <el-option label="Show All" :value="null"></el-option>
+                            </el-select>
+
+                            <el-button
+                                @click="fetchQualityControls"
+                                type="primary"
+                                class="w-100 mt-4">
+                                Apply Filter
+                            </el-button>
+
+                            <el-button
+                                slot="reference">
+                                <i class="fas fa-filter"></i>
+                            </el-button>
+                        </el-popover>
+
                         <el-button
                             type="primary"
                             @click="addNew">
@@ -83,7 +110,7 @@
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this?">
+                                    title="Are you sure to delete this QC code?">
                                     <el-button
                                         type="text"
                                         class="text-danger ml-2"
@@ -127,6 +154,7 @@
                     prop="qc_code"
                     :error="hasError('qc_code')">
                     <el-input
+                        placeholder="ABC"
                         v-model="form.qc_code">
                     </el-input>
                 </el-form-item>
@@ -139,7 +167,7 @@
                         type="textarea"
                         :rows="2"
                         autosize
-                        placeholder="Please input"
+                        placeholder="Add a description"
                         v-model="form.description">
                     </el-input>
                 </el-form-item>
@@ -188,6 +216,7 @@
                 dialogTitle: 'Add Quality Control',
                 filters: {
                     searchString: null,
+                    status: 1
                 },
                 form: this.getDefaultFieldValues(),
                 rules: {

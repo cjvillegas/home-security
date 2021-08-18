@@ -36,11 +36,15 @@ class QualityControlController extends Controller
     public function fetchQualityControls(Request $request)
     {
         $searchString = $request->searchString;
+        $status = $request->get('status');
 
         $qualityControls = QualityControl::orderBy('id', 'DESC')
             ->when($searchString, function ($query) use ($searchString) {
                 $query->where('qc_code', 'like', "%{$searchString}%");
-            });
+            })
+            ->when($status !== null, function ($query) use ($status) {
+                $query->where('is_active', $status);
+            });;
 
         $qualityControls = $qualityControls->paginate($request->size);
 
