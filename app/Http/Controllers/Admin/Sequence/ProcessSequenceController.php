@@ -95,8 +95,7 @@ class ProcessSequenceController extends Controller
     public function update(UpdateProcessSequence $request, ProcessSequence $processSequence)
     {
         $processSequence->updated_by = auth()->user()->id;
-        $processSequence->name = $request->get('name');
-
+        $processSequence->fill($request->all());
         $saved = $processSequence->save();
 
         return response()->json($saved);
