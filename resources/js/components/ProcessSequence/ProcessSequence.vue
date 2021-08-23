@@ -1,108 +1,127 @@
 <template>
-    <el-card class="box-card">
-        <div v-loading="loading">
-            <div class="d-flex">
-                <div>
-                    <el-input
-                        v-model="filters.searchString"
-                        clearable
-                        placeholder="Search process sequences..."
-                        @keyup.enter.native.prevent="getList"
-                        style="width: 250px">
-                    </el-input>
-                </div>
-
-                <div class="ml-auto">
-                    <el-button
-                        type="primary"
-                        @click="showForm = !showForm">
-                        <i class="fas fa-plus"></i> Add New Process Sequence
-                    </el-button>
-                </div>
-            </div>
-
+    <div>
+        <el-card class="box-card">
+            <h4 class="mb-0">Process Sequence List</h4>
+        </el-card>
+        <el-card
+            v-loading="loading"
+            class="box-card mt-3">
             <div>
-                <el-table
-                    fit
-                    :data="processSequences">
-                    <el-table-column
-                        v-for="column in columns"
-                        :key="column.prop"
-                        :sortable="column.sortable"
-                        :show-overflow-tooltip="column.showOverflowTooltip"
-                        :label="column.label"
-                        :prop="column.prop">
-                        <template slot-scope="scope">
-                            <template v-if="column.prop === 'name'">
-                                {{ $StringService.ucwords(scope.row[column.prop]) }}
-                            </template>
-                            <template v-else-if="column.prop === 'created_at'">
-                                {{ scope.row[column.prop] | fixDateByFormat }}
-                            </template>
-                            <template v-else>
-                                {{ scope.row[column.prop] }}
-                            </template>
-                        </template>
-                    </el-table-column>
+                <div class="d-flex">
+                    <div>
+                        <el-input
+                            v-model="filters.searchString"
+                            clearable
+                            placeholder="Search process sequences..."
+                            @keyup.enter.native.prevent="getList"
+                            style="width: 250px">
+                        </el-input>
+                    </div>
 
-                    <el-table-column
-                        label="Actions">
-                        <template slot-scope="scope">
-                            <el-button
-                                @click="configureSequence(scope.row)"
-                                type="text"
-                                class="ml-2">
-                                <i class="fas fa-cogs"></i>
-                            </el-button>
+                    <div class="ml-auto">
+                        <el-button
+                            type="primary"
+                            @click="showForm = !showForm">
+                            <i class="fas fa-plus"></i> Add New Process Sequence
+                        </el-button>
+                    </div>
+                </div>
 
-                            <el-button
-                                @click="stageProcessSequence(scope.row)"
-                                type="text"
-                                class="ml-2">
-                                <i class="fas fa-pencil-alt"></i>
-                            </el-button>
+                <div>
+                    <el-table
+                        fit
+                        :data="processSequences">
+                        <el-table-column
+                            v-for="column in columns"
+                            :key="column.prop"
+                            :sortable="column.sortable"
+                            :show-overflow-tooltip="column.showOverflowTooltip"
+                            :label="column.label"
+                            :prop="column.prop"
+                            :width="column.width || ''">
+                            <template slot-scope="scope">
+                                <template v-if="column.prop === 'name'">
+                                    {{ $StringService.ucwords(scope.row[column.prop]) }}
+                                </template>
+                                <template v-else-if="['process_target', 'new_joiner_target', 'process_manufacturing_time'].includes(column.prop)">
+                                    {{ scope.row[column.prop] | numFormat }}
+                                </template>
+                                <template v-else-if="column.prop === 'stop_start_button_required'">
+                                    <el-tag
+                                        size="mini"
+                                        :type="scope.row.stop_start_button_required ? 'success' : 'info'"
+                                        effect="dark">
+                                        {{ scope.row.stop_start_button_required ? 'Required' : 'Not Required' }}
+                                    </el-tag>
+                                </template>
+                                <template v-else-if="column.prop === 'created_at'">
+                                    {{ scope.row[column.prop] | fixDateByFormat }}
+                                </template>
+                                <template v-else>
+                                    {{ scope.row[column.prop] }}
+                                </template>
+                            </template>
+                        </el-table-column>
 
-                            <el-popconfirm
-                                @confirm="deleteProcessSequence(scope.row)"
-                                confirm-button-text='OK'
-                                cancel-button-text='No, Thanks'
-                                icon="el-icon-info"
-                                icon-color="red"
-                                title="Are you sure to delete this?">
+                        <el-table-column
+                            label="Actions">
+                            <template slot-scope="scope">
                                 <el-button
+                                    @click="configureSequence(scope.row)"
                                     type="text"
-                                    class="text-danger ml-2"
-                                    slot="reference">
-                                    <i class="fas fa-trash-alt"></i>
+                                    class="ml-2">
+                                    <i class="fas fa-cogs"></i>
                                 </el-button>
-                            </el-popconfirm>
-                        </template>
-                    </el-table-column>
-                </el-table>
 
-                <div class="text-right">
-                    <el-pagination
-                        class="mt-3"
-                        background
-                        layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
-                        :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
-                        @size-change="handleSize"
-                        @current-change="handlePage">
-                    </el-pagination>
+                                <el-button
+                                    @click="stageProcessSequence(scope.row)"
+                                    type="text"
+                                    class="ml-2">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </el-button>
+
+                                <el-popconfirm
+                                    @confirm="deleteProcessSequence(scope.row)"
+                                    confirm-button-text='OK'
+                                    cancel-button-text='No, Thanks'
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    title="Are you sure to delete this?">
+                                    <el-button
+                                        type="text"
+                                        class="text-danger ml-2"
+                                        slot="reference">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </el-button>
+                                </el-popconfirm>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+
+                    <div class="text-right">
+                        <el-pagination
+                            class="mt-3"
+                            background
+                            layout="total, sizes, prev, pager, next"
+                            :total="filters.total"
+                            :page-size="filters.size"
+                            :page-sizes="[10, 25, 50, 100]"
+                            :current-page="filters.page"
+                            @size-change="handleSize"
+                            @current-change="handlePage">
+                        </el-pagination>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <process-sequence-form
-            :model="model"
-            :mode="mode"
-            :visible.sync="showForm"
-            @close="closeForm">
-        </process-sequence-form>
-    </el-card>
+            <process-sequence-form
+                :model="model"
+                :mode="mode"
+                :visible.sync="showForm"
+                @close="closeForm">
+            </process-sequence-form>
+        </el-card>
+    </div>
 </template>
 
 <script>
@@ -114,8 +133,12 @@
         mixins: [pagination],
         data() {
             let columns = [
-                {prop: 'id', label: 'ID', showOverflowTooltip: true, sortable: true},
+                {prop: 'id', label: 'ID', showOverflowTooltip: true, sortable: true, width: '80'},
                 {prop: 'name', label: 'Name', showOverflowTooltip: true, sortable: true},
+                {prop: 'process_target', label: 'Process Target', showOverflowTooltip: true, sortable: true},
+                {prop: 'new_joiner_target', label: 'New Joiner Target', showOverflowTooltip: true, sortable: true},
+                {prop: 'process_manufacturing_time', label: 'Process Manufacturing Time', showOverflowTooltip: true, sortable: true},
+                {prop: 'stop_start_button_required', label: 'Stop/Start Button Required', showOverflowTooltip: true, sortable: true},
                 {prop: 'created_at', label: 'Created At', showOverflowTooltip: true, sortable: true},
             ]
 

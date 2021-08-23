@@ -3,25 +3,78 @@
         :visible.sync="showDialog"
         :title="dialogTitle"
         @close="closeForm"
-        width="30%">
+        width="50%">
         <el-form
             :model="processSequenceForm"
             :rules="rules"
             v-loading="loading"
             ref="processSequenceForm">
-            <el-form-item
-                label="Name"
-                prop="name"
-                :error="hasError('name')">
-                <el-input
-                    @keyup.enter.prevent.native="validate"
-                    v-model="processSequenceForm.name"
-                    :disabled="this.mode === 'view'"
-                    clearable
-                    placeholder="Roller Sequence"
-                    class="w-100">
-                </el-input>
-            </el-form-item>
+            <div class="row">
+                <div class="col md-6">
+                    <el-form-item
+                        label="Name"
+                        prop="name"
+                        :error="hasError('name')">
+                        <el-input
+                            v-model="processSequenceForm.name"
+                            :disabled="this.mode === 'view'"
+                            clearable
+                            placeholder="Roller Sequence"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Process Target"
+                        prop="process_target"
+                        :error="hasError('process_target')">
+                        <el-input
+                            v-model="processSequenceForm.process_target"
+                            type="number"
+                            :disabled="this.mode === 'view'"
+                            clearable
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Stop/Start Button Required"
+                        prop="stop_start_button_required">
+                        <el-switch v-model="processSequenceForm.stop_start_button_required"></el-switch>
+                    </el-form-item>
+                </div>
+
+                <div class="col md-6">
+                    <el-form-item
+                        label="New Joiner Target"
+                        prop="new_joiner_target"
+                        :error="hasError('new_joiner_target')">
+                        <el-input
+                            v-model="processSequenceForm.new_joiner_target"
+                            type="number"
+                            :disabled="this.mode === 'view'"
+                            clearable
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Process Manufacturing Time"
+                        prop="process_manufacturing_time"
+                        :error="hasError('process_manufacturing_time')">
+                        <el-input
+                            v-model="processSequenceForm.process_manufacturing_time"
+                            type="number"
+                            :disabled="this.mode === 'view'"
+                            clearable
+                            placeholder="5"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+                </div>
+            </div>
 
             <el-input
                 hidden
@@ -66,7 +119,11 @@
             return {
                 processSequenceForm: {
                     id: null,
-                    name: null
+                    name: null,
+                    process_target: null,
+                    new_joiner_target: null,
+                    process_manufacturing_time: null,
+                    stop_start_button_required: true,
                 },
                 rules: {
                     name: {required: true, message: 'Name is required', trigger: 'blur'}
@@ -141,13 +198,21 @@
             resetForm() {
                 this.processSequenceForm = {
                     id: null,
-                    name: null
+                    name: null,
+                    process_target: null,
+                    new_joiner_target: null,
+                    process_manufacturing_time: null,
+                    stop_start_button_required: true,
                 }
             },
             populateForm() {
                 this.processSequenceForm = {
                     id: this.model.id,
                     name: this.model.name,
+                    process_target: this.model.process_target,
+                    new_joiner_target: this.model.new_joiner_target,
+                    process_manufacturing_time: this.model.process_manufacturing_time,
+                    stop_start_button_required: this.model.stop_start_button_required,
                 }
             }
         },
