@@ -7,6 +7,7 @@ use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Process extends Model
@@ -43,6 +44,7 @@ class Process extends Model
     /********************
     * R E L A T I O N S *
     ********************/
+
     /**
      * Retrieve list of this process' process categories.
      * This method queries from a junction table named category_processes
@@ -54,6 +56,17 @@ class Process extends Model
     {
         return $this->belongsToMany(ProcessCategory::class,'category_processes');
     }
+
+    /**
+     * Get the qc faults related to this process
+     *
+     * @return HasMany
+     */
+    public function qcFaults(): HasMany
+    {
+        return $this->hasMany(QcFault::class);
+    }
+
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

@@ -8,6 +8,7 @@ use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -106,6 +107,16 @@ class User extends Authenticatable
     public function employee()
     {
         return $this->hasOne(Employee::class, 'user_id');
+    }
+
+    /**
+     * Get the qc faults created by this user
+     *
+     * @return HasMany
+     */
+    public function qcFaults(): HasMany
+    {
+        return $this->hasMany(QcFault::class);
     }
 
     /*********************
@@ -225,9 +236,10 @@ class User extends Authenticatable
         // search for a role with the given title
         $employeeRole = Role::where('title', $title)->first();
 
-        // checks if the provided role is present
+        // checks if the provided role is not present
         if (!$employeeRole) {
             Log::info("No role title {$title} found.");
+
             return false;
         }
 

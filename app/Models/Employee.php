@@ -120,9 +120,20 @@ class Employee extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get the qc faults of this employee
+     *
+     * @return HasMany
+     */
+    public function qcFaults(): HasMany
+    {
+        return $this->hasMany(QcFault::class);
+    }
+
     /********************************
-     * E N D  O F  R E L A T I O N S *
-     ********************************/
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 
     protected function serializeDate(DateTimeInterface $date)
     {
