@@ -44,7 +44,7 @@
                                     {{ $StringService.ucwords(scope.row[column.prop]) }}
                                 </template>
                                 <template v-else-if="['process_target', 'new_joiner_target', 'process_manufacturing_time'].includes(column.prop)">
-                                    {{ scope.row[column.prop] | numFormat }}
+                                    {{ scope.row[column.prop] }}
                                 </template>
                                 <template v-else-if="column.prop === 'stop_start_button_required'">
                                     <el-tag
