@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\QualityControlRequest;
 use App\Models\QualityControl;
 use Exception;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class QualityControlController extends Controller
 {
@@ -18,7 +19,7 @@ class QualityControlController extends Controller
      * This will be the quality control's index page. After a successful authentication
      * and no referrer route, the employee will be redirect directly here.
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return View
      */
     public function index()
     {
@@ -113,6 +114,7 @@ class QualityControlController extends Controller
     public function destroy(QualityControl $qualityControl)
     {
         abort_if(Gate::denies('quality_control_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $qualityControl->delete();
     }
 }
