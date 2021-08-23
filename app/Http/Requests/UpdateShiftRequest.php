@@ -6,6 +6,7 @@ use App\Models\Shift;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class UpdateShiftRequest extends FormRequest
 {
@@ -19,7 +20,7 @@ class UpdateShiftRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'nullable',
+                Rule::unique('shifts')->ignore($this->id)->whereNull('deleted_at'),
             ],
         ];
     }

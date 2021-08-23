@@ -22,6 +22,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Roles
     Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
+    Route::post('roles/list', 'RolesController@fetchRoles');
     Route::resource('roles', 'RolesController');
 
     // Users
@@ -72,14 +73,15 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('teams/destroy', 'TeamsController@massDestroy')->name('teams.massDestroy');
     Route::post('teams/parse-csv-import', 'TeamsController@parseCsvImport')->name('teams.parseCsvImport');
     Route::post('teams/process-csv-import', 'TeamsController@processCsvImport')->name('teams.processCsvImport');
-    Route::resource('teams', 'TeamsController');
+    Route::post('teams/list', 'TeamsController@fetchTeams');
+    Route::resource('teams', 'TeamsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Shifts
     Route::delete('shifts/destroy', 'ShiftsController@massDestroy')->name('shifts.massDestroy');
     Route::post('shifts/parse-csv-import', 'ShiftsController@parseCsvImport')->name('shifts.parseCsvImport');
     Route::post('shifts/process-csv-import', 'ShiftsController@processCsvImport')->name('shifts.processCsvImport');
-    Route::get('shifts/list', 'ShiftsController@fetchShifts');
-    Route::resource('shifts', 'ShiftsController');
+    Route::post('shifts/list', 'ShiftsController@fetchShifts');
+    Route::resource('shifts', 'ShiftsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Audit Logs
     Route::resource('audit-logs', 'AuditLogsController', ['except' => ['create', 'store', 'edit', 'update', 'destroy']]);

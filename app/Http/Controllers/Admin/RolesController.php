@@ -18,9 +18,30 @@ class RolesController extends Controller
     {
         abort_if(Gate::denies('role_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $roles = Role::with(['permissions'])->get();
+        $user = auth()->user();
 
-        return view('admin.roles.index', compact('roles'));
+        $user->permissions = $user->getPermissionNameByModule('stock_items');
+
+        return view('admin.roles.index', compact('user'));
+    }
+
+    /**
+     * Fetch Roles.
+     *
+     * @return JsonResponse
+     */
+    public function fetchRoles(Request $request)
+    {
+        $searchString = $request->searchString;
+        $size = $request->size;
+
+        $roles = Role::orderBy('title', 'asc')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('title', 'like', "%{$searchString}%");
+            });
+        $roles = $roles->paginate($size);
+
+        return response()->json(['roles' => $roles]);
     }
 
     public function create()

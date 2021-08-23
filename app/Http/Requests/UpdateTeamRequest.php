@@ -6,12 +6,13 @@ use App\Models\Team;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class UpdateTeamRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('team_edit');
+        return Gate::allows('team_update');
     }
 
     public function rules()
@@ -19,7 +20,7 @@ class UpdateTeamRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'nullable',
+                Rule::unique('teams')->ignore($this->id)->whereNull('deleted_at')
             ],
             'target' => [
                 'nullable',

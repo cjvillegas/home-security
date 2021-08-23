@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card class="box-card">
-            <h4 class="mb-0">Permissions List</h4>
+            <h4 class="mb-0">Shifts List</h4>
         </el-card>
         <div v-loading="loading">
             <el-card class="box-card mt-3">
@@ -10,9 +10,9 @@
                         <el-input
                             v-model="filters.searchString"
                             clearable
-                            placeholder="Search Permission..."
+                            placeholder="Search Shifts..."
                             style="width: 250px"
-                            @keyup.enter.native.prevent="fetchPermissions">
+                            @keyup.enter.native.prevent="fetchShifts">
                         </el-input>
                     </div>
 
@@ -20,18 +20,24 @@
                         <el-button
                             type="primary"
                             @click="addNew">
-                            <i class="fas fa-plus"></i> Add Permission
+                            <i class="fas fa-plus"></i> Add Shift
                         </el-button>
                     </div>
                 </div>
-
                 <el-table
-                    :data="permissions"
+                    :data="shifts"
                     class="w-100"
                     fit>
+
                     <el-table-column
-                        prop="title"
-                        label="Title"
+                        prop="id"
+                        label="ID"
+                        sortable>
+                    </el-table-column>
+
+                    <el-table-column
+                        prop="name"
+                        label="Name"
                         sortable>
                     </el-table-column>
 
@@ -54,12 +60,12 @@
                                     </el-button>
                                 </el-tooltip>
                                 <el-popconfirm
-                                    @confirm="deletePermission(scope.row.id)"
+                                    @confirm="deleteShift(scope.row.id)"
                                     confirm-button-text='OK'
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this Permission?">
+                                    title="Are you sure to delete this Shift?">
                                     <el-button
                                         type="text"
                                         class="text-danger ml-2"
@@ -90,7 +96,7 @@
         </div>
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="(dialogType == 'Add') ? 'Add Permission' : (dialogType == 'Edit') ? 'Edit Permission' : 'View Permission'"
+            :title="(dialogType == 'Add') ? 'Add Shift' : (dialogType == 'Edit') ? 'Edit Shift' : 'View Shift'"
             width="40%"
             @close="clearForm">
             <el-form
@@ -99,17 +105,16 @@
                 :model="form"
                 :rules="rules">
                 <el-form-item
-                    label="Permission Name"
-                    prop="title"
-                    :error="hasError('title')">
+                    label="Shift Name"
+                    prop="name"
+                    :error="hasError('name')">
                     <el-input
-                        v-model="form.title"
-                        :disabled="this.dialogType == 'View'"
+                        v-model="form.name"
+                        placeholder="Shift One"
                         clearable
                         class="w-100">
                     </el-input>
                 </el-form-item>
-
             </el-form>
             <span
                 slot="footer"
@@ -132,7 +137,6 @@
                     Update
                 </el-button>
             </span>
-
         </el-dialog>
     </div>
 </template>
@@ -145,41 +149,38 @@
         mixins: [pagination, formHelper],
         data() {
             return {
+                loading: false,
                 formDialogVisible: false,
                 dialogType: 'Add',
-                loading: false,
+                shifts: [],
                 filters: {
-                    searchString: null,
+                    searchString: null
                 },
-                form: {
-                    id: null,
-                    title: ''
-                },
+                form: this.getDefaultValues(),
                 rules: {
-                    title: {required: true, message: 'Title is required', trigger: ['blur', 'change']},
+                    name: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
                 },
-                permissions: []
             }
         },
 
         created() {
             this.filters.size = 10
-            this.functionName = 'fetchPermissions'
+            this.functionName = 'fetchShifts'
         },
 
         mounted() {
-            this.fetchPermissions()
+            this.fetchShifts()
         },
 
         methods: {
-            fetchPermissions() {
-                let apiUrl = `/admin/permissions/list`
+            fetchShifts() {
+                let apiUrl = `/admin/shifts/list`
                 this.loading = true
 
                 axios.post(apiUrl, this.filters)
                 .then((response) => {
-                    this.permissions = response.data.permissions.data
-                    this.filters.total = response.data.permissions.total
+                    this.shifts = response.data.shifts.data
+                    this.filters.total = response.data.shifts.total
                 })
                 .catch((err) => {
                     console.log(err)
@@ -189,8 +190,14 @@
                 })
             },
 
-            savePermission() {
-                let apiUrl = `/admin/permissions`
+            addNew() {
+                this.clearForm()
+                this.dialogType = 'Add'
+                this.formDialogVisible = true
+            },
+
+            saveShift() {
+                let apiUrl = `/admin/shifts`
                 this.loading = true
 
                 axios.post(apiUrl, this.form)
@@ -202,7 +209,7 @@
                                 message: response.data.message,
                                 type: 'success'
                             })
-                            this.fetchPermissions()
+                            this.fetchShifts()
                             this.clearForm()
                     }
                 })
@@ -216,8 +223,8 @@
                 })
             },
 
-            updatePermission() {
-                let apiUrl = `/admin/permissions/${this.form.id}`
+            updateShift() {
+                let apiUrl = `/admin/shifts/${this.form.id}`
                 this.loading = true
 
                 axios.patch(apiUrl, this.form)
@@ -229,7 +236,7 @@
                                 message: response.data.message,
                                 type: 'success'
                             })
-                            this.fetchPermissions()
+                            this.fetchShifts()
                             this.clearForm()
                     }
                 })
@@ -243,22 +250,28 @@
                 })
             },
 
-            addNew() {
-                if(this.dialogType == 'Edit') {
-                    this.clearForm()
-                }
-                this.dialogType = 'Add'
-                this.formDialogVisible = true
+            validate() {
+                this.$refs.form.validate(valid => {
+                    if (valid) {
+                        this.resetErrors()
+                        if (this.dialogType == 'Edit') {
+                            this.updateShift()
+
+                            return
+                        }
+                        this.saveShift()
+                    }
+                })
             },
 
             openEditDialog(item) {
                 this.dialogType = 'Edit'
                 this.form.id = item.id
-                this.form.title = item.title
+                this.form.name = item.name
             },
 
-            deletePermission(id) {
-                let apiUrl = `/admin/permissions/${id}`
+            deleteShift(id) {
+                let apiUrl = `/admin/shifts/${id}`
                 axios.delete(apiUrl)
                 .then( (response) => {
                     this.$notify({
@@ -266,21 +279,7 @@
                         message: response.data.message,
                         type: 'success'
                     });
-                    this.fetchPermissions()
-                })
-            },
-
-            validate() {
-                this.$refs.form.validate(valid => {
-                    if (valid) {
-                        this.resetErrors()
-                        if (this.dialogType == 'Edit') {
-                            this.updatePermission()
-
-                            return
-                        }
-                        this.savePermission()
-                    }
+                    this.fetchShifts()
                 })
             },
 
@@ -289,9 +288,16 @@
                     this.$refs.form.clearValidate()
                 }
 
-                this.form.title = null
+                this.form = this.getDefaultValues()
 
                 this.formDialogVisible = false
+            },
+
+            getDefaultValues() {
+                return {
+                    id: null,
+                    name: null
+                }
             }
         }
     }
