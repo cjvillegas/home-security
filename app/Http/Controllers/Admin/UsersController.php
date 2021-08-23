@@ -154,4 +154,17 @@ class UsersController extends Controller
 
         return response()->json($user);
     }
+
+    /**
+     * Return the current authenticated user of the session
+     *
+     * @return JsonResponse
+     */
+    public function getAuthUser()
+    {
+        $user = auth()->user();
+        $user->permissions = $user->getPermissionsPerModules('qc_tag');
+
+        return response()->json($user);
+    }
 }

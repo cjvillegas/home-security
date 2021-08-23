@@ -71,5 +71,14 @@ export default {
      */
     changeStatus(id) {
         return axios.patch(`/admin/users/${id}/status-change`)
+    },
+
+    /**
+     * API endpoint by getting the current authenticated user
+     *
+     * @return Promise
+     */
+    getAuthUser() {
+        return axios.get(`/admin/users/get-auth-user`)
     }
 }

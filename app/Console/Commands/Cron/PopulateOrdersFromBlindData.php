@@ -64,7 +64,13 @@ class PopulateOrdersFromBlindData extends Command
                 $newOrders = [];
                 foreach ($chunk as $order) {
                     // perform insertion of the order
-                    $newOrders[] = $this->sanitize((array) $order);
+                    $sanitized = $this->sanitize((array) $order);
+
+                    // sanity check if sanitized data is not false
+                    if ($sanitized) {
+                        $newOrders[] = $sanitized;
+
+                    }
                 }
 
                 // do the actual insertion of data
@@ -100,44 +106,48 @@ class PopulateOrdersFromBlindData extends Command
         // initialize the query
         $query = "
             SELECT
-                TOP 1000
-                OrderDetail.id AS BlindId,
-                [Order].order_id AS OrderNo,
-                [User].company AS Customer,
-                [Order].cust_no AS CustOrdNo,
-                OrderDetail.quantity AS Quantity,
-                BlindType.code AS BlindCode,
-                DetailStatus.name AS BlindStatus,
-                [Order].dat_delivery AS DespatchDate,
-                [Order].dat_order AS Ordered,
-                [Order].username AS OrderEnteredBy,
-                SerialDetailLine.id AS SerialID,
-                [Category].name AS CategoryName,
-                [Category].id AS CategoryID
+                sdl.id AS SerialID,
+                o.order_id AS OrderNo,
+                u.company AS Customer,
+                o.cust_ref AS CustRef,
+                o.cust_no AS CustNo,
+                CASE WHEN ml.location = 'Aluminium' THEN 'Aluminium'
+                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' AND bt.code NOT LIKE '%RIGID%' THEN 'Vertical'
+                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description LIKE '%Louvers%' AND bt.code NOT LIKE 'LO89-RIGID-PVC' THEN 'LouversOnly'
+                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' THEN 'HeadrailOnly'
+                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%'AND bt.code LIKE '%RIGID%' AND bt.description NOT LIKE '%Louvers%' THEN 'VerticalRigidPVC'
+                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.code LIKE '%RIGID%' AND bt.description LIKE '%Louvers%' THEN 'LouversOnlyRigidPVC'
+                WHEN ml.location = 'Roller Express' AND o.order_id NOT IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) THEN 'RollerExpress'
+                WHEN (NOT(od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS') AND o.order_id IS NOT NULL) OR ((ml.location = 'Rollers' OR ml.location = 'RDRS') AND od.option_list NOT LIKE '%Motor%' AND o.order_id IS NOT NULL) OR (bt.code = 'ROLLEXP' AND o.order_id IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) AND o.order_id IS NOT NULL) THEN 'Roller'
+                WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Chain%' THEN 'TechnicalChained'
+                WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Crank%' THEN 'TechnicalCrank'
+                WHEN (o.order_id IS NOT NULL AND ml.location = 'Contracts Department' AND od.option_list LIKE '%Motor%') OR (o.order_id IS NOT NULL AND (od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS')) THEN 'TechnicalMotorised'
+                END AS ProductType,
+                bt.code AS ProductCode,
+                o.dat_order AS Ordered,
+                o.username AS OrderEnteredBy
             FROM
-                OrderDetail
-                INNER JOIN [Order] ON OrderDetail.order_id = [Order].id
-                INNER JOIN [User] ON [Order].user_id = [User].id
-                INNER JOIN BlindType ON OrderDetail.blindtype_id = BlindType.id
-                INNER JOIN Fabric ON OrderDetail.fabric_id = Fabric.id
-                INNER JOIN OrderStatus ON [Order].orderstatus_id = OrderStatus.id
-                INNER JOIN DetailStatus ON OrderDetail.detailstatus_id = DetailStatus.id
-                INNER JOIN ManLocation ON BlindType.manlocation_id = ManLocation.id
-                INNER JOIN SerialDetailLine ON OrderDetail.id = SerialDetailLine.OrderDetail_id
-                INNER JOIN [Category] ON BlindType.category_id = [Category].id
-                LEFT OUTER JOIN RollerTable ON OrderDetail.RollerTableID = RollerTable.ID
+                OrderDetail od
+                INNER JOIN [Order] o ON od.order_id = o.id
+                INNER JOIN [User] u ON o.user_id = u.id
+                INNER JOIN BlindType bt ON od.blindtype_id = bt.id
+                INNER JOIN Fabric f ON od.fabric_id = f.id
+                INNER JOIN OrderStatus os ON o.orderstatus_id = os.id
+                INNER JOIN DetailStatus ds ON od.detailstatus_id = ds.id
+                INNER JOIN ManLocation ml ON bt.manlocation_id = ml.id
+                INNER JOIN SerialDetailLine sdl ON od.id = sdl.OrderDetail_id
+                INNER JOIN [Category] c ON bt.category_id = c.id
+                LEFT OUTER JOIN RollerTable rt ON od.RollerTableID = rt.ID
             WHERE
-                ([Order].order_id IS NOT NULL)
-                AND (OrderStatus.IsOrder = '1')
-                AND (OrderStatus.IsQuotation = '0')
-                AND (OrderStatus.id NOT LIKE '7')
-                AND (BlindType.id <> '382')
+                (o.order_id IS NOT NULL)
+                AND (os.id <> '7')
+                AND (bt.id <> '382')
         ";
 
         // if a blind_id present add additional condition to only load
         // data after this specified blind_id
         if ($latestSerialId && !$loadAll) {
-            $query .= "\t AND (SerialDetailLine.id > {$latestSerialId})";
+            $query .= "\t AND (sdl.id > {$latestSerialId})";
         }
 
         // execute the query
@@ -172,23 +182,24 @@ class PopulateOrdersFromBlindData extends Command
     private function sanitize(array $sageOrder)
     {
         // do a sanity check of the required data
-        if (empty($sageOrder['BlindId']) || empty($sageOrder['OrderNo']) || empty($sageOrder['Customer']) || empty($sageOrder['Quantity']) || empty($sageOrder['OrderEnteredBy']) || empty($sageOrder['SerialID'])) {
+        if (empty($sageOrder['SerialID']) ||
+            empty($sageOrder['OrderNo']) ||
+            empty($sageOrder['Customer']) ||
+            empty($sageOrder['CustRef']) ||
+            empty($sageOrder['ProductType']) ||
+            empty($sageOrder['ProductCode'])) {
             return false;
         }
 
-        $order['blind_id'] = $sageOrder['BlindId'];
+        $order['serial_id'] = $sageOrder['SerialID'];
         $order['order_no'] = $sageOrder['OrderNo'];
         $order['customer'] = $sageOrder['Customer'];
-        $order['customer_order_no'] = $sageOrder['CustOrdNo'];
-        $order['quantity'] = $sageOrder['Quantity'];
-        $order['blind_type'] = $sageOrder['BlindCode'] ?? '';
-        $order['blind_status'] = $sageOrder['BlindStatus'] ?? '';
+        $order['customer_ref'] = $sageOrder['CustRef'];
+        $order['customer_order_no'] = $sageOrder['CustNo'];
+        $order['product_type'] = $sageOrder['ProductType'];
+        $order['blind_type'] = $sageOrder['ProductCode'];
+        $order['ordered_at'] = $sageOrder['Ordered'];
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
-        $order['despatched_at'] = !empty($sageOrder['DespatchDate']) ? Carbon::parse($sageOrder['DespatchDate'])->format('Y-m-d H:i:s') : null;
-        $order['ordered_at'] = !empty($sageOrder['Ordered']) ? Carbon::parse($sageOrder['Ordered'])->format('Y-m-d H:i:s') : null;
-        $order['category_id'] = $sageOrder['CategoryID'] ?? null;
-        $order['category_name'] = $sageOrder['CategoryName'] ?? '';
-        $order['serial_id'] = $sageOrder['SerialID'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $order;

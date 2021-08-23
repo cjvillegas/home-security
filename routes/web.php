@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('users/get-list', 'UsersController@getList')->name('users.get-list');
     Route::patch('users/{user}/status-change', 'UsersController@changeStatus')->name('users.status-change');
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
+    Route::get('users/get-auth-user', 'UsersController@getAuthUser')->name('users.get-auth-user');
     Route::resource('users', 'UsersController');
 
     // User Alerts
@@ -38,6 +39,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
      //Scanners
     Route::get('scanners/get-scanners-by-field', 'ScannersController@getScannersByField')->name('scanners.get-scanners-by-field');
     Route::get('scanners/search-scanners-by-field', 'ScannersController@searchScannersByField')->name('orders.search-scanners-by-field');
+    Route::delete('scanners/qc-tag/{qc_fault}/delete', 'ScannersController@removeQcTag')->name('scanners.qc-tag.delete');
+    Route::match(['put', 'patch'], 'scanners/qc-tag/{qc_fault}/update', 'ScannersController@updateQcTag')->name('scanners.qc-tag.update');
+    Route::post('scanners/qc-tag', 'ScannersController@qcTag')->name('scanners.qc-tag.create');
     // Route::resource('scanners', 'ScannersController');
 
     // Employees

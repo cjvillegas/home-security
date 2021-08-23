@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\CsvImportTrait;
 use App\Http\Requests\MassDestroyScannerRequest;
+use App\Http\Requests\Scanner\StoreQcTag;
+use App\Http\Requests\Scanner\UpdateQcTag;
 use App\Http\Requests\StoreScannerRequest;
 use App\Http\Requests\UpdateScannerRequest;
+use App\Models\QcFault;
 use App\Models\Scanner;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -165,11 +168,62 @@ class ScannersController extends Controller
         $scanners = Scanner::where($field, 'like', "%$toSearch%")
             ->with(['employee' => function ($query) {
                 $query->withTrashed()->with(['shift', 'team']);
-            }, 'process', 'order'])
+            }, 'process', 'order', 'qcFault'])
             ->orderBy('id', 'desc')
             ->get()
             ->toArray();
 
         return response()->json($scanners);
+    }
+
+    /**
+     * Creates new qc tag
+     *
+     * @param StoreQcTag $request
+     *
+     * @return JsonResponse
+     */
+    public function qcTag(StoreQcTag $request)
+    {
+        $qcTag = new QcFault();
+        $qcTag->fill($request->all());
+        $qcTag->operation_date = date('Y-m-d H:i:s', strtotime($request->get('operation_date')));
+        $qcTag->save();
+
+        return response()->json($qcTag);
+    }
+
+    /**
+     * Updates a qc tag
+     *
+     * @param QcFault $qcFault
+     *
+     * @return JsonResponse
+     */
+    public function updateQcTag(UpdateQcTag $request, QcFault $qcFault)
+    {
+        $qcFault->fill($request->all());
+        $qcFault->save();
+
+        return response()->json($qcFault->refresh());
+    }
+
+    /**
+     * Deletes a qc tag
+     *
+     * @param QcFault $qcFault
+     *
+     * @return JsonResponse
+     */
+    public function removeQcTag(QcFault $qcFault)
+    {
+        // checks if the current user has the authorization to delete a qc tag
+        if (!Gate::allows('qc_tag_delete')) {
+            abort(401);
+        }
+
+        $qcFault->delete();
+
+        return response()->json($qcFault->refresh());
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin\QualityControl;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\QualityControlRequest;
 use App\Models\QualityControl;
+use Exception;
 use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,9 @@ class QualityControlController extends Controller
 
     /**
      * Fetch Quality Controls' List
+     *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function fetchQualityControls(Request $request)
@@ -44,16 +48,22 @@ class QualityControlController extends Controller
             })
             ->when($status !== null, function ($query) use ($status) {
                 $query->where('is_active', $status);
-            });;
+            });
 
-        $qualityControls = $qualityControls->paginate($request->size);
+        if ($request->has('size')) {
+            $qualityControls = $qualityControls->paginate($request->size);
+        } else {
+            $qualityControls = $qualityControls->get();
+        }
 
         return response()->json(['qualityControls' => $qualityControls]);
     }
 
     /**
      * Store Quality Control Information
+     *
      * @param QualityControlRequest $request
+     *
      * @return JsonResponse
      */
     public function store(QualityControlRequest $request)
@@ -73,8 +83,10 @@ class QualityControlController extends Controller
 
     /**
      * Update Quality Control Information
+     *
      * @param QualityControlRequest $request
      * @param QualityControl $qualityControl
+     *
      * @return JsonResponse
      */
     public function update(QualityControlRequest $request, QualityControl $qualityControl)
@@ -95,6 +107,7 @@ class QualityControlController extends Controller
      * Delete Quality Control
      *
      * @param  QualityControl $qualityControl
+     *
      * @return JsonResponse
      */
     public function destroy(QualityControl $qualityControl)

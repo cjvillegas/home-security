@@ -47,6 +47,7 @@
         </el-card>
 
         <order-scanners
+            :user="user"
             :scanners-list="scanners">
         </order-scanners>
     </div>
@@ -90,14 +91,22 @@
                 filters: {
                     searchString: null
                 },
+                user: null,
                 processes: []
             }
         },
         created() {
             this.getProcesses()
             this.loadData()
+            this.getAuthUser()
         },
         methods: {
+            getAuthUser() {
+                this.$API.User.getAuthUser()
+                    .then(res => {
+                        this.user = res.data
+                    })
+            },
             loadData() {
                 if (this.field === 'order_no') {
                     this.getOrderDetails()
@@ -176,7 +185,7 @@
             // if the route is loaded from the URL section and not from the
             // search page, redirect it directly to the search page
             if (to.params && !to.params.field) {
-                next({replace: true, name: "Order List"})
+                // next({replace: true, name: "Order List"})
             }
 
             // proceed if else

@@ -27,6 +27,53 @@
                         <span>{{ scope.row[column.key] }}</span>
                     </template>
                 </el-table-column>
+
+                <el-table-column
+                    v-if="user && user.permissions && user.permissions.qc_tag_show"
+                    label="QC Tagged"
+                    prop="qc_tagged"
+                    show-overflow-tooltip>
+                    <template slot-scope="scope">
+                        <el-tag
+                            v-if="scope.row.qc_fault"
+                            type="danger"
+                            size="mini">
+                            <i class="fas fa-tag"></i> QC Tagged
+                        </el-tag>
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                    label="Actions"
+                    width="200">
+                    <template slot-scope="scope">
+                        <el-tooltip
+                            v-if="scope.row.employee"
+                            class="item"
+                            effect="dark"
+                            content="QC Tag"
+                            :open-delay="500"
+                            placement="top">
+                            <el-button
+                                v-if="showQcTagButton(scope.row)"
+                                size="mini"
+                                type="danger"
+                                @click="handleClickQcTagging(scope.row)">
+                                QC Tag
+                            </el-button>
+                        </el-tooltip>
+
+                        <el-tooltip
+                            v-else
+                            class="item"
+                            effect="dark"
+                            content="Cannot QC tag this row. Employee data is missing."
+                            :open-delay="500"
+                            placement="top">
+                            <i class="fas fa-info-circle"></i>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
             </el-table>
 
             <div class="text-right mt-3">
@@ -42,18 +89,29 @@
                 </el-pagination>
             </div>
         </el-card>
+
+        <qc-tag-form
+            :qcCodes="qcCodes"
+            :model="qcTag"
+            :user="user"
+            :scanner="scanner"
+            :visible.sync="showQcTagForm"
+            @close="closeQcTagForm">
+        </qc-tag-form>
     </div>
 </template>
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from "../../mixins/pagination";
+
     export default {
         name: "OrderScanners",
         mixins: [
             pagination
         ],
         props: {
+            user: {},
             scannersList: {
                 type: Array,
                 required: true
@@ -67,33 +125,21 @@
                 {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
                 {label: 'Scanned At', key: 'scanned_at', show_overflow_tooltip: true},
                 {label: 'Shift', key: 'shift', show_overflow_tooltip: true},
-                {label: 'Team', key: 'team', show_overflow_tooltip: true},
+                {label: 'Team', key: 'team', show_overflow_tooltip: true}
             ]
 
             return {
+                showQcTagForm: false,
                 loading: false,
                 scanners: [],
+                qcCodes: [],
                 columns: columns,
                 filters: {
                     searchString: null
                 },
-                search: null
-            }
-        },
-        methods: {
-            formatScanners() {
-                let scanners = cloneDeep(this.scanners)
-
-                this.scanners = scanners.map(scanner => {
-                    scanner.employee_name = this.$StringService.ucwords(scanner.employee ? scanner.employee.fullname : '')
-                    scanner.operation = this.$StringService.ucwords(scanner.process ? scanner.process.name : '')
-                    scanner.blind_id = scanner.blindid
-                    scanner.scanned_at = this.$DateService.formatDateTime(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss', 'MMM DD, YYYY HH:mm')
-                    scanner.shift = scanner.employee && scanner.employee.shift ? scanner.employee.shift.name : ''
-                    scanner.team = scanner.employee && scanner.employee.team ? scanner.employee.team.name : ''
-
-                    return scanner
-                })
+                search: null,
+                scanner: null,
+                qcTag: null
             }
         },
         computed: {
@@ -127,6 +173,87 @@
                 scanners = scanners.filter((item, index) => (index + 1) > offset && (index + 1) <= size)
 
                 return scanners
+            }
+        },
+        created() {
+            this.getQualityControlCodes()
+
+            this.$EventBus.listen('QC_TAG_CREATE', tag => {
+                let index = this.scanners.findIndex(s => s.id === tag.scanner_id)
+
+                if (index > -1) {
+                    let scanner = this.scanners[index]
+                    scanner.qc_fault = cloneDeep(tag)
+                    this.scanners.splice(index, 1, scanner)
+                }
+            })
+
+            this.$EventBus.listen('QC_TAG_DELETE', scanner => {
+                let index = this.scanners.findIndex(s => s.id === scanner.id)
+
+                if (index > -1) {
+                    let scanner = this.scanners[index]
+                    scanner.qc_fault = null
+                    this.scanners.splice(index, 1, scanner)
+                }
+            })
+
+            this.$EventBus.listen('QC_TAG_UPDATE', tag => {
+                let index = this.scanners.findIndex(s => s.id === tag.scanner_id)
+
+                if (index > -1) {
+                    let scanner = this.scanners[index]
+                    scanner.qc_fault = cloneDeep(tag)
+                    this.scanners.splice(index, 1, scanner)
+                }
+            })
+        },
+        methods: {
+            getQualityControlCodes() {
+                axios.post(`/admin/quality-control/list`)
+                    .then(res => {
+                        this.qcCodes = res.data.qualityControls
+                    })
+            },
+            formatScanners() {
+                let scanners = cloneDeep(this.scanners)
+
+                this.scanners = scanners.map(scanner => {
+                    scanner.employee_name = this.$StringService.ucwords(scanner.employee ? scanner.employee.fullname : '')
+                    scanner.operation = this.$StringService.ucwords(scanner.process ? scanner.process.name : '')
+                    scanner.blind_id = scanner.blindid
+                    scanner.scanned_at = this.$DateService.formatDateTime(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss', 'MMM DD, YYYY HH:mm')
+                    scanner.shift = scanner.employee && scanner.employee.shift ? scanner.employee.shift.name : ''
+                    scanner.team = scanner.employee && scanner.employee.team ? scanner.employee.team.name : ''
+
+                    return scanner
+                })
+            },
+            handleClickQcTagging(scanner) {
+                if (!scanner.employee) {
+                    this.$notify({
+                        title: 'Scanner',
+                        message: `Cannot QC tag this process, employee data is missing.`,
+                        type: 'error'
+                    })
+
+                    return
+                }
+
+                this.qcTag = scanner.qc_fault ? cloneDeep(scanner.qc_fault) : null
+                this.scanner = cloneDeep(scanner)
+                this.showQcTagForm = true
+            },
+            closeQcTagForm() {
+                this.scanner = null
+                this.showQcTagForm = false
+            },
+            showQcTagButton(scanner) {
+                if (scanner.qc_fault && this.user.permissions.qc_tag_edit) {
+                    return true
+                }
+
+                return !!(!scanner.qc_fault && this.user.permissions.qc_tag_create);
             }
         },
         watch: {

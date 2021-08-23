@@ -8,7 +8,6 @@ use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
-use App\Models\Process;
 use App\Repositories\Orders\OrderRepository;
 use Gate;
 use Illuminate\Http\JsonResponse;
@@ -117,7 +116,6 @@ class OrdersController extends Controller
     public function fetch(Request $request)
     {
         $size = $request->get('size');
-        $page = $request->get('page');
         $searchString = $request->get('searchString');
 
         $orders = Order::groupBy('order_no');
@@ -166,7 +164,7 @@ class OrdersController extends Controller
             ->with(['scanners' => function ($query) {
                 $query->with(['employee' => function ($query) {
                     $query->with(['shift', 'team']);
-                }, 'process'])
+                }, 'process', 'qcFault'])
                 ->orderBy('scannedtime', 'asc');
             }])
             ->get();

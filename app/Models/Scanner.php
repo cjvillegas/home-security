@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Scanner extends Model
@@ -75,6 +76,7 @@ class Scanner extends Model
     /********************
     * R E L A T I O N S *
     ********************/
+
     /**
      * Retrieve order of this scanner
      *
@@ -104,6 +106,17 @@ class Scanner extends Model
     {
         return $this->belongsTo(Process::class, 'processid', 'barcode');
     }
+
+    /**
+     * Get the qc faults related to this scanner
+     *
+     * @return HasOne
+     */
+    public function qcFault()
+    {
+        return $this->hasOne(QcFault::class, 'scanner_id', 'id');
+    }
+
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class QualityControl extends Model
@@ -31,4 +32,22 @@ class QualityControl extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    /********************
+    * R E L A T I O N S *
+    ********************/
+
+    /**
+     * Get the qc faults that uses this qc code
+     *
+     * @return HasMany
+     */
+    public function qcFaults(): HasMany
+    {
+        return $this->hasMany(QcFault::class);
+    }
+
+    /********************************
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 }
