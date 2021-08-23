@@ -64,7 +64,13 @@ class PopulateOrdersFromBlindData extends Command
                 $newOrders = [];
                 foreach ($chunk as $order) {
                     // perform insertion of the order
-                    $newOrders[] = $this->sanitize((array) $order);
+                    $sanitized = $this->sanitize((array) $order);
+
+                    // sanity check if sanitized data is not false
+                    if ($sanitized) {
+                        $newOrders[] = $sanitized;
+
+                    }
                 }
 
                 // do the actual insertion of data
@@ -176,7 +182,12 @@ class PopulateOrdersFromBlindData extends Command
     private function sanitize(array $sageOrder)
     {
         // do a sanity check of the required data
-        if (empty($sageOrder['BlindId']) || empty($sageOrder['OrderNo']) || empty($sageOrder['Customer']) || empty($sageOrder['Quantity']) || empty($sageOrder['OrderEnteredBy']) || empty($sageOrder['SerialID'])) {
+        if (empty($sageOrder['SerialID']) ||
+            empty($sageOrder['OrderNo']) ||
+            empty($sageOrder['Customer']) ||
+            empty($sageOrder['CustRef']) ||
+            empty($sageOrder['ProductType']) ||
+            empty($sageOrder['ProductCode'])) {
             return false;
         }
 
