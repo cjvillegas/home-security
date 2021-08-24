@@ -6,6 +6,7 @@ use App\Models\Role;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class StoreRoleRequest extends FormRequest
 {
@@ -20,6 +21,7 @@ class StoreRoleRequest extends FormRequest
             'title' => [
                 'string',
                 'required',
+                Rule::unique('roles')->ignore($this->id)->whereNull('deleted_at')
             ],
             'permissions.*' => [
                 'integer',

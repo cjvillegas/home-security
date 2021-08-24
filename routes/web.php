@@ -23,6 +23,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Roles
     Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::post('roles/list', 'RolesController@fetchRoles');
+    Route::get('roles/permissions', 'RolesController@fetchAllPermissions');
     Route::resource('roles', 'RolesController');
 
     // Users

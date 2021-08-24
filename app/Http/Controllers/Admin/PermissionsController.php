@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
 use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class PermissionsController extends Controller
