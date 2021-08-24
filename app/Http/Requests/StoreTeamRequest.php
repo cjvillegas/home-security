@@ -6,6 +6,7 @@ use App\Models\Team;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class StoreTeamRequest extends FormRequest
 {
@@ -19,7 +20,7 @@ class StoreTeamRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'nullable',
+                Rule::unique('teams')->ignore($this->id)->whereNull('deleted_at')
             ],
             'target' => [
                 'nullable',

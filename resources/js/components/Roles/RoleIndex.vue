@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-card class="box-card">
-            <h4 class="mb-0">Permissions List</h4>
+            <h4 class="mb-0">Roles List</h4>
         </el-card>
         <div v-loading="loading">
             <el-card class="box-card mt-3">
@@ -10,9 +10,9 @@
                         <el-input
                             v-model="filters.searchString"
                             clearable
-                            placeholder="Search Permission..."
+                            placeholder="Search Roles..."
                             style="width: 250px"
-                            @keyup.enter.native.prevent="fetchPermissions">
+                            @keyup.enter.native.prevent="fetchRoles">
                         </el-input>
                     </div>
 
@@ -20,19 +20,39 @@
                         <el-button
                             type="primary"
                             @click="addNew">
-                            <i class="fas fa-plus"></i> Add Permission
+                            <i class="fas fa-plus"></i> Add Role
                         </el-button>
                     </div>
                 </div>
-
                 <el-table
-                    :data="permissions"
+                    :data="roles"
                     class="w-100"
                     fit>
+
+                    <el-table-column
+                        prop="id"
+                        label="ID"
+                        width="150"
+                        sortable>
+                    </el-table-column>
+
                     <el-table-column
                         prop="title"
                         label="Title"
+                        width="200"
                         sortable>
+                    </el-table-column>
+
+                    <el-table-column
+                        label="Permissions">
+                    <template slot-scope="scope">
+                        <el-tag
+                            type="primary"
+                            class="m-1"
+                            v-for="permission in scope.row.permissions" :key="permission.id">
+                            {{ permission.title }}
+                        </el-tag>
+                    </template>
                     </el-table-column>
 
                     <el-table-column
@@ -54,12 +74,12 @@
                                     </el-button>
                                 </el-tooltip>
                                 <el-popconfirm
-                                    @confirm="deletePermission(scope.row.id)"
+                                    @confirm="deleteRole(scope.row.id)"
                                     confirm-button-text='OK'
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this Permission?">
+                                    title="Are you sure to delete this Role?">
                                     <el-button
                                         type="text"
                                         class="text-danger ml-2"
@@ -90,8 +110,8 @@
         </div>
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="(dialogType == 'Add') ? 'Add Permission' : (dialogType == 'Edit') ? 'Edit Permission' : 'View Permission'"
-            width="40%"
+            :title="(dialogType == 'Add') ? 'Add Role' : (dialogType == 'Edit') ? 'Edit Role' : 'View Role'"
+            width="50%"
             @close="clearForm">
             <el-form
                 v-loading="loading"
@@ -99,17 +119,41 @@
                 :model="form"
                 :rules="rules">
                 <el-form-item
-                    label="Permission Name"
+                    label="Team Name"
                     prop="title"
                     :error="hasError('title')">
                     <el-input
                         v-model="form.title"
-                        :disabled="this.dialogType == 'View'"
+                        placeholder="Team Alpha"
                         clearable
                         class="w-100">
                     </el-input>
                 </el-form-item>
 
+                <el-form-item
+                    label="Permissions"
+                    prop="permissions"
+                    :error="hasError('permissions')">
+                    <el-checkbox
+                        class="float-right"
+                        v-model="is_select_all"
+                        @change="toggleSelectAll"
+                        label="Select All">
+                    </el-checkbox>
+                    <el-select
+                        v-model="form.permissions"
+                        multiple
+                        placeholder="Select permissions"
+                        class="w-100">
+                        <el-option
+                            v-for="item in permissions"
+                            :key="item.id"
+                            :label="item.title"
+                            :value="item.id">
+                        </el-option>
+
+                    </el-select>
+                </el-form-item>
             </el-form>
             <span
                 slot="footer"
@@ -132,7 +176,6 @@
                     Update
                 </el-button>
             </span>
-
         </el-dialog>
     </div>
 </template>
@@ -145,41 +188,43 @@
         mixins: [pagination, formHelper],
         data() {
             return {
-                formDialogVisible: false,
-                dialogType: 'Add',
                 loading: false,
+                dialogType: false,
+                formDialogVisible: false,
+                roles: [],
+                permissions: [],
+                form: this.getDefaultValues(),
                 filters: {
                     searchString: null,
                 },
-                form: {
-                    id: null,
-                    title: ''
-                },
+
                 rules: {
-                    title: {required: true, message: 'Title is required', trigger: ['blur', 'change']},
+                    title: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
+                    permissions: {required: true, message: 'Permissions is required', trigger: ['blur', 'change']},
                 },
-                permissions: []
+
+                is_select_all: false
             }
         },
 
         created() {
             this.filters.size = 10
-            this.functionName = 'fetchPermissions'
+            this.functionName = 'fetchRoles'
         },
 
         mounted() {
+            this.fetchRoles()
             this.fetchPermissions()
         },
 
         methods: {
-            fetchPermissions() {
-                let apiUrl = `/admin/permissions/list`
+            fetchRoles() {
                 this.loading = true
 
-                axios.post(apiUrl, this.filters)
+                this.$API.Role.getList(this.filters)
                 .then((response) => {
-                    this.permissions = response.data.permissions.data
-                    this.filters.total = response.data.permissions.total
+                    this.roles = response.data.roles.data
+                    this.filters.total = response.data.roles.total
                 })
                 .catch((err) => {
                     console.log(err)
@@ -189,84 +234,77 @@
                 })
             },
 
-            savePermission() {
-                let apiUrl = `/admin/permissions`
+            fetchPermissions() {
                 this.loading = true
 
-                axios.post(apiUrl, this.form)
+                this.$API.Role.getPermissions()
                 .then((response) => {
-                    switch(response.status){
-                        case 200:
-                            this.$notify({
-                                title: 'Success',
-                                message: response.data.message,
-                                type: 'success'
-                            })
-                            this.fetchPermissions()
-                            this.clearForm()
-                    }
+                    this.permissions = response.data.permissions
+                    console.log(this.permissions)
                 })
-                .catch(err => {
-                    if (err.response.status === 422) {
-                        this.setErrors(err.response.data.errors)
-                    }
+                .catch((err) => {
+                    console.log(err)
                 })
-                .finally(_ => {
-                    this.loading = false
-                })
-            },
-
-            updatePermission() {
-                let apiUrl = `/admin/permissions/${this.form.id}`
-                this.loading = true
-
-                axios.patch(apiUrl, this.form)
-                .then((response) => {
-                    switch(response.status){
-                        case 200:
-                            this.$notify({
-                                title: 'Success',
-                                message: response.data.message,
-                                type: 'success'
-                            })
-                            this.fetchPermissions()
-                            this.clearForm()
-                    }
-                })
-                .catch(err => {
-                    if (err.response.status === 422) {
-                        this.setErrors(err.response.data.errors)
-                    }
-                })
-                .finally(_ => {
+                .finally(() => {
                     this.loading = false
                 })
             },
 
             addNew() {
-                if(this.dialogType == 'Edit') {
-                    this.clearForm()
-                }
+                this.clearForm()
                 this.dialogType = 'Add'
                 this.formDialogVisible = true
             },
 
-            openEditDialog(item) {
-                this.dialogType = 'Edit'
-                this.form.id = item.id
-                this.form.title = item.title
+            saveRole() {
+                this.loading = true
+
+                this.$API.Role.save(this.form)
+                .then((response) => {
+                    switch(response.status){
+                        case 200:
+                            this.$notify({
+                                title: 'Success',
+                                message: response.data.message,
+                                type: 'success'
+                            })
+                            this.fetchRoles()
+                            this.clearForm()
+                    }
+                })
+                .catch(err => {
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
             },
 
-            deletePermission(id) {
-                let apiUrl = `/admin/permissions/${id}`
-                axios.delete(apiUrl)
-                .then( (response) => {
-                    this.$notify({
-                        title: 'Deleted!',
-                        message: response.data.message,
-                        type: 'success'
-                    });
-                    this.fetchPermissions()
+            updateRole() {
+                this.loading = true
+
+                this.$API.Role.update(this.form)
+                .then((response) => {
+                    switch(response.status){
+                        case 200:
+                            this.$notify({
+                                title: 'Success',
+                                message: response.data.message,
+                                type: 'success'
+                            })
+                            this.fetchRoles()
+                            this.clearForm()
+                    }
+                })
+                .catch(err => {
+                    if (err.response.status === 422) {
+                        this.setErrors(err.response.data.errors)
+                    }
+                })
+                .finally(_ => {
+                    this.loading = false
                 })
             },
 
@@ -275,13 +313,47 @@
                     if (valid) {
                         this.resetErrors()
                         if (this.dialogType == 'Edit') {
-                            this.updatePermission()
+                            this.updateRole()
 
                             return
                         }
-                        this.savePermission()
+                        this.saveRole()
                     }
                 })
+            },
+
+            openEditDialog(item) {
+                this.clearForm()
+                this.dialogType = 'Edit'
+                this.form.id = item.id
+                this.form.title = item.title
+                item.permissions.forEach(permission => {
+                    this.form.permissions.push(permission.id)
+                });
+            },
+
+            deleteRole(id) {
+                this.$API.Role.delete(id)
+                .then( (response) => {
+                    this.$notify({
+                        title: 'Deleted!',
+                        message: response.data.message,
+                        type: 'success'
+                    });
+                    this.fetchRoles()
+                })
+            },
+
+            toggleSelectAll() {
+                if(this.is_select_all) {
+                    if(this.form.permissions.length <=0) {
+                        this.permissions.forEach(permission => {
+                            this.form.permissions.push(permission.id)
+                        });
+                    }
+                }else {
+                    this.form.permissions = []
+                }
             },
 
             clearForm() {
@@ -289,9 +361,18 @@
                     this.$refs.form.clearValidate()
                 }
 
-                this.form.title = null
+                this.is_select_all = false
+                this.form = this.getDefaultValues()
 
                 this.formDialogVisible = false
+            },
+
+            getDefaultValues() {
+                return {
+                    id: null,
+                    title: null,
+                    permissions: []
+                }
             }
         }
     }

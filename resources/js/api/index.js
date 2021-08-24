@@ -10,6 +10,9 @@ import ProcessCategory from './ProcessCategory'
 import ProcessSequence from './ProcessSequence'
 import ProcessSequenceLink from './ProcessSequenceLink'
 import Machine from './Machine'
+import Role from './Role'
+import Team from './Team'
+import Shift from './Shift'
 
 // Employee endpoint collections
 import EmployeeAuth from './Employee/Auth'
@@ -28,6 +31,9 @@ export default {
     ProcessSequenceLink,
     Machine,
     Scanners,
+    Role,
+    Team,
+    Shift,
 
     // employee dedicated endpoints
     EmployeeAuth,

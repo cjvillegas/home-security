@@ -18,11 +18,13 @@ class ShiftsController extends Controller
 
     public function index()
     {
-        abort_if(Gate::denies('shift_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(Gate::denies('team_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $shifts = Shift::all();
+        $user = auth()->user();
 
-        return view('admin.shifts.index', compact('shifts'));
+        $user->permissions = $user->getPermissionNameByModule('stock_items');
+
+        return view('admin.shifts.index', compact('user'));
     }
 
     /**
@@ -30,54 +32,63 @@ class ShiftsController extends Controller
      *
      * @return void
      */
-    public function fetchShifts()
+    public function fetchShifts(Request $request)
     {
-        $shifts = Shift::all();
+        $searchString = $request->searchString;
+        $size = $request->size;
+
+        $shifts = Shift::orderBy('name', 'asc')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('name', 'like', "%{$searchString}%");
+            });
+        $shifts = $shifts->paginate($size);
+
         return response()->json(['shifts' => $shifts]);
     }
 
-    public function create()
-    {
-        abort_if(Gate::denies('shift_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.shifts.create');
-    }
-
+    /**
+     * Save/Store Shift
+     *
+     * @param  StoreShiftRequest $request
+     *
+     * @return JsonResponse
+     */
     public function store(StoreShiftRequest $request)
     {
         $shift = Shift::create($request->all());
 
-        return redirect()->route('admin.shifts.index');
+        return response()->json(['message' => 'Shift Successfully Saved.']);
     }
 
-    public function edit(Shift $shift)
-    {
-        abort_if(Gate::denies('shift_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.shifts.edit', compact('shift'));
-    }
-
+    /**
+     * Update Shift's Information
+     *
+     * @param  UpdateShiftRequest $request
+     * @param  Shift $shift
+     *
+     * @return JsonResponse
+     */
     public function update(UpdateShiftRequest $request, Shift $shift)
     {
         $shift->update($request->all());
 
-        return redirect()->route('admin.shifts.index');
+        return response()->json(['message' => 'Shift Successfully Updated.']);
     }
 
-    public function show(Shift $shift)
-    {
-        abort_if(Gate::denies('shift_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        return view('admin.shifts.show', compact('shift'));
-    }
-
+    /**
+     * Delete/Destroy Shift
+     *
+     * @param  Shift $shift
+     *
+     * @return JsonResponse
+     */
     public function destroy(Shift $shift)
     {
         abort_if(Gate::denies('shift_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $shift->delete();
 
-        return back();
+        return response()->json(['message' => 'Shift Successfully Deleted.']);
     }
 
     public function massDestroy(MassDestroyShiftRequest $request)
