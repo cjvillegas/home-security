@@ -37,10 +37,12 @@
                     </el-table-column>
 
                     <el-table-column
-                        prop="title"
                         label="Title"
                         width="200"
                         sortable>
+                        <template slot-scope="scope">
+                            {{ scope.row.title | ucWords }}
+                        </template>
                     </el-table-column>
 
                     <el-table-column
