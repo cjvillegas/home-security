@@ -174,10 +174,9 @@
 
         methods: {
             fetchShifts() {
-                let apiUrl = `/admin/shifts/list`
                 this.loading = true
 
-                axios.post(apiUrl, this.filters)
+                this.$API.Shift.getList(this.filters)
                 .then((response) => {
                     this.shifts = response.data.shifts.data
                     this.filters.total = response.data.shifts.total
@@ -197,10 +196,9 @@
             },
 
             saveShift() {
-                let apiUrl = `/admin/shifts`
                 this.loading = true
 
-                axios.post(apiUrl, this.form)
+                this.$API.Shift.save(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -224,10 +222,9 @@
             },
 
             updateShift() {
-                let apiUrl = `/admin/shifts/${this.form.id}`
                 this.loading = true
 
-                axios.patch(apiUrl, this.form)
+                this.$API.Shift.update(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -272,7 +269,7 @@
 
             deleteShift(id) {
                 let apiUrl = `/admin/shifts/${id}`
-                axios.delete(apiUrl)
+                this.$API.Shift.delete(id)
                 .then( (response) => {
                     this.$notify({
                         title: 'Deleted!',

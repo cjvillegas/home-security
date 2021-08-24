@@ -48,6 +48,7 @@
                     <template slot-scope="scope">
                         <el-tag
                             type="primary"
+                            class="m-1"
                             v-for="permission in scope.row.permissions" :key="permission.id">
                             {{ permission.title }}
                         </el-tag>
@@ -133,16 +134,17 @@
                     label="Permissions"
                     prop="permissions"
                     :error="hasError('permissions')">
-                    <el-switch
-                        placeholder="Select all"
-                        @change="toggleSelectAll()"
-                        v-model="is_select_all">
-                    </el-switch>
+                    <el-checkbox
+                        class="float-right"
+                        v-model="is_select_all"
+                        @change="toggleSelectAll"
+                        label="Select All">
+                    </el-checkbox>
                     <el-select
                         v-model="form.permissions"
                         multiple
                         placeholder="Select permissions"
-                        class="roles-selection">
+                        class="w-100">
                         <el-option
                             v-for="item in permissions"
                             :key="item.id"
@@ -217,10 +219,9 @@
 
         methods: {
             fetchRoles() {
-                let apiUrl = `/admin/roles/list`
                 this.loading = true
 
-                axios.post(apiUrl, this.filters)
+                this.$API.Role.getList(this.filters)
                 .then((response) => {
                     this.roles = response.data.roles.data
                     this.filters.total = response.data.roles.total
@@ -234,10 +235,9 @@
             },
 
             fetchPermissions() {
-                let apiUrl = `/admin/roles/permissions/`
                 this.loading = true
 
-                axios.get(apiUrl)
+                this.$API.Role.getPermissions()
                 .then((response) => {
                     this.permissions = response.data.permissions
                     console.log(this.permissions)
@@ -257,10 +257,9 @@
             },
 
             saveRole() {
-                let apiUrl = `/admin/roles`
                 this.loading = true
 
-                axios.post(apiUrl, this.form)
+                this.$API.Role.save(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -284,10 +283,9 @@
             },
 
             updateRole() {
-                let apiUrl = `/admin/roles/${this.form.id}`
                 this.loading = true
 
-                axios.patch(apiUrl, this.form)
+                this.$API.Role.update(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -335,8 +333,7 @@
             },
 
             deleteRole(id) {
-                let apiUrl = `/admin/roles/${id}`
-                axios.delete(apiUrl)
+                this.$API.Role.delete(id)
                 .then( (response) => {
                     this.$notify({
                         title: 'Deleted!',
@@ -348,7 +345,7 @@
             },
 
             toggleSelectAll() {
-                if(this.is_select_all || this.dialogType == 'Edit') {
+                if(this.is_select_all) {
                     if(this.form.permissions.length <=0) {
                         this.permissions.forEach(permission => {
                             this.form.permissions.push(permission.id)

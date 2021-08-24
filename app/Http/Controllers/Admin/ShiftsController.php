@@ -10,7 +10,6 @@ use App\Http\Requests\UpdateShiftRequest;
 use App\Models\Shift;
 use Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShiftsController extends Controller
@@ -51,6 +50,7 @@ class ShiftsController extends Controller
      * Save/Store Shift
      *
      * @param  StoreShiftRequest $request
+     *
      * @return JsonResponse
      */
     public function store(StoreShiftRequest $request)
@@ -65,6 +65,7 @@ class ShiftsController extends Controller
      *
      * @param  UpdateShiftRequest $request
      * @param  Shift $shift
+     *
      * @return JsonResponse
      */
     public function update(UpdateShiftRequest $request, Shift $shift)
@@ -78,6 +79,7 @@ class ShiftsController extends Controller
      * Delete/Destroy Shift
      *
      * @param  Shift $shift
+     *
      * @return JsonResponse
      */
     public function destroy(Shift $shift)

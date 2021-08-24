@@ -7,9 +7,8 @@ use App\Http\Requests\MassDestroyPermissionRequest;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
 use App\Models\Permission;
-use Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class PermissionsController extends Controller
@@ -29,6 +28,7 @@ class PermissionsController extends Controller
      * Fetch Permissions List
      *
      * @param  mixed $request
+     *
      * @return JsonResponse
      */
     public function fetchPermissions(Request $request)

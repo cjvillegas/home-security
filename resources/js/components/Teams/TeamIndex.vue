@@ -195,10 +195,9 @@
 
         methods: {
             fetchTeams() {
-                let apiUrl = `/admin/teams/list`
                 this.loading = true
 
-                axios.post(apiUrl, this.filters)
+                this.$API.Team.getList(this.filter)
                 .then((response) => {
                     this.teams = response.data.teams.data
                     this.filters.total = response.data.teams.total
@@ -220,10 +219,9 @@
             },
 
             saveTeam() {
-                let apiUrl = `/admin/teams`
                 this.loading = true
 
-                axios.post(apiUrl, this.form)
+                this.$API.Team.save(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -247,10 +245,9 @@
             },
 
             updateTeam() {
-                let apiUrl = `/admin/teams/${this.form.id}`
                 this.loading = true
 
-                axios.patch(apiUrl, this.form)
+                this.$API.Team.update(this.form)
                 .then((response) => {
                     switch(response.status){
                         case 200:
@@ -295,8 +292,7 @@
             },
 
             deleteTeam(id) {
-                let apiUrl = `/admin/teams/${id}`
-                axios.delete(apiUrl)
+                this.$API.Team.delete(id)
                 .then( (response) => {
                     this.$notify({
                         title: 'Deleted!',

@@ -8,9 +8,8 @@ use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Permission;
 use App\Models\Role;
-use Gate;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class RolesController extends Controller
@@ -61,12 +60,11 @@ class RolesController extends Controller
      * Store/Save new Role
      *
      * @param  StoreRoleRequest $request
+     *
      * @return JsonResponse
      */
     public function store(StoreRoleRequest $request)
     {
-        Log::info($request->all());
-
         $role = Role::create($request->all());
         $role->permissions()->sync($request->input('permissions', []));
 
@@ -78,6 +76,7 @@ class RolesController extends Controller
      *
      * @param  UpdateRoleRequest $request
      * @param  Role $role
+     *
      * @return JsonResponse
      */
     public function update(UpdateRoleRequest $request, Role $role)
@@ -92,6 +91,7 @@ class RolesController extends Controller
      * Destroy/Delete Role
      *
      * @param  Role $role
+     *
      * @return JsonResponse
      */
     public function destroy(Role $role)

@@ -8,8 +8,8 @@ use App\Http\Requests\MassDestroyTeamRequest;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Team;
-use Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class TeamsController extends Controller
@@ -31,6 +31,7 @@ class TeamsController extends Controller
      * Fetch Teams List
      *
      * @param  mixed $request
+     *
      * @return JsonResponse
      */
     public function fetchTeams(Request $request)
@@ -52,6 +53,7 @@ class TeamsController extends Controller
      * Store/Save new Team
      *
      * @param  StoreTeamRequest $request
+     *
      * @return JsonResponse
      */
     public function store(StoreTeamRequest $request)
@@ -66,6 +68,7 @@ class TeamsController extends Controller
      *
      * @param  UpdateTeamRequest $request
      * @param  Team $team
+     *
      * @return JsonResponse
      */
     public function update(UpdateTeamRequest $request, Team $team)
@@ -79,6 +82,7 @@ class TeamsController extends Controller
      * Destroy/Delete Team
      *
      * @param  Team $team
+     *
      * @return JsonResponse
      */
     public function destroy(Team $team)
