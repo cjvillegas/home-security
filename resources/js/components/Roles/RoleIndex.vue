@@ -245,7 +245,6 @@
                 this.$API.Role.getPermissions()
                 .then((response) => {
                     this.permissions = response.data.permissions
-                    console.log(this.permissions)
                 })
                 .catch((err) => {
                     console.log(err)
