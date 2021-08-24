@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Report;
 use App\Http\Controllers\Controller;
 use App\Models\Machine;
 use App\Models\MachineCounter;
+use App\Services\MachineCounterReportService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -25,56 +26,29 @@ class ReportController extends Controller
         return view('admin.reports.data-export-index');
     }
 
-    private function queryString($date, $isTotal = false)
-    {
-        $query =  "SELECT machines.id, machines.name, machines.created_at, mc.shift_id, mc.id as machine_counter_id,
-        SUM(CASE WHEN mc.machine_id = machines.id THEN mc.total_boxes ELSE 0 END) as boxes
-        FROM machines
-        INNER JOIN machine_counters mc ON mc.machine_id = machines.id
-        WHERE mc.created_at BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59'
-        ";
-        /*
-        *if isTotal is true, this query is for getting the OVERALL total boxes per Machine
-        *if false, this query is to get total boxes per Shift only (Machine)
-        */
-        if (!$isTotal) {
-            $query .= "\t GROUP BY mc.id";
-        } else {
-            $query .= "\t GROUP BY machine_id";
-        }
-
-        return $query;
-    }
-
+    /**
+     * Machine Counter Report for Dashboard
+     *
+     * @return JsonResponse
+     */
     public function getMachineStatistics()
     {
+        $report = new MachineCounterReportService();
+
         $today = now()->format('Y-m-d');
         $yesterday = now()->subDay()->format('Y-m-d');
 
-        // Query today's machine statistics data to get Machine's total boxes
-        $todayMachineCounterData = DB::select(
-            $this->queryString($today, false)
-        );
-
-        $yesterdayMachineCounterData = DB::select(
-            $this->queryString($yesterday, false)
-        );
-
         // Get all existing Machine's for Today and Yesterday
-        $todayMachines = Machine::whereHas('machineCounters', function($q){
-            $q->today();
-        })->get();
-        $yesterdayMachines = Machine::whereHas('machineCounters', function($q){
-            $q->yesterday();
-        })->get();
+        $todayMachines      = $report->listOfMachines($today);
+        $yesterdayMachines  = $report->listOfMachines($yesterday);
 
-        $todayTotalMachineBoxes = DB::select(
-            $this->queryString($today, true)
-        );
+        // Query today's machine statistics data to get Machine's total boxes
+        $todayMachineCounterData = $report->machineCounterData($today);
+        $yesterdayMachineCounterData = $report->machineCounterData($yesterday);
 
-        $yesterdayTotalMachineBoxes = DB::select(
-            $this->queryString($yesterday, true)
-        );
+
+        $todayTotalMachineBoxes = $report->totalMachineBoxes($today);
+        $yesterdayTotalMachineBoxes = $report->totalMachineBoxes($yesterday);
 
         return response()->json([
             'todayMachines' => $todayMachines,
