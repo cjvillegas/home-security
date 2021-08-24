@@ -17,7 +17,7 @@ class MachineCounterReportService
     public function listOfMachines($date) :Collection
     {
         return DB::table('machines')
-                ->select('machines.*', 'machine_counters.created_at')
+                ->select('machines.name', 'machines.id')
                 ->rightJoin('machine_counters', 'machines.id', '=', 'machine_counters.machine_id')
                 ->whereDate('machine_counters.created_at', $date)
                 ->groupBy('machines.id')
