@@ -96,7 +96,7 @@
         </div>
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="(dialogType == 'Add') ? 'Add Shift' : (dialogType == 'Edit') ? 'Edit Shift' : 'View Shift'"
+            :title="dialogTitle"
             width="40%"
             @close="clearForm">
             <el-form
@@ -144,7 +144,6 @@
 <script>
     import pagination from '../../mixins/pagination'
     import { formHelper } from '../../mixins/formHelper'
-
     export default {
         mixins: [pagination, formHelper],
         data() {
@@ -160,6 +159,12 @@
                 rules: {
                     name: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
                 },
+            }
+        },
+
+        computed: {
+            dialogTitle() {
+                return (this.dialogType == 'Add') ? 'Add Shift' : (this.dialogType == 'Edit') ? 'Edit Shift' : 'View Shift'
             }
         },
 

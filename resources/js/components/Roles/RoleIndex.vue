@@ -110,7 +110,7 @@
         </div>
         <el-dialog
             :visible.sync="formDialogVisible"
-            :title="(dialogType == 'Add') ? 'Add Role' : (dialogType == 'Edit') ? 'Edit Role' : 'View Role'"
+            :title="dialogTitle"
             width="50%"
             @close="clearForm">
             <el-form
@@ -183,7 +183,6 @@
 <script>
     import pagination from '../../mixins/pagination'
     import { formHelper } from '../../mixins/formHelper'
-
     export default {
         mixins: [pagination, formHelper],
         data() {
@@ -197,13 +196,17 @@
                 filters: {
                     searchString: null,
                 },
-
                 rules: {
                     title: {required: true, message: 'Name is required', trigger: ['blur', 'change']},
                     permissions: {required: true, message: 'Permissions is required', trigger: ['blur', 'change']},
                 },
-
                 is_select_all: false
+            }
+        },
+
+        computed: {
+            dialogTitle() {
+                return (this.dialogType == 'Add') ? 'Add Role' : (this.dialogType == 'Edit') ? 'Edit Role' : 'View Role'
             }
         },
 
