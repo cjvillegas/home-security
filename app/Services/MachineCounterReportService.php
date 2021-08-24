@@ -11,7 +11,8 @@ class MachineCounterReportService
      * Get today and Yesterday's list of Machines that has Machine counter data
      *
      * @param  mixed $date
-     * @return DB
+     *
+     * @return Collection
      */
     public function listOfMachines($date) :Collection
     {
@@ -28,9 +29,10 @@ class MachineCounterReportService
      *
      * @param  mixed $date
      * @param  mixed $isTotal
-     * @retur
+     *
+     * @return string
      */
-    public function queryString($date, $isTotal = false)
+    public function queryString($date, $isTotal = false): string
     {
         $query =  "SELECT machines.id, machines.name, machines.created_at, mc.shift_id, mc.id as machine_counter_id,
         SUM(CASE WHEN mc.machine_id = machines.id THEN mc.total_boxes ELSE 0 END) as boxes
@@ -38,15 +40,12 @@ class MachineCounterReportService
         INNER JOIN machine_counters mc ON mc.machine_id = machines.id
         WHERE mc.created_at BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59'
         ";
+
         /*
         *if isTotal is true, this query is for getting the OVERALL total boxes per Machine
         *if false, this query is to get total boxes per Shift only (Machine)
         */
-        if (!$isTotal) {
-            $query .= "\t GROUP BY mc.id";
-        } else {
-            $query .= "\t GROUP BY machine_id";
-        }
+        $query .= !$isTotal ? "\t GROUP BY mc.id" : "\t GROUP BY machine_id";
 
         return $query;
     }
@@ -55,9 +54,10 @@ class MachineCounterReportService
      * Get Machine's total boxes per shift
      *
      * @param  mixed $date
-     * @return DB
+     *
+     * @return array
      */
-    public function machineCounterData($date)
+    public function machineCounterData($date): array
     {
         return DB::select(
             $this->queryString($date, false)
@@ -66,8 +66,10 @@ class MachineCounterReportService
 
     /**
      * Get Machine's OVERALL total boxes
+     *
      * @param  mixed $date
-     * @return DB
+     *
+     * @return array
      */
     public function totalMachineBoxes($date)
     {

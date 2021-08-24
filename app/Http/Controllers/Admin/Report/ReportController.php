@@ -3,13 +3,9 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
-use App\Models\Machine;
-use App\Models\MachineCounter;
 use App\Services\MachineCounterReportService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -38,25 +34,13 @@ class ReportController extends Controller
         $today = now()->format('Y-m-d');
         $yesterday = now()->subDay()->format('Y-m-d');
 
-        // Get all existing Machine's for Today and Yesterday
-        $todayMachines      = $report->listOfMachines($today);
-        $yesterdayMachines  = $report->listOfMachines($yesterday);
-
-        // Query today's machine statistics data to get Machine's total boxes
-        $todayMachineCounterData = $report->machineCounterData($today);
-        $yesterdayMachineCounterData = $report->machineCounterData($yesterday);
-
-
-        $todayTotalMachineBoxes = $report->totalMachineBoxes($today);
-        $yesterdayTotalMachineBoxes = $report->totalMachineBoxes($yesterday);
-
         return response()->json([
-            'todayMachines' => $todayMachines,
-            'yesterdayMachines' => $yesterdayMachines,
-            'todayMachineCounterData' => $todayMachineCounterData,
-            'yesterdayMachineCounterData' => $yesterdayMachineCounterData,
-            'todayTotalMachineBoxes' => $todayTotalMachineBoxes,
-            'yesterdayTotalMachineBoxes' => $yesterdayTotalMachineBoxes
+            'todayMachines' => $report->listOfMachines($today),
+            'yesterdayMachines' => $report->listOfMachines($yesterday),
+            'todayMachineCounterData' => $report->machineCounterData($today),
+            'yesterdayMachineCounterData' => $report->machineCounterData($yesterday),
+            'todayTotalMachineBoxes' => $report->totalMachineBoxes($today),
+            'yesterdayTotalMachineBoxes' => $report->totalMachineBoxes($yesterday)
         ]);
 
     }
