@@ -8,6 +8,6 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
         Route::resource('', 'WorkAnalyticsReportController')->only(['index']);
     });
 
-
+    Route::get('/dashboard-machine-statistics', 'ReportController@getMachineStatistics');
     Route::get('/data-export', 'ReportController@dataExport')->name('data-export.index');
 });
