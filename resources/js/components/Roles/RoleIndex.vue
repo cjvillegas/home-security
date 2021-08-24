@@ -138,6 +138,7 @@
                         class="float-right"
                         v-model="is_select_all"
                         @change="toggleSelectAll"
+                        :indeterminate="isIndeterminate"
                         label="Select All">
                     </el-checkbox>
                     <el-select
@@ -158,7 +159,7 @@
             <span
                 slot="footer"
                 class="dialog-footer"
-                v-if="this.dialogType != 'View'">
+                v-if="this.dialogType !== 'View'">
                 <el-button
                     @click="clearForm">
                     Cancel
@@ -166,13 +167,13 @@
                 <el-button
                     type="primary"
                     @click="validate"
-                    v-show="this.dialogType == 'Add'">
+                    v-show="this.dialogType === 'Add'">
                     Save
                 </el-button>
                 <el-button
                     type="primary"
                     @click="validate"
-                    v-show="this.dialogType == 'Edit'">
+                    v-show="this.dialogType === 'Edit'">
                     Update
                 </el-button>
             </span>
@@ -206,7 +207,11 @@
 
         computed: {
             dialogTitle() {
-                return (this.dialogType == 'Add') ? 'Add Role' : (this.dialogType == 'Edit') ? 'Edit Role' : 'View Role'
+                return (this.dialogType === 'Add') ? 'Add Role' : (this.dialogType === 'Edit') ? 'Edit Role' : 'View Role'
+            },
+
+            isIndeterminate() {
+                return !!(this.form && this.form.permissions.length > 0 && this.form.permissions.length < this.permissions.length)
             }
         },
 
@@ -376,6 +381,12 @@
                     title: null,
                     permissions: []
                 }
+            }
+        },
+
+        watch: {
+            'form.permissions'() {
+                this.is_select_all = !!(this.form && this.form.permissions.length === this.permissions.length)
             }
         }
     }
