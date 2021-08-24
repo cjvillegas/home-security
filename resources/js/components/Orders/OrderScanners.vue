@@ -59,7 +59,7 @@
                                 size="mini"
                                 type="danger"
                                 @click="handleClickQcTagging(scope.row)">
-                                QC Tag
+                                {{ scope.row.qc_fault ? 'Update QC Tag' : 'QC Tag' }}
                             </el-button>
                         </el-tooltip>
 
