@@ -3,6 +3,7 @@ namespace App\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class MachineCounterReportService
 {
@@ -38,14 +39,21 @@ class MachineCounterReportService
         SUM(CASE WHEN mc.machine_id = machines.id THEN mc.total_boxes ELSE 0 END) as boxes
         FROM machines
         INNER JOIN machine_counters mc ON mc.machine_id = machines.id
-        WHERE mc.created_at BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59'
-        ";
+        WHERE mc.start_counter_time BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59'";
+
+        if ($date == date('Y-m-d')) {
+            $date = date('Y-m-d H:i:s');
+
+            $query .= "AND mc.start_counter_time <= '{$date}'
+            ";
+        }
 
         /*
         *if isTotal is true, this query is for getting the OVERALL total boxes per Machine
         *if false, this query is to get total boxes per Shift only (Machine)
         */
         $query .= !$isTotal ? "\t GROUP BY mc.id" : "\t GROUP BY machine_id";
+
 
         return $query;
     }
