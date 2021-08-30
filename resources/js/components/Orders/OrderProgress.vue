@@ -5,7 +5,7 @@
             :key="product.product">
             <el-divider>{{ product.name }}</el-divider>
 
-            <div class="d-flex">
+            <div>
                 <el-tag
                     v-for="process in product.processes"
                     :key="process.id"
