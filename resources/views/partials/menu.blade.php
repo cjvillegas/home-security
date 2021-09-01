@@ -294,7 +294,7 @@
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.quality-control.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.quality-control.index") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-list-alt c-sidebar-nav-icon"></i>
-                                QC codes
+                                QC Codes
                             </a>
                         </li>
                     @endcan
