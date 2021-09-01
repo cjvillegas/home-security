@@ -58,5 +58,30 @@ export default {
             url: `/admin/exports/export-raw-scanners-data?start=${start}&end=${end}`,
             responseType: 'blob'
         })
+    },
+
+    /**
+     * API endpoint that exports raw scanners data based on the given daterange.
+     * This endpoint will return a blob that will be parsed and handled by our frontend.
+     *
+     * @param params
+     *
+     * @return Promise
+     */
+    getExports(params) {
+        return axios.get(`/admin/exports/export-list`, {
+            params
+        })
+    },
+
+    /**
+     * API endpoint for deleting an export.
+     *
+     * @param id
+     *
+     * @return Promise
+     */
+    delete(id) {
+        return axios.delete(`/admin/exports/${id}`)
     }
 }

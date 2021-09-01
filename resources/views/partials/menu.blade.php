@@ -270,6 +270,15 @@
                         </li>
                     @endcan
 
+                    @can('data_export_reports_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.qc-report') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.qc-report") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-tags c-sidebar-nav-icon"></i>
+                                QC Report
+                            </a>
+                        </li>
+                    @endcan
+
                 </ul>
             </li>
         @endif
@@ -293,14 +302,12 @@
             </li>
         @endif
 
-        {{-- @can('settings_access') --}}
-            {{-- <li class="c-sidebar-nav-item {{ request()->is('admin/settings*') ? 'c-show' : '' }}">
-                <a href="{{ route("admin.settings.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/settings") ? "c-active" : "" }}">
-                    <i class="fas fa-cogs fa-fw c-sidebar-nav-icon"></i>
-                    Settings
-                </a>
-            </li> --}}
-        {{-- @endcan --}}
+         <li class="c-sidebar-nav-item {{ request()->is('admin/exports*') ? 'c-show' : '' }}">
+            <a href="{{ route("admin.exports.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/exports") ? "c-active" : "" }}">
+                <i class="fas fa-folder-open fa-fw c-sidebar-nav-icon"></i>
+                Exports
+            </a>
+        </li>
 
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')

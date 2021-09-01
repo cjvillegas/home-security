@@ -10,4 +10,7 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
 
     Route::get('/dashboard-machine-statistics', 'ReportController@getMachineStatistics');
     Route::get('/data-export', 'ReportController@dataExport')->name('data-export.index');
+    Route::get('/qc-report', 'ReportController@qcReport')->name('qc-report');
+    Route::get('/qc-list', 'ReportController@getQcList')->name('qc-list');
+    Route::get('/export-qc-fault-data', 'ReportController@exportQcFaultData')->name('export-qc-fault-data');
 });

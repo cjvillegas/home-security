@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Users
     Route::post('users/get-list', 'UsersController@getList')->name('users.get-list');
+    Route::get('users/get-clean-users', 'UsersController@getCleanUsers')->name('users.get-clean-users');
     Route::patch('users/{user}/status-change', 'UsersController@changeStatus')->name('users.status-change');
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::get('users/get-auth-user', 'UsersController@getAuthUser')->name('users.get-auth-user');
@@ -49,6 +50,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Employees
     Route::delete('employees/destroy', 'EmployeesController@massDestroy')->name('employees.massDestroy');
     Route::post('employees/get-list', 'EmployeesController@getList')->name('employees.get-list');
+    Route::get('employees/get-clean-employees', 'EmployeesController@getCleanEmployees')->name('employees.get-clean-employees');
     Route::patch('employees/{employee}/status-change', 'EmployeesController@changeStatus')->name('employees.status-change');
     Route::post('employees/parse-csv-import', 'EmployeesController@parseCsvImport')->name('employees.parseCsvImport');
     Route::post('employees/process-csv-import', 'EmployeesController@processCsvImport')->name('employees.processCsvImport');
@@ -94,6 +96,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // Orderhistory
     Route::delete('orderhistories/destroy', 'OrderhistoryController@massDestroy')->name('orderhistories.massDestroy');
     Route::resource('orderhistories', 'OrderhistoryController');
+
+    // exports
+    Route::get('exports', 'Exports\ExportController@index')->name('exports.index');
+    Route::delete('exports/{export}', 'Exports\ExportController@delete')->name('exports.delete');
+    Route::get('exports/export-list', 'Exports\ExportController@getExports')->name('exports.export-list');
 
     // route collection for reports
     require_once base_path('routes/web/reports.php');

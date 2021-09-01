@@ -14,6 +14,16 @@ export default {
     },
 
     /**
+     * API endpoint in fetching list of employees.
+     * This will only retrieve user information without any other data added
+     *
+     * @return Promise
+     */
+    getCleanEmployees() {
+        return axios.get(`/admin/employees/get-clean-employees`)
+    },
+
+    /**
      * API endpoint for fetching one single instance of employee.
      * This route is under the API collection
      *

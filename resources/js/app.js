@@ -21,6 +21,10 @@ import locale from 'element-ui/lib/locale/lang/en'
 // import router file
 import router from './router'
 
+// vuex store
+import {mapActions} from "vuex";
+import store from './store/store'
+
 // vue filters
 import filters from './filters'
 
@@ -54,10 +58,57 @@ Vue.filter('numFormat', numFormat(numeral));
 const app = new Vue({
     el: '#app',
     router,
+    store,
     data: {},
     created() {
-
+        this.getUsers()
+        this.getEmployees()
+        this.getProcesses()
+        this.getQualityControls()
     },
+    methods: {
+        getUsers() {
+            this.$API.User.getCleanUsers()
+            .then(res => {
+                this.setUsers(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global User Fetching Error`)
+            })
+        },
+
+        getEmployees() {
+            this.$API.Employee.getCleanEmployees()
+            .then(res => {
+                this.setEmployees(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Employee Fetching Error`)
+            })
+        },
+
+        getProcesses() {
+            this.$API.Processes.getAll()
+            .then(res => {
+                this.setProcesses(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Process Fetching Error`)
+            })
+        },
+
+        getQualityControls() {
+            axios.get(`/admin/quality-control/list`)
+            .then(res => {
+                this.setQualityControls(res.data.qualityControls)
+            })
+            .catch(err => {
+                console.error(`Error: Global Quality Control Fetching Error`)
+            })
+        },
+
+        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls'])
+    }
 });
 
 // Add a response interceptor

@@ -34,4 +34,30 @@ export default {
     getDespatchDepartmentAnalytics() {
         return axios.get(`${basePath}/despatch-department-analytics`)
     },
+
+    /**
+     * Fetch QC Tag for reporting
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    getQcList(params) {
+        return axios.get(`/admin/reports/qc-list`, {
+            params: params
+        })
+    },
+
+    /**
+     * Exports the qc fault data based on the passed array
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    exportQcFaultData(params) {
+        return axios.get(`/admin/reports/export-qc-fault-data`, {
+            params: params
+        })
+    }
 }
