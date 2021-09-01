@@ -12,7 +12,7 @@
                     :type="process.type"
                     effect="dark"
                     size="medium"
-                    class="mr-2">
+                    class="mr-2 mt-2">
                     <b>{{ process.label }}: {{ process.count }} / {{ totalOrderCount }}</b>
                 </el-tag>
             </div>
