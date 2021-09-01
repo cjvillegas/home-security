@@ -8,12 +8,14 @@ use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
+use App\Models\OrderTracking;
 use App\Repositories\Orders\OrderRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
@@ -170,5 +172,17 @@ class OrdersController extends Controller
             ->get();
 
         return response()->json($orders);
+    }
+
+    /**
+     * Retrieve order trackings
+     *
+     * @return JsonResponse
+     */
+    public function fetchTrackings(Request $request): JsonResponse
+    {
+        $orderTrackings = OrderTracking::where('order_no', $request->order_no)
+            ->get();
+        return response()->json(['orderTrackings' => $orderTrackings]);
     }
 }

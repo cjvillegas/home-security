@@ -1,5 +1,21 @@
 <template>
-    <el-card class="box-card mt-3">
+    <div>
+        <el-button v-if="trackings.length != 0"
+            @click="showTrackingForm = true"
+            effect="dark"
+            size="small"
+            type="success"
+            class="mr-2">
+            Tracking Available
+        </el-button>
+        <el-tag
+            v-else
+            effect="dark"
+            size="medium"
+            type="info"
+            class="mr-2">
+            No Tracking Available
+        </el-tag>
         <div
             v-for="product in getProcessListWithCount"
             :key="product.product">
@@ -17,7 +33,14 @@
                 </el-tag>
             </div>
         </div>
-    </el-card>
+
+        <order-tracking
+            v-if="trackings.length != 0"
+            :visible.sync="showTrackingForm"
+            :trackings="trackings"
+            @close="closeForm">
+        </order-tracking>
+    </div>
 </template>
 
 <script>
@@ -32,6 +55,10 @@
             processes: {
                 required: true,
                 type: Array
+            },
+            trackings: {
+                required: true,
+                type: Array
             }
         },
         data() {
@@ -40,6 +67,7 @@
                 ProductBlindTypes,
                 timelineProcesses: [],
                 isTimelineEvaluated: false,
+                showTrackingForm: false
             }
         },
         created() {
@@ -80,6 +108,9 @@
                 }
 
                 return processes
+            },
+            closeForm() {
+                this.showTrackingForm = false
             }
         },
         computed: {

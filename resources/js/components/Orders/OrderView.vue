@@ -5,10 +5,13 @@
             <i class="fas fa-arrow-circle-left"></i> Back
         </el-button>
 
-        <order-progress
-            :orders="orders"
-            :processes="processes">
-        </order-progress>
+        <el-card class="box-card mt-3">
+            <order-progress
+                :orders="orders"
+                :processes="processes"
+                :trackings="orderTrackings">
+            </order-progress>
+        </el-card>
 
         <el-card
             class="box-card mt-3"
@@ -92,7 +95,8 @@
                     searchString: null
                 },
                 user: null,
-                processes: []
+                processes: [],
+                orderTrackings: [],
             }
         },
         created() {
@@ -116,14 +120,23 @@
 
                 this.getScannersData()
             },
+            async getOrderTrackingsData() {
+                let apiUrl = `/admin/orders/trackings`
+                await axios.post(apiUrl, {'order_no' : this.orders[0].order_no})
+                .then((response) => {
+                    this.orderTrackings = response.data.orderTrackings
+                })
+            },
             getOrderDetails() {
                 this.loading = true
-
                 this.$API.Orders.getOrderDetails(this.field, this.toSearch)
                     .then(res => {
                         this.orders = cloneDeep(res.data || [])
                         this.filters.total = this.orders.length
                         this.scanners = this.orders.reduce((acc, cur) => acc = [...acc, ...cur.scanners], [])
+
+                        console.log(this.orders)
+                        this.getOrderTrackingsData()
                     })
                     .catch(err => {
                         console.log(err)
@@ -163,7 +176,7 @@
             },
             backToOrderList() {
                 this.$router.push({name: 'Order List'})
-            }
+            },
         },
         computed: {
             filteredOrder() {
@@ -177,9 +190,8 @@
                 // do local pagination
                 // this retrieve orders in between the current offset and the limit
                 orders = orders.filter((item, index) => (index + 1) > offset && (index + 1) <= size)
-
                 return orders
-            }
+            },
         },
         beforeRouteEnter(to, from, next) {
             // if the route is loaded from the URL section and not from the
