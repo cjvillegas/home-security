@@ -113,7 +113,7 @@ class Order extends Model
     /**
      * This will return list of Order Trackings
      *
-     * @return void
+     * @return HasOne
      */
     public function orderTrackings()
     {

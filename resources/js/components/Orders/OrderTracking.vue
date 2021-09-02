@@ -63,9 +63,5 @@
                 return 'Tracking Information for Order ' + this.trackings[0].order_no
             }
         },
-
-        mounted() {
-            console.log(this.trackings)
-        }
     }
 </script>
