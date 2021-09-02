@@ -57,7 +57,7 @@ class CsvExporterService
         );
 
         // dispatch the job for exporting
-        CsvExportJob::dispatch($exportPayload)->onQueue('default')->delay(now()->addMinute());
+        CsvExportJob::dispatch($exportPayload)->onQueue('default');
     }
 
     /**
