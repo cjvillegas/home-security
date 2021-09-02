@@ -78,7 +78,7 @@ class CsvExportJob implements ShouldQueue
 
         // check if the file is stored.
         if ($stored) {
-            $this->finishExport('public/' . $filePath);
+            $this->finishExport($filePath);
         }
     }
 
