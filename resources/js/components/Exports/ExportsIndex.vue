@@ -33,7 +33,7 @@
                             <el-link
                                 v-if="scope.row.url"
                                 :underline="false"
-                                :href="`${basePath}${scope.row.url}`"
+                                :href="scope.row.url"
                                 type="success">
                                 {{ scope.row.url | getFileNameFromPath }}
                             </el-link>
@@ -117,7 +117,6 @@
                 loading: false,
                 exports: [],
                 columns: columns,
-                basePath: window.location.origin
             }
         },
 
