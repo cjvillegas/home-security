@@ -66,7 +66,7 @@ class ExportController extends Controller
      */
     public function delete(Export $export)
     {
-        $folderPath = "public/exports/{$export->id}";
+        $folderPath = "exports/{$export->id}";
 
         Storage::deleteDirectory($folderPath);
 
