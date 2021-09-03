@@ -109,6 +109,16 @@ class Order extends Model
     {
         return $this->hasMany(Scanner::class, 'blindid', 'serial_id');
     }
+
+    /**
+     * This will return list of Order Trackings
+     *
+     * @return HasOne
+     */
+    public function orderTrackings()
+    {
+        return $this->hasOne(OrderTracking::class, 'order_no', 'order_no');
+    }
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

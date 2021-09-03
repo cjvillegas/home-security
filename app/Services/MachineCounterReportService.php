@@ -43,7 +43,6 @@ class MachineCounterReportService
 
         if ($date == date('Y-m-d')) {
             $date = date('Y-m-d H:i:s');
-
             $query .= "AND mc.start_counter_time <= '{$date}'
             ";
         }
