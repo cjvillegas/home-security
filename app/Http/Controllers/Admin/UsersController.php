@@ -8,9 +8,9 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
-use Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends Controller
@@ -135,7 +135,25 @@ class UsersController extends Controller
                 $query->where('users.is_active', $status);
             });
 
-        $users = $users->paginate($size);
+        if ($size) {
+            $users = $users->paginate($size);
+        } else {
+            $users = $users->get();
+        }
+
+        return response()->json($users);
+    }
+
+    /**
+     * Fetch list of users without any additional data added
+     *
+     * @param  Request  $request
+     *
+     * @return JsonResponse
+     */
+    public function getCleanUsers(Request $request)
+    {
+        $users = User::orderBy('created_at', 'desc')->get();
 
         return response()->json($users);
     }

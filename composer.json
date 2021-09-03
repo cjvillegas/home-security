@@ -17,12 +17,14 @@
         "laravel-notification-channels/microsoft-teams": "^1.1",
         "laravel/dusk": "^6.11",
         "laravel/framework": "^8.12",
+        "laravel/horizon": "^5.7",
         "laravel/sanctum": "^2.8",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "laraveldaily/laravel-charts": "^0.1.24",
         "maatwebsite/excel": "^3.1",
         "nuovo/spreadsheet-reader": "^0.5.11",
+        "predis/predis": "^1.1",
         "yajra/laravel-datatables-oracle": "^9.11"
     },
     "require-dev": {

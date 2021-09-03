@@ -14,6 +14,16 @@ export default {
     },
 
     /**
+     * API endpoint in fetching list of user list.
+     * This will only retrieve user list without any other data added
+     *
+     * @return Promise
+     */
+    getCleanUsers() {
+        return axios.get(`/admin/users/get-clean-users`)
+    },
+
+    /**
      * API endpoint for fetching one single instance of user.
      * This route is under the API collection
      *

@@ -8,8 +8,7 @@ use App\Http\Requests\StoreOrderhistoryRequest;
 use App\Http\Requests\UpdateOrderhistoryRequest;
 use App\Models\Order;
 use App\Models\Orderhistory;
-use Gate;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class OrderhistoryController extends Controller

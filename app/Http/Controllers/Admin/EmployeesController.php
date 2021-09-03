@@ -172,6 +172,20 @@ class EmployeesController extends Controller
     }
 
     /**
+     * Fetch list of users without any additional data added
+     *
+     * @param  Request  $request
+     *
+     * @return JsonResponse
+     */
+    public function getCleanEmployees(Request $request)
+    {
+        $employees = Employee::orderBy('created_at', 'desc')->get();
+
+        return response()->json($employees);
+    }
+
+    /**
      * Fetch the specified resource.
      *
      * @param  Employee  $employee

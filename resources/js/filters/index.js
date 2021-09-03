@@ -19,6 +19,39 @@ Vue.filter('fixDateByFormat', (date, format = 'MMM DD, YYYY') => {
     }
 })
 
+/**
+ * Format snake cased word to a proper english word format.
+ * ex. this_is_test => This Is Test
+ *
+ * @param string
+ *
+ * @return string
+ */
+Vue.filter('cleanUpSnakeCaseWord', (string) => {
+    if (string) {
+        return stringService.ucwords(string.replace(/_/g, ' '))
+    }
+
+    return ''
+})
+
+/**
+ * Get the file name from the passed path.
+ *
+ * @param path
+ *
+ * @return string
+ */
+Vue.filter('getFileNameFromPath', (path) => {
+    if (path) {
+        let explode = path.split('/')
+
+        return explode[explode.length - 1] || ''
+    }
+
+    return ''
+})
+
 Vue.filter('ucWords', (string) => {
     if (string) {
         return stringService.ucwords(string)
