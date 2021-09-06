@@ -107,7 +107,7 @@ class ShiftAssignment extends CronDatabasePopulator
         ";
 
         // execute the query
-        $shiftAssignments = DB::connection('stock_sqlsrv')->select($query);
+        $shiftAssignments = DB::connection('sqlsrv')->select($query);
 
         // return data as collection
         return collect($shiftAssignments);
