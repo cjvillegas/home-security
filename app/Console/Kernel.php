@@ -41,6 +41,12 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
 
+        // runs a CRON to fetch shift assignments
+        $schedule->command('shifts:populate-shift-assignment-table')
+            ->everyTwoHours()
+            ->between('06:00', '17:00')
+            ->environments(['production', 'staging']);
+
         // runs a cron that will delete a month old or older notifications
         $schedule->command('notifications:delete-a-month-old-notifications')
             ->dailyAt('00:00');

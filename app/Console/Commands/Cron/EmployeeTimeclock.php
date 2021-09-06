@@ -2,18 +2,17 @@
 
 namespace App\Console\Commands\Cron;
 
+use App\Abstracts\CronDatabasePopulator;
 use App\Models\Employee;
 use App\Models\TimeClock;
-use App\Models\User;
-use App\Notifications\CronFailureNotification;
 use Exception;
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-class EmployeeTimeclock extends Command
+class EmployeeTimeclock extends CronDatabasePopulator
 {
+    private $employees;
+
     /**
      * The name and signature of the console command.
      *
@@ -36,6 +35,9 @@ class EmployeeTimeclock extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
+            ->get();
     }
 
     /**
@@ -46,10 +48,7 @@ class EmployeeTimeclock extends Command
     public function handle(): void
     {
         try {
-            $timeClockData = $this->getTimeclockData();
-
-            $employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
-                ->get();
+            $timeClockData = $this->getDataFromBlind();
 
             $chunkCounter = 0;
 
@@ -59,7 +58,7 @@ class EmployeeTimeclock extends Command
                 $newTimeclocks = [];
                 foreach ($chunk as $timeClock) {
                     // perform data sanitization
-                    $newTimeclocks[] = $this->sanitize((array) $timeClock, $employees);
+                    $newTimeclocks[] = $this->sanitize((array) $timeClock);
                 }
 
                 // do the actual insertion of data
@@ -74,10 +73,8 @@ class EmployeeTimeclock extends Command
                     usleep(100000);
                 }
             }
-        } catch (Exception $err) {
-            $users = (new User)->getUserAdminsWithValidEmails();
-
-            Notification::send($users, new CronFailureNotification('Employee Time Clock', $err->getMessage()));
+        } catch (Exception $error) {
+            $this->sendFailedNotification('Employee Time Clock', $error);
         }
     }
 
@@ -87,11 +84,10 @@ class EmployeeTimeclock extends Command
      * with right information in them
      *
      * @param array $timeClock
-     * @param Collection $employees
      *
-     * @return mixed
+     * @return array|bool
      */
-    private function sanitize(array $timeClock, Collection $employees)
+    protected function sanitize(array $timeClock): ?array
     {
         // do a sanity check of the required data
         if (empty($timeClock['ClockNum']) || empty($timeClock['SwipeDateTime'])) {
@@ -99,7 +95,7 @@ class EmployeeTimeclock extends Command
         }
 
         // fetch an employee record based on the t&a data's clock_num
-        $employee = $employees->firstWhere('clock_num', $timeClock['ClockNum']);
+        $employee = $this->employees->firstWhere('clock_num', $timeClock['ClockNum']);
 
         // build the data to be saved
         $sanitizedTimeClock['employee_id'] = optional($employee)->id;
@@ -115,7 +111,7 @@ class EmployeeTimeclock extends Command
      *
      * @return Collection
      */
-    public function getTimeclockData(): Collection
+    public function getDataFromBlind(): Collection
     {
         $latestTransId = (new TimeClock)->getLatestData();
 

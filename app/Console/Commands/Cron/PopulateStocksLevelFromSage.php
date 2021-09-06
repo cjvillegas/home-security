@@ -2,16 +2,13 @@
 
 namespace App\Console\Commands\Cron;
 
+use App\Abstracts\CronDatabasePopulator;
 use App\Models\StockLevel;
-use App\Models\User;
-use App\Notifications\CronFailureNotification;
 use Exception;
-use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
 
-class PopulateStocksLevelFromSage extends Command
+class PopulateStocksLevelFromSage extends CronDatabasePopulator
 {
     /**
      * The name and signature of the console command.
@@ -35,6 +32,8 @@ class PopulateStocksLevelFromSage extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->table = 'stock_levels';
     }
 
     /**
@@ -46,7 +45,7 @@ class PopulateStocksLevelFromSage extends Command
     {
         try {
             $this->clearTable();
-            $stockLevels = $this->getStocksLevelData();
+            $stockLevels = $this->getDataFromBlind();
 
             $chunkCounter = 0;
             // chunk the results to save memory
@@ -70,10 +69,8 @@ class PopulateStocksLevelFromSage extends Command
                     usleep(100000);
                 }
             }
-        } catch (Exception $err) {
-            $users = (new User)->getUserAdminsWithValidEmails();
-
-            Notification::send($users, new CronFailureNotification('Populate Stock Level From Sage', $err->getMessage()));
+        } catch (Exception $error) {
+            $this->sendFailedNotification('Populate Stock Level From Sage', $error);
         }
     }
 
@@ -82,7 +79,7 @@ class PopulateStocksLevelFromSage extends Command
      *
      * @return string
      */
-    public function getStocksLevelData(): Collection
+    public function getDataFromBlind(): Collection
     {
         $query = "
             SELECT
@@ -120,28 +117,15 @@ class PopulateStocksLevelFromSage extends Command
     }
 
     /**
-     * This will clear the data from the **orders** table.
-     * This method will really do truncation on the orders table, not soft deletion.
-     *
-     * @return void
-     */
-    private function clearTable(): void
-    {
-        $model = new StockLevel();
-        $model->setConnection('mysql')
-            ->truncate();
-    }
-
-    /**
      * Sanitize order item coming from SAGE
      * This will ensure that we will only be saving item
      * with right information in them
      *
      * @param array $sageStockLevel
      *
-     * @return mixed
+     * @return array|boolean
      */
-    private function sanitize(array $sageStockLevel)
+    protected function sanitize(array $sageStockLevel): ?array
     {
         // do a sanity check of the required data
         if (empty($sageStockLevel['Code']) || empty($sageStockLevel['Name']) || empty($sageStockLevel['Actual Stock']) || empty($sageStockLevel['QuantityOnPOPOrder'])) {
