@@ -106,11 +106,8 @@ class ShiftAssignment extends CronDatabasePopulator
                 AND od.ScheduledDate IS NOT NULL
         ";
 
-        // execute the query
-        $shiftAssignments = DB::connection('sqlsrv')->select($query);
-
         // return data as collection
-        return collect($shiftAssignments);
+        return collect(DB::connection('sqlsrv')->select($query));
     }
 
     /**
