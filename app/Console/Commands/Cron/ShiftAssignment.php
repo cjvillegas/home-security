@@ -93,7 +93,7 @@ class ShiftAssignment extends CronDatabasePopulator
 
             // check if the retrieved items are more than zero, if so just call the handle method again
             // in class pagination
-            if ($assignment->count() > 0) {
+            if ($assignments->count() > 0) {
                 $this->handle();
                 $this->page++;
             }
