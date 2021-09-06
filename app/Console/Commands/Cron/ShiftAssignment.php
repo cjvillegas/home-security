@@ -11,6 +11,16 @@ use Illuminate\Support\Facades\DB;
 class ShiftAssignment extends CronDatabasePopulator
 {
     /**
+     * @var int
+     */
+    private $page = 1;
+
+    /**
+     * @var int
+     */
+    private $limit = 10000;
+
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -32,6 +42,8 @@ class ShiftAssignment extends CronDatabasePopulator
     public function __construct()
     {
         parent::__construct();
+
+        $this->table = 'shift_assignments';
     }
 
     /**
@@ -42,6 +54,9 @@ class ShiftAssignment extends CronDatabasePopulator
     public function handle(): void
     {
         try {
+            // truncate the table to populate the new items
+            $this->clearTable();
+
             $assignments = $this->getDataFromBlind();
 
             $chunkCounter = 0;
@@ -67,6 +82,13 @@ class ShiftAssignment extends CronDatabasePopulator
                     usleep(100000);
                 }
             }
+
+            // check if the retrieved items are more than zero, if so just call the handle method again
+            // in class pagination
+            if ($assignment->count() > 0) {
+                $this->handle();
+                $this->page++;
+            }
         } catch (Exception $error) {
             $this->sendFailedNotification('Shift Assignment', $error);
         }
@@ -79,6 +101,8 @@ class ShiftAssignment extends CronDatabasePopulator
      */
     protected function getDataFromBlind(): Collection
     {
+        $offset = ($this->page - 1) * $this->limit;
+
         $query = "
             SELECT DISTINCT
                 sdl.id AS [SerialID],
@@ -104,6 +128,9 @@ class ShiftAssignment extends CronDatabasePopulator
                 o.order_id IS NOT NULL
                 AND o.orderstatus_id <> '7'
                 AND od.ScheduledDate IS NOT NULL
+            ORDER BY sdl.id
+            OFFSET {$offset}
+            FETCH NEXT {$this->limit} ROWS ONLY
         ";
 
         // return data as collection
@@ -120,13 +147,15 @@ class ShiftAssignment extends CronDatabasePopulator
     protected function sanitize(array $item): ?array
     {
         // do a sanity check of the required data
-        if (empty($item['SerialID']) || empty($item['Team']) || empty($item['ScheduledDate'])) {
+        if (empty($item['SerialID']) || empty($item['Team']) || empty($item['ScheduledDate']) || empty($item['WorkingDate'])) {
             return false;
         }
 
         $shiftAssignment['serial_id'] = $item['SerialID'];
         $shiftAssignment['folder_name'] = $item['Team'];
-        $shiftAssignment['scheduled_date'] = (new Carbon(($item['ScheduledDate'])))->format('Y-m-d H:i:s');
+        $shiftAssignment['scheduled_date'] = $item['ScheduledDate'];
+        $shiftAssignment['work_date'] = $item['WorkingDate'];
+        $shiftAssignment['created_at'] = now()->format('Y-m-d H:i');
 
         return $shiftAssignment;
     }
