@@ -94,7 +94,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 WHEN DATEPART(DW, od.ScheduledDate) = '2'AND rt.Description LIKE '%Sun%' THEN DATEADD(day, -1, od.ScheduledDate)
                 END AS [WorkingDate]
             FROM
-                OrderDetail od
+                dbo.[OrderDetail] od
                 INNER JOIN dbo.[Order] o ON od.order_id = o.id
                 INNER JOIN dbo.SerialDetailLine sdl ON od.id = sdl.orderdetail_id
                 INNER JOIN dbo.BlindType bt ON bt.id = od.blindtype_id
