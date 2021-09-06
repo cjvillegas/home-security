@@ -31,6 +31,14 @@
                     class="mr-2">
                     <b>{{ process.label }}: {{ process.count }} / {{ totalOrderCount }}</b>
                 </el-tag>
+                <el-button
+                    @click="openTimelineDialog(product.processes)"
+                    effect="dark"
+                    size="small"
+                    type="default"
+                    class="mr-2">
+                    Timeline
+                </el-button>
             </div>
         </div>
 
@@ -40,6 +48,11 @@
             :trackings="trackings"
             @close="closeForm">
         </order-tracking>
+        <order-timeline
+            :processList="timeLineProcesses"
+            :visible.sync="showTimelineForm"
+            @close="closeForm">
+        </order-timeline>
     </div>
 </template>
 
@@ -67,7 +80,9 @@
                 ProductBlindTypes,
                 timelineProcesses: [],
                 isTimelineEvaluated: false,
-                showTrackingForm: false
+                showTrackingForm: false,
+                showTimelineForm: false,
+                timeLineProcesses: [],
             }
         },
         created() {
@@ -109,14 +124,19 @@
 
                 return processes
             },
+            openTimelineDialog(processes) {
+                this.timeLineProcesses = processes
+                this.showTimelineForm = true
+            },
             closeForm() {
                 this.showTrackingForm = false
+                this.showTimelineForm = false
             }
         },
         computed: {
             getProcessListWithCount() {
                 let processes = []
-
+                let scanners = []
                 if (this.timelineProcesses && this.timelineProcesses) {
                     let ordersInProcess = this.orders.filter(or => or.scanners.length)
                     for (let [index, x] of this.timelineProcesses.entries()) {
@@ -127,8 +147,11 @@
                             totalCount: this.orders.filter(or => x.blindTypes.some(bt => bt === or.blind_type)).length,
                             processes: []
                         })
+
+
                         for (let y of x.processes) {
                             let count = ordersInBlindType.filter(or => {
+                                scanners = or.scanners
                                 return or.scanners.some(sc => sc.processid === y.barcode)
                             }).length
 
@@ -140,9 +163,10 @@
                             if (count === processes[index].totalCount) {
                                 type = 'success'
                             }
-
                             processes[index].processes.push({
                                 label: this.$StringService.ucwords(y.name),
+                                scanners: scanners,
+                                barcode: y.barcode,
                                 key: y.id,
                                 count,
                                 type
@@ -152,6 +176,7 @@
                     }
                 }
 
+                console.log(processes)
                 return processes
             },
             totalOrderCount() {

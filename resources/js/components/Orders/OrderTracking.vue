@@ -34,6 +34,10 @@
                 prop="created_at"
                 label="Shipped Date"
                 sortable>
+                <template
+                    slot-scope="scope">
+                    {{ scope.row.created_at | fixDateByFormat('MMMM DD, YYYY hh:mm:ss a') }}
+                </template>
             </el-table-column>
         </el-table>
     </el-dialog>
