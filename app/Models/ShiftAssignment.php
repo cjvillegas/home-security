@@ -17,7 +17,7 @@ class ShiftAssignment extends Model
     protected $fillable = [
         'serial_id',
         'folder_name',
-        'schedule_date',
+        'scheduled_date',
         'work_date',
         'created_at',
         'updated_at',
