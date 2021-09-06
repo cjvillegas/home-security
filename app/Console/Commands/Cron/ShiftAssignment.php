@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Cron;
 
 use App\Abstracts\CronDatabasePopulator;
-use Carbon\Carbon;
+use App\Models\ShiftAssignment AS ShiftAss;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -73,7 +73,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 }
 
                 // do the actual insertion of data
-                ShiftAssignment::insert($shiftAssignments);
+                ShiftAss::insert($shiftAssignments);
 
                 // increment the execution counter
                 $chunkCounter++;
