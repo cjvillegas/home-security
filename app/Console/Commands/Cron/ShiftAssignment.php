@@ -55,7 +55,9 @@ class ShiftAssignment extends CronDatabasePopulator
     {
         try {
             // truncate the table to populate the new items
-            $this->clearTable();
+            if ($this->page === 1) {
+                $this->clearTable();
+            }
 
             $assignments = $this->getDataFromBlind();
 
@@ -129,7 +131,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 AND o.orderstatus_id <> '7'
                 AND od.ScheduledDate IS NOT NULL
             ORDER BY sdl.id
-            OFFSET {$offset}
+            OFFSET {$offset} ROWS
             FETCH NEXT {$this->limit} ROWS ONLY
         ";
 
