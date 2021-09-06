@@ -160,7 +160,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
      *
      * @param array $sageOrder
      *
-     * @return array|bool
+     * @return array|null
      */
     protected function sanitize(array $sageOrder): ?array
     {
@@ -172,7 +172,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
             empty($sageOrder['ProductType']) ||
             empty($sageOrder['ProductCode'])) {
 
-            return false;
+            return null;
         }
 
         $order['serial_id'] = $sageOrder['SerialID'];

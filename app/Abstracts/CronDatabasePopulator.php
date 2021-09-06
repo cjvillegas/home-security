@@ -66,7 +66,7 @@ abstract class CronDatabasePopulator extends Command
      *
      * @param array $item
      *
-     * @return array|boolean
+     * @return array|null
      */
     abstract protected function sanitize(array $item): ?array;
 }

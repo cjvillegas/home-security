@@ -144,13 +144,13 @@ class ShiftAssignment extends CronDatabasePopulator
      *
      * @param array $item
      *
-     * @return array|bool
+     * @return array|null
      */
     protected function sanitize(array $item): ?array
     {
         // do a sanity check of the required data
         if (empty($item['SerialID']) || empty($item['Team']) || empty($item['ScheduledDate']) || empty($item['WorkingDate'])) {
-            return false;
+            return null;
         }
 
         $shiftAssignment['serial_id'] = $item['SerialID'];

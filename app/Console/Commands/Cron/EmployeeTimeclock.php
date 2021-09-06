@@ -85,13 +85,13 @@ class EmployeeTimeclock extends CronDatabasePopulator
      *
      * @param array $timeClock
      *
-     * @return array|bool
+     * @return array|null
      */
     protected function sanitize(array $timeClock): ?array
     {
         // do a sanity check of the required data
         if (empty($timeClock['ClockNum']) || empty($timeClock['SwipeDateTime'])) {
-            return false;
+            return null;
         }
 
         // fetch an employee record based on the t&a data's clock_num

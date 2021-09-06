@@ -123,13 +123,13 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
      *
      * @param array $sageStockLevel
      *
-     * @return array|boolean
+     * @return array|null
      */
     protected function sanitize(array $sageStockLevel): ?array
     {
         // do a sanity check of the required data
         if (empty($sageStockLevel['Code']) || empty($sageStockLevel['Name']) || empty($sageStockLevel['Actual Stock']) || empty($sageStockLevel['QuantityOnPOPOrder'])) {
-            return false;
+            return null;
         }
 
         $stockLevel['code'] = $sageStockLevel['Code'];
