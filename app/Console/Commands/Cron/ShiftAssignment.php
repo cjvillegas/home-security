@@ -53,6 +53,7 @@ class ShiftAssignment extends CronDatabasePopulator
      */
     public function handle(): void
     {
+        $test = [];
         try {
             // truncate the table to populate the new items
             if ($this->page === 1) {
@@ -69,7 +70,12 @@ class ShiftAssignment extends CronDatabasePopulator
                 $shiftAssignments = [];
                 foreach ($chunk as $assignment) {
                     // perform insertion of the order
-                    $shiftAssignments[] = $this->sanitize((array) $assignment);
+                    $sanitized = $this->sanitize((array) $assignment);
+
+                    // assign only if data is properly sanitized
+                    if ($sanitized !== null) {
+                        $shiftAssignments[] = $sanitized;
+                    }
                 }
 
                 // do the actual insertion of data
