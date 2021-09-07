@@ -104,6 +104,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
             SELECT
                 sdl.id AS SerialID,
                 o.order_id AS OrderNo,
+                o.dat_required AS RequiredDate,
                 u.company AS Customer,
                 o.cust_ref AS CustRef,
                 o.cust_no AS CustNo,
@@ -183,6 +184,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
         $order['product_type'] = $sageOrder['ProductType'];
         $order['blind_type'] = $sageOrder['ProductCode'];
         $order['ordered_at'] = $sageOrder['Ordered'];
+        $order['required_date'] = $sageOrder['RequiredDate'];
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
