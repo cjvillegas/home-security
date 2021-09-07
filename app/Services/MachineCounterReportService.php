@@ -20,7 +20,7 @@ class MachineCounterReportService
         return DB::table('machines')
                 ->select('machines.name', 'machines.id')
                 ->rightJoin('machine_counters', 'machines.id', '=', 'machine_counters.machine_id')
-                ->whereDate('machine_counters.created_at', $date)
+                ->whereDate('machine_counters.start_counter_time', $date)
                 ->groupBy('machines.id')
                 ->get();
     }
@@ -51,8 +51,7 @@ class MachineCounterReportService
         *if isTotal is true, this query is for getting the OVERALL total boxes per Machine
         *if false, this query is to get total boxes per Shift only (Machine)
         */
-        $query .= !$isTotal ? "\t GROUP BY mc.id" : "\t GROUP BY machine_id";
-
+        $query .= !$isTotal ? "\t GROUP BY machine_id, shift_id" : "\t GROUP BY machine_id";
 
         return $query;
     }
