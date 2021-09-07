@@ -2,17 +2,13 @@
 
 namespace App\Console\Commands\Cron;
 
+use App\Abstracts\CronDatabasePopulator;
 use App\Models\Order;
-use App\Models\User;
-use App\Notifications\CronFailureNotification;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Notification;
 
-class PopulateOrdersFromBlindData extends Command
+class PopulateOrdersFromBlindData extends CronDatabasePopulator
 {
     /**
      * The name and signature of the console command.
@@ -36,6 +32,8 @@ class PopulateOrdersFromBlindData extends Command
     public function __construct()
     {
         parent::__construct();
+
+        $this->table = 'orders';
     }
 
     /**
@@ -54,7 +52,7 @@ class PopulateOrdersFromBlindData extends Command
             }
 
             // retrieve orders from sage
-            $orders = $this->getOrdersData($loadAll);
+            $orders = $this->getDataFromBlind($loadAll);
 
             $chunkCounter = 0;
 
@@ -85,10 +83,8 @@ class PopulateOrdersFromBlindData extends Command
                     usleep(100000);
                 }
             }
-        } catch (Exception $err) {
-            $users = (new User)->getUserAdminsWithValidEmails();
-
-            Notification::send($users, new CronFailureNotification('Populate Orders From Blind Data', $err->getMessage()));
+        } catch (Exception $error) {
+            $this->sendFailedNotification('Populate Orders From Blind Data', $error);
         }
     }
 
@@ -99,7 +95,7 @@ class PopulateOrdersFromBlindData extends Command
      *
      * @return Collection
      */
-    public function getOrdersData($loadAll = false): Collection
+    public function getDataFromBlind($loadAll = false): Collection
     {
         $latestSerialId = Order::getLatestSerialId();
 
@@ -108,6 +104,7 @@ class PopulateOrdersFromBlindData extends Command
             SELECT
                 sdl.id AS SerialID,
                 o.order_id AS OrderNo,
+                o.dat_required AS RequiredDate,
                 u.company AS Customer,
                 o.cust_ref AS CustRef,
                 o.cust_no AS CustNo,
@@ -158,28 +155,15 @@ class PopulateOrdersFromBlindData extends Command
     }
 
     /**
-     * This will clear the data from the **orders** table.
-     * This method will really do truncation on the orders table, not soft deletion.
-     *
-     * @return void
-     */
-    private function clearTable(): void
-    {
-        $model = new Order();
-        $model->setConnection('mysql')
-            ->truncate();
-    }
-
-    /**
      * Sanitize order item coming from SAGE
      * This will ensure that we will only be saving item
      * with right information in them
      *
      * @param array $sageOrder
      *
-     * @return mixed
+     * @return array|null
      */
-    private function sanitize(array $sageOrder)
+    protected function sanitize(array $sageOrder): ?array
     {
         // do a sanity check of the required data
         if (empty($sageOrder['SerialID']) ||
@@ -188,7 +172,8 @@ class PopulateOrdersFromBlindData extends Command
             empty($sageOrder['CustRef']) ||
             empty($sageOrder['ProductType']) ||
             empty($sageOrder['ProductCode'])) {
-            return false;
+
+            return null;
         }
 
         $order['serial_id'] = $sageOrder['SerialID'];
@@ -199,6 +184,7 @@ class PopulateOrdersFromBlindData extends Command
         $order['product_type'] = $sageOrder['ProductType'];
         $order['blind_type'] = $sageOrder['ProductCode'];
         $order['ordered_at'] = $sageOrder['Ordered'];
+        $order['required_date'] = $sageOrder['RequiredDate'];
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 

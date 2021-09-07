@@ -4,7 +4,6 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\App;
 
 class Kernel extends ConsoleKernel
 {
@@ -39,6 +38,12 @@ class Kernel extends ConsoleKernel
         // runs a CRON daily to fetch data from SAGE database
         $schedule->command('stocks:populate-stock-levels-from-sage')
             ->everyThirtyMinutes()
+            ->environments(['production', 'staging']);
+
+        // runs a CRON to fetch shift assignments
+        $schedule->command('shifts:populate-shift-assignment-table')
+            ->everyTwoHours()
+            ->between('06:00', '17:00')
             ->environments(['production', 'staging']);
 
         // runs a cron that will delete a month old or older notifications
