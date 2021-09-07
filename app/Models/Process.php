@@ -24,12 +24,30 @@ class Process extends Model
         'deleted_at',
     ];
 
+    /**
+     * Mass assignable fields
+     *
+     * @var array
+     */
     protected $fillable = [
         'name',
         'barcode',
+        'process_target',
+        'new_joiner_target',
+        'process_manufacturing_time',
+        'stop_start_button_required',
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    /**
+     * Cast variables to specified data types
+     *
+     * @var array
+     */
+    protected $casts = [
+        'stop_start_button_required' => 'boolean',
     ];
 
     /**

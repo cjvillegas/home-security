@@ -18,7 +18,7 @@ class CreateShiftAssignmentsTable extends Migration
             $table->integer('serial_id');
             $table->string('folder_name');
             $table->dateTime('scheduled_date');
-            $table->string('work_date');
+            $table->dateTime('work_date');
 
             $table->index('serial_id');
         });

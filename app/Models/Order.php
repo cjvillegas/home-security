@@ -6,6 +6,7 @@ use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
@@ -25,6 +26,7 @@ class Order extends Model
         'serial_id',
         'despatched_at',
         'ordered_at',
+        'required_date',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -115,7 +117,7 @@ class Order extends Model
      *
      * @return HasOne
      */
-    public function orderTrackings()
+    public function orderTrackings(): HasOne
     {
         return $this->hasOne(OrderTracking::class, 'order_no', 'order_no');
     }

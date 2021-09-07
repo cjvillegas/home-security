@@ -39,6 +39,10 @@ export default {
                 this.$router.push({name: 'Employee List', params: {}})
             }
 
+            if (pathname === '/admin/processes' && hash === '#/') {
+                this.$router.push({name: 'Process List', params: {}})
+            }
+
             if (pathname === '/admin/orders' && hash === '#/') {
                 this.$router.push({name: 'Order List', params: {}})
             }

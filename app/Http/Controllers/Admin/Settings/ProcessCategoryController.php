@@ -26,6 +26,17 @@ class ProcessCategoryController extends Controller
     }
 
     /**
+     * Return all not deleted process categories
+     *
+     * @return JsonResponse
+     */
+    public function getAllProcessCategories()
+    {
+        return response()->json(ProcessCategory::get());
+    }
+
+
+    /**
      * Fetch list of process categories
      *
      * @param  Request  $request
