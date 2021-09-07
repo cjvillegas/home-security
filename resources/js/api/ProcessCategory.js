@@ -2,6 +2,15 @@ import axios from 'axios'
 
 export default {
     /**
+     * API endpoint in fetching all Process Category data
+     *
+     * @return Promise
+     */
+    getAll() {
+        return axios.get(`/admin/settings/process-category/get-all`)
+    },
+
+    /**
      * API endpoint in fetching list of process category list
      * This route is under the API collection
      *

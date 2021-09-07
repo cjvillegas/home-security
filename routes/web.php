@@ -61,6 +61,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     // Processes
     Route::delete('processes/destroy', 'ProcessesController@massDestroy')->name('processes.massDestroy');
+    Route::post('processes/get-list', 'ProcessesController@getList')->name('processes.get-list');
     Route::post('processes/parse-csv-import', 'ProcessesController@parseCsvImport')->name('processes.parseCsvImport');
     Route::post('processes/process-csv-import', 'ProcessesController@processCsvImport')->name('processes.processCsvImport');
     Route::post('processes/get-all', 'ProcessesController@getAllProcesses')->name('processes.get-all');
@@ -112,6 +113,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/process-categories', 'Settings\ProcessCategoryController@index')->name('process-categories.index')->middleware('can:process_categories_access');
     // Process Category
     Route::prefix('settings')->as('settings.')->group(function () {
+        Route::get('/process-category/get-all', 'Settings\ProcessCategoryController@getAllProcessCategories')->name('process-category.get-all');
         Route::post('/process-category/get-list', 'Settings\ProcessCategoryController@getList')->name('process-category.get-list');
         Route::apiResource('process-category', 'Settings\ProcessCategoryController')->only(['store', 'show', 'update', 'destroy']);
     });

@@ -36,6 +36,11 @@ const NotificationIndex = () => import('../components/Notifications/Notification
 const NotificationList = () => import('../components/Notifications/NotificationList')
 const NotificationView = () => import('../components/Notifications/NotificationView')
 
+// Processes Components
+const ProcessIndex = () => import('../components/Process/ProcessIndex')
+const ProcessList = () => import('../components/Process/ProcessList')
+const ProcessView = () => import('../components/Process/ProcessView')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -77,6 +82,26 @@ export default new VueRouter({
                     path: ':id',
                     name: 'Employee View',
                     component: EmployeeView,
+                    props: true,
+                }
+            ]
+        },
+        {
+            path: '/process-index',
+            name: 'Process Index',
+            component: ProcessIndex,
+            props: true,
+            children: [
+                {
+                    path: 'list',
+                    name: 'Process List',
+                    component: ProcessList,
+                    props: true,
+                },
+                {
+                    path: ':id',
+                    name: 'Process View',
+                    component: ProcessView,
                     props: true,
                 }
             ]

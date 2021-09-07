@@ -10,9 +10,10 @@ use App\Http\Requests\UpdateProcessRequest;
 use App\Models\CategoryProcess;
 use App\Models\Process;
 use App\Models\ProcessCategory;
-use Gate;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProcessesController extends Controller
@@ -28,15 +29,11 @@ class ProcessesController extends Controller
         return view('admin.processes.index', compact('processes'));
     }
 
-    public function create()
-    {
-        abort_if(Gate::denies('process_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
-        $processCategories = ProcessCategory::get();
-
-        return view('admin.processes.create', compact('processCategories'));
-    }
-
+    /**
+     * @param StoreProcessRequest $request
+     *
+     * @return JsonResponse
+     */
     public function store(StoreProcessRequest $request)
     {
         $processCategories = $request->get('process_categories');
@@ -44,6 +41,10 @@ class ProcessesController extends Controller
         $process = new Process;
         $process->name = $request->get('name');
         $process->barcode = $request->get('barcode');
+        $process->process_target = $request->get('process_target');
+        $process->new_joiner_target = $request->get('new_joiner_target');
+        $process->process_manufacturing_time = $request->get('process_manufacturing_time');
+        $process->stop_start_button_required = $request->get('stop_start_button_required');
         $saved = $process->save();
 
         // if a new process is successfully added and process categories are present
@@ -60,7 +61,7 @@ class ProcessesController extends Controller
             CategoryProcess::insert($categoryProcesses);
         }
 
-        return redirect()->route('admin.processes.index');
+        return response()->json(true);
     }
 
     public function edit(Process $process)
@@ -103,24 +104,34 @@ class ProcessesController extends Controller
         return redirect()->route('admin.processes.index');
     }
 
+    /**
+     * Fetch single instance of a process
+     *
+     * @param Process $process
+     *
+     * @return JsonResponse
+     */
     public function show(Process $process)
     {
         abort_if(Gate::denies('process_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $processCategories = ProcessCategory::get();
-
         $process = $process->loadMissing('processCategories');
 
-        return view('admin.processes.show', compact('process', 'processCategories'));
+        return response()->json($process);
     }
 
+    /**
+     * @param Process $process
+     *
+     * @return JsonResponse
+     */
     public function destroy(Process $process)
     {
         abort_if(Gate::denies('process_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $process->delete();
 
-        return back();
+        return response()->json(true);
     }
 
     public function massDestroy(MassDestroyProcessRequest $request)
@@ -138,5 +149,29 @@ class ProcessesController extends Controller
     public function getAllProcesses()
     {
         return response()->json(Process::get());
+    }
+
+    /**
+     * Fetch list of processes
+     *
+     * @param  Request  $request
+     *
+     * @return JsonResponse
+     */
+    public function getList(Request $request)
+    {
+        $searchString = $request->get('searchString');
+        $size = $request->get('size');
+
+        $processes = Process::orderBy('created_at', 'desc')
+            ->with('processCategories')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('name', 'like', "%{$searchString}%");
+                $query->orWhere('barcode', 'like', "%{$searchString}%");
+            });
+
+        $processes = $processes->paginate($size);
+
+        return response()->json($processes);
     }
 }
