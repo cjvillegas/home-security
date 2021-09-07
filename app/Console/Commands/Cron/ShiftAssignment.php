@@ -7,19 +7,10 @@ use App\Models\ShiftAssignment AS ShiftAss;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ShiftAssignment extends CronDatabasePopulator
 {
-    /**
-     * @var int
-     */
-    private $page = 1;
-
-    /**
-     * @var int
-     */
-    private $limit = 10000;
-
     /**
      * The name and signature of the console command.
      *
@@ -53,12 +44,9 @@ class ShiftAssignment extends CronDatabasePopulator
      */
     public function handle(): void
     {
-        $test = [];
         try {
             // truncate the table to populate the new items
-            if ($this->page === 1) {
-                $this->clearTable();
-            }
+            $this->clearTable();
 
             $assignments = $this->getDataFromBlind();
 
@@ -90,13 +78,6 @@ class ShiftAssignment extends CronDatabasePopulator
                     usleep(100000);
                 }
             }
-
-            // check if the retrieved items are more than zero, if so just call the handle method again
-            // in class pagination
-            if ($assignments->count() > 0) {
-                $this->handle();
-                $this->page++;
-            }
         } catch (Exception $error) {
             $this->sendFailedNotification('Shift Assignment', $error);
         }
@@ -109,7 +90,7 @@ class ShiftAssignment extends CronDatabasePopulator
      */
     protected function getDataFromBlind(): Collection
     {
-        $offset = ($this->page - 1) * $this->limit;
+        $baseDate = '2021-09-01';
 
         $query = "
             SELECT DISTINCT
@@ -136,9 +117,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 o.order_id IS NOT NULL
                 AND o.orderstatus_id <> '7'
                 AND od.ScheduledDate IS NOT NULL
-            ORDER BY sdl.id
-            OFFSET {$offset} ROWS
-            FETCH NEXT {$this->limit} ROWS ONLY
+                AND o.dat_order >= {$baseDate}
         ";
 
         // return data as collection
