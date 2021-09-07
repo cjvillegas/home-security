@@ -117,7 +117,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 o.order_id IS NOT NULL
                 AND o.orderstatus_id <> '7'
                 AND od.ScheduledDate IS NOT NULL
-                AND o.dat_order >= {$baseDate}
+                AND o.dat_order >= '{$baseDate}'
         ";
 
         // return data as collection
