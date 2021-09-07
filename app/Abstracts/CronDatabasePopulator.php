@@ -18,8 +18,8 @@ abstract class CronDatabasePopulator extends Command
     protected $table;
 
     /**
-     * This will clear the data from the **orders** table.
-     * This method will really do truncation on the orders table, not soft deletion.
+     * Clears all the data from the specified table.
+     * This will actually truncate the whole table.
      *
      * @return bool
      */
@@ -61,8 +61,8 @@ abstract class CronDatabasePopulator extends Command
 
     /**
      * Sanitize the data coming from the BlindData database.
-     * This will ensure that we will only be saving item
-     * with right information in them
+     * This will ensure that we will only be saving items
+     * with right information in them.
      *
      * @param array $item
      *

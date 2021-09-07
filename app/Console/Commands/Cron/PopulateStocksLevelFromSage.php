@@ -54,7 +54,12 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
                 $newStockLevels = [];
                 foreach ($chunk as $stocklevel) {
                     // perform insertion of the order
-                    $newStockLevels[] = $this->sanitize((array) $stocklevel);
+                    $sanitized = $this->sanitize((array) $stocklevel);
+
+                    // sanity check
+                    if ($sanitized !== null) {
+                        $newStockLevels[] = $sanitized;
+                    }
                 }
 
                 // do the actual insertion of data

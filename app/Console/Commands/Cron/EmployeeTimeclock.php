@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeTimeclock extends CronDatabasePopulator
 {
+    /**
+     * @var Collection
+     */
     private $employees;
 
     /**
@@ -58,7 +61,12 @@ class EmployeeTimeclock extends CronDatabasePopulator
                 $newTimeclocks = [];
                 foreach ($chunk as $timeClock) {
                     // perform data sanitization
-                    $newTimeclocks[] = $this->sanitize((array) $timeClock);
+                    $sanitized = $this->sanitize((array) $timeClock);
+
+                    // sanity check
+                    if ($sanitized !== null) {
+                        $newTimeclocks[] = $sanitized;
+                    }
                 }
 
                 // do the actual insertion of data

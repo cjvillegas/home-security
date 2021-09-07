@@ -7,7 +7,6 @@ use App\Models\ShiftAssignment AS ShiftAss;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ShiftAssignment extends CronDatabasePopulator
 {
@@ -57,7 +56,7 @@ class ShiftAssignment extends CronDatabasePopulator
                 // foreach to each instance of retrieved order
                 $shiftAssignments = [];
                 foreach ($chunk as $assignment) {
-                    // perform insertion of the order
+                    // perform insertion of the shift assignments
                     $sanitized = $this->sanitize((array) $assignment);
 
                     // assign only if data is properly sanitized
