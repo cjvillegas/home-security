@@ -48,6 +48,17 @@
                                 {{ scope.row.stop_start_button_required ? 'Yes' : 'No' }}
                             </el-tag>
                         </template>
+                        <template v-else-if="'categories' === column.prop">
+                            <el-tag
+                                v-if="scope.row.process_categories && !!scope.row.process_categories.length"
+                                v-for="category in scope.row.process_categories"
+                                :key="category.id"
+                                type="primary"
+                                effect="dark"
+                                class="m-1">
+                                {{ category.name | ucWords }}
+                            </el-tag>
+                        </template>
                         <template v-else>
                             {{ scope.row[column.prop] }}
                         </template>
@@ -162,7 +173,7 @@
                 {label: 'ID', prop: 'id', showOverflowTooltip: true, sortable: true, width: '80'},
                 {label: 'Name', prop: 'name', showOverflowTooltip: true, sortable: true},
                 {label: 'Barcode', prop: 'barcode', showOverflowTooltip: true, sortable: true},
-                {label: 'Categories', prop: 'categories', showOverflowTooltip: true, sortable: true},
+                {label: 'Categories', prop: 'categories', showOverflowTooltip: false, sortable: false},
                 {label: 'Process Target', prop: 'process_target', showOverflowTooltip: true, sortable: true},
                 {label: 'New Joiner Target', prop: 'new_joiner_target', showOverflowTooltip: true, sortable: true},
                 {label: 'Process Manufacturing Time', prop: 'process_manufacturing_time', showOverflowTooltip: true, sortable: true},
