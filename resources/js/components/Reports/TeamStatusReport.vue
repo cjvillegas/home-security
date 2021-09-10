@@ -65,22 +65,19 @@
                     :label="column.label"
                     :prop="column.prop"
                     :width="column.width ? column.width : ''">
+                    <template slot-scope="scope">
+                        <template v-if="column.prop === 'folder_name'">
+                            {{ scope.row.folder_name | ucWords }}
+                        </template>
+                        <template v-else>
+                            {{ scope.row[column.prop] | numFormat }}
+                        </template>
+                    </template>
                     <template
                         v-if="!!teamStatuses.length"
                         slot-scope="scope">
                         {{ scope.row[column.prop] }}
                     </template>
-                        <!--                    <template slot-scope="scope">-->
-<!--                        <template v-if="['employee_full_name', 'user_name', 'process_name'].includes(column.prop)">-->
-<!--                            {{ scope.row[column.prop] | ucWords}}-->
-<!--                        </template>-->
-<!--                        <template v-else-if="['qc_fault_tag_at'].includes(column.prop)">-->
-<!--                            {{ scope.row[column.prop] | fixDateByFormat('MMM DD, YYYY hh:mm a')}}-->
-<!--                        </template>-->
-<!--                        <template v-else>-->
-<!--                            {{ scope.row[column.prop] }}-->
-<!--                        </template>-->
-<!--                    </template>-->
                 </el-table-column>
             </el-table>
 
