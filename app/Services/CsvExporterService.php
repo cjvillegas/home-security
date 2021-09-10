@@ -6,7 +6,6 @@ use App\Interfaces\ServiceDataInterface;
 use App\Jobs\Exports\CsvExportJob;
 use App\Models\Export;
 use App\Models\User;
-use Exception;
 use Illuminate\Support\Str;
 
 class CsvExporterService
@@ -44,7 +43,7 @@ class CsvExporterService
     public function export(ServiceDataInterface $serviceData)
     {
         // generate new export
-        $export = $this->createNewExport($serviceData->getFilters());
+        $export = $this->createNewExport($serviceData->getFilters(), $serviceData->exportType());
 
         $exportPayload = new ExportPayloadService(
             $this->user,
@@ -67,13 +66,13 @@ class CsvExporterService
      *
      * @return Export
      */
-    public function createNewExport(array $filters = []): Export
+    public function createNewExport(array $filters = [], string $exportType): Export
     {
         $export = new Export();
         $export->user_id = $this->user->id;
         $export->uid = (string) Str::uuid();
         $export->status = Export::EXPORT_STATUS_IN_PROGRESS;
-        $export->type = Export::QC_FAULT_EXPORT_REPORT;
+        $export->type = $exportType;
         $export->filters = $filters;
 
         $export->save();

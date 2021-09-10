@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 
 use App\Interfaces\ServiceDataInterface;
+use App\Models\Export;
 use App\Models\QcFault;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -123,7 +124,7 @@ class QualityControlFaultDataService implements ServiceDataInterface
      *
      * @return self
      */
-    private function applyFilters(): self
+    public function applyFilters(): self
     {
         $searchString = $this->getFilterValue('searchString');
         $dateRange = $this->getFilterValue('dateRange');
@@ -216,6 +217,17 @@ class QualityControlFaultDataService implements ServiceDataInterface
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    /**
+     * Get the export type. The export type should have an Export counterpart.
+     * Make sure you register a unique one in the Export model.
+     *
+     * @return string
+     */
+    public function exportType(): string
+    {
+        return Export::QC_FAULT_EXPORT_REPORT;
     }
 
     /**

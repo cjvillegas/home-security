@@ -61,10 +61,25 @@ const app = new Vue({
     store,
     data: {},
     created() {
-        this.getUsers()
-        this.getEmployees()
-        this.getProcesses()
-        this.getQualityControls()
+        let pathname = window.location.pathname
+
+        console.log(pathname)
+
+        /**
+         * optionally load the data on specific pages. since we only use vuex in
+         * selected pages, we will only load the data in those pages, not to all pages
+         */
+        if (pathname === '/admin/reports/qc-report') {
+            this.getUsers()
+            this.getEmployees()
+            this.getProcesses()
+            this.getQualityControls()
+        }
+
+        if (pathname === '/admin/reports/team-status') {
+            this.getTeams()
+            this.getShifts()
+        }
     },
     methods: {
         getUsers() {
@@ -107,7 +122,27 @@ const app = new Vue({
             })
         },
 
-        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls'])
+        getTeams() {
+            axios.get(`/admin/teams/all-teams`)
+            .then(res => {
+                this.setTeams(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Teams Fetching Error`)
+            })
+        },
+
+        getShifts() {
+            axios.get(`/admin/shifts/all-shifts`)
+            .then(res => {
+                this.setShifts(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Shifts Fetching Error`)
+            })
+        },
+
+        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts'])
     }
 });
 

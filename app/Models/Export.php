@@ -16,6 +16,9 @@ class Export extends Model
     // qc report type
     const QC_FAULT_EXPORT_REPORT = 'quality_control_export';
 
+    // team status export report
+    const TEAM_STATUS_EXPORT_REPORT = 'team_status_report';
+
     /**
      * Export Status
      */

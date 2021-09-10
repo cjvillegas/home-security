@@ -111,7 +111,9 @@
 
     export default {
         name: "QcReport",
+
         components: {GlobalQualityControlSelector},
+
         mixins: [pagination],
 
         data() {

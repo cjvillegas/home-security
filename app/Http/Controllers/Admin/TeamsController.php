@@ -8,6 +8,7 @@ use App\Http\Requests\MassDestroyTeamRequest;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
 use App\Models\Team;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
@@ -99,5 +100,15 @@ class TeamsController extends Controller
         Team::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get all teams
+     *
+     * @return JsonResponse
+     */
+    public function getAllTeams()
+    {
+        return response()->json(Team::get());
     }
 }

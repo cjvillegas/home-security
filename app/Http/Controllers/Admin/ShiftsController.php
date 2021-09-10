@@ -8,8 +8,9 @@ use App\Http\Requests\MassDestroyShiftRequest;
 use App\Http\Requests\StoreShiftRequest;
 use App\Http\Requests\UpdateShiftRequest;
 use App\Models\Shift;
-use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class ShiftsController extends Controller
@@ -96,5 +97,15 @@ class ShiftsController extends Controller
         Shift::whereIn('id', request('ids'))->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Get all shifts
+     *
+     * @return JsonResponse
+     */
+    public function getAllShifts()
+    {
+        return response()->json(Shift::get());
     }
 }

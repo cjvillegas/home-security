@@ -279,6 +279,15 @@
                         </li>
                     @endcan
 
+                    @can('data_export_reports_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.team-status') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.team-status") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
+                                Team Status
+                            </a>
+                        </li>
+                    @endcan
+
                 </ul>
             </li>
         @endif
