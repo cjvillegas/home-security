@@ -23,12 +23,14 @@
                     <el-table-column
                         prop="code"
                         label="Code"
+                        width="200px"
                         sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="name"
-                        label="Name"
+                        label="Description"
+                        width="500px"
                         sortable>
                     </el-table-column>
 
@@ -39,25 +41,21 @@
                     </el-table-column>
 
                     <el-table-column
-                        prop="po_stock"
-                        label="Post Stock"
-                        sortable>
-                    </el-table-column>
-
-                    <!-- <el-table-column
-                        label="View"
+                        label="Incoming Stock"
                         class-name="table-action-button">
                         <template slot-scope="scope">
                             <template>
                                 <el-button
-                                    @click="viewStockLevel(scope.row)"
-                                    type="text"
-                                    class="text-info">
-                                    <i class="fas fa-eye"></i>
+                                    @click="viewPurchaseOrder(scope.row)"
+                                    class="btn btn-default">
+                                    <span
+                                        class="ml-2 text-default">
+                                        View Purchase Orders
+                                    </span>
                                 </el-button>
                             </template>
                         </template>
-                    </el-table-column> -->
+                    </el-table-column>
                 </el-table>
             </div>
             <el-pagination
@@ -135,6 +133,10 @@
             viewStockLevel(id) {
                 this.selected_id = id
                 this.viewDialogVisible = true
+            },
+
+            viewPurchaseOrder(data) {
+
             },
 
             closeForm() {

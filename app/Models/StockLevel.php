@@ -19,4 +19,22 @@ class StockLevel extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    /********************
+    * R E L A T I O N S *
+    ********************/
+
+    /**
+     * This will return Purchase Orders
+     *
+     * @return HasMany
+     */
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'code', 'code');
+    }
+
+    /********************************
+    * E N D  O F  R E L A T I O N S *
+    ********************************/
 }
