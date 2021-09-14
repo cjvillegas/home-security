@@ -30,7 +30,7 @@
                     <el-table-column
                         prop="name"
                         label="Description"
-                        width="500px"
+                        width="1000"
                         sortable>
                     </el-table-column>
 
@@ -45,14 +45,17 @@
                         class-name="table-action-button">
                         <template slot-scope="scope">
                             <template>
-                                <el-button
-                                    @click="viewPurchaseOrder(scope.row.purchase_orders)"
-                                    class="btn btn-default">
-                                    <span
-                                        class="ml-2 text-default">
-                                        View Purchase Orders
-                                    </span>
-                                </el-button>
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="View Purchase Orders"
+                                    placement="top">
+                                    <el-button
+                                        @click="viewPurchaseOrder(scope.row.purchase_orders)"
+                                        class="btn-default text-default">
+                                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    </el-button>
+                                </el-tooltip>
                             </template>
                         </template>
                     </el-table-column>
