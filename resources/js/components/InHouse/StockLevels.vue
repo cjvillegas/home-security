@@ -46,7 +46,7 @@
                         <template slot-scope="scope">
                             <template>
                                 <el-button
-                                    @click="viewPurchaseOrder(scope.row)"
+                                    @click="viewPurchaseOrder(scope.row.purchase_orders)"
                                     class="btn btn-default">
                                     <span
                                         class="ml-2 text-default">
@@ -70,6 +70,13 @@
                 @current-change="handlePage">
             </el-pagination>
         </el-card>
+
+        <purchase-order-view
+            :purchaseOrders="purchaseOrders"
+            :visible.sync="showPurchaseOrderView"
+            @close="closeForm">
+
+        </purchase-order-view>
     </div>
 </template>
 
@@ -94,6 +101,8 @@
                 selected_id: '',
                 viewDialogVisible: false,
                 lastSync: '',
+                showPurchaseOrderView: false,
+                purchaseOrders: [],
             }
         },
 
@@ -112,6 +121,7 @@
                 .then((response) => {
                     this.stockLevels = response.data.stockLevels.data
                     this.filters.total = response.data.stockLevels.total
+                    console.log(this.stockLevels)
                 })
                 .catch( (err) => {
                     console.log(err)
@@ -136,11 +146,13 @@
             },
 
             viewPurchaseOrder(data) {
-
+                this.purchaseOrders = data
+                this.showPurchaseOrderView = true
             },
 
             closeForm() {
                 this.viewDialogVisible = false
+                this.showPurchaseOrderView = false
             }
         }
     }

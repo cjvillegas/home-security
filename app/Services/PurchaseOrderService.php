@@ -78,7 +78,7 @@ class PurchaseOrderService
             INNER JOIN StockItem AS StockItem ON StockItemStatus.StockItemStatusID = StockItem.StockItemStatusID
             INNER JOIN POPOrderReturn AS POPOrderReturn
             INNER JOIN POPOrderReturnLine AS POPOrderReturnLine ON POPOrderReturn.POPOrderReturnID = POPOrderReturnLine.POPOrderReturnID ON StockItem.Code = POPOrderReturnLine.ItemCode
-            WHERE POPOrderReturnLine.DateTimeUpdated >= {$date}
+            WHERE POPOrderReturnLine.DateTimeUpdated >= '{$date}'
             GROUP BY
                 StockItem.Code,
                 StockItem.Name,

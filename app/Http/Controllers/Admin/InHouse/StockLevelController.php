@@ -39,6 +39,7 @@ class StockLevelController extends Controller
         $size = $request->size;
 
         $stockLevels = StockLevel::orderBy('created_at', 'DESC')
+            ->with('purchaseOrders')
             ->when($searchString, function($query) use ($searchString) {
                 $query->where('name', 'like', "%{$searchString}%")
                     ->orWhere('code', 'like', "%{$searchString}%");
