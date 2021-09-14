@@ -86,16 +86,8 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
     public function getDataFromBlind(): Collection
     {
         $orders = new PurchaseOrderService();
-        $purchaseOrder = PurchaseOrder::latest('date_time_updated')
-                    ->first();
 
-        if (is_null($purchaseOrder)) {
-            $data = $orders->fetchInitialData();
-        } else {
-            $data = $orders->fetchUpdatedData(
-                $purchaseOrder->date_time_updated
-            );
-        }
+        $data = $orders->fetchUpdatedData();
 
         return collect($data);
     }
