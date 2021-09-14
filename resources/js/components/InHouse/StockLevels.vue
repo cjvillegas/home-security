@@ -124,7 +124,6 @@
                 .then((response) => {
                     this.stockLevels = response.data.stockLevels.data
                     this.filters.total = response.data.stockLevels.total
-                    console.log(this.stockLevels)
                 })
                 .catch( (err) => {
                     console.log(err)
@@ -138,7 +137,6 @@
                 let apiUrl = `/admin/in-house/stock-levels/last-sync`
                 axios.get(apiUrl)
                 .then((response) => {
-                    console.log(response.data)
                     this.lastSync = moment(response.data.lastSync.created_at).format('MMMM Do YYYY, h:mm:ss a')
                 })
             },
