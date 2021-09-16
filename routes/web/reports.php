@@ -13,4 +13,8 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     Route::get('/qc-report', 'ReportController@qcReport')->name('qc-report');
     Route::get('/qc-list', 'ReportController@getQcList')->name('qc-list');
     Route::get('/export-qc-fault-data', 'ReportController@exportQcFaultData')->name('export-qc-fault-data');
+
+    Route::get('/team-status', 'ReportController@teamStatus')->name('team-status');
+    Route::get('/team-status-list', 'ReportController@getTeamStatusReport')->name('team-status-list');
+    Route::get('/export-team-status-report', 'ReportController@exportTeamStatus')->name('export-team-status-report');
 });

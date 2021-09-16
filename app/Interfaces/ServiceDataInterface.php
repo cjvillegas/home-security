@@ -16,4 +16,9 @@ interface ServiceDataInterface
      * @return self
      */
     public function buildQuery();
+
+    /**
+     * @return self
+     */
+    function applyFilters();
 }

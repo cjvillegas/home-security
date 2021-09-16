@@ -83,6 +83,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('teams/parse-csv-import', 'TeamsController@parseCsvImport')->name('teams.parseCsvImport');
     Route::post('teams/process-csv-import', 'TeamsController@processCsvImport')->name('teams.processCsvImport');
     Route::post('teams/list', 'TeamsController@fetchTeams');
+    Route::get('teams/all-teams', 'TeamsController@getAllTeams')->name('teams.all-teams');
     Route::resource('teams', 'TeamsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Shifts
@@ -90,6 +91,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('shifts/parse-csv-import', 'ShiftsController@parseCsvImport')->name('shifts.parseCsvImport');
     Route::post('shifts/process-csv-import', 'ShiftsController@processCsvImport')->name('shifts.processCsvImport');
     Route::post('shifts/list', 'ShiftsController@fetchShifts');
+    Route::get('shifts/all-shifts', 'ShiftsController@getAllShifts')->name('shifts.all-shifts');
     Route::resource('shifts', 'ShiftsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Audit Logs
