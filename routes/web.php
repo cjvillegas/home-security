@@ -68,7 +68,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('processes', 'ProcessesController');
 
     // Orders
-    Route::delete('orders/destroy', 'OrdersController@massDestroy')->name('orders.massDestroy');
     Route::post('orders/parse-csv-import', 'OrdersController@parseCsvImport')->name('orders.parseCsvImport');
     Route::post('orders/process-csv-import', 'OrdersController@processCsvImport')->name('orders.processCsvImport');
     Route::get('orders/vieworderno/{id}', [OrdersController::class, 'vieworderno'])->name('orders.vieworderno');
@@ -80,7 +79,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/{order_no}/process-sequences', 'OrdersController@getOrderProcessSequences')->name('orders.process-sequences');
     Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
-    Route::resource('orders', 'OrdersController');
+    Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams
     Route::delete('teams/destroy', 'TeamsController@massDestroy')->name('teams.massDestroy');
