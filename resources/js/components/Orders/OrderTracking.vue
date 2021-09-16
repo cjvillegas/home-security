@@ -5,7 +5,9 @@
         @close="closeForm"
         width="60%">
         <el-table
-            :data="trackings">
+            v-if="hasTrackings"
+            fit
+            :data="orderTrackings">
             <el-table-column
                 prop="order_no"
                 label="Order No."
@@ -40,19 +42,33 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <el-empty
+            v-else
+            description="No Order Tracking Yet. Wait for the next sync of the data from the BlindData database and recheck again.">
+        </el-empty>
     </el-dialog>
 </template>
 
 <script>
-    import {dialog} from "../../mixins/dialog";
-    import {formHelper} from "../../mixins/formHelper";
+    import { dialog } from "../../mixins/dialog";
+    import { formHelper } from "../../mixins/formHelper";
+
     export default {
         name: "OrderTracking",
+
         mixins: [dialog, formHelper],
+
         props: {
-            trackings: {
+            order: {
                 required: true,
-                type: Array
+            },
+            orderTrackings: []
+        },
+
+        data() {
+            return {
+                loading: false,
             }
         },
 
@@ -64,8 +80,12 @@
 
         computed: {
             dialogTitle() {
-                return 'Tracking Information for Order ' + this.trackings[0].order_no
+                return 'Tracking Information for Order ' + (this.order ? this.order.order_no : '')
+            },
+
+            hasTrackings() {
+                return this.orderTrackings && this.orderTrackings.length
             }
-        },
+        }
     }
 </script>

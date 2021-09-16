@@ -1,21 +1,5 @@
 <template>
     <div>
-        <el-button v-if="trackings.length != 0"
-            @click="showTrackingForm = true"
-            effect="dark"
-            size="small"
-            type="success"
-            class="mr-2">
-            Tracking Available
-        </el-button>
-        <el-tag
-            v-else
-            effect="dark"
-            size="medium"
-            type="info"
-            class="mr-2">
-            No Tracking Available
-        </el-tag>
         <div
             v-for="product in getProcessListWithCount"
             :key="product.product">
@@ -42,12 +26,6 @@
             </div>
         </div>
 
-        <order-tracking
-            v-if="trackings.length != 0"
-            :visible.sync="showTrackingForm"
-            :trackings="trackings"
-            @close="closeForm">
-        </order-tracking>
         <order-timeline
             :processList="timeLineProcesses"
             :visible.sync="showTimelineForm"
@@ -57,102 +35,63 @@
 </template>
 
 <script>
-    import * as ProductProcessCodes from '../../constants/ProductProcessCodes'
-    import * as ProductBlindTypes from '../../constants/ProductBlindTypes'
+    import {mapGetters} from 'vuex'
+
     export default {
         name: "OrderProgress",
         props: {
-            orders: {
+            order: {
                 required: true,
             },
-            processes: {
-                required: true,
-                type: Array
-            },
-            trackings: {
-                required: true,
-                type: Array
-            }
+            orders: {},
+            processSequences: {}
         },
+
         data() {
             return {
-                ProductProcessCodes,
-                ProductBlindTypes,
-                timelineProcesses: [],
-                isTimelineEvaluated: false,
                 showTrackingForm: false,
                 showTimelineForm: false,
                 timeLineProcesses: [],
             }
         },
-        created() {
-            this.getTimelineProcesses()
-        },
+
         methods: {
-            getTimelineProcesses() {
-                // if this method is already executed, cancel execution
-                if (this.isTimelineEvaluated) {
-                    return
-                }
-
-                if (this.orders && this.orders.length) {
-                    this.isTimelineEvaluated = true
-                    for (let x in this.ProductBlindTypes) {
-                        let codes = this.ProductBlindTypes[x]
-                        let fromBlindType = codes.find(code => this.orders.some(or => or.blind_type === code))
-                        if (fromBlindType) {
-                            this.timelineProcesses.push({
-                                productName: x,
-                                processes: this.findAndSort(x),
-                                blindTypes: codes
-                            })
-                        }
-                    }
-                }
-            },
-            findAndSort(product) {
-                let codeList = this.ProductProcessCodes[product]
-                let processes = []
-
-                for (let x of codeList) {
-                    let process = this.processes.find(pr => pr.barcode === x)
-
-                    if (process) {
-                        processes.push(process)
-                    }
-                }
-
-                return processes
-            },
             openTimelineDialog(processes) {
                 this.timeLineProcesses = processes
                 this.showTimelineForm = true
             },
+
             closeForm() {
                 this.showTrackingForm = false
                 this.showTimelineForm = false
             }
         },
+
         computed: {
+            ...mapGetters(['processes']),
+
             getProcessListWithCount() {
                 let processes = []
                 let scanners = []
-                if (this.timelineProcesses && this.timelineProcesses) {
+
+                if (this.processSequences && this.processSequences.length && this.orders && this.orders.length) {
                     let ordersInProcess = this.orders.filter(or => or.scanners.length)
-                    for (let [index, x] of this.timelineProcesses.entries()) {
-                        let ordersInBlindType = ordersInProcess.filter(or => x.blindTypes.includes(or.blind_type))
+
+                    for (let [index, x] of this.processSequences.entries()) {
+
+                        let orderInSequence = ordersInProcess.filter(or => x.name.toLowerCase() === or.product_type.toLowerCase())
+
                         processes.push({
-                            product: x.productName,
-                            name: this.$StringService.ucwords(x.productName.replace(/_/g, ' ')),
-                            totalCount: this.orders.filter(or => x.blindTypes.some(bt => bt === or.blind_type)).length,
+                            product: x.name,
+                            name: this.$StringService.ucwords(x.name),
+                            totalCount: this.orders.filter(or => x.name.toLowerCase() === or.product_type.toLowerCase()).length,
                             processes: []
                         })
 
-
-                        for (let y of x.processes) {
-                            let count = ordersInBlindType.filter(or => {
+                        for (let step of x.steps) {
+                            let count = orderInSequence.filter(or => {
                                 scanners = or.scanners
-                                return or.scanners.some(sc => sc.processid === y.barcode)
+                                return or.scanners.some(sc => sc.processid === step.process.barcode)
                             }).length
 
                             let type = 'danger'
@@ -163,11 +102,12 @@
                             if (count === processes[index].totalCount) {
                                 type = 'success'
                             }
+
                             processes[index].processes.push({
-                                label: this.$StringService.ucwords(y.name),
+                                label: this.$StringService.ucwords(step.process.name),
                                 scanners: scanners,
-                                barcode: y.barcode,
-                                key: y.id,
+                                barcode: step.process.barcode,
+                                key: step.process.id,
                                 count,
                                 type
                             })
@@ -176,7 +116,6 @@
                     }
                 }
 
-                console.log(processes)
                 return processes
             },
             totalOrderCount() {
@@ -185,15 +124,6 @@
                 }
 
                 return 0
-            }
-        },
-        watch: {
-            orders: {
-                handler() {
-                    this.getTimelineProcesses()
-                },
-                immediate: true,
-                deep: true
             }
         }
     }

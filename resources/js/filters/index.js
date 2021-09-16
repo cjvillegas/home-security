@@ -52,10 +52,21 @@ Vue.filter('getFileNameFromPath', (path) => {
     return ''
 })
 
+/**
+ * Format a string to capitalized all first letters of every word.
+ */
 Vue.filter('ucWords', (string) => {
     if (string) {
         return stringService.ucwords(string)
     }
 
     return ''
+})
+
+Vue.filter('valueForEmptyText', text => {
+    if (!text) {
+        return '--:--'
+    }
+
+    return text
 })

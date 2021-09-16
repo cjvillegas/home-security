@@ -3,6 +3,7 @@
         :visible.sync="showDialog"
         title="Order Timeline"
         @close="closeForm"
+        append-to-body
         width="40%">
         <div class="container mt-5 mb-5">
             <div class="row">
@@ -19,8 +20,8 @@
                                     :key="scannerKey">
                                     <div
                                         v-if="scanner.processid == process.barcode">
-                                        {{ scanner.employee.fullname }}
-                                        <span class="float-right">{{ scanner.scannedtime }}</span>
+                                        {{ (scanner.employee ? scanner.employee.fullname : '') | valueForEmptyText }}
+                                        <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                     </div>
                                 </div>
                             </el-card>
