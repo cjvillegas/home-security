@@ -275,6 +275,13 @@ class OrdersController extends Controller
         return response()->json($processSequences);
     }
 
+    /**
+     * Retrieve list of orders based on the provided order no
+     *
+     * @param $orderNo
+     *
+     * @return JsonResponse
+     */
     public function getOrdersByOrderNo($orderNo): JsonResponse
     {
         $orders = Order::where('order_no', $orderNo)

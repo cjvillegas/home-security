@@ -9,6 +9,11 @@ class PurchaseOrder extends Model
 {
     use HasFactory;
 
+    /**
+     * Mass assignable fields
+     *
+     * @var string[]
+     */
     protected $fillable = [
         'code',
         'order_date',
@@ -23,9 +28,9 @@ class PurchaseOrder extends Model
     /**
      * Get most recent Date record in Purchase Orders Table
      *
-     * @return Date
+     * @return string
      */
-    public function getMostRecentUpdateDate()
+    public function getMostRecentUpdateDate(): ?string
     {
         $latest = self::latest('date_time_updated')->first();
 
