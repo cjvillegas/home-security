@@ -11,7 +11,7 @@
                 <el-button
                     @click="showTimelineDialog = true"
                     size="small"
-                    type="default"
+                    type="primary"
                     class="mr-2">
                     Operations Timeline
                 </el-button>
