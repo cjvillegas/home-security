@@ -49,6 +49,11 @@ class Kernel extends ConsoleKernel
         // runs a cron that will delete a month old or older notifications
         $schedule->command('notifications:delete-a-month-old-notifications')
             ->dailyAt('00:00');
+
+        // runs a cron that fetch Purchase Orders every 30 minutes from SAGE database
+        $schedule->command('orders:populate-purchase-orders-from-sage')
+            ->everyThirtyMinutes()
+            ->environments(['production', 'staging']);
     }
 
     /**
