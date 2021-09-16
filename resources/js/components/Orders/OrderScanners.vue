@@ -48,7 +48,7 @@
                     width="200">
                     <template slot-scope="scope">
                         <el-tooltip
-                            v-if="scope.row.employee"
+                            v-if="scope.row.employee_id"
                             class="item"
                             effect="dark"
                             content="QC Tag"
@@ -121,7 +121,7 @@
             let columns = [
                 {label: 'ID', key: 'id', show_overflow_tooltip: true},
                 {label: 'Employee', key: 'employee_name', show_overflow_tooltip: true},
-                {label: 'Operation', key: 'operation', show_overflow_tooltip: true},
+                {label: 'Operation', key: 'process_name', show_overflow_tooltip: true},
                 {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
                 {label: 'Scanned At', key: 'scanned_at', show_overflow_tooltip: true},
                 {label: 'Shift', key: 'shift', show_overflow_tooltip: true},
@@ -142,6 +142,7 @@
                 qcTag: null
             }
         },
+
         computed: {
             filteredScanners() {
                 let scanners = cloneDeep(this.scanners)
@@ -175,6 +176,7 @@
                 return scanners
             }
         },
+
         created() {
             this.getQualityControlCodes()
 
@@ -219,8 +221,6 @@
                 let scanners = cloneDeep(this.scanners)
 
                 this.scanners = scanners.map(scanner => {
-                    scanner.employee_name = this.$StringService.ucwords(scanner.employee ? scanner.employee.fullname : '')
-                    scanner.operation = this.$StringService.ucwords(scanner.process ? scanner.process.name : '')
                     scanner.blind_id = scanner.blindid
                     scanner.scanned_at = this.$DateService.formatDateTime(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss', 'MMM DD, YYYY HH:mm')
                     scanner.shift = scanner.employee && scanner.employee.shift ? scanner.employee.shift.name : ''
@@ -230,7 +230,7 @@
                 })
             },
             handleClickQcTagging(scanner) {
-                if (!scanner.employee) {
+                if (!scanner.employee_id) {
                     this.$notify({
                         title: 'Scanner',
                         message: `Cannot QC tag this process, employee data is missing.`,

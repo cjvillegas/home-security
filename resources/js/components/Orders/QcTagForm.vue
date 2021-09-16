@@ -41,7 +41,7 @@
                         <i class="fas fa-boxes"></i>
                         Operation
                     </template>
-                    {{ scanner.operation | ucWords }}
+                    {{ scanner.process_name | ucWords }}
                 </el-descriptions-item>
                 <el-descriptions-item label-class-name="w-25">
                     <template slot="label">
@@ -331,9 +331,9 @@
                 return {
                     id: null,
                     quality_control_id: null,
-                    employee_id: this.scanner && this.scanner.employee ? this.scanner.employee.id : null,
+                    employee_id: this.scanner ? this.scanner.employee_id : null,
                     user_id: this.user ? this.user.id : null,
-                    process_id: this.scanner && this.scanner.process ? this.scanner.process.id : null,
+                    process_id: this.scanner ? this.scanner.process_id : null,
                     scanner_id: this.scanner ? this.scanner.id : null,
                     operation_date: this.scanner ? this.scanner.scannedtime : null,
                     description: null,

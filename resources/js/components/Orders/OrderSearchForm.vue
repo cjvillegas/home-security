@@ -9,7 +9,7 @@
                     v-model="searchForm.field"
                     class="w-100">
                     <el-option label="Order No." value="order_no"></el-option>
-                    <el-option label="Blind No." value="blindid"></el-option>
+                    <el-option label="Blind No." value="serial_id"></el-option>
                 </el-select>
             </el-form-item>
 
@@ -55,16 +55,14 @@ export default {
     },
     methods: {
         querySearch(searchString, cb) {
-            let request = this.searchForm.field === 'order_no' ? this.$API.Orders.searchOrderByField(this.searchForm.field, searchString) : this.$API.Scanners.searchScannerByField(this.searchForm.field, searchString)
-
-            request
-                .then(res => {
-                    cb(res.data)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-                .finally(_ => {})
+            this.$API.Orders.searchOrderByField(this.searchForm.field, searchString)
+            .then(res => {
+                cb(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            .finally(_ => {})
         },
         selectOrder(order) {
             this.$router.push({name: 'Order View', params: {toSearch: order[this.searchForm.field], field: this.searchForm.field}})

@@ -5,51 +5,17 @@
             <i class="fas fa-arrow-circle-left"></i> Back
         </el-button>
 
-        <el-card class="box-card mt-3">
-            <order-progress
-                :orders="orders"
-                :processes="processes"
-                :trackings="orderTrackings">
-            </order-progress>
-        </el-card>
-
         <el-card
             class="box-card mt-3"
             v-loading="loading">
-            <h4>Orders</h4>
-
-            <el-table
-                fit
-                :data="filteredOrder"
-                class="mt-3">
-                <el-table-column
-                    v-for="column in columns"
-                    :key="column.key"
-                    :prop="column.key"
-                    :label="column.label"
-                    :show-overflow-tooltip="column.show_overflow_tooltip"
-                    sortable>
-                    <template slot-scope="scope">
-                        <span>{{ scope.row[column.key] }}</span>
-                    </template>
-                </el-table-column>
-            </el-table>
-
-            <div class="text-right mt-3">
-                <el-pagination
-                    background
-                    layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
-                    :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
-                    @size-change="handleSize"
-                    @current-change="handlePage">
-                </el-pagination>
-            </div>
+            <h4>Order Info</h4>
+            <order-info
+                :order="order">
+            </order-info>
         </el-card>
 
         <order-scanners
+            ref="scanners"
             :user="user"
             :scanners-list="scanners">
         </order-scanners>
@@ -61,7 +27,9 @@
     import pagination from '../../mixins/pagination'
     export default {
         name: "OrderView",
+
         mixins: [pagination],
+
         props: {
             toSearch: {
                 required: true
@@ -72,38 +40,25 @@
                 default: 'order_no'
             }
         },
-        data() {
-            let columns = [
-                {label: 'ID', key: 'id', show_overflow_tooltip: true},
-                {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
-                {label: 'Order No.', key: 'order_no', show_overflow_tooltip: true},
-                {label: 'Customer', key: 'customer', show_overflow_tooltip: true},
-                {label: 'Quantity', key: 'quantity', show_overflow_tooltip: true},
-                {label: 'Blind Type', key: 'blind_type', show_overflow_tooltip: true},
-                {label: 'Blind Status', key: 'blind_status', show_overflow_tooltip: true},
-                {label: 'Ordered By', key: 'ordered_by_name', show_overflow_tooltip: true},
-                {label: 'Serial ID', key: 'serial_id', show_overflow_tooltip: true},
-                {label: 'Ordered Date', key: 'ordered_date', show_overflow_tooltip: true},
-            ]
 
+        data() {
             return {
                 loading: false,
-                orders: [],
+                order: null,
                 scanners: [],
-                columns: columns,
                 filters: {
                     searchString: null
                 },
                 user: null,
-                processes: [],
                 orderTrackings: [],
             }
         },
+
         created() {
-            this.getProcesses()
             this.loadData()
             this.getAuthUser()
         },
+
         methods: {
             getAuthUser() {
                 this.$API.User.getAuthUser()
@@ -112,87 +67,44 @@
                     })
             },
             loadData() {
-                if (this.field === 'order_no') {
-                    this.getOrderDetails()
-
-                    return false
-                }
-
-                this.getScannersData()
+                this.getOrderDetails()
             },
-            async getOrderTrackingsData() {
-                let apiUrl = `/admin/orders/trackings`
-                await axios.post(apiUrl, {'order_no' : this.orders[0].order_no})
-                .then((response) => {
-                    this.orderTrackings = response.data.orderTrackings
+
+            getOrderScannersData() {
+                this.$refs.scanners ? this.$refs.scanners.loading = true : null
+
+                this.$API.Orders.getOrderScannersData(this.order.order_no)
+                .then(res => {
+                    this.scanners = res.data
+                    this.order.scanners = cloneDeep(res.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.$refs.scanners ? this.$refs.scanners.loading = false : null
                 })
             },
             getOrderDetails() {
                 this.loading = true
                 this.$API.Orders.getOrderDetails(this.field, this.toSearch)
                     .then(res => {
-                        this.orders = cloneDeep(res.data || [])
-                        this.filters.total = this.orders.length
-                        this.scanners = this.orders.reduce((acc, cur) => acc = [...acc, ...cur.scanners], [])
+                        this.order = cloneDeep(res.data)
 
-                        console.log(this.orders)
-                        this.getOrderTrackingsData()
+                        this.getOrderScannersData()
                     })
                     .catch(err => {
                         console.log(err)
                     })
                     .finally(_ => {
                         this.loading = false
-                    })
-            },
-            getScannersData() {
-                this.loading = true
-
-                this.$API.Scanners.getScannersByField(this.field, this.toSearch)
-                    .then(res => {
-                        this.scanners = cloneDeep(res.data || [])
-                        this.filters.total = this.orders.length
-                        this.orders = this.scanners.reduce((acc, cur) => acc = [...acc, ...(cur.order && !acc.some(o => o.id === cur.order.id)) ? [cur.order] : []], [])
-                            .map(or => {
-                                or.scanners = this.scanners.filter(sc => sc.blindid === or.serial_id)
-                                return or
-                            })
-                    })
-                    .catch(err => {
-                        console.log(err)
-                    })
-                    .finally(_ => {
-                        this.loading = false
-                    })
-            },
-            getProcesses() {
-                this.$API.Processes.getAll()
-                    .then(res => {
-                        this.processes = cloneDeep(res.data)
-                    })
-                    .catch(err => {
-                        console.log(err)
                     })
             },
             backToOrderList() {
                 this.$router.push({name: 'Order List'})
             },
         },
-        computed: {
-            filteredOrder() {
-                let orders = cloneDeep(this.orders)
-                let page = this.filters.page
-                let offset = (page - 1) * this.filters.size
-                let size = this.filters.size * page
 
-                this.filters.total = orders.length
-
-                // do local pagination
-                // this retrieve orders in between the current offset and the limit
-                orders = orders.filter((item, index) => (index + 1) > offset && (index + 1) <= size)
-                return orders
-            },
-        },
         beforeRouteEnter(to, from, next) {
             // if the route is loaded from the URL section and not from the
             // search page, redirect it directly to the search page

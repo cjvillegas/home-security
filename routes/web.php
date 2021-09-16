@@ -74,7 +74,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('orders/vieworderno/{id}', [OrdersController::class, 'vieworderno'])->name('orders.vieworderno');
     Route::get('orders/fetch', 'OrdersController@fetch')->name('orders.fetch');
     Route::get('orders/search-orders-by-field', 'OrdersController@searchOrdersByField')->name('orders.search-orders-by-field');
-    Route::get('/orders/{to_search}/order-list', 'OrdersController@showOrderList')->name('orders.order-list');
+    Route::get('/orders/{to_search}/order-details', 'OrdersController@getOrderDetails')->name('orders.order-details');
+    Route::get('/orders/{order_no}/planned-work', 'OrdersController@getOrderPlannedWork')->name('orders.planned-work');
+    Route::get('/orders/{order_no}/scanners', 'OrdersController@getOrderScanners')->name('orders.scanners');
+    Route::get('/orders/{order_no}/process-sequences', 'OrdersController@getOrderProcessSequences')->name('orders.process-sequences');
+    Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
     Route::resource('orders', 'OrdersController');
 

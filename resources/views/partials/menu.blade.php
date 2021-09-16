@@ -180,7 +180,7 @@
                     @endcan
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.orders.index', ['type' => 'blindid']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.index', ['type' => 'serial_id']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-angle-double-right c-sidebar-nav-icon"></i>
                                 Search By Serial ID
                             </a>
