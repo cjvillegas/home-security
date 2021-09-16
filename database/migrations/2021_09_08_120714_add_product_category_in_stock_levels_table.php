@@ -26,7 +26,7 @@ class AddProductCategoryInStockLevelsTable extends Migration
     public function down()
     {
         Schema::table('stock_levels', function (Blueprint $table) {
-
+            $table->dropColumn('product_category');
         });
     }
 }

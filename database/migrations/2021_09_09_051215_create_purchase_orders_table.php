@@ -15,7 +15,7 @@ class CreatePurchaseOrdersTable extends Migration
     {
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+            $table->string('code')->index();
             $table->dateTime('order_date');
             $table->dateTime('estimated_delivery');
             $table->bigInteger('quantity');

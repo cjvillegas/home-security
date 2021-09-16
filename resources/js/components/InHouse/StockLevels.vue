@@ -30,7 +30,7 @@
                     <el-table-column
                         prop="name"
                         label="Description"
-                        width="1000"
+                        width="700px"
                         sortable>
                     </el-table-column>
 
@@ -78,7 +78,6 @@
             :purchaseOrders="purchaseOrders"
             :visible.sync="showPurchaseOrderView"
             @close="closeForm">
-
         </purchase-order-view>
     </div>
 </template>
