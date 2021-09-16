@@ -79,7 +79,7 @@ class TeamStatusDataService implements ServiceDataInterface
                 DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P5688737', 'P1002', 'P1021', 'P1024', 'P1025') THEN 1 ELSE 0 END) AS SIGNED) AS completed_blinds"),
                 DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P1012', 'P1014') THEN 1 ELSE 0 END) AS SIGNED) AS packed_blinds")
             ])
-            ->leftJoin('scanners AS sc', 'sc.blindid', 'shift_assignments.serial_id')
+            ->leftJoin('scanners AS sc', DB::raw('CAST(sc.blindid AS SIGNED)'), 'shift_assignments.serial_id')
             ->leftJoin('processes AS p', 'p.barcode', 'sc.processid')
             ->groupBy('shift_assignments.folder_name')
             ->orderBy('shift_assignments.folder_name');
