@@ -59,5 +59,31 @@ export default {
         return axios.get(`/admin/reports/export-qc-fault-data`, {
             params: params
         })
-    }
+    },
+
+    /**
+     * Fetch QC Tag for reporting
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    getTeamStatusList(params) {
+        return axios.get(`/admin/reports/team-status-list`, {
+            params: params
+        })
+    },
+
+    /**
+     * Exports the qc fault data based on the passed array
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    exportTeamStatusReport(params) {
+        return axios.get(`/admin/reports/export-team-status-report`, {
+            params: params
+        })
+    },
 }

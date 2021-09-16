@@ -83,6 +83,7 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
      * Get Stocks Level Data
      *
      * @return string
+     *
      */
     public function getDataFromBlind(): Collection
     {
@@ -90,7 +91,7 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
             SELECT
                 StockItem.Code, StockItem.Name, WarehouseItem.ConfirmedQtyInStock -
                 WarehouseItem.QuantityAllocatedSOP - WarehouseItem.QuantityAllocatedStock AS 'Actual Stock',
-                WarehouseItem.QuantityOnPOPOrder
+                WarehouseItem.QuantityOnPOPOrder, NLNominalAccount.AccountName AS [ProductCategory]
             FROM
                 StockItem INNER JOIN
                 BinItem ON StockItem.ItemID = BinItem.ItemID INNER JOIN
@@ -141,6 +142,7 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
         $stockLevel['name'] = $sageStockLevel['Name'];
         $stockLevel['available_stock'] = $sageStockLevel['Actual Stock'];
         $stockLevel['po_stock'] = $sageStockLevel['QuantityOnPOPOrder'];
+        $stockLevel['product_category'] = $sageStockLevel['ProductCategory'];
         $stockLevel['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $stockLevel;

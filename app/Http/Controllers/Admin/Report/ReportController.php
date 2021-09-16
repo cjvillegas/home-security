@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\QualityControlFaultDataService;
+use App\Services\Reports\TeamStatusDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -95,6 +96,62 @@ class ReportController extends Controller
         return response()->json([
             'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.',
             'success' => true
+        ]);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function teamStatus()
+    {
+        return view('admin.reports.team-status-report');
+    }
+
+    /**
+     * Fetch team status data report
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getTeamStatusReport(Request $request)
+    {
+        $service = new TeamStatusDataService($request->all());
+        $data = $service->getData('list');
+
+        return response()->json($data);
+    }
+
+    /**
+     * Export team status data to a CSV file
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function exportTeamStatus(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+
+        $service = new TeamStatusDataService($request->all());
+        $data = $service->getData('export');
+
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Team Status Report')
+            ->setPath('exports')
+            ->setHeaders([
+                'folder_name' => 'Folder Name',
+                'planned_blinds' => 'Planned Blinds',
+                'not_started' => 'Not Started',
+                'started_blinds' => 'Started Blinds',
+                'completed_blinds' => 'Completed Blinds',
+                'packed_blinds' => 'Packed Blinds',
+            ])
+            ->export($service);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
         ]);
     }
 

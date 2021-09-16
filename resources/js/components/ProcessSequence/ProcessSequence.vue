@@ -135,10 +135,6 @@
             let columns = [
                 {prop: 'id', label: 'ID', showOverflowTooltip: true, sortable: true, width: '80'},
                 {prop: 'name', label: 'Name', showOverflowTooltip: true, sortable: true},
-                {prop: 'process_target', label: 'Process Target', showOverflowTooltip: true, sortable: true},
-                {prop: 'new_joiner_target', label: 'New Joiner Target', showOverflowTooltip: true, sortable: true},
-                {prop: 'process_manufacturing_time', label: 'Process Manufacturing Time', showOverflowTooltip: true, sortable: true},
-                {prop: 'stop_start_button_required', label: 'Stop/Start Button Required', showOverflowTooltip: true, sortable: true},
                 {prop: 'created_at', label: 'Created At', showOverflowTooltip: true, sortable: true},
             ]
 

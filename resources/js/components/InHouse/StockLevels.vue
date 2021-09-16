@@ -23,12 +23,14 @@
                     <el-table-column
                         prop="code"
                         label="Code"
+                        width="200px"
                         sortable>
                     </el-table-column>
 
                     <el-table-column
                         prop="name"
-                        label="Name"
+                        label="Description"
+                        width="700px"
                         sortable>
                     </el-table-column>
 
@@ -39,25 +41,24 @@
                     </el-table-column>
 
                     <el-table-column
-                        prop="po_stock"
-                        label="Post Stock"
-                        sortable>
-                    </el-table-column>
-
-                    <!-- <el-table-column
-                        label="View"
+                        label="Incoming Stock"
                         class-name="table-action-button">
                         <template slot-scope="scope">
                             <template>
-                                <el-button
-                                    @click="viewStockLevel(scope.row)"
-                                    type="text"
-                                    class="text-info">
-                                    <i class="fas fa-eye"></i>
-                                </el-button>
+                                <el-tooltip
+                                    class="item"
+                                    effect="dark"
+                                    content="View Purchase Orders"
+                                    placement="top">
+                                    <el-button
+                                        @click="viewPurchaseOrder(scope.row.purchase_orders)"
+                                        class="btn-default text-default">
+                                            <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    </el-button>
+                                </el-tooltip>
                             </template>
                         </template>
-                    </el-table-column> -->
+                    </el-table-column>
                 </el-table>
             </div>
             <el-pagination
@@ -72,6 +73,12 @@
                 @current-change="handlePage">
             </el-pagination>
         </el-card>
+
+        <purchase-order-view
+            :purchaseOrders="purchaseOrders"
+            :visible.sync="showPurchaseOrderView"
+            @close="closeForm">
+        </purchase-order-view>
     </div>
 </template>
 
@@ -96,6 +103,8 @@
                 selected_id: '',
                 viewDialogVisible: false,
                 lastSync: '',
+                showPurchaseOrderView: false,
+                purchaseOrders: [],
             }
         },
 
@@ -127,7 +136,6 @@
                 let apiUrl = `/admin/in-house/stock-levels/last-sync`
                 axios.get(apiUrl)
                 .then((response) => {
-                    console.log(response.data)
                     this.lastSync = moment(response.data.lastSync.created_at).format('MMMM Do YYYY, h:mm:ss a')
                 })
             },
@@ -137,8 +145,14 @@
                 this.viewDialogVisible = true
             },
 
+            viewPurchaseOrder(data) {
+                this.purchaseOrders = data
+                this.showPurchaseOrderView = true
+            },
+
             closeForm() {
                 this.viewDialogVisible = false
+                this.showPurchaseOrderView = false
             }
         }
     }

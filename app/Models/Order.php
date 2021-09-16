@@ -14,6 +14,11 @@ class Order extends Model
     use SoftDeletes;
     use HasFactory;
 
+    /**
+     * Mass assignable fields
+     *
+     * @var string[]
+     */
     protected $fillable = [
         'blind_id',
         'order_no',

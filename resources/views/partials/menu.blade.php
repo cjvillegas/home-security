@@ -180,7 +180,7 @@
                     @endcan
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.orders.index', ['type' => 'blindid']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.index', ['type' => 'serial_id']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-angle-double-right c-sidebar-nav-icon"></i>
                                 Search By Serial ID
                             </a>
@@ -275,6 +275,15 @@
                             <a href="{{ route('admin.reports.qc-report') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.qc-report") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-tags c-sidebar-nav-icon"></i>
                                 QC Report
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('data_export_reports_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.team-status') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.team-status") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
+                                Team Status
                             </a>
                         </li>
                     @endcan
