@@ -22,7 +22,7 @@
                     <i class="fas fa-boxes"></i>
                     Order
                 </template>
-                {{ order_details.order_no | numFormat }}
+                {{ order_details.order_no }}
             </el-descriptions-item>
 
             <el-descriptions-item>
