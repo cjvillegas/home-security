@@ -287,6 +287,12 @@
                             </a>
                         </li>
                     @endcan
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.fire-register') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.fire-register") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-check-circle c-sidebar-nav-icon"></i>
+                                Fire Register
+                            </a>
+                        </li>
 
                 </ul>
             </li>

@@ -80,6 +80,10 @@ const app = new Vue({
             this.getTeams()
             this.getShifts()
         }
+
+        if (pathname === '/admin/reports/fire-register') {
+            this.getShifts()
+        }
     },
     methods: {
         getUsers() {

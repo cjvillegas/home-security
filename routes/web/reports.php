@@ -17,4 +17,8 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     Route::get('/team-status', 'ReportController@teamStatus')->name('team-status');
     Route::get('/team-status-list', 'ReportController@getTeamStatusReport')->name('team-status-list');
     Route::get('/export-team-status-report', 'ReportController@exportTeamStatus')->name('export-team-status-report');
+
+    //fire register
+    Route::get('/fire-register', 'FireRegisterController@fireRegister')->name('fire-register');
+    Route::post('/fire-register', 'FireRegisterController@getEmployees')->name('fire-register.get-employees');
 });
