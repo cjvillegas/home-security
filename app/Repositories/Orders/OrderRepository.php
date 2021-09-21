@@ -24,6 +24,7 @@ class OrderRepository
         // do the actual query
         $orders = Order::where($field, 'like', "%$searchString%")
             ->select('id', 'blind_id', 'order_no', 'customer', 'serial_id', 'customer_order_no')
+            ->groupBy('order_no')
             ->limit(25)
             ->orderBy('id', 'desc')
             ->get()

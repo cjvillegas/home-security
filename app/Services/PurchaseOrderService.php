@@ -16,7 +16,7 @@ class PurchaseOrderService
     public function fetchUpdatedData()
     {
         $date = (new PurchaseOrder())->getMostRecentUpdateDate();
-        $whereQuery = $date ? "WHERE POPOrderReturnLine.DateTimeUpdated >= '{$date}'" : '';
+        $whereQuery = $date ? "WHERE POPOrderReturnLine.DateTimeUpdated > '{$date}'" : '';
         $query = "
             SELECT
                 StockItem.Code,

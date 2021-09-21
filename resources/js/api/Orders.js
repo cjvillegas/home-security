@@ -38,6 +38,36 @@ export default {
      * @return Promise
      */
     getOrderDetails(field, toSearch) {
-        return axios.get(`/admin/orders/${toSearch}/order-list?field=${field}`);
+        return axios.get(`/admin/orders/${toSearch}/order-details?field=${field}`);
+    },
+
+    /**
+     * Retrieve orders' scanners data based on the provided order no
+     *
+     * @param orderNo
+     *
+     * @returns Promise
+     */
+    getOrderScannersData(orderNo) {
+        return axios.get(`/admin/orders/${orderNo}/scanners`)
+    },
+
+    /**
+     * Get orders' planned work based on the passed order no
+     *
+     * @param orderNo
+     *
+     * @returns Promise
+     */
+    getOrderPlannedWork(orderNo) {
+        return axios.get(`/admin/orders/${orderNo}/planned-work`)
+    },
+
+    getOrderProcessSequences(orderNo) {
+        return axios.get(`/admin/orders/${orderNo}/process-sequences`)
+    },
+
+    getOrdersByOrderNo(orderNo) {
+        return axios.get(`/admin/orders/${orderNo}/order-list-by-order-no`)
     }
 }

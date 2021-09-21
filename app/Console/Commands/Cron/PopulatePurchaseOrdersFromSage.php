@@ -128,7 +128,7 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
         $purchaseOrder['estimated_delivery'] = $sagePurchaseOrder['POEstimatedDelivery'];
         $purchaseOrder['quantity'] = $sagePurchaseOrder['POQty'];
         $purchaseOrder['date_time_updated'] = $sagePurchaseOrder['DateTimeUpdated'];
-        $purchaseOrder['created_at'] = now('UTC')->format('Y-m-d H:i:s');
+        $purchaseOrder['created_at'] = now()->format('Y-m-d H:i:s');
 
         return $purchaseOrder;
     }
