@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 class FireRegisterController extends Controller
@@ -19,6 +21,8 @@ class FireRegisterController extends Controller
      */
     public function fireRegister(): View
     {
+        abort_if(Gate::denies('fire_register_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.reports.fire-register');
     }
 
@@ -30,6 +34,8 @@ class FireRegisterController extends Controller
      */
     public function getEmployees(Request $request): JsonResponse
     {
+        abort_if(Gate::denies('fire_register_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $query = "SELECT e.fullname, sc.scannedtime
             FROM employees e
             INNER JOIN scanners sc ON sc.employeeid = e.barcode
