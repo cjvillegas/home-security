@@ -1,5 +1,8 @@
 <template>
     <div>
+        <el-card class="box-card">
+            <h4 class="mb-0">Fire Register</h4>
+        </el-card>
         <el-card
             v-loading="loading"
             class="box-card mt-3">
@@ -20,12 +23,12 @@
                             Apply Filter
                         </el-button>
                     </global-filter-box>
-                    <el-button
+                    <!-- <el-button
                         @click="exportFireRegister"
                         :disabled="!canExportData"
                         type="success">
                         <i class="fas fa-file-export"></i> Export
-                    </el-button>
+                    </el-button> -->
                 </div>
             </div>
             <el-table
