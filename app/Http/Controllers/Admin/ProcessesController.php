@@ -10,10 +10,13 @@ use App\Http\Requests\UpdateProcessRequest;
 use App\Models\CategoryProcess;
 use App\Models\Process;
 use App\Models\ProcessCategory;
+use App\Models\ProcessSequence\ProcessSequence;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProcessesController extends Controller
@@ -174,4 +177,24 @@ class ProcessesController extends Controller
 
         return response()->json($processes);
     }
+
+    /**
+     * Fetch processes by Search
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function searchProcesses(Request $request): JsonResponse
+    {
+        $searchString = $request->get('searchString');
+
+        $processes = ProcessSequence::orderBy('name', 'desc')
+                ->when($searchString, function ($query) use ($searchString) {
+                    $query->where('name', 'like', "%{$searchString}%");
+                })->get();
+        Log::info($processes);
+        return response()->json(['processes' => $processes]);
+    }
+
 }

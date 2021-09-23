@@ -45,6 +45,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('scanners/qc-tag/{qc_fault}/delete', 'ScannersController@removeQcTag')->name('scanners.qc-tag.delete');
     Route::match(['put', 'patch'], 'scanners/qc-tag/{qc_fault}/update', 'ScannersController@updateQcTag')->name('scanners.qc-tag.update');
     Route::post('scanners/qc-tag', 'ScannersController@qcTag')->name('scanners.qc-tag.create');
+    Route::post('scanners/get-scanners-by-barcode', 'ScannersController@getScannersByBarcode')->name('scanners.scanners-by-barcode');
     // Route::resource('scanners', 'ScannersController');
 
     // Employees
@@ -65,6 +66,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('processes/parse-csv-import', 'ProcessesController@parseCsvImport')->name('processes.parseCsvImport');
     Route::post('processes/process-csv-import', 'ProcessesController@processCsvImport')->name('processes.processCsvImport');
     Route::post('processes/get-all', 'ProcessesController@getAllProcesses')->name('processes.get-all');
+    Route::post('processes/search', 'ProcessesController@searchProcesses')->name('processes.search');
     Route::resource('processes', 'ProcessesController');
 
     // Orders
@@ -79,6 +81,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/{order_no}/process-sequences', 'OrdersController@getOrderProcessSequences')->name('orders.process-sequences');
     Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
+    Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.update-product-type');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams

@@ -245,4 +245,20 @@ class OrdersController extends Controller
 
         return response()->json($orders);
     }
+
+    /**
+     * Update Product Type
+     *
+     * @param  mixed $request
+     * @param  mixed $order
+     *
+     * @return JsonResponse
+     */
+    public function updateProductType(Request $request, Order $order): JsonResponse
+    {
+        $order->product_type = $request->product_type;
+        $order->save();
+
+        return response()->json(['message' => 'Successfully saved changes']);
+    }
 }

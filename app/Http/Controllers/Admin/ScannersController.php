@@ -14,6 +14,8 @@ use App\Models\Scanner;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class ScannersController extends Controller
@@ -225,5 +227,27 @@ class ScannersController extends Controller
         $qcFault->delete();
 
         return response()->json($qcFault->refresh());
+    }
+
+    /**
+     * Fetch all scanners per Process on Orders Timeline view
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
+    public function getScannersByBarcode(Request $request): JsonResponse
+    {
+        $scanners = Scanner::select([
+                'scanners.scannedtime',
+                'employees.fullname',
+                'scanners.processid'
+            ])
+            ->join('employees', 'scanners.employeeid', 'employees.barcode')
+            ->join('orders', 'scanners.blindid', 'orders.serial_id')
+            ->where('orders.order_no', $request->order_no)
+            ->get();
+        Log::info($request->all());
+        Log::info($scanners);
+        return response()->json(['scanners' => $scanners]);
     }
 }

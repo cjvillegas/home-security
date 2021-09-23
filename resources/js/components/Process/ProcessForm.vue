@@ -289,7 +289,6 @@
             model(value) {
                 if (value) {
                     this.initializeForm()
-
                 }
             }
         }

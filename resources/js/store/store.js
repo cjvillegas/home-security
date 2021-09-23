@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from 'vuex'
 
+import orders from './modules/orders'
+import process from './modules/process'
 
 Vue.use(Vuex)
 
@@ -73,5 +75,10 @@ export default new Vuex.Store({
         setShifts({commit}, shifts) {
             commit('SET_SHIFTS', shifts)
         }
+    },
+
+    modules: {
+        orders,
+        process
     }
 })

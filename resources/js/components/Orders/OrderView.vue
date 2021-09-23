@@ -10,7 +10,8 @@
             v-loading="loading">
             <h4>Order Info</h4>
             <order-info
-                :order="order">
+                :order="order"
+                :scanners-list="scanners">
             </order-info>
         </el-card>
 
@@ -25,6 +26,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from '../../mixins/pagination'
+import { mapActions } from 'vuex'
     export default {
         name: "OrderView",
 
@@ -60,6 +62,7 @@
         },
 
         methods: {
+            ...mapActions('orders', ['setOrderNo']),
             getAuthUser() {
                 this.$API.User.getAuthUser()
                     .then(res => {
@@ -92,6 +95,7 @@
                         this.order = cloneDeep(res.data)
 
                         this.getOrderScannersData()
+                        this.setOrderNo(this.order.order_no)
                     })
                     .catch(err => {
                         console.log(err)

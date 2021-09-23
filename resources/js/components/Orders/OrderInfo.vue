@@ -46,7 +46,10 @@
                     <i class="fas fa-cubes"></i>
                     Total Blinds
                 </template>
-                {{ order_details.total_blinds | numFormat }}
+                <el-button
+                    @click="showTotalBlindsModal = true">
+                    {{ order_details.total_blinds | numFormat }}
+                </el-button>
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -182,14 +185,22 @@
             @close="showTrackingForm = false">
         </order-tracking>
         <!-- End of Order Trackings -->
+
+        <order-view-total-blinds
+            :orders="orders"
+            :visible.sync="showTotalBlindsModal"
+            @close="showTotalBlindsModal = false">
+        </order-view-total-blinds>
     </div>
 </template>
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
+import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
 
     export default {
+  components: { OrderViewTotalBlinds },
         name: "OrderInfo",
 
         props: {
@@ -210,6 +221,7 @@
                 showPlannedWorkModal: false,
                 showPackedOrdersModal: false,
                 showTimelineDialog: false,
+                showTotalBlindsModal: false,
                 timelineProcesses: [],
                 order_details: null,
                 orders: [],
