@@ -54,6 +54,12 @@
                          {{ scope.row.scannedtime | fixDateByFormat('MMM DD, YYYY HH:mm:ss') }}
                     </template>
                 </el-table-column>
+
+                <el-table-column
+                    prop="clock_num"
+                    label="Clock Num"
+                    sortable>
+                </el-table-column>
             </el-table>
         </el-card>
     </div>
