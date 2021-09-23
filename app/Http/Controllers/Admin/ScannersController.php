@@ -228,26 +228,4 @@ class ScannersController extends Controller
 
         return response()->json($qcFault->refresh());
     }
-
-    /**
-     * Fetch all scanners per Process on Orders Timeline view
-     *
-     * @param  mixed $request
-     * @return JsonResponse
-     */
-    public function getScannersByBarcode(Request $request): JsonResponse
-    {
-        $scanners = Scanner::select([
-                'scanners.scannedtime',
-                'employees.fullname',
-                'scanners.processid'
-            ])
-            ->join('employees', 'scanners.employeeid', 'employees.barcode')
-            ->join('orders', 'scanners.blindid', 'orders.serial_id')
-            ->where('orders.order_no', $request->order_no)
-            ->get();
-        Log::info($request->all());
-        Log::info($scanners);
-        return response()->json(['scanners' => $scanners]);
-    }
 }

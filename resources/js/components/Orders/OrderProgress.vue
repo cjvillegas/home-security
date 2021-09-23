@@ -72,7 +72,6 @@
 
             getProcessListWithCount() {
                 let processes = []
-                let scanners = []
 
                 if (this.processSequences && this.processSequences.length && this.orders && this.orders.length) {
                     let ordersInProcess = this.orders.filter(or => or.scanners.length)
@@ -89,8 +88,9 @@
                         })
 
                         for (let step of x.steps) {
+                            let scanners = []
                             let count = orderInSequence.filter(or => {
-                                scanners = or.scanners
+                                scanners = [...or.scanners.filter(sc => sc.processid === step.process.barcode), ...scanners]
                                 return or.scanners.some(sc => sc.processid === step.process.barcode)
                             }).length
 

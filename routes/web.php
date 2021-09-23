@@ -45,7 +45,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('scanners/qc-tag/{qc_fault}/delete', 'ScannersController@removeQcTag')->name('scanners.qc-tag.delete');
     Route::match(['put', 'patch'], 'scanners/qc-tag/{qc_fault}/update', 'ScannersController@updateQcTag')->name('scanners.qc-tag.update');
     Route::post('scanners/qc-tag', 'ScannersController@qcTag')->name('scanners.qc-tag.create');
-    Route::post('scanners/get-scanners-by-barcode', 'ScannersController@getScannersByBarcode')->name('scanners.scanners-by-barcode');
     // Route::resource('scanners', 'ScannersController');
 
     // Employees

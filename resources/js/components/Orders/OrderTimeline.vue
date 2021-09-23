@@ -18,10 +18,10 @@
                                 <h3> {{ process.label }} </h3>
                                 <div
                                     class="overflow-auto"
-                                    v-for="(scanner, scannerKey) in filterScannersPerProcess(process.barcode)"
+                                    v-for="(scanner, scannerKey) in process.scanners"
                                     :key="scannerKey">
                                     <div>
-                                        {{ (scanner.fullname ? scanner.fullname : '') | valueForEmptyText }}
+                                        {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
                                         <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                     </div>
                                 </div>
@@ -51,38 +51,7 @@ import { mapActions, mapGetters } from 'vuex';
                 loading: false
             }
         },
-
-        mounted() {
-            this.getScannersData(this.order_no)
-        },
-
-        computed: {
-            ...mapGetters('orders', ['scanners', 'order_no'])
-        },
-
         methods: {
-            ...mapActions('orders', ['getScannersData']),
-            // getScannersInfo(barcode, order_no) {
-            //     let apiUrl = `/admin/scanners/get-scanners-by-barcode`
-
-            //     axios.post(apiUrl, {'processid' : barcode, 'order_no': order_no})
-            //     .then((response) => {
-            //         console.log(response.data)
-            //         this.scanners = response.data.scanners
-            //     })
-            //     .catch((err) => {
-            //         console.log(err)
-            //     })
-            // },
-
-            filterScannersPerProcess(id) {
-                let filteredScanners = this.scanners.filter(scanner => {
-                    return scanner.processid == id
-                })
-
-                return filteredScanners
-            },
-
             closeForm() {
                 this.closeModal()
             }
