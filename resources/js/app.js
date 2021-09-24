@@ -81,6 +81,9 @@ const app = new Vue({
             this.getShifts()
         }
 
+        if (pathname === '/admin/reports/fire-register') {
+            this.getShifts()
+        }
         if (pathname === '/admin/reports/work-analytics') {
             this.getShifts()
             this.getEmployees()

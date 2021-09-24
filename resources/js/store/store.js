@@ -1,5 +1,9 @@
+import { register } from "numeral";
 import Vue from "vue";
 import Vuex from 'vuex'
+
+// modules
+import fireregister from './modules/fireregister'
 
 
 Vue.use(Vuex)
@@ -73,5 +77,8 @@ export default new Vuex.Store({
         setShifts({commit}, shifts) {
             commit('SET_SHIFTS', shifts)
         }
+    },
+    modules: {
+        fireregister,
     }
 })

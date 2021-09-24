@@ -57,6 +57,18 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
 
                     // sanity check
                     if ($sanitized !== null) {
+                        // Update Or Create those record the fetched from SAGE to keep the data in sync
+                        PurchaseOrder::updateOrCreate(
+                            [
+                                'code' => $sanitized['code']],
+                            [
+                                'order_date' => $sanitized['order_date'],
+                                'estimated_delivery' => $sanitized['estimated_delivery'],
+                                'quantity' => $sanitized['quantity'],
+                                'date_time_updated' => $sanitized['date_time_updated']
+
+                            ]
+                        );
                         $newPurchaseOrders[] = $sanitized;
                     }
                 }
