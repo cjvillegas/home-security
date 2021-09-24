@@ -4,6 +4,7 @@ namespace App\Models;
 
 use \DateTimeInterface;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -121,4 +122,37 @@ class Scanner extends Model
     * E N D  O F  R E L A T I O N S *
     ********************************/
 
+    /**************
+    * S C O P E S *
+    **************/
+
+    /**
+     * Filter by employees
+     *
+     * @param Builder $builder
+     * @param array $employees
+     *
+     * @return Builder
+     */
+    public function scopeByEmployees(Builder $builder, array $employees)
+    {
+        return $builder->whereIn('employeeid', $employees);
+    }
+
+    /**
+     * Filter by process
+     *
+     * @param Builder $builder
+     * @param array $processes
+     *
+     * @return Builder
+     */
+    public function scopeByProcesses(Builder $builder, array $processes)
+    {
+        return $builder->whereIn('processid', $processes);
+    }
+
+    /**************************
+    * E N D  O F  S C O P E S *
+    **************************/
 }

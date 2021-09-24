@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
+use App\Interfaces\ServiceDataInterface;
 use App\Models\Export;
 use App\Models\User;
-use phpDocumentor\Reflection\Types\Array_;
-use phpDocumentor\Reflection\Types\Mixed_;
 
 class ExportPayloadService
 {
@@ -25,9 +24,9 @@ class ExportPayloadService
     private $headers;
 
     /**
-     * @var mixed
+     * @var ServiceDataInterface
      */
-    private $data;
+    private $service;
 
     /**
      * @var string
@@ -50,7 +49,7 @@ class ExportPayloadService
      * @param User $user
      * @param Export $export
      * @param array $headers
-     * @param mixed $data
+     * @param ServiceDataInterface $service
      * @param string $path
      * @param string $name
      * @param string $type
@@ -61,7 +60,7 @@ class ExportPayloadService
         User $user,
         Export $export,
         array $headers,
-        $data,
+        ServiceDataInterface $service,
         string $path,
         string $name,
         string $type
@@ -69,7 +68,7 @@ class ExportPayloadService
         $this->user = $user;
         $this->export = $export;
         $this->headers = $headers;
-        $this->data = $data;
+        $this->service = $service;
         $this->path = $path;
         $this->name = $name;
         $this->type = $type;
@@ -109,11 +108,11 @@ class ExportPayloadService
     /**
      * Return the data to be exported
      *
-     * @return mixed
+     * @return ServiceDataInterface
      */
-    public function getData()
+    public function getService(): ServiceDataInterface
     {
-        return $this->data;
+        return $this->service;
     }
 
     /**

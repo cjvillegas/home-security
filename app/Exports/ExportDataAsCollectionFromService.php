@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
+use App\Interfaces\ServiceDataInterface;
 use Illuminate\Support\Collection as SupportCollection;
-use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -19,9 +19,9 @@ class ExportDataAsCollectionFromService implements
     use Exportable;
 
     /**
-     * @var Collection
+     * @var ServiceDataInterface
      */
-    private $collection;
+    private $service;
 
     /**
      * @var array
@@ -34,13 +34,13 @@ class ExportDataAsCollectionFromService implements
     private $headerKeys;
 
     /**
-     * QcFaultDataExport constructor.
+     * ExportDataAsCollectionFromService constructor.
      *
-     * @param Collection $collection
+     * @param ServiceDataInterface $service
      */
-    public function __construct(Collection $collection, array $headers)
+    public function __construct(ServiceDataInterface $service, array $headers)
     {
-        $this->collection = $collection;
+        $this->service = $service;
         $this->headers = array_values($headers);
         $this->headerKeys = array_keys($headers);
     }
@@ -50,7 +50,7 @@ class ExportDataAsCollectionFromService implements
     */
     public function collection(): SupportCollection
     {
-        return $this->collection->chunk(1000);
+        return $this->service->getData('export')->chunk(1000);
     }
 
     /**

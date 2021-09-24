@@ -1,4 +1,4 @@
 @extends('layouts.admin')
 @section('content')
-    <work-analytics-index></work-analytics-index>
+    <fire-register> </fire-register>
 @endsection

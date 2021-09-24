@@ -8,17 +8,13 @@
                 label="Hourly Work Analytics"
                 name="hourly-work-analytics"
                 lazy>
-                <hourly-work-analytics
-                    :page-data="pageData">
-                </hourly-work-analytics>
+                <hourly-work-analytics></hourly-work-analytics>
             </el-tab-pane>
             <el-tab-pane
                 label="Daily Work Analytics"
                 name="daily-work-analytics"
                 lazy>
-                <daily-work-analytics
-                    :page-data="pageData">
-                </daily-work-analytics>
+                <daily-work-analytics></daily-work-analytics>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -27,20 +23,17 @@
 <script>
     export default {
         name: "WorkAnalyticsIndex",
-        props: {
-            pageData: {
-                required: true,
-                type: Object
-            }
-        },
+
         data() {
             return {
                 activeTab: 'hourly-work-analytics'
             }
         },
+
         created() {
             this.selectTabBasedOnHash()
         },
+
         methods: {
             tabChange(tab) {
                 if (tab.name) {
