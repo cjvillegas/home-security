@@ -50,7 +50,7 @@ class InvoicedOrder extends CronDatabasePopulator
 
             // chunk the results to save memory
             foreach ($orderInvoices->chunk(100) as $chunk) {
-                // foreach to each instance of retrieved timeclock
+                // foreach to each instance of retrieved invoice
                 $newOrderInvoices = [];
                 foreach ($chunk as $invoice) {
                     // perform data sanitization
