@@ -53,11 +53,7 @@ export default {
      * @return Promise
      */
     exportRawData(start, end) {
-        return axios({
-            method: 'get',
-            url: `/admin/exports/export-raw-scanners-data?start=${start}&end=${end}`,
-            responseType: 'blob'
-        })
+        return axios.get(`/admin/exports/export-raw-scanners-data?start=${start}&end=${end}`)
     },
 
     /**

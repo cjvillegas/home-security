@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
-use App\Models\{Employee, Process, Shift, Scanner, Team};
+use App\Models\Scanner;
+use App\Services\Reports\WorkAnalyticsDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class WorkAnalyticsReportController extends Controller
@@ -16,20 +16,13 @@ class WorkAnalyticsReportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\View\View|
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
         abort_if(Gate::denies('work_analytics_reports_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $teams = Team::get();
-        $processes = Process::get();
-        $shifts = Shift::get();
-        $employees = Employee::get();
-
-        return view('admin/reports/work-analytics/index', compact(
-            'teams', 'processes', 'shifts', 'employees'
-        ));
+        return view('admin/reports/work-analytics/index');
     }
 
     /**
@@ -39,34 +32,10 @@ class WorkAnalyticsReportController extends Controller
      */
     public function getWorkAnalytics(Request $request)
     {
-        try {
-            $start = $request->get('start');
-            $end = $request->get('end');
+        $service = new WorkAnalyticsDataService($request->all());
+        $scanners = $service->getData('all');
 
-            $scanners = Scanner::whereBetween('scannedtime', [$start, $end])
-                ->select(
-                    'scanners.id',
-                    'scanners.scannedtime',
-                    'scanners.employeeid',
-                    'scanners.processid',
-                    'scanners.blindid',
-                    'e.id AS employee_id',
-                    'e.fullname AS fullname',
-                    'e.team_id',
-                    'e.shift_id',
-                    'p.barcode AS process_barcode',
-                    'p.id AS process_id'
-                )
-                ->join('processes AS p', 'p.barcode', '=', 'scanners.processid')
-                ->join('employees AS e', 'e.barcode', '=', 'scanners.employeeid')
-                ->get();
-
-            return response()->json($scanners);
-        } catch (\Exception $e) {
-            Log::error('Get Work Analytics Error', [
-                'error ' . $e
-            ]);
-        }
+        return response()->json($scanners);
     }
 
     /**

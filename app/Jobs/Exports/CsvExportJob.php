@@ -3,6 +3,7 @@
 namespace App\Jobs\Exports;
 
 use App\Exports\ExportDataAsCollectionFromService;
+use App\Exports\ExportDataFromQuery;
 use App\Models\Export;
 use App\Models\User;
 use App\Services\ExportPayloadService;
@@ -74,7 +75,7 @@ class CsvExportJob implements ShouldQueue
         $filePath = "{$this->payload->getPath()}/{$this->export->id}/{$this->payload->getName()}{$this->payload->getType()}";
 
         // Store on default disk
-        $stored = (new ExportDataAsCollectionFromService($this->payload->getData(), $this->payload->getHeaders()))->store($filePath, 'public');
+        $stored = (new ExportDataAsCollectionFromService($this->payload->getService(), $this->payload->getHeaders()))->store($filePath, 'public');
 
         // check if the file is stored.
         if ($stored) {

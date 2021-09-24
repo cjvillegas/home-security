@@ -6,6 +6,7 @@ use App\Interfaces\ServiceDataInterface;
 use App\Jobs\Exports\CsvExportJob;
 use App\Models\Export;
 use App\Models\User;
+use Exception;
 use Illuminate\Support\Str;
 
 class CsvExporterService
@@ -42,31 +43,40 @@ class CsvExporterService
 
     public function export(ServiceDataInterface $serviceData)
     {
-        // generate new export
-        $export = $this->createNewExport($serviceData->getFilters(), $serviceData->exportType());
+        $export = null;
+        try {
+            // generate new export
+            $export = $this->createNewExport($serviceData->exportType(), $serviceData->getFilters());
 
-        $exportPayload = new ExportPayloadService(
-            $this->user,
-            $export,
-            $this->getHeaders(),
-            $serviceData->getData('export'),
-            $this->getPath(),
-            $this->getName(),
-            $this->getType()
-        );
+            $exportPayload = new ExportPayloadService(
+                $this->user,
+                $export,
+                $this->getHeaders(),
+                $serviceData,
+                $this->getPath(),
+                $this->getName(),
+                $this->getType()
+            );
 
-        // dispatch the job for exporting
-        CsvExportJob::dispatch($exportPayload)->onQueue('default');
+            // dispatch the job for exporting
+            CsvExportJob::dispatch($exportPayload)->onQueue('default');
+        } catch (Exception $exception) {
+            if (!empty($export)) {
+                $export->status = Export::EXPORT_STATUS_FAILED;
+                $export->save();
+            }
+        }
     }
 
     /**
      * Create new export instance
      *
+     * @param string $exportType
      * @param array $filters
      *
      * @return Export
      */
-    public function createNewExport(array $filters = [], string $exportType): Export
+    public function createNewExport(string $exportType, array $filters = []): Export
     {
         $export = new Export();
         $export->user_id = $this->user->id;

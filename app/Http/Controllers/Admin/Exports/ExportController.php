@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Exports;
 
-use App\Exports\RawScannersDataExport;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Exports\ExportRawScannersDataRequest;
 use App\Models\Export;
+use App\Models\User;
+use App\Services\CsvExporterService;
+use App\Services\Reports\ScannersDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,16 +25,36 @@ class ExportController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param ExportRawScannersDataRequest $request
      *
-     * @return RawScannersDataExport
+     * @return JsonResponse
      */
-    public function exportRawScannersData(Request $request)
+    public function exportRawScannersData(ExportRawScannersDataRequest $request): JsonResponse
     {
-        $start = $request->get('start');
-        $end = $request->get('end');
+        $user = User::find(auth()->user()->id);
 
-        return new RawScannersDataExport($start, $end);
+        $service = new ScannersDataService($request->all());
+
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Raw Scanners Data')
+            ->setPath('exports')
+            ->setHeaders([
+                'order_no' => 'Order No.',
+                'order_at' => 'Ordered At',
+                'customer' => 'Customer',
+                'blind_type' => 'Blind Type',
+                'quantity' => 'Quantity',
+                'serial_id' => 'Serial ID',
+                'name' => 'Operation',
+                'fullname' => 'Employee',
+                'scanned_date_time' => 'Scanned Date',
+            ])
+            ->export($service);
+
+        return response()->json([
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.',
+            'success' => true
+        ]);
     }
 
     /**

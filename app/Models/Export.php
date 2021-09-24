@@ -19,6 +19,9 @@ class Export extends Model
     // team status export report
     const TEAM_STATUS_EXPORT_REPORT = 'team_status_report';
 
+    // scanners raw data
+    const SCANNERS_RAW_DATA = 'scanners_raw_data';
+
     /**
      * Export Status
      */
