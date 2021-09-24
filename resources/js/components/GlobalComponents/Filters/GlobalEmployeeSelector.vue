@@ -11,9 +11,14 @@
             :placeholder="`Please select ${isMultiple ? 'employees' : 'an employee'}`"
             class="w-100">
             <el-option
+                v-if="isMultiple"
+                label="Select All"
+                :value="null">
+            </el-option>
+            <el-option
                 v-for="employee in employees"
                 :key="employee.id"
-                :value="employee.id"
+                :value="employee[property]"
                 :label="employee.fullname | ucWords">
             </el-option>
         </el-select>
@@ -36,7 +41,10 @@
                 type: Boolean,
                 default: true
             },
-            value: {}
+            value: {},
+            property: {
+                default: 'id'
+            }
         },
 
         data() {
@@ -55,6 +63,18 @@
 
         methods: {
             handleChange() {
+                if (this.isMultiple) {
+                    if (this.model[this.model.length - 1] === null) {
+                        this.model = [null]
+                    } else {
+                        let index = this.model.findIndex(em => em === null)
+
+                        if (index > -1) {
+                            this.model.splice(index, 1)
+                        }
+                    }
+                }
+
                 this.$emit('update:value', this.model)
             }
         },
