@@ -6,13 +6,12 @@ export default {
     /**
      * Fetch work analytics report based on the provided SOD and EOD
      *
-     * @param start
-     * @param end
+     * @param params
      *
      * @return Promise
      */
-    fetchWorkAnalytics(start, end) {
-        return axios.get(`${basePath}/get-work-analytics?start=${start}&end=${end}`)
+    fetchWorkAnalytics(params) {
+        return axios.get(`${basePath}/get-work-analytics`, {params: params})
     },
 
     /**

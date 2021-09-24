@@ -134,7 +134,6 @@ class ReportController extends Controller
         $user = User::find(auth()->user()->id);
 
         $service = new TeamStatusDataService($request->all());
-        $data = $service->getData('export');
 
         $exporter = new CsvExporterService($user);
         $exporter->setName('Team Status Report')
