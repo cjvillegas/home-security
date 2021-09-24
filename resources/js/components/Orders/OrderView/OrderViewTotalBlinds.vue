@@ -66,7 +66,7 @@
         mixins: [dialog],
 
         props: {
-            orders: {
+            order_no: {
                 required: true,
             },
         },
@@ -75,18 +75,49 @@
             return {
                 loading: false,
                 selectedOrder: {},
-                showUpdateForm: false
+                showUpdateForm: false,
+                orders: [],
             }
         },
+        created() {
+            this.functionName = 'getOrdersByOderNo'
 
+            this.$EventBus.listen('PRODUCT_TYPE_UPDATE', _ => {
+                this.getOrdersByOrderNo()
+            })
+        },
         methods: {
             openUpdateFormDialog(row) {
                 this.selectedOrder = cloneDeep(row)
                 this.showUpdateForm = true
             },
 
+            getOrdersByOrderNo() {
+                this.loading = true
+                console.log(this.order_no)
+
+                this.$API.Orders.getOrdersByOrderNo(this.order_no)
+                .then(res => {
+                    this.orders = res.data
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+            },
+
             closeDialog() {
                 this.closeModal()
+            }
+        },
+
+        watch: {
+            order_no: {
+                handler() {
+                    this.getOrdersByOrderNo()
+                }
             }
         }
     }

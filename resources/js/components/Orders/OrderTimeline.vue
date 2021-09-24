@@ -16,15 +16,19 @@
                             :type="process.type">
                             <el-card>
                                 <h3> {{ process.label }} </h3>
-                                <div
-                                    class="overflow-auto"
-                                    v-for="(scanner, scannerKey) in process.scanners"
-                                    :key="scannerKey">
-                                    <div>
-                                        {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
-                                        <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
-                                    </div>
-                                </div>
+                                <el-collapse v-if="process.scanners.length > 5">
+                                    <el-collapse-item title="View Scanners History">
+                                        <div
+                                            class="overflow-auto"
+                                            v-for="(scanner, scannerKey) in process.scanners"
+                                            :key="scannerKey">
+                                            <div>
+                                                {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
+                                                <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                            </div>
+                                        </div>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-card>
                         </el-timeline-item>
                     </el-timeline>

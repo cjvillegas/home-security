@@ -47,7 +47,7 @@
                     Total Blinds
                 </template>
                 <el-button
-                    @click="showTotalBlindsModal = true">
+                    @click="openTotalBlinds">
                     {{ order_details.total_blinds | numFormat }}
                 </el-button>
             </el-descriptions-item>
@@ -187,7 +187,7 @@
         <!-- End of Order Trackings -->
 
         <order-view-total-blinds
-            :orders="orders"
+            :order_no="order_no"
             :visible.sync="showTotalBlindsModal"
             @close="showTotalBlindsModal = false">
         </order-view-total-blinds>
@@ -226,7 +226,8 @@ import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
                 order_details: null,
                 orders: [],
                 processSequences: [],
-                orderTrackings: []
+                orderTrackings: [],
+                order_no: null
             }
         },
 
@@ -423,6 +424,11 @@ import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
                     this.loading = true
                 })
             },
+
+            openTotalBlinds() {
+                this.order_no = this.order.order_no
+                this.showTotalBlindsModal = true
+            }
         },
 
         watch: {

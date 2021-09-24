@@ -65,7 +65,6 @@
             ...mapMutations('process', ['setProcesses']),
 
             querySearch(queryString, cb) {
-                console.log(this.form)
                 let processes = []
 
                 this.searchProcessesList(this.filters)
@@ -90,11 +89,18 @@
             saveChanges() {
                 this.updateProductType(this.form)
                 .then((response) => {
-                    this.$notify({
-                        title: 'Success!',
-                        message: response.data.message,
-                        type: 'success'
-                    });
+                    if (response.data) {
+                        this.$EventBus.fire('PRODUCT_TYPE_UPDATE')
+                        this.$notify({
+                            title: 'Success!',
+                            message: response.data.message,
+                            type: 'success'
+                        });
+
+                        setTimeout(_ => {
+                            this.closeDialog()
+                        }, 300)
+                    }
                 })
             },
 
