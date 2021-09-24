@@ -54,6 +54,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('orders:populate-purchase-orders-from-sage')
             ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
+
+        // schedule to fetch invoiced data everyday @2pm
+        $schedule->command('orders:invoiced-order')
+            ->dailyAt('14:00')
+            ->environments(['production', 'staging']);
     }
 
     /**

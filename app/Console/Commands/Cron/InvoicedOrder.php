@@ -75,7 +75,7 @@ class InvoicedOrder extends CronDatabasePopulator
                 }
             }
         } catch (Exception $error) {
-            $this->sendFailedNotification('Employee Time Clock', $error);
+            $this->sendFailedNotification('Invoiced Order', $error);
         }
     }
 
@@ -86,6 +86,8 @@ class InvoicedOrder extends CronDatabasePopulator
      */
     protected function getDataFromBlind(): Collection
     {
+        $date = date('Y-m-d');
+
         $query = "
             SELECT
                 DISTINCT([Order].order_id) AS OrderNumber,
@@ -94,7 +96,7 @@ class InvoicedOrder extends CronDatabasePopulator
             FROM [User]
 	            INNER JOIN [Order] ON [User].id = [Order].user_id
 	            INNER JOIN OrderDetail ON [Order].id = OrderDetail.order_id
-            WHERE ([Order].dat_invoice BETWEEN CONVERT(DATETIME, '2021-09-01 00:00:00', 102) AND CONVERT(DATETIME, '2021-09-07 00:00:00', 102))
+            WHERE ([Order].dat_invoice BETWEEN CONVERT(DATETIME, '{$date} 00:00:00', 102) AND CONVERT(DATETIME, '{$date} 00:00:00', 102))
         ";
 
         // execute the query
@@ -120,10 +122,14 @@ class InvoicedOrder extends CronDatabasePopulator
             return null;
         }
 
+        $now = now()->toDateTimeString();
+
         // build the data to be saved
         $sanitized['order_no'] = $invoice['OrderNumber'];
         $sanitized['invoice_no'] = $invoice['InvoiceNumber'];
         $sanitized['date'] = Carbon::parse($invoice['InvoiceDate'])->format('Y-m-d');
+        $sanitized['created_at'] = $now;
+        $sanitized['updated_at'] = $now;
 
         return $sanitized;
     }
