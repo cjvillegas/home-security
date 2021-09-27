@@ -125,7 +125,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced Date
                 </template>
-                --:--
+                {{ order_details.invoice_date | fixDateByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -133,7 +133,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced No.
                 </template>
-                --:--
+                {{ order_details.invoice_no }}
             </el-descriptions-item>
         </el-descriptions>
 

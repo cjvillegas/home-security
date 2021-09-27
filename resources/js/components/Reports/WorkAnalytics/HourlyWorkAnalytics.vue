@@ -278,12 +278,13 @@
 
                 return {sod, eod}
             },
+
             getLegends() {
                 let legends = cloneDeep(this.filters.legend === 'employee' ? this.employees : this.processes)
                 let filters = cloneDeep(this.filters.legend === 'employee' ? this.filters.employees : this.filters.processes)
 
-                if (!filters.some(em => em === null)) {
-                    legends = legends.filter(leg => this.filters.employees.some(em => em === leg.barcode))
+                if (!filters.some(filter => filter === null)) {
+                    legends = legends.filter(leg => filters.some(em => em === leg.barcode))
                 }
 
                 legends = legends.map(leg => {
@@ -294,6 +295,7 @@
 
                 return legends
             },
+
             exportToFile() {
                 this.loading = true
 

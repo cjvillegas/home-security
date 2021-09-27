@@ -81,7 +81,7 @@
                 processes: [null],
                 employees: [null],
                 legend: 'process',
-                date: [moment().startOf('month').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+                date: [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
             },
             options: {
                 title: {
@@ -270,29 +270,17 @@
 
         getLegends() {
             let legends = cloneDeep(this.filters.legend === 'employee' ? this.employees : this.processes)
+            let filters = cloneDeep(this.filters.legend === 'employee' ? this.filters.employees : this.filters.processes)
 
-            if (this.filters.legend === 'employee') {
-                if (!this.filters.employees.some(em => em === null)) {
-                    legends = legends.filter(leg => this.filters.employees.some(em => em === leg.id))
-                }
-
-                legends = legends.map(emp => {
-                    emp.label = this.$StringService.ucwords(emp.fullname)
-
-                    return emp
-                })
+            if (!filters.some(filter => filter === null)) {
+                legends = legends.filter(leg => filters.some(em => em === leg.barcode))
             }
-            if (this.filters.legend === 'process') {
-                if (!this.filters.processes.some(em => em === null)) {
-                    legends = legends.filter(leg => this.filters.processes.some(pr => pr === leg.id))
-                }
 
-                legends = legends.map(prc => {
-                    prc.label = this.$StringService.ucwords(prc.name)
+            legends = legends.map(leg => {
+                leg.label = this.$StringService.ucwords(this.filters.legend === 'employee' ? leg.fullname : leg.name)
 
-                    return prc
-                })
-            }
+                return leg
+            })
 
             return legends
         },
