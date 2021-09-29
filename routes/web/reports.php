@@ -21,4 +21,8 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     //fire register
     Route::get('/fire-register', 'FireRegisterController@fireRegister')->name('fire-register');
     Route::post('/fire-register', 'FireRegisterController@getEmployees')->name('fire-register.get-employees');
+
+    //manufacture blinds
+    Route::get('/manufactured-blinds', 'ManufacturedBlindController@index')->name('manufactured-blinds');
+    Route::post('/manufactured-blinds', 'ManufacturedBlindController@getBlinds')->name('manufactured-blinds');
 });

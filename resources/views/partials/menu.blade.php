@@ -296,6 +296,13 @@
                             </a>
                         </li>
                     @endcan
+
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.manufactured-blinds') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.manufactured-blinds") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-check-circle c-sidebar-nav-icon"></i>
+                                Manufactured Blinds
+                            </a>
+                        </li>
                 </ul>
             </li>
         @endif
