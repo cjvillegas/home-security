@@ -81,6 +81,7 @@
 
                         let orderInSequence = ordersInProcess.filter(or => x.name.toLowerCase() === or.product_type.toLowerCase())
 
+                        console.log(this.orders.filter(or => x.name.toLowerCase() === or.product_type.toLowerCase()).length)
                         processes.push({
                             product: x.name,
                             name: this.$StringService.ucwords(x.name),
@@ -120,6 +121,7 @@
             },
             totalOrderCount() {
                 if (this.getProcessListWithCount && this.getProcessListWithCount.length) {
+                    console.log(this.getProcessListWithCount.reduce((acc, cur) => acc += cur.totalCount , 0))
                     return this.getProcessListWithCount.reduce((acc, cur) => acc += cur.totalCount , 0)
                 }
 
