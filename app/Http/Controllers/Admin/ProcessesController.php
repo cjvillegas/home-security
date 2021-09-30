@@ -76,12 +76,22 @@ class ProcessesController extends Controller
         return view('admin.processes.edit', compact('process', 'processCategories'));
     }
 
+    /**
+     * @param UpdateProcessRequest $request
+     * @param Process $process
+     *
+     * @return JsonResponse
+     */
     public function update(UpdateProcessRequest $request, Process $process)
     {
         $processCategories = $request->get('process_categories', []);
 
         $process->name = $request->get('name');
         $process->barcode = $request->get('barcode');
+        $process->process_target = $request->get('process_target', $process->process_target);
+        $process->new_joiner_target = $request->get('new_joiner_target', $process->new_joiner_target);
+        $process->process_manufacturing_time = $request->get('process_manufacturing_time', $process->process_manufacturing_time);
+        $process->stop_start_button_required = $request->get('stop_start_button_required', $process->stop_start_button_required);
         $saved = $process->save();
 
         if ($saved) {
@@ -104,7 +114,7 @@ class ProcessesController extends Controller
             }
         }
 
-        return redirect()->route('admin.processes.index');
+        return response()->json($process);
     }
 
     /**

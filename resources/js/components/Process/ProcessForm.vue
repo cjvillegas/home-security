@@ -113,7 +113,6 @@
 		    	Close
 		    </el-button>
 		    <el-button
-                :disabled="hasModel"
                 @click="validate"
                 type="primary"
                 class="btn-primary">
@@ -149,7 +148,7 @@
 
         computed: {
             hasModel() {
-                return this.model && this.model.id
+                return !!(this.model && this.model.id)
             },
 
             dialogTitle() {

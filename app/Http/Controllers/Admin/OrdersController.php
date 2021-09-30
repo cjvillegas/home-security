@@ -119,18 +119,23 @@ class OrdersController extends Controller
      */
     public function getOrderDetails(Request $request, $to_search): JsonResponse
     {
-        $orders= Order::where($request->get('field'), $to_search)
+        $field = $request->get('field');
+
+        $orders= Order::where("orders.{$field}", $to_search)
             ->select([
                 'orders.*',
-                DB::raw('COUNT(DISTINCT serial_id) AS total_blinds')
+                'oi.invoice_no',
+                'oi.date AS invoice_date',
+                DB::raw('COUNT(DISTINCT orders.serial_id) AS total_blinds')
             ])
+            ->leftJoin('order_invoices AS oi', 'oi.order_no', 'orders.order_no')
             ->with(['scanners' => function ($query) {
                 $query->with(['employee' => function ($query) {
                     $query->with(['shift', 'team']);
                 }, 'process', 'qcFault'])
                 ->orderBy('scannedtime', 'asc');
             }])
-            ->groupBy('order_no')
+            ->groupBy('orders.order_no')
             ->first();
 
         return response()->json($orders);

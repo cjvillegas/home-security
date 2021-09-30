@@ -165,7 +165,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // notifications
     Route::get('/notifications/get-list', 'NotificationController@getList')->name('notifications.get-list');
     Route::resource('notifications', 'NotificationController')->only(['index', 'show', 'destroy']);
-
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

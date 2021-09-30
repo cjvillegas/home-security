@@ -11,7 +11,7 @@
                 <el-button
                     @click="showTimelineDialog = true"
                     size="small"
-                    type="default"
+                    type="primary"
                     class="mr-2">
                     Operations Timeline
                 </el-button>
@@ -22,7 +22,7 @@
                     <i class="fas fa-boxes"></i>
                     Order
                 </template>
-                {{ order_details.order_no | numFormat }}
+                {{ order_details.order_no }}
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -128,7 +128,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced Date
                 </template>
-                --:--
+                {{ order_details.invoice_date | fixDateByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -136,7 +136,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced No.
                 </template>
-                --:--
+                {{ order_details.invoice_no }}
             </el-descriptions-item>
         </el-descriptions>
 

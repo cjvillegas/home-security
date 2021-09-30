@@ -164,7 +164,7 @@
     import pagination from "../../mixins/pagination";
 
     export default {
-        name: "Process",
+        name: "ProcessList",
 
         mixins: [pagination],
 

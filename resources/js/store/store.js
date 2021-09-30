@@ -1,8 +1,11 @@
+import { register } from "numeral";
 import Vue from "vue";
 import Vuex from 'vuex'
 
+//modules
 import orders from './modules/orders'
 import process from './modules/process'
+import fireregister from './modules/fireregister'
 
 Vue.use(Vuex)
 
@@ -79,6 +82,7 @@ export default new Vuex.Store({
 
     modules: {
         orders,
-        process
+        process,
+        fireregister
     }
 })

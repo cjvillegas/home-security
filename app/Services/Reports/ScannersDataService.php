@@ -4,13 +4,13 @@ namespace App\Services\Reports;
 
 use App\Interfaces\ServiceDataInterface;
 use App\Models\Export;
-use App\Models\ShiftAssignment;
-use Carbon\Carbon;
+use App\Models\Scanner;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class TeamStatusDataService implements ServiceDataInterface
+class ScannersDataService implements ServiceDataInterface
 {
     /**
      * @var array
@@ -31,11 +31,11 @@ class TeamStatusDataService implements ServiceDataInterface
     }
 
     /**
-     * Retrieve team status report data
+     * Retrieve scanners report data
      *
      * @param string $type
      *
-     * @return Collection|LengthAwarePaginator
+     * @return Collection|LengthAwarePaginator|Builder
      */
     public function getData(string $type)
     {
@@ -48,19 +48,27 @@ class TeamStatusDataService implements ServiceDataInterface
 
                 // if pagination is enabled
                 if ($this->isFilterExist('size')) {
-                    $teamStatus = $query->paginate($page, $size);
+                    $scanners = $query->paginate($page, $size);
                 } else {
-                    $teamStatus = $query->getResultInCollection();
+                    $scanners = $query->getResultInCollection();
                 }
 
                 break;
             case 'export':
-                $teamStatus = $query->getResultInCollection();
+                $scanners = $query->getResultInCollection();
+
+                break;
+            case 'count';
+                $scanners = $this->query->count();
+
+                break;
+            case 'query';
+                $scanners = $this->query;
 
                 break;
         }
 
-        return $teamStatus;
+        return $scanners;
     }
 
     /**
@@ -68,45 +76,36 @@ class TeamStatusDataService implements ServiceDataInterface
      *
      * @return self
      */
-    public function buildQuery(): self
+    public function buildQuery()
     {
-        $query = ShiftAssignment::query()
+        $query = Scanner::query()
             ->select([
-                'shift_assignments.folder_name',
-                DB::raw("COUNT(DISTINCT shift_assignments.id) AS planned_blinds"),
-                DB::raw("COUNT(DISTINCT shift_assignments.id) - CAST(SUM(DISTINCT CASE WHEN sc.blindid = shift_assignments.serial_id THEN 1 ELSE 0 END) AS SIGNED) AS not_started"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.blindid = shift_assignments.serial_id THEN 1 ELSE 0 END) AS SIGNED) AS started_blinds"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P5688737', 'P1002', 'P1021', 'P1024', 'P1025') THEN 1 ELSE 0 END) AS SIGNED) AS completed_blinds"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P1012', 'P1014') THEN 1 ELSE 0 END) AS SIGNED) AS packed_blinds")
+                'orders.order_no',
+                DB::raw('DATE_FORMAT(orders.ordered_at, "%Y-%m-%d") AS order_at'),
+                'orders.customer',
+                'orders.blind_type',
+                'orders.quantity',
+                'orders.serial_id',
+                'processes.name',
+                'employees.fullname',
+                DB::raw('DATE_FORMAT(scanners.scannedtime, "%Y-%m-%d %H:%i") as scanned_date_time'),
             ])
-            ->leftJoin('scanners AS sc', DB::raw('CAST(sc.blindid AS SIGNED)'), 'shift_assignments.serial_id')
-            ->leftJoin('processes AS p', 'p.barcode', 'sc.processid')
-            ->groupBy('shift_assignments.folder_name')
-            ->orderBy('shift_assignments.folder_name');
+            ->leftJoin('orders', 'orders.serial_id', '=', 'scanners.blindid')
+            ->join('processes', 'processes.barcode', '=', 'scanners.processid')
+            ->join('employees', 'employees.barcode', '=', 'scanners.employeeid');
 
         $this->query = $query;
 
         return $this;
     }
 
-    /**
-     * Apply relative filters
-     *
-     * @return self
-     */
-    function applyFilters(): self
+    function applyFilters()
     {
-        $folders = $this->getFilterValue('folders', []);
+        $start = $this->getFilterValue('start');
+        $end = $this->getFilterValue('end');
 
-        // if employee filter is present
-        if ($this->isFilterExist('date') && $date = $this->getFilterValue('date')) {
-            $date = Carbon::parse($date)->format('Y-m-d');
-            $this->query->filterInDate($date);
-        }
-
-        // filter shift assignments by folder name
-        if ($this->isFilterExist('folders') && !empty($folders)) {
-            $this->query->filterByFolderName($folders);
+        if ($this->isFilterExist('start') && $this->isFilterExist('end')) {
+            $this->query->whereBetween('scannedtime', [$start, $end]);
         }
 
         return $this;
@@ -149,7 +148,7 @@ class TeamStatusDataService implements ServiceDataInterface
      */
     public function exportType(): string
     {
-        return Export::TEAM_STATUS_EXPORT_REPORT;
+        return Export::SCANNERS_RAW_DATA;
     }
 
     /**
