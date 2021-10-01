@@ -41,6 +41,11 @@ const ProcessIndex = () => import('../components/Process/ProcessIndex')
 const ProcessList = () => import('../components/Process/ProcessList')
 const ProcessView = () => import('../components/Process/ProcessView')
 
+// Team Components
+const TeamIndex = () => import('../components/Teams/TeamIndex')
+const TeamList = () => import('../components/Teams/TeamList')
+const TeamConfiguration = () => import('../components/Teams/TeamConfiguration')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -142,6 +147,26 @@ export default new VueRouter({
                     path: ':id',
                     name: 'Notification View',
                     component: NotificationView,
+                    props: true,
+                },
+            ]
+        },
+        {
+            path: '/team-index',
+            name: 'Team Index',
+            component: TeamIndex,
+            props: true,
+            children: [
+                {
+                    path: 'list',
+                    name: 'Team List',
+                    component: TeamList,
+                    props: true,
+                },
+                {
+                    path: 'view-team',
+                    name: 'Team View',
+                    component: TeamConfiguration,
                     props: true,
                 },
             ]

@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Team;
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UpdateTeamRequest extends FormRequest
@@ -28,6 +26,7 @@ class UpdateTeamRequest extends FormRequest
                 'min:-2147483648',
                 'max:2147483647',
             ],
+            'folder_names' => 'nullable|array'
         ];
     }
 }
