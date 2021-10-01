@@ -116,7 +116,36 @@
 
         methods: {
             deleteTeam() {
+                this.$confirm('Are you sure you want to delete this team?', 'Confirm', {
+                    confirmButtonText: "Yes, I'm Sure",
+                    cancelButtonText: 'No, Not Sure',
+                    type: 'error',
+                    confirmButtonClass: 'el-button--danger'
+                })
+                    .then(_ => {
+                        this.loading = true
 
+                        this.$API.Team.delete(this.team_details.id)
+                        .then( (response) => {
+                            this.$notify({
+                                title: 'Deleted!',
+                                message: response.data.message,
+                                type: 'success'
+                            })
+
+                            setTimeout(_ => {
+                                this.backToList()
+
+                            }, 300)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                        .finally(_ => {
+                            this.loading = false
+                        })
+                    })
+                    .catch(_ => {})
             },
 
             backToList() {
