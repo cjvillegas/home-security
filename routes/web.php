@@ -87,6 +87,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('teams/process-csv-import', 'TeamsController@processCsvImport')->name('teams.processCsvImport');
     Route::post('teams/list', 'TeamsController@fetchTeams');
     Route::get('teams/all-teams', 'TeamsController@getAllTeams')->name('teams.all-teams');
+    Route::get('teams/folders', 'TeamsController@shiftAssignmentFolders')->name('teams.folders');
     Route::resource('teams', 'TeamsController')->only(['index', 'store', 'update', 'destroy']);
 
     // Shifts

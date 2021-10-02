@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { update } from 'lodash'
 
 export default {
     /**
@@ -18,7 +17,7 @@ export default {
      * API endpoint for Saving Team.
      * This route is under the API collection
      *
-     * @param id
+     * @param postData
      *
      * @return Promise
      */
@@ -30,7 +29,7 @@ export default {
      * API endpoint for Updating Team.
      * This route is under the API collection
      *
-     * @param id
+     * @param postData
      *
      * @return Promise
      */

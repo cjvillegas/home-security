@@ -17,12 +17,6 @@
                             class="w-100">
                         </el-date-picker>
 
-                        <global-shift-selector
-                            class="mt-3"
-                            :value.sync="filters.shifts"
-                            is-multiple>
-                        </global-shift-selector>
-
                         <global-team-selector
                             class="mt-3"
                             :value.sync="filters.teams"
@@ -101,7 +95,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from "../../mixins/pagination"
-    import {mapGetters} from "vuex";
+    import { mapGetters } from "vuex"
 
     export default {
         name: "TeamStatusReport",
@@ -131,10 +125,10 @@
         },
 
         computed: {
-            ...mapGetters(['teams', 'shifts']),
+            ...mapGetters(['teams']),
 
             disableApplyFilterButton() {
-                return !this.filters.date || !this.filters.shifts.length
+                return !this.filters.date || !this.filters.teams.length
             },
 
             canExportData() {
@@ -153,7 +147,6 @@
                 this.loading = true
 
                 let filters = cloneDeep(this.filters)
-                delete filters.shifts
                 delete filters.teams
                 filters.folders = this.buildFolders()
 
@@ -174,7 +167,6 @@
                 let filters = cloneDeep(this.filters)
                 delete filters.size
                 delete filters.page
-                delete filters.shifts
                 delete filters.teams
                 filters.folders = this.buildFolders()
 
@@ -200,27 +192,15 @@
 
             buildFolders() {
                 let folders = []
+                let teams = this.teams.filter(team => this.filters.teams.some(t => t === team.id))
 
-                for (let x of this.filters.shifts) {
-                    let shift = this.shifts.find(s => s.id === x)
-
-                    if (shift) {
-                        if (!!this.filters.teams.length) {
-                            for (let teamId of this.filters.teams) {
-                                let folder = shift.name
-                                let team = this.teams.find(t => t.id === teamId)
-
-                                if (team) {
-                                    folder += ' ' + team.name
-                                }
-
-                                folders.push(folder)
-                            }
-                        } else {
-                            folders.push(shift.name)
-                        }
+                folders = teams.reduce((acc, cur) => {
+                    if (Array.isArray(cur.folder_names)) {
+                        acc = [...acc, ...cur.folder_names]
                     }
-                }
+
+                    return acc
+                }, [])
 
                 return folders
             }
