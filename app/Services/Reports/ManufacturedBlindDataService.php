@@ -4,9 +4,13 @@ namespace App\Services\Reports;
 
 use App\Interfaces\ServiceDataInterface;
 use App\Models\Order;
+use App\Models\ProcessSequence\ProcessSequence;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Log;
 
-class ManufacturedBlindDataService implements ServiceDataInterface
+class ManufacturedBlindDataService
 {
     /**
      * @var array
@@ -19,122 +23,103 @@ class ManufacturedBlindDataService implements ServiceDataInterface
     private $query;
 
     /**
-     * TeamStatusDataService constructor.
-     */
-    public function __construct(array $filters)
-    {
-        $this->filters = $filters;
-    }
-
-    /**
-     * Retrieve Manufactured Blinds Data, the return data will largely based on the
-     * passed filters array
-     *
-     * @param string $type
-     *
-     * @return Collection|LengthAwarePaginator
-     */
-    public function getData(string $type)
-    {
-        $query = $this->buildQuery()->applyFilters();
-
-        switch ($type) {
-            case 'list':
-                $size = $this->getFilterValue('size', 25);
-                $page = $this->getFilterValue('page', 1);
-
-                // if pagination is enabled
-                if ($this->isFilterExist('size')) {
-                    $manufacturedBlinds = $query->paginate($page, $size);
-                } else {
-                    $manufacturedBlinds = $query->getResultInCollection();
-                }
-
-                break;
-            case 'export':
-                $manufacturedBlinds = $query->getResultInCollection();
-
-                break;
-        }
-
-        return $manufacturedBlinds;
-    }
-
-    /**
-     * Query
-     *
-     * @return self
-     */
-    public function buildQuery(): self
-    {
-        $query = Order::query()
-            ->select([
-                'orders.id',
-                'sc.scannedtime',
-                'orders.serialid'
-            ])
-            ->leftJoin('scanners AS sc', 'orders.serial_id', 'sc.blindid')
-            ->groupBy('orders.id');
-
-        $this->query = $query;
-
-        return $this;
-
-    }
-
-    public function applyFilters()
-    {
-        $dateRange = $this->getFilterValue('dateRange');
-
-        // if daterange is present
-        if ($this->isFilterExist('dateRange') && $dateRange) {
-            $this->query->filterInRange($dateRange);
-        }
-    }
-
-    /**
-     * @param int $page
-     * @param int $size
-     *
-     * @return LengthAwarePaginator
-     */
-    private function paginate(int $page = 1, int $size = 25): LengthAwarePaginator
-    {
-        return $this->query->paginate($size, ['*'], 'page', $page);
-    }
-
-    /**
-     * Retrieve the qc fault data in collect format from the DB
+     * Retrieved all Blinds based on selected DateRange
      *
      * @return Collection
      */
-    private function getResultInCollection(): Collection
+    public function getAllBlinds($dateRange): Collection
     {
-        return $this->query->get();
+        $from = $dateRange[0];
+        $to = $dateRange[1];
+
+        $query = Order::query()
+            ->select([
+                'orders.id',
+                'orders.order_no',
+                'orders.product_type',
+                'sc.scannedtime',
+                'orders.serial_id'
+            ])
+            ->with('scanners')
+            ->whereBetween('scannedtime', [$from, $to])
+            ->whereNotNull('orders.product_type')
+            ->leftJoin('scanners AS sc', 'orders.serial_id', 'sc.blindid')
+            ->groupBy('orders.serial_id')
+            ->get();
+
+        $blinds = $this->sanitizeFullyProcessedBlinds($query);
+
+        return $blinds;
     }
 
     /**
-     * Check certain key exists in the filters array
+     * This will return the Sanitized Fully Processed Blinds.
      *
-     * @param string $key
+     * @param  mixed $blinds
      *
      * @return bool
      */
-    private function isFilterExist(string $key): bool
+    function sanitizeFullyProcessedBlinds($blinds): Collection
     {
-        return isset($this->filters[$key]);
+        $blindsCollection = new Collection();
+
+        $isFullyProcessed = false;
+        foreach ($blinds as $blind) {
+            $isFullyProcessed = $this->isFullyProcessed($blind);
+            if ($isFullyProcessed) {
+                $blindsCollection->push($blind);
+            }
+        }
+        $blindsCollection = $blindsCollection->filter(
+            function ($blind, $blindKey) {
+                return $blind->scannedtime > Carbon::parse($blind->scannedtime)
+                    ->format('Y-m-d').' '. '18:00:00';
+            }
+        )
+        ->groupBy(
+            function ($date) {
+                return Carbon::parse($date->scannedtime)->format('Y-m-d');
+            }
+        );
+        return $blindsCollection;
     }
 
     /**
-     * Retrieve a value from the filters using a key
+     * Determine whether the specific blind is Fully processed or not.
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  mixed $blind
      *
-     * @return mixed|null
+     * @return Boolean
      */
-    private function getFilterValue(string $key, $default = null)
+    function isFullyProcessed($blind): bool
     {
-        return $this->filters[$key] ?? $default;
+        $processSequence = ProcessSequence::select(
+            [
+                'process_sequences.*',
+                'o.id AS order_id',
+                'o.order_no AS order_no',
+            ]
+        )->with(['steps' => function ($query) {
+            $query->with('process');
+        }])
+        ->join('orders AS o', 'o.product_type', 'process_sequences.name')
+        ->where('o.order_no', $blind->order_no)
+        ->groupBy('process_sequences.id')
+        ->first();
+
+        $isFullyProcessed = false;
+        if ($processSequence) {
+            $isFullyProcessed = $processSequence->steps->every(function($value, $index) use ($blind) {
+                $process = $value->process;
+                if ($process) {
+                    return $blind->scanners->contains(function($scanner, $scannerIndex) use ($process) {
+                        return $scanner->processid == $process->barcode;
+                    });
+                }
+                return false;
+            });
+        }
+
+        return $isFullyProcessed;
     }
 }
