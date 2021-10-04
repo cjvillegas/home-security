@@ -93,9 +93,23 @@ export default {
      *
      * @returns Promise
      */
-    timeclockEmployees(params) {
-        return axios.get(`/admin/reports/timeclock-employees`, {
+    timeAndAttendance(params) {
+        return axios.get(`/admin/reports/time-and-attendance`, {
             params
         })
-    }
+    },
+
+    /**
+     * Exports the time and attendance report to excel file
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    exportTimeAndAttendance(params) {
+        return axios.get(`/admin/reports/export-time-and-attendance`, {
+            params: params
+        })
+    },
+
 }

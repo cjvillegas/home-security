@@ -22,6 +22,9 @@ class Export extends Model
     // scanners raw data
     const SCANNERS_RAW_DATA = 'scanners_raw_data';
 
+    //
+    const TIME_AND_ATTENDANCE_REPORT = 'time_and_attendance';
+
     /**
      * Export Status
      */

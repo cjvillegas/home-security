@@ -10,8 +10,8 @@
                     <global-filter-box>
                         <label>Select Date</label>
                         <el-date-picker
-                            v-model="filters.dates"
-                            type="daterange"
+                            v-model="filters.date"
+                            type="date"
                             placeholder="Select Dates"
                             class="w-100">
                         </el-date-picker>
@@ -37,6 +37,13 @@
                         type="success">
                         <i class="fas fa-file-export"></i> Export
                     </el-button>
+
+                    <el-button
+                        @click="print"
+                        :disabled="!canExportData"
+                        type="info">
+                        <i class="fas fa-print"></i> Print
+                    </el-button>
                 </div>
             </div>
 
@@ -60,20 +67,6 @@
                     :width="column.width ? column.width : ''">
                 </el-table-column>
             </el-table>
-
-            <div class="text-right">
-                <el-pagination
-                    class="mt-3"
-                    background
-                    layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
-                    :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
-                    @size-change="handleSize"
-                    @current-change="handlePage">
-                </el-pagination>
-            </div>
         </el-card>
     </div>
 </template>
@@ -91,7 +84,7 @@
         data() {
             let columns = [
                 {label: 'Employee Name', prop: 'employee_name', showOverflowTooltip: true, sortable: true},
-                {label: 'Clock No.', prop: 'clock_num', showOverflowTooltip: true, sortable: true},
+                {label: 'Clock No.', prop: 'clock_number', showOverflowTooltip: true, sortable: true},
                 {label: 'Clock In', prop: 'clock_in', showOverflowTooltip: true, sortable: true},
                 {label: 'Clock Out', prop: 'clock_out', showOverflowTooltip: true, sortable: true},
                 {label: 'Time In', prop: 'time_in', showOverflowTooltip: true, sortable: true},
@@ -101,7 +94,7 @@
                 loading: false,
                 filters: {
                     employees: [null],
-                    dates: null
+                    date: moment().subtract(1, 'days').format('YYYY-MM-DD')
                 },
                 timeclocks: [],
                 columns: columns
@@ -112,11 +105,11 @@
             ...mapGetters(['users']),
 
             canExportData() {
-
+                return !!(this.timeclocks && this.timeclocks.length > 1)
             },
 
             disableApplyFilterButton() {
-                return !this.filters.dates || !this.filters.dates.length
+                return !this.filters.date
             }
         },
 
@@ -133,9 +126,9 @@
 
                 this.sanitizeFilter(filters)
 
-                this.$API.Reports.timeclockEmployees(filters)
+                this.$API.Reports.timeAndAttendance(filters)
                 .then(res => {
-                    this.timeclocks = res.data.data
+                    this.timeclocks = res.data
                 })
                 .catch(err => {
                     console.log(err)
@@ -146,7 +139,60 @@
             },
 
             exportReport() {
+                this.loading = true
 
+                let filters = cloneDeep(this.filters)
+
+                this.sanitizeFilter(filters)
+
+                this.$API.Reports.exportTimeAndAttendance(filters)
+                .then(res => {
+                    if (res.data.success) {
+                        this.$notify({
+                            title: 'Team Status Report',
+                            message: res.data.message,
+                            type: 'success'
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.loading = false
+                })
+            },
+
+            print() {
+                let baseUrl = window.location.origin
+
+                let content = "<html><head>"
+                content += `<link href="${baseUrl}/css/print.css" rel="stylesheet" />`
+
+                content += "<table><thead><tr>"
+                for (let x of this.columns) {
+                    content += `<th>${x.label}</th>`
+                }
+                content += "</tr></thead>"
+
+                content += "<tbody>"
+                for (let item of this.timeclocks) {
+                    content += '<tr>'
+                    for (let x of this.columns) {
+                        console.log(item)
+                        content += `<td>${item[x.prop]}</td>`
+                    }
+                    content += '<tr>'
+                }
+                content += "</tbody></table>"
+
+                content += "</head></html>"
+
+                let win = window.open("")
+
+                win.document.write(content)
+                win.document.close()
+                win.print()
             },
 
             sanitizeFilter(filters) {

@@ -29,3 +29,17 @@
 .letter-spacing-8 {
     letter-spacing: 8px;
 }
+
+table {
+    width: 100%;
+    text-align: left;
+}
+
+table td,
+table th {
+    width: 5%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
+    font-family:Sans-serif;
+}

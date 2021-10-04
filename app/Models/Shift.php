@@ -12,6 +12,10 @@ class Shift extends Model
     use SoftDeletes;
     use HasFactory;
 
+    const SHIFT_ONE_TIME = ['06:00', '14:00'];
+    const SHIFT_TWO_TIME = ['14:00', '22:00'];
+    const SHIFT_THREE_TIME = ['22:00', '06:00'];
+
     public $table = 'shifts';
 
     protected $dates = [
