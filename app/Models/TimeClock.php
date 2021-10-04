@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -27,7 +28,6 @@ class TimeClock extends Model
     /********************
     * R E L A T I O N S *
     ********************/
-
     /**
      * Get the user who created this sequence
      *
@@ -54,4 +54,43 @@ class TimeClock extends Model
 
         return optional($timeClock)->trans_id;
     }
+
+    /**************
+    * S C O P E S *
+    **************/
+
+    /**
+     * Add a condition to filter only data where the specified date column is
+     * in between the passed dates.
+     *
+     * @param Builder $query
+     * @param array $dates
+     *
+     * @return Builder
+     */
+    public function scopeFilterInBetweenDates(Builder $query, array $dates): Builder
+    {
+        return $query->whereBetween('time_clocks.swiped_at', $dates);
+    }
+
+    /**
+     * Add condition to retrieve only data where employee_id is in the collection
+     * of employee ids parameter
+     *
+     * @param Builder $builder
+     * @param mixed $employee
+     *
+     * @return Builder
+     */
+    public function scopePerEmployee(Builder $builder, $employee): Builder
+    {
+        $ids = is_array($employee) ? $employee : [$employee];
+
+        return $builder->whereIn('employee_id', $ids);
+
+    }
+
+    /**************************
+    * E N D  O F  S C O P E S *
+    **************************/
 }

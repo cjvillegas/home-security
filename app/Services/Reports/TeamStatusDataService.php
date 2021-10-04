@@ -2,32 +2,25 @@
 
 namespace App\Services\Reports;
 
-use App\Interfaces\ServiceDataInterface;
 use App\Models\Export;
 use App\Models\ShiftAssignment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection AS SupCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
-class TeamStatusDataService implements ServiceDataInterface
+/**
+ * @author Chaps
+ */
+class TeamStatusDataService extends ReportDataService
 {
-    /**
-     * @var array
-     */
-    private $filters;
-
-    /**
-     * @var mixed
-     */
-    private $query;
-
     /**
      * TeamStatusDataService constructor.
      */
     public function __construct(array $filters)
     {
-        $this->filters = $filters;
+        parent::__construct($filters);
     }
 
     /**
@@ -48,14 +41,27 @@ class TeamStatusDataService implements ServiceDataInterface
 
                 // if pagination is enabled
                 if ($this->isFilterExist('size')) {
-                    $teamStatus = $query->paginate($page, $size);
+                    $countSql = exportSqlQuery((clone $this->query)->groupBy('shift_assignments.folder_name'));
+                    $totalCount = DB::select("SELECT COUNT(*) AS aggregate FROM ($countSql) AS main_table LIMIT 1")[0]->aggregate ?? 0;
+
+                    $items = (clone $this->query)
+                        ->groupBy('shift_assignments.id')
+                        ->get();
+
+                    $items = $this->processShiftAssignmentData($items);
+
+                    $teamStatus = new LengthAwarePaginator($items, $totalCount, $size, $page);
                 } else {
-                    $teamStatus = $query->getResultInCollection();
+                    $this->query->groupBy('shift_assignments.id');
+
+                    $teamStatus = $this->processShiftAssignmentData($query->getResultInCollection());
                 }
 
                 break;
             case 'export':
-                $teamStatus = $query->getResultInCollection();
+                $this->query->groupBy('shift_assignments.id');
+
+                $teamStatus = $this->processShiftAssignmentData($query->getResultInCollection());
 
                 break;
         }
@@ -73,15 +79,14 @@ class TeamStatusDataService implements ServiceDataInterface
         $query = ShiftAssignment::query()
             ->select([
                 'shift_assignments.folder_name',
-                DB::raw("COUNT(DISTINCT shift_assignments.id) AS planned_blinds"),
-                DB::raw("COUNT(DISTINCT shift_assignments.id) - CAST(SUM(DISTINCT CASE WHEN sc.blindid = shift_assignments.serial_id THEN 1 ELSE 0 END) AS SIGNED) AS not_started"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.blindid = shift_assignments.serial_id THEN 1 ELSE 0 END) AS SIGNED) AS started_blinds"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P5688737', 'P1002', 'P1021', 'P1024', 'P1025') THEN 1 ELSE 0 END) AS SIGNED) AS completed_blinds"),
-                DB::raw("CAST(SUM(DISTINCT CASE WHEN sc.processid IN ('P1012', 'P1014') THEN 1 ELSE 0 END) AS SIGNED) AS packed_blinds")
+                DB::raw("1 AS planned_blinds"),
+                DB::raw("0 AS not_started"),
+                DB::raw("CASE WHEN sc.blindid = shift_assignments.serial_id AND sc.blindid = shift_assignments.serial_id THEN 1 ELSE 0 END AS started_blinds"),
+                DB::raw("CASE WHEN sc.blindid = shift_assignments.serial_id AND sc.processid IN ('P5688737', 'P1002', 'P1021', 'P1024', 'P1025') THEN 1 ELSE 0 END AS completed_blinds"),
+                DB::raw("CASE WHEN sc.blindid = shift_assignments.serial_id AND sc.processid IN ('P1012', 'P1014') THEN 1 ELSE 0 END AS packed_blinds")
             ])
             ->leftJoin('scanners AS sc', DB::raw('CAST(sc.blindid AS SIGNED)'), 'shift_assignments.serial_id')
             ->leftJoin('processes AS p', 'p.barcode', 'sc.processid')
-            ->groupBy('shift_assignments.folder_name')
             ->orderBy('shift_assignments.folder_name');
 
         $this->query = $query;
@@ -94,51 +99,53 @@ class TeamStatusDataService implements ServiceDataInterface
      *
      * @return self
      */
-    function applyFilters(): self
+    public function applyFilters(): self
     {
         $folders = $this->getFilterValue('folders', []);
 
         // if employee filter is present
         if ($this->isFilterExist('date') && $date = $this->getFilterValue('date')) {
-            $date = Carbon::parse($date)->format('Y-m-d');
-            $this->query->filterInDate($date);
+            $date = Carbon::parse($date);
+            $dates = [$date->startOfDay()->format('Y-m-d H:i:s'), $date->endOfDay()->format('Y-m-d H:i:s')];
+            $this->query->filterInBetweenDates($dates);
         }
 
         // filter shift assignments by folder name
         if ($this->isFilterExist('folders') && !empty($folders)) {
-            $this->query->filterByFolderName($folders);
+            $this->query->filterInFolderName($folders);
         }
 
         return $this;
     }
 
     /**
-     * @param int $page
-     * @param int $size
+     * Process the shift assignments data. Remove duplicates and return only unique names.
+     * We can't achieve it in the query, we need to create a processing method to do so.
      *
-     * @return LengthAwarePaginator
-     */
-    private function paginate(int $page = 1, int $size = 25): LengthAwarePaginator
-    {
-        return $this->query->paginate($size, ['*'], 'page', $page);
-    }
-
-    /**
-     * Retrieve the qc fault data in collect format from the DB
+     * @param Collection $collection
      *
-     * @return Collection
+     * @return SupCollection
      */
-    private function getResultInCollection(): Collection
+    private function processShiftAssignmentData(Collection $collection): SupCollection
     {
-        return $this->query->get();
-    }
+        $processed = [];
 
-    /**
-     * @return array
-     */
-    public function getFilters(): array
-    {
-        return $this->filters;
+        foreach ($collection as $item) {
+            // check if this item is not yet added in the processed array
+            if (!isset($processed[$item->folder_name])) {
+                $processed[$item->folder_name] = $item->toArray();
+
+                continue;
+            }
+
+            $processed[$item->folder_name]['planned_blinds'] += $item->planned_blinds;
+            $processed[$item->folder_name]['completed_blinds'] += $item->completed_blinds;
+            $processed[$item->folder_name]['packed_blinds'] += $item->packed_blinds;
+            $processed[$item->folder_name]['started_blinds'] += $item->started_blinds;
+            $processed[$item->folder_name]['not_started'] = $processed[$item->folder_name]['planned_blinds'] - $processed[$item->folder_name]['started_blinds'];
+        }
+
+        return collect(array_values($processed));
     }
 
     /**
@@ -150,30 +157,5 @@ class TeamStatusDataService implements ServiceDataInterface
     public function exportType(): string
     {
         return Export::TEAM_STATUS_EXPORT_REPORT;
-    }
-
-    /**
-     * Check certain key exists in the filters array
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    private function isFilterExist(string $key): bool
-    {
-        return isset($this->filters[$key]);
-    }
-
-    /**
-     * Retrieve a value from the filters using a key
-     *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed|null
-     */
-    private function getFilterValue(string $key, $default = null)
-    {
-        return $this->filters[$key] ?? $default;
     }
 }

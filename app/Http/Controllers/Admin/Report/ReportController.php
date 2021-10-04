@@ -11,6 +11,7 @@ use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\QualityControlFaultDataService;
 use App\Services\Reports\TeamStatusDataService;
+use App\Services\Reports\TimeclockDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -174,6 +175,23 @@ class ReportController extends Controller
             'todayTotalMachineBoxes' => $report->totalMachineBoxes($today),
             'yesterdayTotalMachineBoxes' => $report->totalMachineBoxes($yesterday)
         ]);
+    }
 
+    /**
+     * Time & Attendance Report Page
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function timeAndAttendance()
+    {
+        return view('admin.reports.time-and-attendance');
+    }
+
+    public function timeclockEmployees(Request $request)
+    {
+        $service = new TimeclockDataService($request->all());
+        $data = $service->getData('list');
+
+        return response()->json($data);
     }
 }

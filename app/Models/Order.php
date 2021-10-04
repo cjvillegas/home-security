@@ -128,7 +128,10 @@ class Order extends Model
         return $this->hasOne(OrderTracking::class, 'order_no', 'order_no');
     }
 
-    public function processSequence()
+    /**
+     * @return HasOne
+     */
+    public function processSequence(): HasOne
     {
         return $this->hasOne(ProcessSequence::class, 'name', 'product_type');
     }

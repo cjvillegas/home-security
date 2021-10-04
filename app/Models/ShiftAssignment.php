@@ -28,16 +28,17 @@ class ShiftAssignment extends Model
     * S C O P E S *
     **************/
     /**
-     * Add a condition to filter only data that is equal to the given date
+     * Add a condition to filter only data where the specified date columns
+     * is in between the passed dates values
      *
      * @param Builder $query
-     * @param string $date
+     * @param string $dates
      *
      * @return Builder
      */
-    public function scopeFilterInDate(Builder $query, string $date): Builder
+    public function scopeFilterInBetweenDates(Builder $query, array $dates): Builder
     {
-        return $query->whereRaw("DATE_FORMAT(shift_assignments.scheduled_date, '%Y-%m-%d') = '{$date}'");
+        return $query->whereBetween('shift_assignments.scheduled_date', $dates);
     }
 
     /**
@@ -59,6 +60,24 @@ class ShiftAssignment extends Model
                 }
             }
         });
+    }
+
+    /**
+     * Filters shift assignments based on the folder names
+     *
+     * @param Builder $builder
+     * @param array $folders
+     *
+     * @return Builder
+     */
+    public function scopeFilterInFolderName(Builder $builder, array $folders): Builder
+    {
+        // sanity check: has folders
+        if (!empty($folders)) {
+            $builder->whereIn('shift_assignments.folder_name', $folders);
+        }
+
+        return $builder;
     }
 
     /**************************

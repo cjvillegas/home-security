@@ -26,6 +26,7 @@ class Team extends Model
     protected $fillable = [
         'name',
         'target',
+        'folder_names',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -38,6 +39,15 @@ class Team extends Model
      */
     protected $appends = [
         'color',
+    ];
+
+    /**
+     * Cast variables to specified data types
+     *
+     * @var array
+     */
+    protected $casts = [
+        'folder_names' => 'array',
     ];
 
     /**

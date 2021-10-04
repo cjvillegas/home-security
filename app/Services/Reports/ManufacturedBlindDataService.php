@@ -2,13 +2,12 @@
 
 namespace App\Services\Reports;
 
-use App\Interfaces\ServiceDataInterface;
 use App\Models\Order;
 use App\Models\ProcessSequence\ProcessSequence;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection as SuppCollection;
+use Illuminate\Support\Facades\DB;
 
 class ManufacturedBlindDataService
 {
@@ -25,12 +24,12 @@ class ManufacturedBlindDataService
     /**
      * Retrieved all Blinds based on selected DateRange
      *
-     * @return Collection
+     * @return SuppCollection
      */
-    public function getAllBlinds($dateRange): Collection
+    public function getAllBlinds($dateRange): SuppCollection
     {
-        $from = $dateRange[0];
-        $to = $dateRange[1];
+        $from = Carbon::parse($dateRange[0])->startOfDay()->format('Y-m-d H:i');
+        $to = Carbon::parse($dateRange[1])->endOfDay()->format('Y-m-d H:i');
 
         $query = Order::query()
             ->select([
@@ -38,20 +37,24 @@ class ManufacturedBlindDataService
                 'orders.order_no',
                 'orders.product_type',
                 'sc.scannedtime',
-                'orders.serial_id'
+                'orders.serial_id',
+                DB::raw('COUNT(DISTINCT sc.id) AS scanners_count')
             ])
-            ->with(['scanners', 'processSequence' => function($query) {
-                $query->with(['steps' => function($query) {
-                    $query->with('process');
-                }]);
-            }])
-            ->whereBetween('scannedtime', [$from, $to])
             ->whereNotNull('orders.product_type')
-            ->leftJoin('scanners AS sc', 'orders.serial_id', 'sc.blindid')
+            ->leftJoin('scanners AS sc', function ($join) use ($from, $to){
+                $join->on('orders.serial_id', 'sc.blindid')
+                    ->whereBetween('scannedtime', [$from, $to]);
+            })
             ->groupBy('orders.serial_id')
             ->get();
 
-        $blinds = $this->sanitizeFullyProcessedBlinds($query);
+        $processSequences = ProcessSequence::with([
+            'steps' => function ($query) {
+                $query->with(['process']);
+            }
+        ])->get();
+
+        $blinds = $this->sanitizeFullyProcessedBlinds($query, $processSequences);
 
         return $blinds;
     }
@@ -60,57 +63,31 @@ class ManufacturedBlindDataService
      * This will return the Sanitized Fully Processed Blinds.
      *
      * @param  mixed $blinds
+     * @param  SuppCollection $processSequences
      *
-     * @return bool
+     * @return SuppCollection
      */
-    function sanitizeFullyProcessedBlinds($blinds): Collection
+    function sanitizeFullyProcessedBlinds($blinds, SuppCollection $processSequences): SuppCollection
     {
-        $blindsCollection = new Collection();
+        $blindsCollection = collect();
 
-        $isFullyProcessed = false;
         foreach ($blinds as $blind) {
-            $isFullyProcessed = $this->isFullyProcessed($blind);
+            $sequence = $processSequences->first(function ($item) use ($blind) {
+                return strtolower($item->name) === strtolower($blind->product_type);
+            });
+
+            // sanity check: blind should have a valid sequence
+            if (empty($sequence)) {
+                continue;
+            }
+
+            $isFullyProcessed = $sequence->steps->count() === $blind->scanners_count;
+
             if ($isFullyProcessed) {
                 $blindsCollection->push($blind);
             }
         }
-        $blindsCollection = $blindsCollection->filter(
-            function ($blind, $blindKey) {
-                return $blind->scannedtime > Carbon::parse($blind->scannedtime)
-                    ->format('Y-m-d').' '. '18:00:00';
-            }
-        )
-        ->groupBy(
-            function ($date) {
-                return Carbon::parse($date->scannedtime)->format('Y-m-d');
-            }
-        );
+
         return $blindsCollection;
-    }
-
-    /**
-     * Determine whether the specific blind is Fully processed or not.
-     *
-     * @param  mixed $blind
-     *
-     * @return Boolean
-     */
-    function isFullyProcessed($blind): bool
-    {
-        dd($blind);
-        $isFullyProcessed = false;
-        if ($blind->process_sequence) {
-            $isFullyProcessed = $processSequence->steps->every(function($value, $index) use ($blind) {
-                $process = $value->process;
-                if ($process) {
-                    return $blind->scanners->contains(function($scanner, $scannerIndex) use ($process) {
-                        return $scanner->processid == $process->barcode;
-                    });
-                }
-                return false;
-            });
-        }
-
-        return $isFullyProcessed;
     }
 }

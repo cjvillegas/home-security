@@ -1,4 +1,4 @@
 @extends('layouts.admin')
 @section('content')
-    <app></app>
+    <time-and-attendance></time-and-attendance>
 @endsection
