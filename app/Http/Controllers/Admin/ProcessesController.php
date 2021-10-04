@@ -15,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -203,7 +202,7 @@ class ProcessesController extends Controller
                 ->when($searchString, function ($query) use ($searchString) {
                     $query->where('name', 'like', "%{$searchString}%");
                 })->get();
-        Log::info($processes);
+
         return response()->json(['processes' => $processes]);
     }
 
