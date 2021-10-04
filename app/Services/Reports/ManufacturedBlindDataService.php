@@ -40,7 +40,11 @@ class ManufacturedBlindDataService
                 'sc.scannedtime',
                 'orders.serial_id'
             ])
-            ->with('scanners')
+            ->with(['scanners', 'processSequence' => function($query) {
+                $query->with(['steps' => function($query) {
+                    $query->with('process');
+                }]);
+            }])
             ->whereBetween('scannedtime', [$from, $to])
             ->whereNotNull('orders.product_type')
             ->leftJoin('scanners AS sc', 'orders.serial_id', 'sc.blindid')
@@ -93,22 +97,9 @@ class ManufacturedBlindDataService
      */
     function isFullyProcessed($blind): bool
     {
-        $processSequence = ProcessSequence::select(
-            [
-                'process_sequences.*',
-                'o.id AS order_id',
-                'o.order_no AS order_no',
-            ]
-        )->with(['steps' => function ($query) {
-            $query->with('process');
-        }])
-        ->join('orders AS o', 'o.product_type', 'process_sequences.name')
-        ->where('o.order_no', $blind->order_no)
-        ->groupBy('process_sequences.id')
-        ->first();
-
+        dd($blind);
         $isFullyProcessed = false;
-        if ($processSequence) {
+        if ($blind->process_sequence) {
             $isFullyProcessed = $processSequence->steps->every(function($value, $index) use ($blind) {
                 $process = $value->process;
                 if ($process) {

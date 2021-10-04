@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ProcessSequence\ProcessSequence;
 use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,6 +126,11 @@ class Order extends Model
     public function orderTrackings(): HasOne
     {
         return $this->hasOne(OrderTracking::class, 'order_no', 'order_no');
+    }
+
+    public function processSequence()
+    {
+        return $this->hasOne(ProcessSequence::class, 'name', 'product_type');
     }
     /********************************
     * E N D  O F  R E L A T I O N S *
