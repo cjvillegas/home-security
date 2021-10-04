@@ -85,4 +85,17 @@ export default {
             params: params
         })
     },
+
+    /**
+     * API endpoint that fetches timeclock data for employees
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
+    timeclockEmployees(params) {
+        return axios.get(`/admin/reports/timeclock-employees`, {
+            params
+        })
+    }
 }

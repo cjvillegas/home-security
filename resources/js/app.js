@@ -89,6 +89,10 @@ const app = new Vue({
             this.getEmployees()
             this.getProcesses()
         }
+
+        if (pathname === '/admin/reports/time-and-attendance') {
+            this.getEmployees()
+        }
     },
     methods: {
         getUsers() {

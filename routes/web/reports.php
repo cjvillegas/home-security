@@ -21,4 +21,8 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     //fire register
     Route::get('/fire-register', 'FireRegisterController@fireRegister')->name('fire-register');
     Route::post('/fire-register', 'FireRegisterController@getEmployees')->name('fire-register.get-employees');
+
+    // time & attendance report
+    Route::get('/time-and-attendance', 'ReportController@timeAndAttendance')->name('time-and-attendance');
+    Route::get('/timeclock-employees', 'ReportController@timeclockEmployees')->name('timeclock-employees');
 });
