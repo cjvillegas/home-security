@@ -133,7 +133,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced No.
                 </template>
-                {{ order_details.invoice_no }}
+                {{ order_details.invoice_no || '--:--' }}
             </el-descriptions-item>
         </el-descriptions>
 
@@ -157,8 +157,9 @@
         </order-view-planned-work>
 
         <order-view-packed-orders
-            ref="packedOrders"
             v-if="order"
+            ref="packedOrders"
+            :order="order_details"
             :scanners="packedData"
             :visible.sync="showPackedOrdersModal"
             @close="showPackedOrdersModal = false">
