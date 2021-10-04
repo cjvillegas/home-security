@@ -80,7 +80,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/{order_no}/process-sequences', 'OrdersController@getOrderProcessSequences')->name('orders.process-sequences');
     Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
-    Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.update-product-type');
+    Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.product-type');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams

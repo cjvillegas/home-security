@@ -26,7 +26,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from '../../mixins/pagination'
-import { mapActions } from 'vuex'
+    import { mapActions } from 'vuex'
     export default {
         name: "OrderView",
 

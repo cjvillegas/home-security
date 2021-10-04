@@ -3,7 +3,7 @@
         <el-dialog
             :visible.sync="showDialog"
             title="Total Blinds"
-            :before-close="closeDialog"
+            :before-close="closeModal"
             width="70%"
             top="10vh">
             <el-table
@@ -107,10 +107,6 @@
                     this.loading = false
                 })
             },
-
-            closeDialog() {
-                this.closeModal()
-            }
         },
 
         watch: {

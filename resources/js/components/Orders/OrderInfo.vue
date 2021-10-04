@@ -197,10 +197,10 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import {mapActions, mapGetters} from "vuex";
-import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
+    import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
 
     export default {
-  components: { OrderViewTotalBlinds },
+        components: { OrderViewTotalBlinds },
         name: "OrderInfo",
 
         props: {
