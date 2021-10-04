@@ -5,7 +5,8 @@
         @close="closeForm"
         append-to-body
         width="40%">
-        <div class="container mt-5 mb-5">
+        <div class="container mt-5 mb-5"
+            v-loading="loading">
             <div class="row">
                 <div class="col-md-12">
                     <el-timeline>
@@ -15,15 +16,19 @@
                             :type="process.type">
                             <el-card>
                                 <h3> {{ process.label }} </h3>
-                                <div
-                                    v-for="(scanner, scannerKey) in process.scanners"
-                                    :key="scannerKey">
-                                    <div
-                                        v-if="scanner.processid == process.barcode">
-                                        {{ (scanner.employee ? scanner.employee.fullname : '') | valueForEmptyText }}
-                                        <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
-                                    </div>
-                                </div>
+                                <el-collapse v-if="process.scanners.length > 5">
+                                    <el-collapse-item title="View Scanners History">
+                                        <div
+                                            class="overflow-auto"
+                                            v-for="(scanner, scannerKey) in process.scanners"
+                                            :key="scannerKey">
+                                            <div>
+                                                {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
+                                                <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                            </div>
+                                        </div>
+                                    </el-collapse-item>
+                                </el-collapse>
                             </el-card>
                         </el-timeline-item>
                     </el-timeline>
@@ -34,6 +39,7 @@
 </template>
 
 <script>
+    import { mapActions, mapGetters } from 'vuex';
     import {dialog} from "../../mixins/dialog";
     export default {
         name: "OrderTimeline",
@@ -42,18 +48,17 @@
             processList: {
                 required: true,
                 type: Array
-            }
+            },
         },
         data() {
             return {
-
+                loading: false
             }
         },
-
         methods: {
             closeForm() {
                 this.closeModal()
             }
-        }
+        },
     }
 </script>
