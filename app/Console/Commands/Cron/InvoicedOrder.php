@@ -86,7 +86,14 @@ class InvoicedOrder extends CronDatabasePopulator
      */
     protected function getDataFromBlind(): Collection
     {
-        $date = date('Y-m-d');
+        $date = date('Y-m-d', strtotime('-1 day'));
+        $day = date('l', strtotime($date));
+
+        // if it's monday, go back to friday
+        if ($day === 'Monday') {
+            $date = date('Y-m-d', strtotime('-3 day'));
+        }
+
 
         $query = "
             SELECT
@@ -96,7 +103,7 @@ class InvoicedOrder extends CronDatabasePopulator
             FROM [User]
 	            INNER JOIN [Order] ON [User].id = [Order].user_id
 	            INNER JOIN OrderDetail ON [Order].id = OrderDetail.order_id
-            WHERE ([Order].dat_invoice BETWEEN CONVERT(DATETIME, '{$date} 00:00:00', 102) AND CONVERT(DATETIME, '{$date} 00:00:00', 102))
+            WHERE ([Order].dat_invoice BETWEEN CONVERT(DATETIME, '{$date} 00:00:00', 102) AND CONVERT(DATETIME, '{$date} 23:59:59', 102))
         ";
 
         // execute the query

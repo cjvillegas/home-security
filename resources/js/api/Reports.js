@@ -8,6 +8,8 @@ export default {
      *
      * @param params
      *
+     * @handler \App\Http\Controllers\Admin\Report\WorkAnalyticsReportController@getWorkAnalytics
+     *
      * @return Promise
      */
     fetchWorkAnalytics(params) {
@@ -17,6 +19,8 @@ export default {
     /**
      * Fetch manufactured blind analytics. Data being fetched is from the previous day
      * and the current day.
+     *
+     * @handler \App\Http\Controllers\Admin\Report\WorkAnalyticsReportController@manufacturedBlindsAnalytics
      *
      * @return Promise
      */
@@ -28,6 +32,8 @@ export default {
      * Fetch despatch department analytics. Data being fetched is from the previous day
      * and the current day.
      *
+     * @handler \App\Http\Controllers\Admin\Report\WorkAnalyticsReportController@getDespatchDepartmentAnalytics
+     *
      * @return Promise
      */
     getDespatchDepartmentAnalytics() {
@@ -38,6 +44,8 @@ export default {
      * Fetch QC Tag for reporting
      *
      * @param params
+     *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@getQcList
      *
      * @returns Promise
      */
@@ -52,6 +60,8 @@ export default {
      *
      * @param params
      *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@exportQcFaultData
+     *
      * @returns Promise
      */
     exportQcFaultData(params) {
@@ -65,6 +75,8 @@ export default {
      *
      * @param params
      *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@getTeamStatusReport
+     *
      * @returns Promise
      */
     getTeamStatusList(params) {
@@ -74,9 +86,11 @@ export default {
     },
 
     /**
-     * Exports the qc fault data based on the passed array
+     * Exports the team status report
      *
      * @param params
+     *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@exportTeamStatus
      *
      * @returns Promise
      */
@@ -91,6 +105,8 @@ export default {
      *
      * @param params
      *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@timeAndAttendance
+     *
      * @returns Promise
      */
     timeAndAttendance(params) {
@@ -104,6 +120,8 @@ export default {
      *
      * @param params
      *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@exportTimeAndAttendance
+     *
      * @returns Promise
      */
     exportTimeAndAttendance(params) {
@@ -112,4 +130,16 @@ export default {
         })
     },
 
+    /**
+     * API endpoint that fetches the who works here data
+     *
+     * @param params
+     *
+     * @handler \App\Http\Controllers\Admin\Report\ReportController@whoWorksHere
+     *
+     * @returns Promise
+     */
+    whoWorksHere(params) {
+        return axios.get(`/admin/reports/who-works-here`, {params})
+    }
 }

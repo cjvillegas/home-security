@@ -14,9 +14,9 @@ class AddMachineIdColumnInScannersTable extends Migration
     public function up()
     {
         Schema::table('scanners', function (Blueprint $table) {
-            $table->unsignedBigInteger('machine_id')->nullable()->after('id');
+            $table->unsignedBigInteger('machineid')->nullable()->after('id');
 
-            $table->foreign('machine_id')->references('id')->on('machines')->onUpdate('SET NULL')->onDelete('SET NULL');
+            $table->foreign('machineid')->references('id')->on('machines')->onUpdate('SET NULL')->onDelete('SET NULL');
         });
     }
 
@@ -28,8 +28,8 @@ class AddMachineIdColumnInScannersTable extends Migration
     public function down()
     {
         Schema::table('scanners', function (Blueprint $table) {
-            $table->dropForeign('scanners_machine_id_foreign');
-            $table->dropColumn('machine_id');
+            $table->dropForeign('scanners_machineid_foreign');
+            $table->dropColumn('machineid');
         });
     }
 }

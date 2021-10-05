@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
@@ -94,9 +95,9 @@ class Employee extends Model
     /**
      * Relation to Machine Counters
      *
-     * @return HasMany
+     * @return HasOne
      */
-    public function machineCounters()
+    public function machineCounters(): HasOne
     {
         return $this->hasOne(MachineCounter::class);
     }
@@ -129,6 +130,26 @@ class Employee extends Model
     public function qcFaults(): HasMany
     {
         return $this->hasMany(QcFault::class);
+    }
+
+    /**
+     * Scanners
+     *
+     * @return HasMany
+     */
+    public function scanners(): HasMany
+    {
+        return $this->hasMany(Scanner::class, 'employeeid', 'barcode');
+    }
+
+    /**
+     * Timeclock
+     *
+     * @return HasMany
+     */
+    public function attendance(): HasMany
+    {
+        return $this->hasMany(TimeClock::class, 'employee_id');
     }
 
     /********************************
