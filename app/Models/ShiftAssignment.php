@@ -28,7 +28,8 @@ class ShiftAssignment extends Model
     * S C O P E S *
     **************/
     /**
-     * Add a condition to filter only data that is equal to the given date
+     * Add a condition to filter only data where the specified date columns
+     * is in between the passed dates values
      *
      * @param Builder $query
      * @param string $dates
