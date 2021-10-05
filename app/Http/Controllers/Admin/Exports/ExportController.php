@@ -48,6 +48,7 @@ class ExportController extends Controller
                 'name' => 'Operation',
                 'fullname' => 'Employee',
                 'scanned_date_time' => 'Scanned Date',
+                'machine_name' => 'Machine Name'
             ])
             ->export($service);
 
