@@ -133,7 +133,7 @@ class Employee extends Model
     }
 
     /**
-     * Get the employee scanners
+     * Scanners
      *
      * @return HasMany
      */

@@ -235,7 +235,7 @@ class ReportController extends Controller
     }
 
     /**
-     * Return the who's works here page
+     * Who Works Here report page
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
@@ -245,6 +245,8 @@ class ReportController extends Controller
     }
 
     /**
+     * Fetch the who works here data
+     *
      * @param Request $request
      *
      * @return JsonResponse
