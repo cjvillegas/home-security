@@ -12,6 +12,7 @@ use App\Services\MachineCounterReportService;
 use App\Services\Reports\QualityControlFaultDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
+use App\Services\Reports\WhoWorksHereDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -231,5 +232,28 @@ class ReportController extends Controller
             'success' => true,
             'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
         ]);
+    }
+
+    /**
+     * Return the who's works here page
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function whoWorksHerePage()
+    {
+        return view('admin.reports.who-works-here');
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function whoWorksHere(Request $request): JsonResponse
+    {
+        $service = new WhoWorksHereDataService($request->all());
+        $data = $service->getData('list');
+
+        return response()->json($data);
     }
 }
