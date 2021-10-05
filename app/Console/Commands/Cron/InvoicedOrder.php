@@ -87,6 +87,12 @@ class InvoicedOrder extends CronDatabasePopulator
     protected function getDataFromBlind(): Collection
     {
         $date = date('Y-m-d', strtotime('-1 day'));
+        $day = date('l', strtotime($date));
+
+        // if it's monday, go back to friday
+        if ($day === 'Monday') {
+            $date = date('Y-m-d', strtotime('-3 day'));
+        }
 
 
         $query = "
