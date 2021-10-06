@@ -35,9 +35,13 @@ class ManufacturedBlindController extends Controller
     public function getBlinds(Request $request): JsonResponse
     {
         $service = new ManufacturedBlindDataService();
-        $blinds = $service->getAllBlinds($request->dateRange);
+        $data = $service->getAllBlinds($request->dateRange);
 
-        return response()->json(['blinds' => $blinds]);
+        return response()->json([
+                'blinds' => $data['blinds'],
+                'total_manufactured' => $data['totalManufacturedBlinds'],
+                'total_invoice' => $data['totalInvoicedBlinds']
+            ]);
     }
 
     /**
@@ -49,6 +53,8 @@ class ManufacturedBlindController extends Controller
      */
     public function exportManufacturedBlinds(Request $request)
     {
+        $user = User::find(auth()->user()->id);
+
         return null;
     }
 }

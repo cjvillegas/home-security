@@ -15,6 +15,7 @@ const actions = {
     getBlinds({commit, state}, data) {
         let apiUrl = `/admin/reports/manufactured-blinds`
 
+        commit('setLoading', true)
         axios.post(apiUrl, data)
         .then((response) => {
             console.log(response.data)

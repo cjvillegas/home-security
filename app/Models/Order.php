@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Order\OrderInvoice;
 use App\Models\ProcessSequence\ProcessSequence;
 use \DateTimeInterface;
 use Carbon\Carbon;
@@ -144,6 +145,16 @@ class Order extends Model
     public function latestScanner(): HasOne
     {
         return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime');
+    }
+
+    /**
+     * Get Order Invoice info per Blind
+     *
+     * @return HasOne
+     */
+    public function orderInvoice(): HasOne
+    {
+        return $this->hasOne(OrderInvoice::class, 'order_no', 'order_no');
     }
     /********************************
     * E N D  O F  R E L A T I O N S *

@@ -5,10 +5,12 @@ namespace App\Services\Reports;
 use App\Models\Order;
 use App\Models\ProcessSequence\ProcessSequence;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SuppCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class ManufacturedBlindDataService
 {
@@ -21,6 +23,21 @@ class ManufacturedBlindDataService
      * @var mixed
      */
     private $query;
+
+    /**
+     * Overall total Manufactured Blinds
+     *
+     * @var int
+     */
+    private $totalManufacturedBlinds = 0;
+
+    /**
+     * Overall total Invoiced Blinds
+     *
+     * @var int
+     */
+    private $totalInvoicedBlinds = 0;
+
 
     /**
      * Retrieved all Blinds based on selected DateRange
@@ -44,13 +61,13 @@ class ManufacturedBlindDataService
             ->with(['latestScanner' => function($query) use ($from, $to) {
                 $query->whereBetween('scannedtime', [$from, $to]);
             }])
+            ->with('orderInvoice')
             ->whereNotNull('orders.product_type')
             ->join('scanners AS sc', function ($join) use ($from, $to){
                 $join->on('orders.serial_id', 'sc.blindid')
                     ->whereBetween('scannedtime', [$from, $to]);
             })
             ->groupBy('orders.serial_id')
-            ->limit(10)
             ->get();
 
         $processSequences = ProcessSequence::with([
@@ -61,15 +78,90 @@ class ManufacturedBlindDataService
 
         $blinds = $this->sanitizeFullyProcessedBlinds($query, $processSequences);
 
-        $blinds = $this->segregateByShift($blinds);
+        $blinds = $this->segregateByDaysAndShifts($blinds, $from, $to);
 
-        return $blinds;
+        $data = collect([
+                    'blinds' => $blinds,
+                    'totalManufacturedBlinds' => $this->totalManufacturedBlinds,
+                    'totalInvoicedBlinds' => $this->totalInvoicedBlinds
+                ]);
+        return $data;
     }
 
-    private function segregateByShift(): SuppCollection
+    /**
+     * To Seggregated the fetched data by Shifts
+     *
+     * @return SuppCollection
+     */
+    private function segregateByDaysAndShifts($blinds, $from, $to): SuppCollection
     {
+        $data = collect();
+        $period = CarbonPeriod::create($from, $to);
+        foreach ($period as $date) {
+        }
+        // initialize Shifts
+        $dates = $period->toArray();
 
-        return collect();
+        $shift1 = new stdClass;
+        $shift1->name = "Shift 1";
+        $shift1->start = "06:00:00";
+        $shift1->end = "14:00:00";
+
+        $shift2 = new stdClass;
+        $shift2->name = "Shift 2";
+        $shift2->start = "14:00:00";
+        $shift2->end = "22:00:00";
+
+        $shift3 = new stdClass;
+        $shift3->name = "Shift 3";
+        $shift3->start = "22:00:00";
+        $shift3->end = "06:00:00";
+
+        $shifts = array($shift1, $shift2, $shift3);
+
+        // Segregate per Date based on selected Date Range
+        foreach ($dates as $date) {
+            $dataPerDate = $blinds->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
+                ->where('scannedtime', '<=', Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59');
+
+            // Sanitize if the data the specific date has Data
+            if ($dataPerDate->count() > 0) {
+
+                //Segregate data per Shifts
+                foreach ($shifts as $shift) {
+                    $start = Carbon::parse($date)->format('Y-m-d'). ' '. $shift->start;
+                    $end = Carbon::parse($date)->format('Y-m-d'). ' '. $shift->end;
+
+                    if ($shift->name == "Shift 3") {
+                        $end = Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. $shift->end;
+                    }
+                    $manufacturedBlindsCount = $dataPerDate->where('scannedtime', '>=', $start)
+                        ->where('scannedtime', '<=', $end)
+                        ->count();
+                    $invoicedBlindsCount =  $dataPerDate->where('scannedtime', '>=', $start)
+                        ->where('scannedtime', '<=', $end)->whereNotNull('orderInvoice')
+                        ->count();
+
+                    $dateValue = Carbon::parse($date)->format('Y-m-d');
+                    if ($shift->name == "Shift 3") {
+                        $dateValue = Carbon::parse($date)->format('Y-m-d'). ' / '. Carbon::parse($date)->addDay()->format('Y-m-d');
+                    }
+
+                    //Increment overall total value
+                    $this->totalManufacturedBlinds += $manufacturedBlindsCount;
+                    $this->totalInvoicedBlinds += $invoicedBlindsCount;
+
+                    $data->push([
+                        'date' => $dateValue,
+                        'shift' => $shift->name,
+                        'manufactured_blinds' => $manufacturedBlindsCount,
+                        'invoiced_blinds' => $invoicedBlindsCount
+                    ]);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -102,10 +194,7 @@ class ManufacturedBlindDataService
             }
         }
 
-        //format Blinds
-        $manufacturedBlindsData = $this->formatBlindsCollection($blindsCollection);
-
-        return $manufacturedBlindsData;
+        return $blindsCollection;
     }
 
     /**
@@ -122,18 +211,8 @@ class ManufacturedBlindDataService
         //         });
 
 
-        $data = $blindsCollection->filter(function ($blind, $blindKey) {
-                    return $blind->scannedtime >= Carbon::parse($blind->scannedtime)
-                        ->format('Y-m-d').' '. '06:00:00' &&
-                        $blind->scannedtime <=  Carbon::parse($blind->scannedtime)
-                        ->format('Y-m-d').' '. '14:00:00';
-                })
-                ->groupBy(
-                    function ($date) {
-                        return Carbon::parse($date->scannedtime)->format('Y-m-d');
-                    }
-                );
 
-        return $data;
+
+        return collect();
     }
 }
