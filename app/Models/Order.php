@@ -135,6 +135,16 @@ class Order extends Model
     {
         return $this->hasOne(ProcessSequence::class, 'name', 'product_type');
     }
+
+    /**
+     * Get the most recent scanner data of an employee
+     *
+     * @return HasOne
+     */
+    public function latestScanner(): HasOne
+    {
+        return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime');
+    }
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

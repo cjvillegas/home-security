@@ -41,9 +41,8 @@ class ManufacturedBlindDataService
                 'orders.serial_id',
                 DB::raw('COUNT(DISTINCT sc.id) AS scanners_count')
             ])
-            ->with(['scanners' => function($query) use ($from, $to) {
-                $query->whereBetween('scannedtime', [$from, $to])
-                    ->last();
+            ->with(['latestScanner' => function($query) use ($from, $to) {
+                $query->whereBetween('scannedtime', [$from, $to]);
             }])
             ->whereNotNull('orders.product_type')
             ->join('scanners AS sc', function ($join) use ($from, $to){
@@ -54,7 +53,6 @@ class ManufacturedBlindDataService
             ->limit(10)
             ->get();
 
-        dd($query);
         $processSequences = ProcessSequence::with([
             'steps' => function ($query) {
                 $query->with(['process']);
@@ -63,7 +61,15 @@ class ManufacturedBlindDataService
 
         $blinds = $this->sanitizeFullyProcessedBlinds($query, $processSequences);
 
+        $blinds = $this->segregateByShift($blinds);
+
         return $blinds;
+    }
+
+    private function segregateByShift(): SuppCollection
+    {
+
+        return collect();
     }
 
     /**
@@ -74,7 +80,7 @@ class ManufacturedBlindDataService
      *
      * @return SuppCollection
      */
-    function sanitizeFullyProcessedBlinds($blinds, SuppCollection $processSequences): SuppCollection
+    public function sanitizeFullyProcessedBlinds($blinds, SuppCollection $processSequences): SuppCollection
     {
         $blindsCollection = collect();
 
@@ -109,7 +115,7 @@ class ManufacturedBlindDataService
      *
      * @return SuppCollection
      */
-    function formatBlindsCollection($blindsCollection): SuppCollection
+    private function formatBlindsCollection($blindsCollection): SuppCollection
     {
         // $data = $blindsCollection->groupBy(function($date) {
         //             return Carbon::parse($date->scannedtime)->format('Y-m-d'); // grouping by years
