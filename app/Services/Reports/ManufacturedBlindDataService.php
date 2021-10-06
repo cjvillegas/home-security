@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SuppCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ManufacturedBlindDataService
 {
@@ -40,14 +41,20 @@ class ManufacturedBlindDataService
                 'orders.serial_id',
                 DB::raw('COUNT(DISTINCT sc.id) AS scanners_count')
             ])
+            ->with(['scanners' => function($query) use ($from, $to) {
+                $query->whereBetween('scannedtime', [$from, $to])
+                    ->last();
+            }])
             ->whereNotNull('orders.product_type')
-            ->leftJoin('scanners AS sc', function ($join) use ($from, $to){
+            ->join('scanners AS sc', function ($join) use ($from, $to){
                 $join->on('orders.serial_id', 'sc.blindid')
                     ->whereBetween('scannedtime', [$from, $to]);
             })
             ->groupBy('orders.serial_id')
+            ->limit(10)
             ->get();
 
+        dd($query);
         $processSequences = ProcessSequence::with([
             'steps' => function ($query) {
                 $query->with(['process']);
@@ -81,6 +88,7 @@ class ManufacturedBlindDataService
                 continue;
             }
 
+            // if the number of steps is equal to blind's scanners, its fully processed
             $isFullyProcessed = $sequence->steps->count() === $blind->scanners_count;
 
             if ($isFullyProcessed) {
@@ -88,6 +96,38 @@ class ManufacturedBlindDataService
             }
         }
 
-        return $blindsCollection;
+        //format Blinds
+        $manufacturedBlindsData = $this->formatBlindsCollection($blindsCollection);
+
+        return $manufacturedBlindsData;
+    }
+
+    /**
+     * Format Blinds Collection to count it per day and per shift
+     *
+     * @param  mixed $blinds
+     *
+     * @return SuppCollection
+     */
+    function formatBlindsCollection($blindsCollection): SuppCollection
+    {
+        // $data = $blindsCollection->groupBy(function($date) {
+        //             return Carbon::parse($date->scannedtime)->format('Y-m-d'); // grouping by years
+        //         });
+
+
+        $data = $blindsCollection->filter(function ($blind, $blindKey) {
+                    return $blind->scannedtime >= Carbon::parse($blind->scannedtime)
+                        ->format('Y-m-d').' '. '06:00:00' &&
+                        $blind->scannedtime <=  Carbon::parse($blind->scannedtime)
+                        ->format('Y-m-d').' '. '14:00:00';
+                })
+                ->groupBy(
+                    function ($date) {
+                        return Carbon::parse($date->scannedtime)->format('Y-m-d');
+                    }
+                );
+
+        return $data;
     }
 }

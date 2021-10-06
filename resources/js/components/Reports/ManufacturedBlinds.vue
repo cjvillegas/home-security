@@ -31,7 +31,8 @@
                 </div>
             </div>
 
-            <el-table>
+            <el-table
+                :data="blinds">
                 <el-table-column
                     label="Date">
                 </el-table-column>
