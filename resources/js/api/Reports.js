@@ -141,5 +141,9 @@ export default {
      */
     whoWorksHere(params) {
         return axios.get(`/admin/reports/who-works-here`, {params})
+    },
+
+    dashboardMachineStatistics(params) {
+        return axios.get(`/admin/reports/dashboard-machine-statistics`, {params})
     }
 }

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Report;
 
-use App\Exports\ExportDataAsCollectionFromService;
 use App\Http\Controllers\Controller;
 use App\Jobs\Exports\ExportQcFaultDataJob;
-use App\Models\Export;
 use App\Models\User;
 use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
+use App\Services\Reports\DashboardMachineStatisticsDataService;
 use App\Services\Reports\QualityControlFaultDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
@@ -257,5 +256,18 @@ class ReportController extends Controller
         $data = $service->getData('list');
 
         return response()->json($data);
+    }
+
+    /**
+     * Retrieve Dashboard's machine statistics data
+     *
+     * @return JsonResponse
+     */
+    public function dashboardMachineStatistics(Request $request): JsonResponse
+    {
+        $service = new DashboardMachineStatisticsDataService($request->all());
+
+
+        return response()->json($service->getData('list'));
     }
 }

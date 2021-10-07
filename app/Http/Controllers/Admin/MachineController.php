@@ -102,25 +102,39 @@ class MachineController extends Controller
     }
 
     /**
-     * Destroy machine data
+     * Destroy a machine
      *
      * @param  Machine $machine
      *
      * @return JsonResponse
      */
-    public function destroy(Machine $machine)
+    public function destroy(Machine $machine): JsonResponse
     {
         abort_if(Gate::denies('machine_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        DB::beginTransaction();
-        try {
-            $machine->delete();
-            DB::commit();
+        $machine->delete();
+        DB::commit();
 
-            return response()->json(['message' => 'Successfully Deleted!']);
-        }
-        catch (Exception $e) {
-            DB::rollBack();
-        }
+        return response()->json(['message' => 'Successfully Deleted!']);
+    }
+
+    /**
+     * Fetch all machines
+     *
+     * @return JsonResponse
+     */
+    public function machines(): JsonResponse
+    {
+        $machines = Machine::
+            select([
+                'id',
+                'location',
+                'model',
+                'name',
+                'serial_no'
+            ])
+            ->get();
+
+        return response()->json($machines);
     }
 }

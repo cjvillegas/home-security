@@ -33,4 +33,7 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     // who works here
     Route::get('/who-works-here-page', 'ReportController@whoWorksHerePage')->name('who-works-here-page');
     Route::get('/who-works-here', 'ReportController@whoWorksHere')->name('who-works-here');
+
+    // dashboard machine statistics
+    Route::get('/dashboard-machine-statistics', 'ReportController@dashboardMachineStatistics')->name('dashboard-machine-statistics');
 });

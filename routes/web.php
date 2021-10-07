@@ -143,6 +143,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::prefix('machines')->as('machines')->group(function () {
         Route::get('/', 'MachineController@index');
         Route::post('machines-list', 'MachineController@fetchMachines');
+        Route::get('all-machines', 'MachineController@machines');
 
         Route::post('store', 'MachineController@store')->name('machine.store');
         Route::patch('{machine}/update', 'MachineController@update')->name('machine.update');
