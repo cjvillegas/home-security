@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Order\OrderInvoice;
 use App\Models\ProcessSequence\ProcessSequence;
-use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,11 +78,6 @@ class Order extends Model
         $this->attributes['scheduled_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
     }
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
-    }
-
     /*******************
     * F U N C T I O N  *
     *******************/
@@ -144,6 +139,16 @@ class Order extends Model
     public function latestScanner(): HasOne
     {
         return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime');
+    }
+
+    /**
+     * Get Order Invoice info per Blind
+     *
+     * @return HasOne
+     */
+    public function orderInvoice(): HasOne
+    {
+        return $this->hasOne(OrderInvoice::class, 'order_no', 'order_no');
     }
     /********************************
     * E N D  O F  R E L A T I O N S *

@@ -4,11 +4,11 @@ namespace App\Services\Reports;
 
 use App\Models\Order;
 use App\Models\ProcessSequence\ProcessSequence;
+use App\Models\Shift;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection as SuppCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ManufacturedBlindDataService
 {
@@ -21,6 +21,21 @@ class ManufacturedBlindDataService
      * @var mixed
      */
     private $query;
+
+    /**
+     * Overall total Manufactured Blinds
+     *
+     * @var int
+     */
+    private $totalManufacturedBlinds = 0;
+
+    /**
+     * Overall total Invoiced Blinds
+     *
+     * @var int
+     */
+    private $totalInvoicedBlinds = 0;
+
 
     /**
      * Retrieved all Blinds based on selected DateRange
@@ -44,13 +59,13 @@ class ManufacturedBlindDataService
             ->with(['latestScanner' => function($query) use ($from, $to) {
                 $query->whereBetween('scannedtime', [$from, $to]);
             }])
+            ->with('orderInvoice')
             ->whereNotNull('orders.product_type')
             ->join('scanners AS sc', function ($join) use ($from, $to){
                 $join->on('orders.serial_id', 'sc.blindid')
                     ->whereBetween('scannedtime', [$from, $to]);
             })
             ->groupBy('orders.serial_id')
-            ->limit(10)
             ->get();
 
         $processSequences = ProcessSequence::with([
@@ -61,15 +76,77 @@ class ManufacturedBlindDataService
 
         $blinds = $this->sanitizeFullyProcessedBlinds($query, $processSequences);
 
-        $blinds = $this->segregateByShift($blinds);
+        $blinds = $this->segregateByDaysAndShifts($blinds, $from, $to);
 
-        return $blinds;
+        $data = collect([
+                    'blinds' => $blinds,
+                    'totalManufacturedBlinds' => $this->totalManufacturedBlinds,
+                    'totalInvoicedBlinds' => $this->totalInvoicedBlinds
+                ]);
+        return $data;
     }
 
-    private function segregateByShift(): SuppCollection
+    /**
+     * To Seggregated the fetched data by Shifts
+     *
+     * @return SuppCollection
+     */
+    private function segregateByDaysAndShifts($blinds, $from, $to): SuppCollection
     {
+        $data = collect();
+        $period = CarbonPeriod::create($from, $to);
+        foreach ($period as $date) {
+        }
+        // initialize Shifts
+        $dates = $period->toArray();
+        $shifts = array(Shift::SHIFT_ONE_TIME, Shift::SHIFT_TWO_TIME, Shift::SHIFT_THREE_TIME);
 
-        return collect();
+        // Segregate per Date based on selected Date Range
+        foreach ($dates as $date) {
+            $dataPerDate = $blinds->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
+                ->where('scannedtime', '<=', Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59');
+
+            // Sanitize if the data the specific date has Data
+            if ($dataPerDate->count() > 0) {
+
+                //Segregate data per Shifts
+                foreach ($shifts as $key=>$shift) {
+                    $start = Carbon::parse($date)->format('Y-m-d'). ' '. $shift[0];
+                    $end = Carbon::parse($date)->format('Y-m-d'). ' '. $shift[1];
+
+                    // if shift 3
+                    if ($key == 2) {
+                        $end = Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. $shift[1];
+                    }
+                    $manufacturedBlindsCount = $dataPerDate->where('scannedtime', '>=', $start)
+                        ->where('scannedtime', '<=', $end)
+                        ->count();
+                    $invoicedBlindsCount =  $dataPerDate->where('scannedtime', '>=', $start)
+                        ->where('scannedtime', '<=', $end)->whereNotNull('orderInvoice')
+                        ->count();
+
+                    $dateValue = Carbon::parse($date)->format('Y-m-d');
+
+                    // if shift 3
+                    if ($key == 2) {
+                        $dateValue = Carbon::parse($date)->format('Y-m-d'). ' / '. Carbon::parse($date)->addDay()->format('Y-m-d');
+                    }
+
+                    //Increment overall total value
+                    $this->totalManufacturedBlinds += $manufacturedBlindsCount;
+                    $this->totalInvoicedBlinds += $invoicedBlindsCount;
+
+                    $data->push([
+                        'date' => $dateValue,
+                        'shift' => 'Shift '. ($key + 1),
+                        'manufactured_blinds' => $manufacturedBlindsCount,
+                        'invoiced_blinds' => $invoicedBlindsCount
+                    ]);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
@@ -102,38 +179,6 @@ class ManufacturedBlindDataService
             }
         }
 
-        //format Blinds
-        $manufacturedBlindsData = $this->formatBlindsCollection($blindsCollection);
-
-        return $manufacturedBlindsData;
-    }
-
-    /**
-     * Format Blinds Collection to count it per day and per shift
-     *
-     * @param  mixed $blinds
-     *
-     * @return SuppCollection
-     */
-    private function formatBlindsCollection($blindsCollection): SuppCollection
-    {
-        // $data = $blindsCollection->groupBy(function($date) {
-        //             return Carbon::parse($date->scannedtime)->format('Y-m-d'); // grouping by years
-        //         });
-
-
-        $data = $blindsCollection->filter(function ($blind, $blindKey) {
-                    return $blind->scannedtime >= Carbon::parse($blind->scannedtime)
-                        ->format('Y-m-d').' '. '06:00:00' &&
-                        $blind->scannedtime <=  Carbon::parse($blind->scannedtime)
-                        ->format('Y-m-d').' '. '14:00:00';
-                })
-                ->groupBy(
-                    function ($date) {
-                        return Carbon::parse($date->scannedtime)->format('Y-m-d');
-                    }
-                );
-
-        return $data;
+        return $blindsCollection;
     }
 }

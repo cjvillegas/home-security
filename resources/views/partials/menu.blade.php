@@ -298,20 +298,6 @@
                     @endcan
                     @can('data_export_reports_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.reports.time-and-attendance-page') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.time-and-attendance-page") ? "c-active" : "" }}">
-                                <i class="fa-fw fas fa-clock c-sidebar-nav-icon"></i>
-                                Time & Attendance
-                            </a>
-                        </li>
-                    @endcan
-                    @can('data_export_reports_access')
-                        <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.reports.who-works-here-page') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.who-works-here-page") ? "c-active" : "" }}">
-                                <i class="fa-fw fas fa-clipboard-list c-sidebar-nav-icon"></i>
-                                Who Works Here
-                    @endcan
-                    @can('data_export_reports_access')
-                        <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.reports.manufactured-blinds') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.manufactured-blinds") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-check-circle c-sidebar-nav-icon"></i>
                                 Manufactured Blinds
@@ -323,6 +309,14 @@
                             <a href="{{ route('admin.reports.time-and-attendance') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.time-and-attendance") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-clock c-sidebar-nav-icon"></i>
                                 Time & Attendance
+                            </a>
+                        </li>
+                    @endcan
+                    @can('data_export_reports_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.who-works-here-page') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.who-works-here-page") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-clipboard-list c-sidebar-nav-icon"></i>
+                                Who Works Here
                             </a>
                         </li>
                     @endcan

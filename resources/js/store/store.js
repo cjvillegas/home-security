@@ -82,9 +82,9 @@ export default new Vuex.Store({
     },
 
     modules: {
+        manufacturedblinds,
         orders,
         process,
-        fireregister,
-        manufacturedblinds,
+        fireregister
     }
 })
