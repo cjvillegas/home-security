@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ProcessSequence\ProcessSequence;
 use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -125,6 +126,24 @@ class Order extends Model
     public function orderTrackings(): HasOne
     {
         return $this->hasOne(OrderTracking::class, 'order_no', 'order_no');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function processSequence(): HasOne
+    {
+        return $this->hasOne(ProcessSequence::class, 'name', 'product_type');
+    }
+
+    /**
+     * Get the most recent scanner data of an employee
+     *
+     * @return HasOne
+     */
+    public function latestScanner(): HasOne
+    {
+        return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime');
     }
     /********************************
     * E N D  O F  R E L A T I O N S *
