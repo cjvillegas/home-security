@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Order\OrderInvoice;
 use App\Models\ProcessSequence\ProcessSequence;
-use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -77,11 +76,6 @@ class Order extends Model
     public function setScheduledDateAttribute($value)
     {
         $this->attributes['scheduled_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
     }
 
     /*******************

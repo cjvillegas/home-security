@@ -4,13 +4,11 @@ namespace App\Services\Reports;
 
 use App\Models\Order;
 use App\Models\ProcessSequence\ProcessSequence;
+use App\Models\Shift;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SuppCollection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use stdClass;
 
 class ManufacturedBlindDataService
 {
@@ -101,24 +99,11 @@ class ManufacturedBlindDataService
         }
         // initialize Shifts
         $dates = $period->toArray();
-
-        $shift1 = new stdClass;
-        $shift1->name = "Shift 1";
-        $shift1->start = "06:00:00";
-        $shift1->end = "14:00:00";
-
-        $shift2 = new stdClass;
-        $shift2->name = "Shift 2";
-        $shift2->start = "14:00:00";
-        $shift2->end = "22:00:00";
-
-        $shift3 = new stdClass;
-        $shift3->name = "Shift 3";
-        $shift3->start = "22:00:00";
-        $shift3->end = "06:00:00";
-
-        $shifts = array($shift1, $shift2, $shift3);
-
+        $shifts = [
+            ['name' => 'Shift 1', 'start' => '06:00:00', 'end' => '14:00:00'],
+            ['name' => 'Shift 2', 'start' => '14:00:00', 'end' => '22:00:00'],
+            ['name' => 'Shift 3', 'start' => '22:00:00', 'end' => '06:00:00'],
+        ];
         // Segregate per Date based on selected Date Range
         foreach ($dates as $date) {
             $dataPerDate = $blinds->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
@@ -129,11 +114,11 @@ class ManufacturedBlindDataService
 
                 //Segregate data per Shifts
                 foreach ($shifts as $shift) {
-                    $start = Carbon::parse($date)->format('Y-m-d'). ' '. $shift->start;
-                    $end = Carbon::parse($date)->format('Y-m-d'). ' '. $shift->end;
+                    $start = Carbon::parse($date)->format('Y-m-d'). ' '. $shift['start'];
+                    $end = Carbon::parse($date)->format('Y-m-d'). ' '. $shift['end'];
 
-                    if ($shift->name == "Shift 3") {
-                        $end = Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. $shift->end;
+                    if ($shift['name'] == "Shift 3") {
+                        $end = Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. $shift['end'];
                     }
                     $manufacturedBlindsCount = $dataPerDate->where('scannedtime', '>=', $start)
                         ->where('scannedtime', '<=', $end)
@@ -143,7 +128,7 @@ class ManufacturedBlindDataService
                         ->count();
 
                     $dateValue = Carbon::parse($date)->format('Y-m-d');
-                    if ($shift->name == "Shift 3") {
+                    if ($shift['name'] == "Shift 3") {
                         $dateValue = Carbon::parse($date)->format('Y-m-d'). ' / '. Carbon::parse($date)->addDay()->format('Y-m-d');
                     }
 
@@ -153,7 +138,7 @@ class ManufacturedBlindDataService
 
                     $data->push([
                         'date' => $dateValue,
-                        'shift' => $shift->name,
+                        'shift' => $shift['name'],
                         'manufactured_blinds' => $manufacturedBlindsCount,
                         'invoiced_blinds' => $invoicedBlindsCount
                     ]);
