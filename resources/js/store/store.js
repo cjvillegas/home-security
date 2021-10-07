@@ -2,10 +2,11 @@ import { register } from "numeral";
 import Vue from "vue";
 import Vuex from 'vuex'
 
-// modules
+//modules
+import orders from './modules/orders'
+import process from './modules/process'
 import fireregister from './modules/fireregister'
 import manufacturedblinds from './modules/report/manufacturedblinds'
-
 
 Vue.use(Vuex)
 
@@ -79,8 +80,11 @@ export default new Vuex.Store({
             commit('SET_SHIFTS', shifts)
         }
     },
+
     modules: {
-        fireregister,
         manufacturedblinds,
+        orders,
+        process,
+        fireregister
     }
 })

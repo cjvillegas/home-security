@@ -1,10 +1,14 @@
 <template>
     <el-dialog
         :visible.sync="showDialog"
-        title="Packed Orders"
+        title="Order Packing"
         :before-close="closeDialog"
         width="50%"
         top="10vh">
+        <div v-if="hasScanners">
+            {{ totalScanned | numFormat }} of {{ totalBlind | numFormat }} Packed Blinds
+        </div>
+
         <el-table
             v-if="hasScanners"
             fit
@@ -24,8 +28,8 @@
                     <template v-else-if="column.key === 'scannedtime'">
                         <span>{{ scope.row[column.key] | fixDateByFormat }}</span>
                     </template>
-                    <template v-else-if="column.key === 'serial_id'">
-                        <span>{{ scope.row[column.key] | numFormat }}</span>
+                    <template v-else>
+                        <span>{{ scope.row[column.key] }}</span>
                     </template>
                 </template>
             </el-table-column>
@@ -50,6 +54,10 @@
         props: {
             scanners: {
                 required: true
+            },
+
+            order: {
+                required: true
             }
         },
 
@@ -70,6 +78,24 @@
         computed: {
             hasScanners() {
                 return this.scanners && this.scanners.length
+            },
+
+            totalBlind() {
+                return this.order ? this.order.total_blinds : 0
+            },
+
+            totalScanned() {
+                if (!this.scanners || !this.scanners.length) {
+                    return 0
+                }
+
+                return this.scanners.reduce((acc, cur) => {
+                    if (!acc.some(a => a === cur.serial_id)) {
+                        acc = [...acc, ...[cur.serial_id]]
+                    }
+
+                    return acc
+                }, []).length
             }
         },
 

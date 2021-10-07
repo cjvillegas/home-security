@@ -89,8 +89,10 @@ class ScannersDataService implements ServiceDataInterface
                 'processes.name',
                 'employees.fullname',
                 DB::raw('DATE_FORMAT(scanners.scannedtime, "%Y-%m-%d %H:%i") as scanned_date_time'),
+                'ma.name AS machine_name'
             ])
             ->leftJoin('orders', 'orders.serial_id', '=', 'scanners.blindid')
+            ->leftJoin('machines AS ma', 'ma.id', 'scanners.machineid')
             ->join('processes', 'processes.barcode', '=', 'scanners.processid')
             ->join('employees', 'employees.barcode', '=', 'scanners.employeeid');
 

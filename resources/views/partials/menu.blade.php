@@ -309,6 +309,11 @@
                             <a href="{{ route('admin.reports.time-and-attendance') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.time-and-attendance") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-clock c-sidebar-nav-icon"></i>
                                 Time & Attendance
+                    @can('data_export_reports_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.reports.who-works-here-page') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.who-works-here-page") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-clipboard-list c-sidebar-nav-icon"></i>
+                                Who Works Here
                             </a>
                         </li>
                     @endcan

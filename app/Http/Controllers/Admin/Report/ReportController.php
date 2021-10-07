@@ -12,6 +12,7 @@ use App\Services\MachineCounterReportService;
 use App\Services\Reports\QualityControlFaultDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
+use App\Services\Reports\WhoWorksHereDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -182,14 +183,77 @@ class ReportController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function timeAndAttendance()
+    public function timeAndAttendancePage()
     {
         return view('admin.reports.time-and-attendance');
     }
 
-    public function timeclockEmployees(Request $request)
+    /**
+     * Fetch time and attendance data
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function timeAndAttendance(Request $request)
     {
         $service = new TimeclockDataService($request->all());
+        $data = $service->getData('list');
+
+        return response()->json($data);
+    }
+
+    /**
+     * Export team status data to a CSV file
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function exportTimeAndAttendance(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+
+        $service = new TimeclockDataService($request->all());
+
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Time And Attendance Report')
+            ->setPath('exports')
+            ->setHeaders([
+                'employee_name' => 'Employee Name',
+                'clock_number' => 'Clock No.',
+                'clock_in' => 'Clock In',
+                'clock_out' => 'Clock Out',
+                'time_in' => 'Time In',
+            ])
+            ->export($service);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+        ]);
+    }
+
+    /**
+     * Who Works Here report page
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function whoWorksHerePage()
+    {
+        return view('admin.reports.who-works-here');
+    }
+
+    /**
+     * Fetch the who works here data
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function whoWorksHere(Request $request): JsonResponse
+    {
+        $service = new WhoWorksHereDataService($request->all());
         $data = $service->getData('list');
 
         return response()->json($data);

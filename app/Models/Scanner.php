@@ -45,7 +45,7 @@ class Scanner extends Model
     ];
 
     /**
-     * Custom properties that will appended to all instances
+     * Custom properties that will get appended to all instances
      * and data collection of this scanners
      *
      * @var array
@@ -150,6 +150,20 @@ class Scanner extends Model
     public function scopeByProcesses(Builder $builder, array $processes)
     {
         return $builder->whereIn('processid', $processes);
+    }
+
+    /**
+     * Add a condition to filter only data where the specified date column is
+     * in between the passed dates.
+     *
+     * @param Builder $query
+     * @param array $dates
+     *
+     * @return Builder
+     */
+    public function scopeFilterInBetweenDates(Builder $query, array $dates): Builder
+    {
+        return $query->whereBetween('scanners.scannedtime', $dates);
     }
 
     /**************************

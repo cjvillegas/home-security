@@ -46,7 +46,10 @@
                     <i class="fas fa-cubes"></i>
                     Total Blinds
                 </template>
-                {{ order_details.total_blinds | numFormat }}
+                <el-button
+                    @click="openTotalBlinds">
+                    {{ order_details.total_blinds | numFormat }}
+                </el-button>
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -133,7 +136,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced No.
                 </template>
-                {{ order_details.invoice_no }}
+                {{ order_details.invoice_no || '--:--' }}
             </el-descriptions-item>
         </el-descriptions>
 
@@ -157,8 +160,9 @@
         </order-view-planned-work>
 
         <order-view-packed-orders
-            ref="packedOrders"
             v-if="order"
+            ref="packedOrders"
+            :order="order_details"
             :scanners="packedData"
             :visible.sync="showPackedOrdersModal"
             @close="showPackedOrdersModal = false">
@@ -182,14 +186,22 @@
             @close="showTrackingForm = false">
         </order-tracking>
         <!-- End of Order Trackings -->
+
+        <order-view-total-blinds
+            :order_no="order_no"
+            :visible.sync="showTotalBlindsModal"
+            @close="showTotalBlindsModal = false">
+        </order-view-total-blinds>
     </div>
 </template>
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import {mapGetters} from "vuex";
+    import {mapActions, mapGetters} from "vuex";
+    import OrderViewTotalBlinds from './OrderView/OrderViewTotalBlinds.vue';
 
     export default {
+        components: { OrderViewTotalBlinds },
         name: "OrderInfo",
 
         props: {
@@ -210,11 +222,13 @@
                 showPlannedWorkModal: false,
                 showPackedOrdersModal: false,
                 showTimelineDialog: false,
+                showTotalBlindsModal: false,
                 timelineProcesses: [],
                 order_details: null,
                 orders: [],
                 processSequences: [],
-                orderTrackings: []
+                orderTrackings: [],
+                order_no: null
             }
         },
 
@@ -411,6 +425,11 @@
                     this.loading = true
                 })
             },
+
+            openTotalBlinds() {
+                this.order_no = this.order.order_no
+                this.showTotalBlindsModal = true
+            }
         },
 
         watch: {
