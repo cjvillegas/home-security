@@ -181,23 +181,4 @@ class ManufacturedBlindDataService
 
         return $blindsCollection;
     }
-
-    /**
-     * Format Blinds Collection to count it per day and per shift
-     *
-     * @param  mixed $blinds
-     *
-     * @return SuppCollection
-     */
-    private function formatBlindsCollection($blindsCollection): SuppCollection
-    {
-        // $data = $blindsCollection->groupBy(function($date) {
-        //             return Carbon::parse($date->scannedtime)->format('Y-m-d'); // grouping by years
-        //         });
-
-
-
-
-        return collect();
-    }
 }
