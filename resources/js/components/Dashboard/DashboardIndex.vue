@@ -4,7 +4,7 @@
 
         <el-tabs
             v-model="activeTab"
-            type="border-card"
+            type="border-card">
             <el-tab-pane
                 name="manufactured-blinds"
                 label="Manufactured Blinds"
