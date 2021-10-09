@@ -138,7 +138,17 @@ class Order extends Model
      */
     public function latestScanner(): HasOne
     {
-        return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime');
+        return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime', 'desc');
+    }
+
+    /**
+     * Get the oldest scanner
+     *
+     * @return HasOne
+     */
+    public function oldestScanner(): HasOne
+    {
+        return $this->hasOne(Scanner::class, 'blindid', 'serial_id')->orderBy('scannedtime', 'asc');
     }
 
     /**

@@ -266,8 +266,8 @@ class ReportController extends Controller
     public function dashboardMachineStatistics(Request $request): JsonResponse
     {
         $service = new DashboardMachineStatisticsDataService($request->all());
+        $data = $service->getData('list');
 
-
-        return response()->json($service->getData('list'));
+        return response()->json($data);
     }
 }
