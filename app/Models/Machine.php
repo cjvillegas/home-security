@@ -6,31 +6,47 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Log;
 
 class Machine extends Model
 {
     use SoftDeletes, HasFactory;
 
-
     /**
-     * Alternative for fillable
+     * Mass assignable fields
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'serial_no',
+        'location',
+        'supplier',
+        'model',
+        'machine_target',
+        'parameter_1',
+        'parameter_2',
+        'parameter_3',
+        'parameter_4',
+        'parameter_5',
+        'parameter_6',
+        'parameter_7',
+        'parameter_8',
+        'parameter_9',
+        'parameter_10',
+        'status',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
     /**
-     * Set Machine's Status
+     * Cast variables to specified data types
      *
-     * @param integer $value
-     *
-     * @return string
+     * @var array
      */
-    public function getStatusAttribute($value): string
-    {
-        return $value === 1 ? 'Active' : 'Inactive';
-    }
+    protected $casts = [
+        'status' => 'boolean',
+    ];
 
     /**
      * Relation to Machine Counter's model

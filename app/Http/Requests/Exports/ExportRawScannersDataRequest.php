@@ -26,7 +26,7 @@ class ExportRawScannersDataRequest extends FormRequest
     {
         return [
             'start' => 'required|date',
-            'end' => 'required|date|after:start'
+            'end' => 'required|date|after_or_equal:start'
         ];
     }
 
