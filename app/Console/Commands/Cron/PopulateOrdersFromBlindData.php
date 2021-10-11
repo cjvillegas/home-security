@@ -134,7 +134,6 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                 INNER JOIN ManLocation ml ON bt.manlocation_id = ml.id
                 INNER JOIN SerialDetailLine sdl ON od.id = sdl.OrderDetail_id
                 INNER JOIN [Category] c ON bt.category_id = c.id
-                LEFT OUTER JOIN RollerTable rt ON od.RollerTableID = rt.ID
             WHERE
                 (o.order_id IS NOT NULL)
                 AND (os.id <> '7')
