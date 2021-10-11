@@ -32,7 +32,7 @@ class MachineController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchMachines(Request $request)
+    public function fetchMachines(Request $request): JsonResponse
     {
         $searchString = $request->searchString;
         $size = $request->size;
@@ -83,9 +83,10 @@ class MachineController extends Controller
      *
      * @return JsonResponse
      */
-    public function update(MachineRequest $request, Machine $machine)
+    public function update(MachineRequest $request, Machine $machine): JsonResponse
     {
         abort_if(Gate::denies('machine_update'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         DB::beginTransaction();
         try {
             $machine->update($request->all());
