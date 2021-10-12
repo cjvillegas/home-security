@@ -270,4 +270,14 @@ class ReportController extends Controller
 
         return response()->json($data);
     }
+
+    /**
+     * Target Performance
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function targetPerformance()
+    {
+        return view('admin.reports.target-performance');
+    }
 }
