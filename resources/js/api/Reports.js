@@ -143,7 +143,14 @@ export default {
         return axios.get(`/admin/reports/who-works-here`, {params})
     },
 
+    /**
+     * Fetch dashboard's machine statistics
+     *
+     * @param params
+     *
+     * @returns Promise
+     */
     dashboardMachineStatistics(params) {
-        return axios.get(`/admin/reports/dashboard-machine-statistics`, {params})
+        return axios.get(`/admin/reports/dashboard/machine-statistics`, {params})
     }
 }

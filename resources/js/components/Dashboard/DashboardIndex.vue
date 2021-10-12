@@ -22,7 +22,7 @@
                 name="machine-statistics"
                 label="Machine Statistics"
                 lazy>
-                <machine-statistics></machine-statistics>
+                <dashboard-machine-statistics></dashboard-machine-statistics>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -33,7 +33,7 @@ export default {
     name: "DashboardIndex",
     data() {
         return {
-            activeTab: 'machine-statistics'
+            activeTab: 'manufactured-blinds'
         }
     }
 }
