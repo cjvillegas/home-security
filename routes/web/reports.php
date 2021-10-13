@@ -35,7 +35,7 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     Route::get('/who-works-here', 'ReportController@whoWorksHere')->name('who-works-here');
 
     // dashboard machine statistics
-    Route::get('/dashboard-machine-statistics', 'ReportController@dashboardMachineStatistics')->name('dashboard-machine-statistics');
+    Route::get('/dashboard/machine-statistics', 'ReportController@dashboardMachineStatistics')->name('dashboard-machine-statistics');
 
     // target performance
     Route::get('/target-performance', 'ReportController@targetPerformance')->name('target-performance');

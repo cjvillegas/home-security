@@ -194,7 +194,7 @@
     import cloneDeep from "lodash/cloneDeep";
 
     export default {
-        name: "MachineStatistics",
+        name: "DashboardMachineStatistics",
 
         data() {
             return {
@@ -293,9 +293,6 @@
 
                 let start = moment().subtract(1, 'day').format('YYYY-MM-DD') + ' 00:00:00'
                 let end = moment().format('YYYY-MM-DD') + ' 23:59:59'
-
-                start = '2021-10-04'
-                end = '2021-10-05'
 
                 let filters = {
                     dates: [start, end],

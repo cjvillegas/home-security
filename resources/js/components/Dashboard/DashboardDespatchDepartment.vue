@@ -146,10 +146,12 @@
                 yesterdayTotalMachineBoxes: []
             }
         },
+
         created() {
             this.getDespatchDepartmentAnalytics()
             this.fetchMachineStatistics()
         },
+
         methods: {
             getDespatchDepartmentAnalytics() {
                 this.loading = true
