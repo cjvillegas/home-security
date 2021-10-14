@@ -320,6 +320,12 @@
                             </a>
                         </li>
                     @endcan
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.reports.target-performance') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.target-performance") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-clipboard-list c-sidebar-nav-icon"></i>
+                            Target Performance
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endif

@@ -9,6 +9,7 @@ use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\DashboardMachineStatisticsDataService;
 use App\Services\Reports\QualityControlFaultDataService;
+use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
 use App\Services\Reports\WhoWorksHereDataService;
@@ -279,5 +280,17 @@ class ReportController extends Controller
     public function targetPerformance()
     {
         return view('admin.reports.target-performance');
+    }
+
+    /**
+     * Get Performances based on Selected filters
+     *
+     * @return JsonResponse
+     */
+    public function getTargetPerformances(Request $request): JsonResponse
+    {
+        $service = new TargetPerformanceDataService($request->all());
+
+        return response()->json([]);
     }
 }

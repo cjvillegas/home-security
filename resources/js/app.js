@@ -93,6 +93,14 @@ const app = new Vue({
         if (pathname === '/admin/reports/time-and-attendance') {
             this.getEmployees()
         }
+
+        if (pathname == '/admin/reports/manufactured-blinds') {
+            this.getQualityControls()
+        }
+
+        if (pathname == '/admin/reports/target-performance') {
+            this.getEmployees()
+        }
     },
     methods: {
         getUsers() {
