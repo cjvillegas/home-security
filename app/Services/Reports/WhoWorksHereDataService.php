@@ -67,8 +67,7 @@ class WhoWorksHereDataService extends ReportDataService
                 },
                 'attendance' => function ($query) {
                     if ($this->isFilterExist('date') && $this->getFilterValue('date')) {
-                        $date = $this->getDate();
-                        $query->where('swiped_at', 'like', "{$date}%");
+                        $query->whereBetween('swiped_at', $this->getStartAndEndDAte());
                     }
                 }
             ])
@@ -88,8 +87,7 @@ class WhoWorksHereDataService extends ReportDataService
     {
         // if employee filter is present
         if ($this->isFilterExist('date') && $this->getFilterValue('date')) {
-            $date = $this->getDate();
-            $this->query->where('swiped_at', 'like', "{$date}%");
+            $this->query->whereBetween('swiped_at', $this->getStartAndEndDAte());
         }
 
         // filter per employees
