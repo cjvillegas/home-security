@@ -127,7 +127,7 @@ class WorkAnalyticsReportController extends Controller
                 SELECT COUNT(orders.order_no)
                 FROM orders
                     INNER JOIN order_trackings ot ON ot.order_no = orders.order_no
-                WHERE DATE_FORMAT(ot.created_at, '%Y-%m-%d') = '2021-09-06'
+                WHERE DATE_FORMAT(ot.created_at, '%Y-%m-%d') = '{$yesterday}'
                     GROUP BY orders.order_no
             ) AS fu
         ")[0]->aggregate;
