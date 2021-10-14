@@ -39,7 +39,7 @@
                 showFilterDialog: false,
                 filters: {
                     employees: [],
-                    date: null,
+                    dateRange: null,
                     isNewJoiner: false,
                 }
             }

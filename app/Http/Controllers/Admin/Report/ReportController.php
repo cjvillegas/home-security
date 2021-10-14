@@ -290,7 +290,8 @@ class ReportController extends Controller
     public function getTargetPerformances(Request $request): JsonResponse
     {
         $service = new TargetPerformanceDataService($request->all());
+        $data = $service->getData('list');
 
-        return response()->json([]);
+        return response()->json(['performances' => $data]);
     }
 }

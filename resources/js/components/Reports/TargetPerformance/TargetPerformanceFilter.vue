@@ -85,7 +85,7 @@ import { mapActions } from 'vuex';
          methods: {
              ...mapActions('targetperformance',['getPerformances']),
              applyFilter() {
-                 this.getPerformances()
+                 this.getPerformances(this.filters)
                  this.closeModal()
              },
 

@@ -12,8 +12,22 @@ const getters = {
 };
 
 const actions = {
-    getPerformances({commit, state}, data) {
-        console.log('fetch backend data')
+    async getPerformances({commit, state}, data) {
+        let apiUrl = `/admin/reports/target-performance`
+
+        commit('setLoading', true)
+        await axios.post(apiUrl, data)
+        .then((response) => {
+            commit('setLoading', false)
+            commit('setPerformances', response.data.performances)
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        .finally(_ => {
+            commit('setLoading', false)
+        })
     }
 };
 
