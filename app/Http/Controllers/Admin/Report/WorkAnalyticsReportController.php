@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order\OrderInvoice;
 use App\Models\Scanner;
 use App\Services\Reports\WorkAnalyticsDataService;
 use Illuminate\Http\JsonResponse;
@@ -106,7 +107,36 @@ class WorkAnalyticsReportController extends Controller
             DB::raw("CAST(SUM(CASE WHEN `scannedtime` BETWEEN '{$today} 06:00:00' AND '{$todayAddOne} 05:59:59' AND processid = 'P1014' THEN 1 ELSE 0 END) AS SIGNED) AS total_P1014_today"),
         )
             ->whereIn('processid', ['P1012', 'P1013', 'P1014'])
-            ->first();
+            ->first()
+            ->toArray();
+
+        // get yesterdays invoiced orders
+        $total_invoiced_orders_yesterday = DB::select("
+            SELECT COUNT(*) AS aggregate from(
+                SELECT COUNT(DISTINCT order_invoices.id)
+                FROM `order_invoices`
+                    INNER JOIN `orders` AS `o` ON `o`.`order_no` = `order_invoices`.`order_no`
+                    INNER JOIN `scanners` AS `sc` ON `sc`.`blindid` = `o`.`serial_id` AND sc.processid IN ('P1012', 'P1013', 'P1014')
+                WHERE `order_invoices`.`date` = '{$yesterday}' AND `order_invoices`.`deleted_at` IS NULL
+                    GROUP BY order_invoices.id
+            ) AS fu
+        ")[0]->aggregate;
+
+        $total_shipped_consignments_yesterday = DB::select("
+            SELECT COUNT(*) AS aggregate FROM(
+                SELECT COUNT(orders.order_no)
+                FROM orders
+                    INNER JOIN order_trackings ot ON ot.order_no = orders.order_no
+                WHERE DATE_FORMAT(ot.created_at, '%Y-%m-%d') = '2021-09-06'
+                    GROUP BY orders.order_no
+            ) AS fu
+        ")[0]->aggregate;
+
+        $counter = array_merge($counter,
+            [
+                'total_invoiced_orders_yesterday' => $total_invoiced_orders_yesterday,
+                'total_shipped_consignments_yesterday' => $total_shipped_consignments_yesterday
+            ]);
 
         return response()->json($counter);
     }
