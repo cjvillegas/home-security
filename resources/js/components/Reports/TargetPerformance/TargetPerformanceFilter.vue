@@ -35,6 +35,24 @@
                     </el-select>
                 </div>
             </div>
+            <div class="col-md-6">
+                <div>
+                    <label>Target</label>
+                    <el-select
+                        v-model="filters.type"
+                        placeholder="Please Select"
+                        class="w-100">
+                        <el-option
+                            value="trade"
+                            label="Trade Target">
+                        </el-option>
+                        <el-option
+                            value="internet"
+                            label="Internet Target">
+                        </el-option>
+                    </el-select>
+                </div>
+            </div>
         </div>
         <span
             slot="footer"

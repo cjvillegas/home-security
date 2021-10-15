@@ -19,6 +19,53 @@
                     description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
                 </el-empty>
             </div>
+
+            <div v-else>
+                <div class="row" v-for="(employee, employeeKey) in performances" :key="employeeKey">
+                    <div class="col-md-12">
+                        <h3>{{ employee.employee_name }}</h3>
+                        <el-table
+                            :data="employee.performances">
+                            <el-table-column
+                                prop="name"
+                                label="Process Name">
+                            </el-table-column>
+                            <el-table-column
+                                prop="scanners_count"
+                                label="Scanners Count">
+                            </el-table-column>
+                            <el-table-column
+                                prop="qc_count"
+                                label="QC Tagged">
+                            </el-table-column>
+                            <el-table-column
+                                v-if="filters.isNewJoiner && filters.type=='trade'"
+                                prop="trade_target_new_joiner"
+                                label="Trade Target">
+                            </el-table-column>
+                            <el-table-column
+                                v-if="filters.isNewJoiner && filters.type=='internet'"
+                                prop="internet_target_new_joiner"
+                                label="Internet Target">
+                            </el-table-column>
+                            <el-table-column
+                                v-if="!filters.isNewJoiner && filters.type=='trade'"
+                                prop="trade_target"
+                                label="Trade Target">
+                            </el-table-column>
+                            <el-table-column
+                                v-if="!filters.isNewJoiner&& filters.type=='internet'"
+                                prop="internet_target"
+                                label="Internet Target">
+                            </el-table-column>
+                            <el-table-column
+                                prop="date"
+                                label="Date">
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </div>
+            </div>
         </el-card>
 
         <target-performance-filter
@@ -41,6 +88,7 @@
                     employees: [],
                     dateRange: null,
                     isNewJoiner: false,
+                    type: null
                 }
             }
         },
@@ -49,7 +97,7 @@
             ...mapGetters('targetperformance', ['performances', 'loading']),
 
             hasPerformancesData() {
-                return this.performances > 0
+                return this.performances.length != 0
             }
         },
 

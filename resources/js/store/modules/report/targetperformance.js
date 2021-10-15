@@ -20,7 +20,6 @@ const actions = {
         .then((response) => {
             commit('setLoading', false)
             commit('setPerformances', response.data.performances)
-
         })
         .catch(err => {
             console.log(err)
@@ -34,6 +33,9 @@ const actions = {
 const mutations = {
     setLoading(state, loading) {
         return state.loading = loading
+    },
+    setPerformances(state, performances) {
+        return state.performances = performances
     }
 };
 

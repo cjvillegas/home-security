@@ -2,6 +2,7 @@
 
 namespace App\Services\Reports;
 
+use App\Models\Employee;
 use App\Models\Scanner;
 use App\Services\Reports\ReportDataService;
 use Carbon\Carbon;
@@ -78,6 +79,7 @@ class TargetPerformanceDataService extends ReportDataService
 
         if ($this->isNewJoiner) {
             $selectQuery = [
+                'e.id',
                 'e.fullname',
                 'scanners.scannedtime',
                 DB::raw("p.name AS name"),
@@ -89,6 +91,7 @@ class TargetPerformanceDataService extends ReportDataService
             ];
         } else {
             $selectQuery = [
+                'e.id',
                 'e.fullname',
                 'scanners.scannedtime',
                 DB::raw("p.name AS name"),
@@ -126,44 +129,60 @@ class TargetPerformanceDataService extends ReportDataService
         }
 
         $dates = $period->toArray();
-        Log::info($performances);
-        foreach ($employees as $employee) {
-            $performance = collect();
 
+        foreach ($employees as $employee) {
+            $employeeName = $performances->where('id', $employee)->first();
+            $performance = collect();
             foreach ($dates as $date) {
-                $performancesPerDate = $performances->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '06:00:00')
-                    ->where('scannedtime', '<=', Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. '05:59:59');
+                $performancesPerDate = $performances->where('id', $employee)
+                    ->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
+                    ->where('scannedtime', '<=', Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59');
 
                 $dateValue = Carbon::parse($date)->format('Y-m-d');
 
                 if ($performancesPerDate->count() > 0) {
                     foreach ($performancesPerDate as $performancePerDate) {
-
+                        Log::info($performancePerDate);
+                        Log::info('-');
                         $value = $this->isNewJoiner ? [
+                            'name' => $performancePerDate['name'],
                             'date' => $dateValue,
+                            'scannedtime' => $performancePerDate['scannedtime'],
                             'qc_count' => $performancePerDate['qc_count'],
                             'scanners_count' => $performancePerDate['scanners_count'],
-                            'trade_target_new_joiner' => $performancePerDate['trade_target'],
-                            'internet_target_new_joiner' => $performancePerDate['internet_target']
+                            'trade_target_new_joiner' => $performancePerDate['trade_target_new_joiner'],
+                            'internet_target_new_joiner' => $performancePerDate['internet_target_new_joiner']
                         ] : [
+                            'name' => $performancePerDate['name'],
                             'date' => $dateValue,
+                            'scannedtime' => $performancePerDate['scannedtime'],
                             'qc_count' => $performancePerDate['qc_count'],
                             'scanners_count' => $performancePerDate['scanners_count'],
                             'trade_target' => $performancePerDate['trade_target'],
                             'internet_target' => $performancePerDate['internet_target']
                         ];
-
-                        $performance->push(
-                            $value
-                        );
+                        //sanitize if the Employee has Data
+                        if ($employeeName) {
+                            $performance->push(
+                                $value
+                            );
+                        }
                     }
                 }
-
             }
-            $data->put($employee, $performance);
+
+            //sanitize if the Employee has Data
+            if ($employeeName) {
+                $data->push(
+                    [
+                        'employee_name' => $employeeName['fullname'],
+                        'performances' => $performance
+                    ]
+                );
+            }
+
         }
 
-        dd($data);
         return $data;
     }
 
