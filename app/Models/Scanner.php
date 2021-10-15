@@ -59,10 +59,10 @@ class Scanner extends Model
         return '';
     }
 
-    public function getScannedtimeAttribute($value)
-    {
-        return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
-    }
+    // public function getScannedtimeAttribute($value)
+    // {
+    //     return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
+    // }
 
     public function setScannedtimeAttribute($value)
     {

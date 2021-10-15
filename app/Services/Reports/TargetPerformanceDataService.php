@@ -4,8 +4,11 @@ namespace App\Services\Reports;
 
 use App\Models\Scanner;
 use App\Services\Reports\ReportDataService;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection AS SupCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TargetPerformanceDataService extends ReportDataService
 {
@@ -14,6 +17,18 @@ class TargetPerformanceDataService extends ReportDataService
      * @var bool
      */
     private $isNewJoiner = false;
+
+    /**
+     *
+     * @var array
+     */
+    private $employees = [];
+
+    /**
+     * @var mixed
+     */
+    private $dateRange;
+
 
     /**
      * Target Performance Data constructor.
@@ -32,10 +47,16 @@ class TargetPerformanceDataService extends ReportDataService
     {
         $performances = collect();
         $query = $this->buildQuery()->applyFilters();
+        $this->employees = $this->getFilterValue('employees');
 
         switch ($type) {
             case 'list':
-                $performances = collect($query->getResultInCollection());
+                $performances = $this->segregateByDays(
+                    collect($this->query->get()),
+                    $this->dateRange[0],
+                    $this->dateRange[1],
+                    $this->employees
+                );
                 break;
 
             case 'export':
@@ -58,6 +79,7 @@ class TargetPerformanceDataService extends ReportDataService
         if ($this->isNewJoiner) {
             $selectQuery = [
                 'e.fullname',
+                'scanners.scannedtime',
                 DB::raw("p.name AS name"),
                 DB::raw("scanners.employeeid AS employeeid"),
                 DB::raw("COUNT(scanners.id) AS scanners_count"),
@@ -68,6 +90,7 @@ class TargetPerformanceDataService extends ReportDataService
         } else {
             $selectQuery = [
                 'e.fullname',
+                'scanners.scannedtime',
                 DB::raw("p.name AS name"),
                 DB::raw("scanners.employeeid AS employeeid"),
                 DB::raw("COUNT(scanners.id) AS scanners_count"),
@@ -91,17 +114,71 @@ class TargetPerformanceDataService extends ReportDataService
     }
 
     /**
+     * Logic for segregating the data by Employees and Days
+     *
+     * @return SupCollection
+     */
+    public function segregateByDays($performances, $from, $to, $employees): SupCollection
+    {
+        $data = collect();
+        $period = CarbonPeriod::create($from, $to);
+        foreach ($employees as $date) {
+        }
+
+        $dates = $period->toArray();
+        Log::info($performances);
+        foreach ($employees as $employee) {
+            $performance = collect();
+
+            foreach ($dates as $date) {
+                $performancesPerDate = $performances->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '06:00:00')
+                    ->where('scannedtime', '<=', Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. '05:59:59');
+
+                $dateValue = Carbon::parse($date)->format('Y-m-d');
+
+                if ($performancesPerDate->count() > 0) {
+                    foreach ($performancesPerDate as $performancePerDate) {
+
+                        $value = $this->isNewJoiner ? [
+                            'date' => $dateValue,
+                            'qc_count' => $performancePerDate['qc_count'],
+                            'scanners_count' => $performancePerDate['scanners_count'],
+                            'trade_target_new_joiner' => $performancePerDate['trade_target'],
+                            'internet_target_new_joiner' => $performancePerDate['internet_target']
+                        ] : [
+                            'date' => $dateValue,
+                            'qc_count' => $performancePerDate['qc_count'],
+                            'scanners_count' => $performancePerDate['scanners_count'],
+                            'trade_target' => $performancePerDate['trade_target'],
+                            'internet_target' => $performancePerDate['internet_target']
+                        ];
+
+                        $performance->push(
+                            $value
+                        );
+                    }
+                }
+
+            }
+            $data->put($employee, $performance);
+        }
+
+        dd($data);
+        return $data;
+    }
+
+    /**
      * Apply the filters
      *
      * @return self
      */
     public function applyFilters(): self
     {
-        $employees = $this->getFilterValue('employees');
+        $this->employees = $this->getFilterValue('employees');
 
-        if ($this->isFilterExist('dateRange') && is_array($dateRange = $this->getFilterValue('dateRange'))) {
-            $this->query->whereBetween('scanners.scannedtime', $dateRange)
-                ->whereIn('e.id', $employees);
+        if ($this->isFilterExist('dateRange') && is_array($this->dateRange = $this->getFilterValue('dateRange'))) {
+            $this->query->whereBetween('scanners.scannedtime', $this->dateRange)
+                ->whereIn('e.id', $this->employees);
         }
 
         return $this;
