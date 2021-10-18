@@ -3,15 +3,11 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\ProcessSequence\ProcessSequence;
+use App\Models\User;
+use App\Services\CsvExporterService;
 use App\Services\Reports\ManufacturedBlindDataService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
-use stdClass;
 
 class ManufacturedBlindController extends Controller
 {
@@ -34,11 +30,12 @@ class ManufacturedBlindController extends Controller
      */
     public function getBlinds(Request $request): JsonResponse
     {
-        $service = new ManufacturedBlindDataService();
-        $data = $service->getAllBlinds($request->dateRange);
+        $service = new ManufacturedBlindDataService($request->all());
+        $data = $service->getData('list');
 
         return response()->json([
                 'blinds' => $data['blinds'],
+                'total_blinds' => $data['totalBlinds'],
                 'total_manufactured' => $data['totalManufacturedBlinds'],
                 'total_invoice' => $data['totalInvoicedBlinds']
             ]);
@@ -49,12 +46,27 @@ class ManufacturedBlindController extends Controller
      *
      * @param  mixed $request
      *
-     * @return null
+     * @return JsonResponse
      */
     public function exportManufacturedBlinds(Request $request)
     {
         $user = User::find(auth()->user()->id);
+        $service = new ManufacturedBlindDataService($request->all());
 
-        return null;
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Manufactured Blinds Report')
+            ->setPath('exports')
+            ->setHeaders([
+                'date' => 'Date',
+                'shift' => 'Shift',
+                'manufactured_blinds' => 'Manufactured Blinds',
+                'invoiced_blinds' => 'Invoiced Blinds',
+            ])
+            ->export($service);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+        ]);
     }
 }
