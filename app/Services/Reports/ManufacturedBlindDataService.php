@@ -2,25 +2,31 @@
 
 namespace App\Services\Reports;
 
-use App\Models\Order;
-use App\Models\ProcessSequence\ProcessSequence;
+use App\Models\Export;
+use App\Models\Scanner;
 use App\Models\Shift;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection as SuppCollection;
-use Illuminate\Support\Facades\DB;
 
-class ManufacturedBlindDataService
+class ManufacturedBlindDataService extends ReportDataService
 {
     /**
-     * @var array
+     * @var mixed
      */
-    private $filters;
+    private $processSequences;
 
     /**
      * @var mixed
      */
-    private $query;
+    private $dateRange;
+
+    /**
+     * Overall total Blinds from selected Date Range
+     *
+     * @var int
+     */
+    private $totalBlinds =0;
 
     /**
      * Overall total Manufactured Blinds
@@ -36,54 +42,89 @@ class ManufacturedBlindDataService
      */
     private $totalInvoicedBlinds = 0;
 
+    /**
+     * QualityControlFaultDataService constructor.
+     *
+     * @param array $filters
+     */
+    public function __construct(array $filters)
+    {
+        parent::__construct($filters);
+    }
 
     /**
      * Retrieved all Blinds based on selected DateRange
      *
      * @return SuppCollection
      */
-    public function getAllBlinds($dateRange): SuppCollection
+    public function getData(string $type): SuppCollection
     {
-        $from = Carbon::parse($dateRange[0])->startOfDay()->format('Y-m-d H:i');
-        $to = Carbon::parse($dateRange[1])->endOfDay()->format('Y-m-d H:i');
+        $data = collect();
+        $query = $this->buildQuery();
 
-        $query = Order::query()
-            ->select([
-                'orders.id',
-                'orders.order_no',
-                'orders.product_type',
-                'sc.scannedtime',
-                'orders.serial_id',
-                DB::raw('COUNT(DISTINCT sc.id) AS scanners_count')
-            ])
-            ->with(['latestScanner' => function($query) use ($from, $to) {
-                $query->whereBetween('scannedtime', [$from, $to]);
-            }])
-            ->with('orderInvoice')
-            ->whereNotNull('orders.product_type')
-            ->join('scanners AS sc', function ($join) use ($from, $to){
-                $join->on('orders.serial_id', 'sc.blindid')
-                    ->whereBetween('scannedtime', [$from, $to]);
-            })
-            ->groupBy('orders.serial_id')
-            ->get();
+        switch ($type) {
+            case 'list':
+                $blinds = collect($this->query->get());
 
-        $processSequences = ProcessSequence::with([
-            'steps' => function ($query) {
-                $query->with(['process']);
-            }
-        ])->get();
+                $this->totalBlinds = $blinds->count();
+                $blinds = $this->segregateByDaysAndShifts($blinds, $this->dateRange['from'], $this->dateRange['to']);
 
-        $blinds = $this->sanitizeFullyProcessedBlinds($query, $processSequences);
+                $data = collect([
+                            'blinds' => $blinds,
+                            'totalBlinds' => $this->totalBlinds,
+                            'totalManufacturedBlinds' => $this->totalManufacturedBlinds,
+                            'totalInvoicedBlinds' => $this->totalInvoicedBlinds
+                        ]);
 
-        $blinds = $this->segregateByDaysAndShifts($blinds, $from, $to);
+                break;
+            case 'export':
+                $blinds = collect($this->query->get());
 
-        $data = collect([
-                    'blinds' => $blinds,
-                    'totalManufacturedBlinds' => $this->totalManufacturedBlinds,
-                    'totalInvoicedBlinds' => $this->totalInvoicedBlinds
-                ]);
+                $blinds = $this->segregateByDaysAndShifts($blinds, $this->dateRange['from'], $this->dateRange['to']);
+
+                //append the OVERALL total value on Last row
+                $blinds = $blinds->push([
+                            'date' => 'TOTAL VALUE: ',
+                            'shift' => '-',
+                            'manufactured_blinds' => $this->totalManufacturedBlinds,
+                            'invoiced_blinds' => $this->totalInvoicedBlinds
+                        ]);
+
+                $data = $blinds;
+                break;
+
+        }
+
         return $data;
+    }
+
+    /**
+     * Get the base query for this report
+     *
+     * @return self
+     */
+    public function buildQuery(): self
+    {
+        // assign dateRange filters to private variables
+        $this->dateRange['from'] = Carbon::parse($this->getFilterValue('start'))->format('Y-m-d'). ' ' . '06:00:00';
+        $this->dateRange['to'] = Carbon::parse($this->getFilterValue('end'))->format('Y-m-d'). ' ' . '05:59:29';
+        $from = $this->dateRange['from'];
+        $to = $this->dateRange['to'];
+        //new logic - using scanner and processid
+        // these are the processid that will determine if the Order/Blind is Fully PRocessed
+        $processes = ['P1025', 'P1024', 'P1021', 'P1002', 'P5688737'];
+
+        $query = Scanner::query()
+            ->select(['id','scannedtime', 'blindid', 'processid'])
+            ->with('order.orderInvoice')
+            ->with('orderInvoice')
+            ->byProcesses($processes)
+            ->whereBetween('scannedtime', [$from, $to])
+            ->groupBy('blindid');
+
+        $this->query = $query;
+
+        return $this;
     }
 
     /**
@@ -91,7 +132,7 @@ class ManufacturedBlindDataService
      *
      * @return SuppCollection
      */
-    private function segregateByDaysAndShifts($blinds, $from, $to): SuppCollection
+    private function segregateByDaysAndShifts($scanners, $from, $to): SuppCollection
     {
         $data = collect();
         $period = CarbonPeriod::create($from, $to);
@@ -103,11 +144,11 @@ class ManufacturedBlindDataService
 
         // Segregate per Date based on selected Date Range
         foreach ($dates as $date) {
-            $dataPerDate = $blinds->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
-                ->where('scannedtime', '<=', Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59');
+            $scannersPerDate = $scanners->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '06:00:00')
+                ->where('scannedtime', '<=', Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. '05:59:59');
 
             // Sanitize if the data the specific date has Data
-            if ($dataPerDate->count() > 0) {
+            if ($scannersPerDate->count() > 0) {
 
                 //Segregate data per Shifts
                 foreach ($shifts as $key=>$shift) {
@@ -118,11 +159,12 @@ class ManufacturedBlindDataService
                     if ($key == 2) {
                         $end = Carbon::parse($date)->addDay()->format('Y-m-d'). ' '. $shift[1];
                     }
-                    $manufacturedBlindsCount = $dataPerDate->where('scannedtime', '>=', $start)
+                    $manufacturedBlindsCount = $scannersPerDate->where('scannedtime', '>=', $start)
                         ->where('scannedtime', '<=', $end)
                         ->count();
-                    $invoicedBlindsCount =  $dataPerDate->where('scannedtime', '>=', $start)
-                        ->where('scannedtime', '<=', $end)->whereNotNull('orderInvoice')
+
+                    $invoicedBlindsCount =  $scannersPerDate->where('scannedtime', '>=', $start)
+                        ->where('scannedtime', '<=', $end)->whereNotNull('order.orderInvoice')
                         ->count();
 
                     $dateValue = Carbon::parse($date)->format('Y-m-d');
@@ -180,5 +222,28 @@ class ManufacturedBlindDataService
         }
 
         return $blindsCollection;
+    }
+
+    /**
+     * Apply the present filters to the query.
+     *
+     * @return self
+     */
+    public function applyFilters(): self
+    {
+        $dateRange = $this->getFilterValue('dateRange');
+
+        return $this;
+    }
+
+    /**
+     * Get the export type. The export type should have an Export counterpart.
+     * Make sure you register a unique one in the Export model.
+     *
+     * @return string
+     */
+    public function exportType(): string
+    {
+        return Export::MANUFACTURED_BLIND_REPORT;
     }
 }

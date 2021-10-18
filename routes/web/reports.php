@@ -25,6 +25,8 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     //manufacture blinds
     Route::get('/manufactured-blinds', 'ManufacturedBlindController@index')->name('manufactured-blinds');
     Route::post('/manufactured-blinds', 'ManufacturedBlindController@getBlinds')->name('manufactured-blinds');
+    Route::post('/export-manufactured-blind-report', 'ManufacturedBlindController@exportManufacturedBlinds')->name('export-manufactured-blind');
+
     // time & attendance report
     Route::get('/time-and-attendance-page', 'ReportController@timeAndAttendancePage')->name('time-and-attendance-page');
     Route::get('/time-and-attendance', 'ReportController@timeAndAttendance')->name('time-and-attendance');

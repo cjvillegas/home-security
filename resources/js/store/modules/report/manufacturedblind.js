@@ -12,13 +12,12 @@ const getters = {
 };
 
 const actions = {
-    getBlinds({commit, state}, data) {
+    async getBlinds({commit, state}, data) {
         let apiUrl = `/admin/reports/manufactured-blinds`
 
         commit('setLoading', true)
-        axios.post(apiUrl, data)
+        await axios.post(apiUrl, data)
         .then((response) => {
-            console.log(response.data)
             commit('setLoading', false)
             commit('setBlinds', response.data.blinds)
         })
@@ -30,8 +29,26 @@ const actions = {
         })
     },
 
-    exportManufacturedBlinds() {
+    async exportManufacturedBlinds({commit}, data) {
+        let apiUrl = `/admin/reports/export-manufactured-blind-report`
 
+        commit('setLoading', true)
+        await axios.post(apiUrl, data)
+        .then((response) => {
+            if (response.data.success) {
+                this.$notify({
+                    title: 'Manufactured Blind Report',
+                    message: response.data.message,
+                    type: 'success'
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        .finally(_ => {
+            commit('setLoading', false)
+        })
     }
 };
 
