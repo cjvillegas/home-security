@@ -14,13 +14,7 @@
                 </div>
             </div>
 
-            <div v-if="!hasPerformancesData">
-                <el-empty
-                    description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
-                </el-empty>
-            </div>
-
-            <div v-else>
+            <!-- <div v-if="hasPerformancesData">
                 <div class="row" v-for="(employee, employeeKey) in performances" :key="employeeKey">
                     <div class="col-md-12">
                         <h3>{{ employee.employee_name }}</h3>
@@ -66,6 +60,51 @@
                     </div>
                 </div>
             </div>
+
+            <div v-else>
+                <el-empty
+                    description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
+                </el-empty>
+            </div> -->
+            <div
+                class="row"
+                v-for="(employee, employeeKey) in performances"
+                :key="employeeKey">
+                <h2 class="font-weight-light">
+                    {{ employee.employee_name }}
+                </h2>
+                <hr>
+
+            </div>
+
+            <el-collapse>
+                <el-collapse-item
+                    v-for="(employee, employeeKey) in performances"
+                    :key="employeeKey"
+                    :title="employee.employee_name">
+                    <div class="row"
+                        v-for="(performance, performanceKey) in employee.performances"
+                        :key="performanceKey">
+                        <div class="col-md-2">
+                            {{ performance.process_name }}
+                        </div>
+                        <div class="col-md-10">
+
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item m-2"
+                                    v-for="(performanceDate, performanceDateKey) in performance.data"
+                                    :key="performanceDateKey">
+                                    <span> QC Tagged : {{ performanceDate.qc_count }} </span>
+                                    <span> Date: {{ performanceDate.date }} </span>
+                                    <span> Scanners Count:   {{ performanceDate.scanners_count }} </span>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+
         </el-card>
 
         <target-performance-filter
@@ -76,6 +115,13 @@
     </div>
 </template>
 
+<style scoped>
+    .card-body {
+        min-height: 150px;
+        min-width: 150px;
+        margin-right: 5px;
+    }
+</style>
 <script>
     import { mapGetters } from 'vuex'
     export default {

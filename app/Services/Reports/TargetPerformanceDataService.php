@@ -3,6 +3,7 @@
 namespace App\Services\Reports;
 
 use App\Models\Employee;
+use App\Models\QcFault;
 use App\Models\Scanner;
 use App\Services\Reports\ReportDataService;
 use Carbon\Carbon;
@@ -53,9 +54,9 @@ class TargetPerformanceDataService extends ReportDataService
         switch ($type) {
             case 'list':
                 $performances = $this->segregateByDays(
-                    collect($this->query->get()),
-                    $this->dateRange[0],
-                    $this->dateRange[1],
+                    $query->getResultInCollection(),
+                    Carbon::parse($this->dateRange[0])->addDay(),
+                    Carbon::parse($this->dateRange[1])->addDay(),
                     $this->employees
                 );
                 break;
@@ -83,9 +84,9 @@ class TargetPerformanceDataService extends ReportDataService
                 'e.fullname',
                 'scanners.scannedtime',
                 DB::raw("p.name AS name"),
+                DB::raw("p.id AS process_id"),
                 DB::raw("scanners.employeeid AS employeeid"),
                 DB::raw("COUNT(scanners.id) AS scanners_count"),
-                DB::raw("SUM(CASE WHEN qc_faults.id IS NOT NULL THEN 1 ELSE 0 END) AS qc_count"),
                 'p.trade_target_new_joiner',
                 'p.internet_target_new_joiner'
             ];
@@ -95,9 +96,9 @@ class TargetPerformanceDataService extends ReportDataService
                 'e.fullname',
                 'scanners.scannedtime',
                 DB::raw("p.name AS name"),
+                DB::raw("p.id AS process_id"),
                 DB::raw("scanners.employeeid AS employeeid"),
                 DB::raw("COUNT(scanners.id) AS scanners_count"),
-                DB::raw("SUM(CASE WHEN qc_faults.id IS NOT NULL THEN 1 ELSE 0 END) AS qc_count"),
                 'p.trade_target',
                 'p.internet_target'
             ];
@@ -130,58 +131,189 @@ class TargetPerformanceDataService extends ReportDataService
 
         $dates = $period->toArray();
 
+        // new logic
         foreach ($employees as $employee) {
-            $employeeName = $performances->where('id', $employee)->first();
-            $performance = collect();
-            foreach ($dates as $date) {
-                $performancesPerDate = $performances->where('id', $employee)
-                    ->where('scannedtime', '>=', Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00')
-                    ->where('scannedtime', '<=', Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59');
+            $employeeName = Employee::find($employee);
+            $performancesPerProcesses = $performances->where('id', $employee);
+            $performanceGroupByProcess = collect();
+            $performanceGroupByDate = collect();
+            $validDate = null;
 
-                $dateValue = Carbon::parse($date)->format('Y-m-d');
+            $performancesPerProcesses->each(function ($performanceProcess, $performanceProcessKey) use ($dates, $employee, $employeeName, $performanceGroupByDate, $performanceGroupByProcess, $performances) {
 
-                if ($performancesPerDate->count() > 0) {
-                    foreach ($performancesPerDate as $performancePerDate) {
-                        Log::info($performancePerDate);
-                        Log::info('-');
-                        $value = $this->isNewJoiner ? [
-                            'name' => $performancePerDate['name'],
-                            'date' => $dateValue,
-                            'scannedtime' => $performancePerDate['scannedtime'],
-                            'qc_count' => $performancePerDate['qc_count'],
-                            'scanners_count' => $performancePerDate['scanners_count'],
-                            'trade_target_new_joiner' => $performancePerDate['trade_target_new_joiner'],
-                            'internet_target_new_joiner' => $performancePerDate['internet_target_new_joiner']
-                        ] : [
-                            'name' => $performancePerDate['name'],
-                            'date' => $dateValue,
-                            'scannedtime' => $performancePerDate['scannedtime'],
-                            'qc_count' => $performancePerDate['qc_count'],
-                            'scanners_count' => $performancePerDate['scanners_count'],
-                            'trade_target' => $performancePerDate['trade_target'],
-                            'internet_target' => $performancePerDate['internet_target']
-                        ];
-                        //sanitize if the Employee has Data
-                        if ($employeeName) {
-                            $performance->push(
-                                $value
-                            );
+                foreach ($dates as $date) {
+                    $from = Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00';
+                    $to = Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59';
+                    $dateValue = Carbon::parse($date)->format('Y-m-d');
+                    $qcFaultsCount = QcFault::filterByEmployee($employee)
+                            ->filterInRange([$from, $to])
+                            ->filterByProcess([$performanceProcess['process_id']])
+                            ->count();
+                    $performancePerDate = $performances
+                        ->where('id', $employee)
+                        ->where('name', $performanceProcess['name'])
+                        ->where('scannedtime', '>=', $from)
+                        ->where('scannedtime', '<=', $to)->first();
+                    // check if the Process has data for that specific date
+                    if (!empty($performancePerDate)) {
+                        if ($performanceProcess['name'] == $performancePerDate['name']) {
+
+                            $value = $this->isNewJoiner ? [
+                                'name' => $performancePerDate['name'],
+                                'date' => $dateValue,
+                                'scannedtime' => $performancePerDate['scannedtime'],
+                                'scanners_count' => $performancePerDate['scanners_count'],
+                                'qc_count' => $qcFaultsCount,
+                                'trade_target_new_joiner' => $performancePerDate['trade_target_new_joiner'],
+                                'internet_target_new_joiner' => $performancePerDate['internet_target_new_joiner']
+                            ] : [
+                                'name' => $performancePerDate['name'],
+                                'date' => $dateValue,
+                                'scannedtime' => $performancePerDate['scannedtime'],
+                                'scanners_count' => $performancePerDate['scanners_count'],
+                                'qc_count' => $qcFaultsCount,
+                                'trade_target' => $performancePerDate['trade_target'],
+                                'internet_target' => $performancePerDate['internet_target']
+                            ];
                         }
+                    } else {
+                        $value = $this->isNewJoiner ? [
+                            'name' => null,
+                            'date' => $dateValue,
+                            'scannedtime' => null,
+                            'scanners_count' => 0,
+                            'qc_count' => null,
+                            'trade_target_new_joiner' => null,
+                            'internet_target_new_joiner' => null
+                        ] : [
+                            'name' => null,
+                            'date' => $dateValue,
+                            'scannedtime' => null,
+                            'scanners_count' => 0,
+                            'qc_count' => null,
+                            'trade_target' => null,
+                            'internet_target' => null
+                        ];
                     }
-                }
-            }
 
-            //sanitize if the Employee has Data
-            if ($employeeName) {
-                $data->push(
+                    $performanceGroupByDate->push(
+                        $value
+                    );
+                }
+
+                $performanceGroupByProcess->push(
                     [
-                        'employee_name' => $employeeName['fullname'],
-                        'performances' => $performance
+                        'process_name' => $performanceProcess['name'],
+                        'data' => $performanceGroupByDate->filter(function ($performance) use ($performanceProcess) {
+                            return $performance['name'] == $performanceProcess['name'] || $performance['name'] == null;
+                        })->unique(function ($performance) {
+                            return $performance['date'].$performance['scanners_count'];
+                        })->sortByDesc('scanners_count')
                     ]
                 );
-            }
+                //reset its value each iteration to avoid data redundancy
+                $performanceGroupByDate = collect();
+            });
+            //sanitize if the Employee has Data
+            $data->push(
+                [
+                    'employee_name' => $employeeName['fullname'],
+                    'performances' => $performanceGroupByProcess
+                ]
+            );
+            $performanceGroupByProcess = collect();
 
         }
+
+        // foreach ($employees as $employee) {
+        //     $employeeName = $performances->where('id', $employee)->first();
+        //     $performance = collect();
+        //     $performanceGroupByDate = collect();
+
+        //     foreach ($dates as $date) {
+        //         $from = Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00';
+        //         $to = Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59';
+
+        //         $performancesPerDate = $performances->where('id', $employee)
+        //             ->where('scannedtime', '>=', $from)
+        //             ->where('scannedtime', '<=', $to);
+
+        //         $dateValue = Carbon::parse($date)->format('Y-m-d');
+
+        //         if ($performancesPerDate->count() > 0) {
+        //             foreach ($performancesPerDate as $performancePerDate) {
+        //                 $qcFaultsCount = QcFault::filterByEmployee($employee)
+        //                     ->filterInRange([$from, $to])
+        //                     ->filterByProcess([$performancePerDate['process_id']])
+        //                     ->count();
+        //                 $value = $this->isNewJoiner ? [
+        //                     'name' => $performancePerDate['name'],
+        //                     'date' => $dateValue,
+        //                     'scannedtime' => $performancePerDate['scannedtime'],
+        //                     'scanners_count' => $performancePerDate['scanners_count'],
+        //                     'qc_count' => $qcFaultsCount,
+        //                     'trade_target_new_joiner' => $performancePerDate['trade_target_new_joiner'],
+        //                     'internet_target_new_joiner' => $performancePerDate['internet_target_new_joiner']
+        //                 ] : [
+        //                     'name' => $performancePerDate['name'],
+        //                     'date' => $dateValue,
+        //                     'scannedtime' => $performancePerDate['scannedtime'],
+        //                     'scanners_count' => $performancePerDate['scanners_count'],
+        //                     'qc_count' => $qcFaultsCount,
+        //                     'trade_target' => $performancePerDate['trade_target'],
+        //                     'internet_target' => $performancePerDate['internet_target']
+        //                 ];
+        //                 //sanitize if the Employee has Data
+        //                 if ($employeeName) {
+        //                     $performance->push(
+        //                         $value
+        //                     );
+        //                 }
+        //             }
+        //         } else {
+        //             if ($employeeName) {
+        //                 $performance->push(
+        //                     $value = $this->isNewJoiner ? [
+        //                         'name' => null,
+        //                         'date' => null,
+        //                         'scannedtime' => null,
+        //                         'scanners_count' => null,
+        //                         'qc_count' => null,
+        //                         'trade_target_new_joiner' => null,
+        //                         'internet_target_new_joiner' => null
+        //                     ] : [
+        //                         'name' => null,
+        //                         'date' => null,
+        //                         'scannedtime' => null,
+        //                         'scanners_count' => null,
+        //                         'qc_count' => null,
+        //                         'trade_target' => null,
+        //                         'internet_target' => null
+        //                     ]
+        //                 );
+        //             }
+        //         }
+
+        //         $performanceGroupByDate->push(
+        //             [
+        //                 'date' => $date,
+        //                 'data' => $performance
+        //             ]
+        //         );
+        //         $performance = collect();
+        //     }
+
+        //     //sanitize if the Employee has Data
+        //     if ($employeeName) {
+        //         $data->push(
+        //             [
+        //                 'employee_name' => $employeeName['fullname'],
+        //                 'performances' => $performanceGroupByDate
+        //             ]
+        //         );
+        //     }
+
+        // }
 
         return $data;
     }
