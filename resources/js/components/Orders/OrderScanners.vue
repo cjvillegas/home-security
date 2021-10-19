@@ -222,7 +222,7 @@
 
                 this.scanners = scanners.map(scanner => {
                     scanner.blind_id = scanner.blindid
-                    scanner.scanned_at = this.$DateService.formatDateTime(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss', 'MMM DD, YYYY HH:mm')
+                    scanner.scanned_at = this.$DateService.formatDateTime(scanner.scannedtime, 'YYYY-MM-DD HH:mm:ss', 'MMM DD, YYYY HH:mm')
                     scanner.shift = scanner.employee && scanner.employee.shift ? scanner.employee.shift.name : ''
                     scanner.team = scanner.employee && scanner.employee.team ? scanner.employee.team.name : ''
 

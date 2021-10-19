@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Order\OrderInvoice;
-use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,19 +59,9 @@ class Scanner extends Model
         return '';
     }
 
-    public function getScannedtimeAttribute($value)
-    {
-        return $value;
-    }
-
     public function setScannedtimeAttribute($value)
     {
         $this->attributes['scannedtime'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('Y-m-d H:i:s');
     }
 
     /********************
