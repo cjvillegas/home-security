@@ -59,9 +59,7 @@ class DashboardMachineStatisticsDataService extends ReportDataService
             ->select([
                 'orders.id',
                 'orders.order_no',
-                'orders.serial_id',
-                'oi.id AS invoice_id',
-                'oi.date AS invoiced_at'
+                'orders.serial_id'
             ])
             ->with(['scanners' => function  ($relation) {
                 $relation->select([
@@ -77,7 +75,6 @@ class DashboardMachineStatisticsDataService extends ReportDataService
             }])
             ->join('scanners AS sc', 'sc.blindid', 'orders.serial_id')
             ->join('machines', 'machines.id', 'sc.machineid')
-            ->leftJoin('order_invoices AS oi', 'oi.order_no', 'orders.order_no')
             ->whereNotNull('sc.machineid')
             ->groupBy('orders.id');
 
@@ -136,30 +133,18 @@ class DashboardMachineStatisticsDataService extends ReportDataService
             $trackedOrderNums = [];
 
             foreach ($blinds as $blind) {
-                // if this blind's order has been invoiced and this blind's order is not been counted yet
-                // then add this to the tracked invoiced orders. This will prevent us to count orders twice
-                $countCompleted = false;
-                if ($type === 'vertical') {
-                    if ($blind->invoice_id && !in_array($blind->order_no, $trackedOrderNums)) {
-                        $trackedOrderNums[] = $blind->order_no;
-                        $countCompleted = true;
-                    }
-                }
-
                 $baseKey = 'today';
                 $today = $this->getStartAndEndDate($shiftKey, $shift, $dates[$baseKey]);
-
                 $scanner = $this->getScanner($blind->scanners, $today);
 
                 // if the scanner is not today, then check if it is from yesterday
                 if (empty($scanner)) {
                     $baseKey = 'yesterday';
                     $yesterday = $this->getStartAndEndDate($shiftKey, $shift, $dates[$baseKey]);
-
                     $scanner = $this->getScanner($blind->scanners, $yesterday);
                 }
 
-                // if no scanner found in this particular shift range, just neglect
+                // if no scanner found in this particular shift range, neglect the current blind
                 if (empty($scanner)) {
                     continue;
                 }
@@ -167,40 +152,34 @@ class DashboardMachineStatisticsDataService extends ReportDataService
                 // if this blind's order has been invoiced and this blind's order is not been counted yet
                 // then add this to the tracked invoiced orders. This will prevent us to count orders twice
                 $countProcessed = false;
-                if ($type === 'venetian') {
-                    if (!in_array($blind->order_no, $trackedOrderNums)) {
-                        $trackedOrderNums[] = $blind->order_no;
-                        $countProcessed = true;
-                    }
+                if (!isset($trackedOrderNums[$blind->order_no])) {
+                    $trackedOrderNums[$blind->order_no] = $blind->order_no;
+                    $countProcessed = true;
                 }
 
                 // set empty set of data set
                 if (!isset($dataSet[$baseKey][$shiftKey][$scanner->machineid])) {
                     $dataSet[$baseKey][$shiftKey][$scanner->machineid] = [
                         'processed_blinds' => 0,
-                        'completed_orders' => 0,
-                        'headrail_cut' => 0,
                         'processed_orders' => 0,
+                        'headrail_cut' => 0,
                         'machine_name' => $scanner->machine_name,
                     ];
                 }
 
                 $dataSet[$baseKey][$shiftKey][$scanner->machineid]['processed_blinds']++;
-                $dataSet[$baseKey][$shiftKey][$scanner->machineid]['completed_orders'] += $countCompleted;
                 $dataSet[$baseKey][$shiftKey][$scanner->machineid]['processed_orders'] += $countProcessed;
 
                 // set empty set for total data set
                 if (!isset($dataSet[$baseKey][$shiftKey]['total'])) {
                     $dataSet[$baseKey][$shiftKey]['total'] = [
                         'processed_blinds' => 0,
-                        'completed_orders' => 0,
-                        'headrail_cut' => 0,
                         'processed_orders' => 0,
+                        'headrail_cut' => 0,
                     ];
                 }
 
                 $dataSet[$baseKey][$shiftKey]['total']['processed_blinds']++;
-                $dataSet[$baseKey][$shiftKey]['total']['completed_orders'] += $countCompleted;
                 $dataSet[$baseKey][$shiftKey]['total']['processed_orders'] += $countProcessed;
 
                 // increment the headrail cut

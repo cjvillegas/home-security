@@ -116,7 +116,7 @@ class WorkAnalyticsReportController extends Controller
                 SELECT COUNT(DISTINCT order_invoices.id)
                 FROM `order_invoices`
                     INNER JOIN `orders` AS `o` ON `o`.`order_no` = `order_invoices`.`order_no`
-                    INNER JOIN `scanners` AS `sc` ON `sc`.`blindid` = `o`.`serial_id` AND sc.processid IN ('P1012', 'P1013', 'P1014')
+                    INNER JOIN `scanners` AS `sc` ON `sc`.`blindid` = `o`.`serial_id`
                 WHERE `order_invoices`.`date` = '{$yesterday}' AND `order_invoices`.`deleted_at` IS NULL
                     GROUP BY order_invoices.id
             ) AS fu
