@@ -22,4 +22,14 @@ class OrderInvoice extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    /**
+     * Get the most recent order invoice
+     *
+     * @return static|null
+     */
+    public static function getRecentInvoice(): ?self
+    {
+        return self::orderBy('invoice_no', 'desc')->first();
+    }
 }
