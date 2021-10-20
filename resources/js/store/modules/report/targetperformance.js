@@ -2,12 +2,13 @@ import axios from "axios";
 
 const state = {
     performances: [],
-
+    dates: [],
     loading: false
 };
 
 const getters = {
     performances: state => state.performances,
+    dates: state => state.dates,
     loading: state => state.loading
 };
 
@@ -20,6 +21,7 @@ const actions = {
         .then((response) => {
             commit('setLoading', false)
             commit('setPerformances', response.data.performances)
+            commit('setDates', response.data.dates)
         })
         .catch(err => {
             console.log(err)
@@ -36,6 +38,9 @@ const mutations = {
     },
     setPerformances(state, performances) {
         return state.performances = performances
+    },
+    setDates(state, dates) {
+        return state.dates = dates
     }
 };
 

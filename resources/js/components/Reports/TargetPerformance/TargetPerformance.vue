@@ -13,70 +13,18 @@
                     </el-button>
                 </div>
             </div>
-
-            <!-- <div v-if="hasPerformancesData">
-                <div class="row" v-for="(employee, employeeKey) in performances" :key="employeeKey">
-                    <div class="col-md-12">
-                        <h3>{{ employee.employee_name }}</h3>
-                        <el-table
-                            :data="employee.performances">
-                            <el-table-column
-                                prop="name"
-                                label="Process Name">
-                            </el-table-column>
-                            <el-table-column
-                                prop="scanners_count"
-                                label="Scanners Count">
-                            </el-table-column>
-                            <el-table-column
-                                prop="qc_count"
-                                label="QC Tagged">
-                            </el-table-column>
-                            <el-table-column
-                                v-if="filters.isNewJoiner && filters.type=='trade'"
-                                prop="trade_target_new_joiner"
-                                label="Trade Target">
-                            </el-table-column>
-                            <el-table-column
-                                v-if="filters.isNewJoiner && filters.type=='internet'"
-                                prop="internet_target_new_joiner"
-                                label="Internet Target">
-                            </el-table-column>
-                            <el-table-column
-                                v-if="!filters.isNewJoiner && filters.type=='trade'"
-                                prop="trade_target"
-                                label="Trade Target">
-                            </el-table-column>
-                            <el-table-column
-                                v-if="!filters.isNewJoiner&& filters.type=='internet'"
-                                prop="internet_target"
-                                label="Internet Target">
-                            </el-table-column>
-                            <el-table-column
-                                prop="date"
-                                label="Date">
-                            </el-table-column>
-                        </el-table>
-                    </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <ul class="list-group list-group-horizontal">
+                        <li class="list-group-item mt-2 mr-2"
+                            v-for="(date, dateKey) in dates"
+                            :key="dateKey">
+                            <h3>{{ date| fixDateByFormat('MMM DD, YYYY') }}</h3>
+                        </li>
+                    </ul>
                 </div>
             </div>
-
-            <div v-else>
-                <el-empty
-                    description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
-                </el-empty>
-            </div> -->
-            <div
-                class="row"
-                v-for="(employee, employeeKey) in performances"
-                :key="employeeKey">
-                <h2 class="font-weight-light">
-                    {{ employee.employee_name }}
-                </h2>
-                <hr>
-
-            </div>
-
             <el-collapse>
                 <el-collapse-item
                     v-for="(employee, employeeKey) in performances"
@@ -89,14 +37,24 @@
                             {{ performance.process_name }}
                         </div>
                         <div class="col-md-10">
-
                             <ul class="list-group list-group-horizontal">
-                                <li class="list-group-item m-2"
+                                <li class="list-group-item mt-2 mr-2"
                                     v-for="(performanceDate, performanceDateKey) in performance.data"
                                     :key="performanceDateKey">
-                                    <span> QC Tagged : {{ performanceDate.qc_count }} </span>
-                                    <span> Date: {{ performanceDate.date }} </span>
-                                    <span> Scanners Count:   {{ performanceDate.scanners_count }} </span>
+                                    <span> QC Tagged : {{ performanceDate.data.qc_count }} </span>
+                                    <span> Scanners Count:   {{ performanceDate.data.scanners_count }} </span>
+                                    <span v-if="employee.is_new_joiner && employee.type=='internet'">
+                                        Internet Target New Joiner: {{ performanceDate.data.intenet_target_new_joiner  }}
+                                    </span>
+                                    <span v-if="employee.is_new_joiner && employee.type=='trade'">
+                                        Trade Target New Joiner: {{ performanceDate.data.trade_target_new_joiner  }}
+                                    </span>
+                                    <span v-if="!employee.is_new_joiner && employee.type=='internet'">
+                                        Internet Target: {{ performanceDate.data.intenet_target  }}
+                                    </span>
+                                    <span v-if="!employee.is_new_joiner && employee.type=='trade'">
+                                        Trade Target: {{ performanceDate.data.trade_target  }}
+                                    </span>
                                 </li>
                             </ul>
                         </div>
@@ -140,7 +98,7 @@
         },
 
         computed: {
-            ...mapGetters('targetperformance', ['performances', 'loading']),
+            ...mapGetters('targetperformance', ['performances', 'dates', 'loading']),
 
             hasPerformancesData() {
                 return this.performances.length != 0

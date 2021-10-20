@@ -291,6 +291,11 @@ class ReportController extends Controller
         $service = new TargetPerformanceDataService($request->all());
         $data = $service->getData('list');
 
-        return response()->json(['performances' => $data]);
+        return response()->json(
+            [
+                'performances' => $data['performances'],
+                'dates' => $data['dates']
+            ]
+        );
     }
 }
