@@ -127,7 +127,13 @@ class TimeclockDataService extends ReportDataService
                     $timeclock[$item->employee_id]['clock_out'] = null;
                     $timeclock[$item->employee_id]['time_in'] = '--:--';
                 } else {
-                    $timeclock[$item->employee_id]['clock_out'] = date("M d, Y H:i", strtotime($item->swiped_at));
+                    $start = Carbon::parse($timeclock[$item->employee_id]['clock_in']);
+                    $end = Carbon::parse($item->swiped_at);
+
+                    // don't let the rendered hours greater than 12 hours
+                    if ($end->diff($start)->h <= 12) {
+                        $timeclock[$item->employee_id]['clock_out'] = date("M d, Y H:i", strtotime($item->swiped_at));
+                    }
                 }
 
                 // if both clock_in & clock_out is not empty compute the time in

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Order\OrderInvoice;
 use \DateTimeInterface;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -59,10 +60,10 @@ class Scanner extends Model
         return '';
     }
 
-    // public function getScannedtimeAttribute($value)
-    // {
-    //     return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
-    // }
+    public function getScannedtimeAttribute($value)
+    {
+        return $value;
+    }
 
     public function setScannedtimeAttribute($value)
     {
@@ -116,6 +117,16 @@ class Scanner extends Model
     public function qcFault()
     {
         return $this->hasOne(QcFault::class, 'scanner_id', 'id');
+    }
+
+    /**
+     * Get the order invoiced related to this Scanner
+     *
+     * @return void
+     */
+    public function orderInvoice()
+    {
+        return $this->hasOne(OrderInvoice::class, 'order_no', 'blindid');
     }
 
     /********************************

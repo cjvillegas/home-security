@@ -29,6 +29,17 @@
                                         </div>
                                     </el-collapse-item>
                                 </el-collapse>
+                                <div v-else>
+                                    <div
+                                        class="overflow-auto"
+                                        v-for="(scanner, scannerKey) in process.scanners"
+                                        :key="scannerKey">
+                                        <div>
+                                            {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
+                                            <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </el-card>
                         </el-timeline-item>
                     </el-timeline>

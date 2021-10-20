@@ -101,6 +101,9 @@ const app = new Vue({
         if (pathname == '/admin/reports/target-performance') {
             this.getEmployees()
         }
+        if (pathname === '/admin/reports/who-works-here-page') {
+                        this.getEmployees()
+        }
     },
     methods: {
         getUsers() {

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\Exports\ExportQcFaultDataJob;
 use App\Models\User;
 use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;

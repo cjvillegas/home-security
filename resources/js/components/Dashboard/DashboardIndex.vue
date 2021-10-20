@@ -33,7 +33,7 @@ export default {
     name: "DashboardIndex",
     data() {
         return {
-            activeTab: 'manufactured-blinds'
+            activeTab: 'despatch-department'
         }
     }
 }

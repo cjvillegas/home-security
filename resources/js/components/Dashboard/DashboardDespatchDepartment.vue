@@ -185,7 +185,7 @@
         computed: {
             formattedProgress() {
                 const shifts = ['shift_1', 'shift_2', 'shift_3', 'total']
-                const processes = ['P1012', 'P1013', 'P1014']
+                const processes = ['P1012', 'P1013', 'P1014', 'shipped_consignments', 'invoiced_orders']
                 let data = {}
                 let defaultValues = [
                     {key: 'P1012', label: 'Louvres Packed', count: 0},
@@ -193,9 +193,18 @@
                     {key: 'P1014', label: 'Machine Packed', count: 0},
                 ]
 
+                let additional = [
+                    {key: 'shipped_consignments', label: 'Shipped Consignments', count: 0},
+                    {key: 'invoiced_orders', label: 'Invoiced Orders', count: 0},
+                ]
+
                 for (let shift of shifts) {
                     let today = cloneDeep(defaultValues)
                     let yesterday = cloneDeep(defaultValues)
+
+                    if (shift === 'total') {
+                        yesterday = [...yesterday, ...additional]
+                    }
 
                     for (let process of processes) {
                         let todayIndex = today.findIndex(t => t.key === process)

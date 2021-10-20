@@ -26,7 +26,7 @@
                         </div>
 
                         <el-button
-                            @click="getBlinds(filters)"
+                            @click="fetchBlinds"
                             :disabled="disableApplyFilterButton"
                             type="primary"
                             class="w-100 mt-4">
@@ -34,12 +34,15 @@
                         </el-button>
                     </global-filter-box>
                     <el-button
-                        @click="exportManufacturedBlinds"
+                        @click="clickExportData"
                         :disabled="!canExportData"
                         type="success">
                         <i class="fas fa-file-export"></i> Export
                     </el-button>
                 </div>
+            </div>
+            <div v-if="filters.dateRange">
+                <p class="text-muted">Selected Dates: {{ dateVisual }}</p>
             </div>
             <el-table
                 :data="blinds"
@@ -73,6 +76,7 @@
 </template>
 
 <script>
+    import cloneDeep from "lodash/cloneDeep"
     import { mapActions, mapGetters } from 'vuex'
     import moment from "moment";
     export default {
@@ -111,18 +115,57 @@
         },
 
         computed: {
-            ...mapGetters('manufacturedblinds', ['blinds', 'loading']),
+            ...mapGetters('manufacturedblind', ['blinds', 'loading']),
 
             canExportData() {
-                return false
+                console.log(this.blinds)
+                return this.blinds.length > 0
             },
+
             disableApplyFilterButton() {
-                return false
+                return !this.filters.dateRange
             },
+
+            dateVisual() {
+                let sod = moment(this.filters.dateRange[0]).format('MMM DD, YYYY')
+                let eod = moment(this.filters.dateRange[1]).format('MMM DD, YYYY')
+                return  sod + ' - ' + eod
+            }
         },
 
         methods: {
-            ...mapActions('manufacturedblinds', ['getBlinds', 'exportManufacturedBlinds']),
+            ...mapActions('manufacturedblind', ['getBlinds', 'exportManufacturedBlinds']),
+
+            fetchBlinds() {
+                let {sod, eod} = this.getSodAndEod()
+                sod = sod.format('YYYY-MM-DD HH:mm')
+                eod = eod.format('YYYY-MM-DD HH:mm')
+
+                let parameters = cloneDeep(this.filters)
+                parameters.start = sod
+                parameters.end = eod
+
+                this.getBlinds(parameters)
+            },
+
+            clickExportData() {
+                let {sod, eod} = this.getSodAndEod()
+                sod = sod.format('YYYY-MM-DD HH:mm')
+                eod = eod.format('YYYY-MM-DD HH:mm')
+
+                let parameters = cloneDeep(this.filters)
+                parameters.start = sod
+                parameters.end = eod
+
+                this.exportManufacturedBlinds(parameters)
+                .then(() => {
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Your data is being exported. Please wait a while and check the Export page for your export',
+                        type: 'success'
+                    })
+                })
+            },
 
             getOverallTotal(param) {
                 const { columns, data } = param;
@@ -149,6 +192,14 @@
                 );
 
                 return sums;
+            },
+
+            getSodAndEod() {
+                // define the SOD and EOD
+                let sod = moment(this.filters.dateRange[0]).hour(6).startOf('hour')
+                let eod = moment(this.filters.dateRange[1]).add(1, 'day').hour(6).startOf('hour')
+
+                return {sod, eod}
             },
 
             datesChange() {

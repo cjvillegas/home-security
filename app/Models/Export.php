@@ -25,6 +25,9 @@ class Export extends Model
     // the time and attendance report
     const TIME_AND_ATTENDANCE_REPORT = 'time_and_attendance';
 
+    // manufactured blinds report
+    const MANUFACTURED_BLIND_REPORT = 'manufactured_blind_export';
+
     /**
      * Export Status
      */
