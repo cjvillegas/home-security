@@ -18,7 +18,8 @@ export default new Vuex.Store({
         processes: [],
         qualityControls: [],
         teams: [],
-        shifts: []
+        shifts: [],
+        products: []
     },
     getters: {
         users(state) {
@@ -38,6 +39,9 @@ export default new Vuex.Store({
         },
         shifts(state) {
             return state.shifts
+        },
+        products(state) {
+            return state.products
         }
     },
     mutations: {
@@ -58,6 +62,9 @@ export default new Vuex.Store({
         },
         SET_SHIFTS(state, shifts) {
             state.shifts = shifts
+        },
+        SET_PRODUCTS(state, products) {
+            state.products = products
         }
     },
     actions: {
@@ -78,6 +85,9 @@ export default new Vuex.Store({
         },
         setShifts({commit}, shifts) {
             commit('SET_SHIFTS', shifts)
+        },
+        setProducts({commit}, products) {
+            commit('SET_PRODUCTS', products)
         }
     },
 

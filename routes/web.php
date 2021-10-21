@@ -81,6 +81,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
     Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.product-type');
+    Route::get('orders/all-products', 'OrdersController@getAllBlindType')->name('orders.blind-type');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams

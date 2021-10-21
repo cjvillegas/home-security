@@ -46,6 +46,7 @@ Vue.prototype.$DateService = new DateGenericService()
 // vue filter
 import numeral from 'numeral';
 import numFormat from 'vue-filter-number-format'
+import axios from 'axios';
 
 // use the filter
 Vue.filter('numFormat', numFormat(numeral));
@@ -74,6 +75,7 @@ const app = new Vue({
             this.getEmployees()
             this.getProcesses()
             this.getQualityControls()
+            this.getProducts()
         }
 
         if (pathname === '/admin/reports/team-status') {
@@ -159,7 +161,18 @@ const app = new Vue({
             })
         },
 
-        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts'])
+        getProducts() {
+            axios.get(`/admin/orders/all-products`)
+            .then(res => {
+                console.log(res.data)
+                this.setProducts(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Products Fetching Error`)
+            })
+        },
+
+        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setProducts'])
     }
 });
 
