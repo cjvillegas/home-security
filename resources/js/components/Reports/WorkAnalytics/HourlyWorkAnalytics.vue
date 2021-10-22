@@ -153,7 +153,7 @@
 
                     while (sodCopy <= eod && sod <= eod) {
                         let count = localScanners.filter(scanner => {
-                            return moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')
+                            return moment(scanner.scannedtime).isBetween(sod, sodCopy, null, '[)')
                         }).length
 
                         data.push(count)
