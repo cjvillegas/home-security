@@ -226,20 +226,28 @@
             </a>
             <ul class="c-sidebar-nav-dropdown-items">
                 @can('stock_items_access')
-                <li class="c-sidebar-nav-item">
-                    <a href="{{ route('admin.in-house.stocks.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stocks.index") ? "c-active" : "" }}">
-                        <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
-                        Stock Items
-                    </a>
-                </li>
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.in-house.stock-inventories.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-inventories.index") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-boxes c-sidebar-nav-icon"></i>
+                            Inventory
+                        </a>
+                    </li>
+                @endcan
+                @can('stock_items_access')
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.in-house.stocks.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stocks.index") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-warehouse c-sidebar-nav-icon"></i>
+                            Stock Items
+                        </a>
+                    </li>
                 @endcan
                 @can('stock_level_access')
-                <li class="c-sidebar-nav-item">
-                    <a href="{{ route('admin.in-house.stock-levels.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-levels.index") ? "c-active" : "" }}">
-                        <i class="fa-fw fas fa-project-diagram c-sidebar-nav-icon"></i>
-                        Stock Level
-                    </a>
-                </li>
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.in-house.stock-levels.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-levels.index") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-truck-loading c-sidebar-nav-icon"></i>
+                            Stock Level
+                        </a>
+                    </li>
                 @endcan
             </ul>
         </li>

@@ -10,4 +10,8 @@ Route::namespace('InHouse')->as('in-house.')->prefix('in-house')->group( functio
     Route::get('stock-levels', 'StockLevelController@index')->name('stock-levels.index');
     Route::get('stock-levels/last-sync', 'StockLevelController@lastSync');
     Route::post('stock-levels/list', 'StockLevelController@fetchStockLevels');
+
+    // Stock Inventory Routes
+    Route::get('stock-inventories/search-stock-levels', 'StockInventoryController@searchStockLevels')->name('stock-inventories.search-stock-levels');
+    Route::resource('stock-inventories', 'StockInventoryController');
 });

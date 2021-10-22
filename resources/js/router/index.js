@@ -46,6 +46,11 @@ const TeamIndex = () => import('../components/Teams/TeamIndex')
 const TeamList = () => import('../components/Teams/TeamList')
 const TeamConfiguration = () => import('../components/Teams/TeamConfiguration')
 
+// Stock Inventory
+const StockInventoryDefault = () => import('../components/InHouse/StockInventory/StockInventoryDefault')
+const StockInventoryIndex = () => import('../components/InHouse/StockInventory/StockInventoryIndex')
+const StockInventoryForm = () => import('../components/InHouse/StockInventory/StockInventoryForm')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -167,6 +172,26 @@ export default new VueRouter({
                     path: 'view-team',
                     name: 'Team View',
                     component: TeamConfiguration,
+                    props: true,
+                },
+            ]
+        },
+        {
+            path: '/stock-inventories',
+            name: 'Stock Inventory Default',
+            component: StockInventoryDefault,
+            props: true,
+            children: [
+                {
+                    path: 'index',
+                    name: 'Stock Inventory Index',
+                    component: StockInventoryIndex,
+                    props: true,
+                },
+                {
+                    path: 'form',
+                    name: 'Stock Inventory Form',
+                    component: StockInventoryForm,
                     props: true,
                 },
             ]

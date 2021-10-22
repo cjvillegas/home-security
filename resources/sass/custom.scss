@@ -41,3 +41,66 @@
         border-top: 4px solid #e6e6e6
     }
 }
+
+.stock-inventory {
+    .summary-container {
+        .summary-title {
+            border: 1px solid;
+            border-radius: 5px;
+            text-align: center;
+            padding: 5px;
+            box-shadow: 1px 2px #888888;
+            font-weight: 700;
+        }
+    }
+
+    .new-orders-container {
+        border-left: .5em solid #ee4526;
+    }
+
+    .pending-orders-container {
+        border-left: .5em solid #f9c710;
+    }
+
+    .completed-orders-container {
+        border-left: .5em solid #8bcc4c;
+    }
+
+    .summary-analytic {
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .summary-analytic-count {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .summary-table-container {
+        border-left: .5em solid #3e47a7;
+
+        .summary-table-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+    }
+}
+
+.f-size-2em {
+    font-size: 1em !important;
+}
+
+.sbg-select-item {
+    line-height: 20px;
+    margin: 10px 0px;
+
+    .item-title {
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .item-description {
+
+    }
+}
