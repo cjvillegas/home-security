@@ -167,7 +167,7 @@
                     let index = 0
                     while (sodCopy <= eod && sod <= eod) {
                         let count = localScanners.filter((scanner, index) => {
-                            return moment(scanner.scannedtime, 'MM/DD/YYYY HH:mm:ss').isBetween(sod, sodCopy, null, '[)')
+                            return moment(scanner.scannedtime).isBetween(sod, sodCopy, null, '[)')
                         }).length
 
                         data.push(count)
@@ -298,15 +298,15 @@
             data.push([].concat(['', 'Total'], this.plottedData.setTotal))
 
             this.$API.Exports.exportDailyWorkAnalyticsReport(headers, data)
-                .then(res => {
-                    this.exporter('xlsx', `Daily Work Analytics Report`, res.data)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-                .finally(_ => {
-                    this.loading = false
-                })
+            .then(res => {
+                this.exporter('xlsx', `Daily Work Analytics Report`, res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            .finally(_ => {
+                this.loading = false
+            })
         }
     }
 }
