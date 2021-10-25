@@ -29,6 +29,22 @@ const actions = {
         .finally(_ => {
             commit('setLoading', false)
         })
+    },
+
+    async exportTargetPerformance({commit}, data) {
+        let apiUrl = `/admin/reports/export-target-performance`
+
+        commit('setLoading', true)
+        await axios.post(apiUrl, data)
+        .then((response) => {
+            commit('setLoading', false)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        .finally(_ => {
+            commit('setLoading', false)
+        })
     }
 };
 

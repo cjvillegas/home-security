@@ -3,6 +3,8 @@
 namespace App\Services\Reports;
 
 use App\Models\Employee;
+use App\Models\Export;
+use App\Models\Process;
 use App\Models\QcFault;
 use App\Models\Scanner;
 use App\Services\Reports\ReportDataService;
@@ -31,6 +33,10 @@ class TargetPerformanceDataService extends ReportDataService
      */
     private $dateRange;
 
+    /**
+     * @var mixed
+     */
+    private $processes;
 
     /**
      * Target Performance Data constructor.
@@ -50,6 +56,8 @@ class TargetPerformanceDataService extends ReportDataService
         $data = collect();
 
         $query = $this->buildQuery()->applyFilters();
+        $this->getProcesses();
+        Log::info($this->dateRange);
         $this->employees = $this->getFilterValue('employees');
         $from = Carbon::parse($this->dateRange[0]);
         $to = Carbon::parse($this->dateRange[1]);
@@ -75,6 +83,20 @@ class TargetPerformanceDataService extends ReportDataService
                 break;
 
             case 'export':
+                $performances = $this->segregateByDays(
+                    $query->getResultInCollection(),
+                    $from,
+                    $to,
+                    $dates,
+                    $this->employees
+                );
+
+                $data = collect(
+                    [
+                        'performances' => $performances,
+                        'dates' => $dates
+                    ]
+                );
                 break;
         }
 
@@ -88,7 +110,6 @@ class TargetPerformanceDataService extends ReportDataService
      */
     public function buildQuery(): self
     {
-        $selectQuery = array();
         $this->isNewJoiner = $this->getFilterValue('isNewJoiner');
 
         $query = Scanner::query()
@@ -129,53 +150,51 @@ class TargetPerformanceDataService extends ReportDataService
             //iterate all processes done by employee
             if ($employeeProcesses->count() > 0) {
                 foreach ($employeeProcesses as $process) {
+                    $totalTradeTarget = 0;
+                    $totalInternetTarget = 0;
+                    $totalTradeNewJoiner = 0;
+                    $totalInternetNewJoiner = 0;
+                    $totalQcTagged = 0;
+                    $totalScannersCount = 0;
                     $dateList = collect();
+
                     //each process must be assigned per date.
                     foreach ($dates as $date) {
                         $from = Carbon::parse($date)->format('Y-m-d'). ' '. '00:00:00';
                         $to = Carbon::parse($date)->format('Y-m-d'). ' '. '23:59:59';
                         $dateValue = Carbon::parse($date)->format('Y-m-d');
                         $value = [];
-
+                        $qcCount = QcFault::whereBetween('operation_date', [$from, $to])
+                            ->where('employee_id', $employee)
+                            ->where('process_id', $process['process_id'])
+                            ->count();
                         $performanceOnThatDate = $this->performancePerDateQuery($from, $to, $employee, $process['process_id']);
                         //if the Employee has performance on that date, assign the values
+
                         if ($performanceOnThatDate) {
-                            $value = $this->isNewJoiner ? [
+                            $totalScannersCount += $performanceOnThatDate['scanners_count'];
+                            $value = [
                                 'name' => $performanceOnThatDate['name'],
                                 'date' => $dateValue,
                                 'scannedtime' => $performanceOnThatDate['scannedtime'],
                                 'scanners_count' => $performanceOnThatDate['scanners_count'],
-                                'qc_count' => 0,
-                                'trade_target_new_joiner' => $performanceOnThatDate['trade_target_new_joiner'],
-                                'internet_target_new_joiner' => $performanceOnThatDate['internet_target_new_joiner']
-                            ] : [
-                                'name' => $performanceOnThatDate['name'],
-                                'date' => $dateValue,
-                                'scannedtime' => $performanceOnThatDate['scannedtime'],
-                                'scanners_count' => $performanceOnThatDate['scanners_count'],
-                                'qc_count' => 0,
-                                'trade_target' => $performanceOnThatDate['trade_target'],
-                                'internet_target' => $performanceOnThatDate['internet_target']
+                                'qc_count' => $qcCount,
+                                'trade_target' => $this->processes->where('id', $process['process_id'])->pluck('trade_target')[0] ?: 0,
+                                'internet_target' => $this->processes->where('id', $process['process_id'])->pluck('internet_target')[0] ?: 0
                             ];
-                        } else {
-                            $value = $this->isNewJoiner ? [
-                                'name' => $process['name'],
-                                'date' => $dateValue,
-                                'scannedtime' => null,
-                                'scanners_count' => 0,
-                                'qc_count' => 0,
-                                'trade_target_new_joiner' => $process['trade_target_new_joiner'],
-                                'internet_target_new_joiner' => $process['internet_target_new_joiner']
-                            ] : [
-                                'name' => $process['name'],
-                                'date' => $dateValue,
-                                'scannedtime' => null,
-                                'scanners_count' => 0,
-                                'qc_count' => 0,
-                                'trade_target' => $process['trade_target'],
-                                'internet_target' => $process['internet_target']
-                            ];
+
+                            if ($this->isNewJoiner) {
+                                $value = array_splice($value, 2);
+                                $value['trade_target_new_joiner'] = $this->processes->where('id', $process['process_id'])->pluck('trade_target_new_joiner')[0] ?: 0;
+                                $value['internet_target_new_joiner'] = $this->processes->where('id', $process['process_id'])->pluck('internet_target_new_joiner')[0] ?: 0;
+                            }
                         }
+                        //increment total target for Overall Employee performance
+                        $totalTradeTarget += $this->processes->where('id', $process['process_id'])->pluck('trade_target')[0] ?: 0;
+                        $totalInternetTarget += $this->processes->where('id', $process['process_id'])->pluck('internet_target')[0] ?: 0;
+                        $totalTradeNewJoiner += $this->processes->where('id', $process['process_id'])->pluck('trade_target_new_joiner')[0] ?: 0;
+                        $totalInternetNewJoiner += $this->processes->where('id', $process['process_id'])->pluck('internet_target_new_joiner')[0] ?: 0;
+                        $totalQcTagged += $qcCount;
 
                         $dateList->push(
                             [
@@ -188,6 +207,17 @@ class TargetPerformanceDataService extends ReportDataService
                     $processesData->push(
                         [
                             'process_name' => $process['name'],
+                            'total_trade_target' => $totalTradeTarget,
+                            'total_internet_target' => $totalInternetTarget,
+                            'total_trade_target_new_joiner' => $totalTradeNewJoiner,
+                            'total_internet_target_new_joiner' => $totalInternetNewJoiner,
+                            'total_qc_tagged' => $totalQcTagged,
+                            'total_scanners_count' => $totalScannersCount,
+                            'trade_target_percentage' => $totalTradeTarget != 0 ? (number_format(($totalScannersCount/$totalTradeTarget) * 100, 2, '.', ' ')) : 0,
+                            'internet_target_percentage' => $totalInternetTarget != 0 ? (number_format(($totalScannersCount/$totalInternetTarget) * 100, 2, '.', ' ')) : 0,
+                            'trade_new_joiner_percentage' => $totalTradeNewJoiner != 0 ? (number_format(($totalScannersCount/$totalTradeNewJoiner) * 100, 2, '.', ' ')) : 0,
+                            'internet_new_joiner_percentage' => $totalInternetNewJoiner != 0 ? (number_format(($totalScannersCount/$totalInternetNewJoiner) * 100, 2, '.', ' ')) : 0,
+                            'total_qc_percentage' => $totalTradeTarget != 0 ? (number_format(($totalQcTagged/$totalTradeTarget) * 100, 2, '.', ' ')) : 0,
                             'data' => $dateList
                         ]
                     );
@@ -241,6 +271,11 @@ class TargetPerformanceDataService extends ReportDataService
         return $data;
     }
 
+    public function getProcesses()
+    {
+        $this->processes = collect(Process::all());
+    }
+
     /**
      * Apply the filters
      *
@@ -256,5 +291,16 @@ class TargetPerformanceDataService extends ReportDataService
         }
 
         return $this;
+    }
+
+    /**
+     * Get the export type. The export type should have an Export counterpart.
+     * Make sure you register a unique one in the Export model.
+     *
+     * @return string
+     */
+    public function exportType(): string
+    {
+        return Export::TARGET_PERFORMANCE_REPORT;
     }
 }

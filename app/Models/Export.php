@@ -28,6 +28,9 @@ class Export extends Model
     // manufactured blinds report
     const MANUFACTURED_BLIND_REPORT = 'manufactured_blind_export';
 
+    // target performance report
+    const TARGET_PERFORMANCE_REPORT = 'target_performance_export';
+
     /**
      * Export Status
      */
