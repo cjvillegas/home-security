@@ -7,7 +7,8 @@
             <div class="col-md-6">
                 <global-employee-selector
                     :value.sync="filters.employees"
-                    :is-multiple="true">
+                    :is-multiple="true"
+                    :has-limit="true">
                 </global-employee-selector>
             </div>
             <div class="col-md-6">
@@ -63,6 +64,7 @@
 		    </el-button>
 		    <el-button
                 @click="applyFilter"
+                :disabled="disableApplyFilterButton"
                 type="primary"
                 class="btn-primary">
 		    	Apply Filter
@@ -91,6 +93,9 @@ import { mapActions } from 'vuex';
          },
 
          computed: {
+             disableApplyFilterButton() {
+                return !this.filters.dateRange || !this.filters.employees.length || this.filters.type == null
+            },
              employeeInformationLabel() {
                  if ( this.filters.employees.length > 1 ) {
                      return "Are these Employees new joiners?"
@@ -103,8 +108,15 @@ import { mapActions } from 'vuex';
          methods: {
              ...mapActions('targetperformance',['getPerformances']),
              applyFilter() {
-                 this.getPerformances(this.filters)
-                 this.closeModal()
+                 if (this.filters.employees.length > 10) {
+                     this.$notify.error({
+                        title: 'Error',
+                        message: 'You can only select up to 10 Employees'
+                    });
+                 } else {
+                    this.getPerformances(this.filters)
+                    this.closeModal()
+                 }
              },
 
              closeFilter() {

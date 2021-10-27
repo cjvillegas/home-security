@@ -104,6 +104,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from "../../mixins/pagination";
+import { mapGetters } from 'vuex';
 
     export default {
         name: "OrderScanners",
@@ -118,22 +119,11 @@
             }
         },
         data() {
-            let columns = [
-                {label: 'ID', key: 'id', show_overflow_tooltip: true},
-                {label: 'Employee', key: 'employee_name', show_overflow_tooltip: true},
-                {label: 'Operation', key: 'process_name', show_overflow_tooltip: true},
-                {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
-                {label: 'Scanned At', key: 'scanned_at', show_overflow_tooltip: true},
-                {label: 'Shift', key: 'shift', show_overflow_tooltip: true},
-                {label: 'Team', key: 'team', show_overflow_tooltip: true}
-            ]
-
             return {
                 showQcTagForm: false,
                 loading: false,
                 scanners: [],
                 qcCodes: [],
-                columns: columns,
                 filters: {
                     searchString: null
                 },
@@ -144,6 +134,19 @@
         },
 
         computed: {
+            ...mapGetters(['privacy']),
+            columns() {
+                return  [
+                    {label: 'ID', key: 'id', show_overflow_tooltip: true},
+                    {label: this.privacy ? 'Barcode' : 'Employee', key: this.privacy ? 'barcode' : 'employee_name' , show_overflow_tooltip: true},
+                    {label: 'Operation', key: 'process_name', show_overflow_tooltip: true},
+                    {label: 'Blind ID', key: 'blind_id', show_overflow_tooltip: true},
+                    {label: 'Scanned At', key: 'scanned_at', show_overflow_tooltip: true},
+                    {label: 'Shift', key: 'shift', show_overflow_tooltip: true},
+                    {label: 'Team', key: 'team', show_overflow_tooltip: true}
+                ]
+            },
+
             filteredScanners() {
                 let scanners = cloneDeep(this.scanners)
 

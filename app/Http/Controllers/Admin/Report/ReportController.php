@@ -12,11 +12,13 @@ use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
 use App\Services\Reports\WhoWorksHereDataService;
+use App\Services\TargetPerformanceExporterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -311,13 +313,10 @@ class ReportController extends Controller
         $user = User::find(auth()->user()->id);
 
         $service = new TargetPerformanceDataService($request->all());
-        $exporter = new CsvExporterService($user);
+        $exporter = new TargetPerformanceExporterService($user);
         $exporter->setName('Target Performance Report')
             ->setPath('exports')
-            ->setHeaders([
-                'performances' => 'Performances'
-            ])
-            ->export($service);
+            ->export($service, $request->dateRange);
 
         return response()->json(
             [

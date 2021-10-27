@@ -19,7 +19,9 @@ export default new Vuex.Store({
         processes: [],
         qualityControls: [],
         teams: [],
-        shifts: []
+        shifts: [],
+        user: {},
+        privacy: false
     },
     getters: {
         users(state) {
@@ -39,6 +41,12 @@ export default new Vuex.Store({
         },
         shifts(state) {
             return state.shifts
+        },
+        user(state) {
+            return state.user
+        },
+        privacy(state) {
+            return state.privacy
         }
     },
     mutations: {
@@ -59,6 +67,12 @@ export default new Vuex.Store({
         },
         SET_SHIFTS(state, shifts) {
             state.shifts = shifts
+        },
+        SET_USER(state, user) {
+            state.user = user
+        },
+        SET_PRIVACY(state, privacy) {
+            state.privacy = privacy
         }
     },
     actions: {
@@ -79,6 +93,12 @@ export default new Vuex.Store({
         },
         setShifts({commit}, shifts) {
             commit('SET_SHIFTS', shifts)
+        },
+        setUser({commit}, user) {
+            commit('SET_USER', user)
+        },
+        setPrivacy({commit}, privacy) {
+            commit('SET_PRIVACY', privacy)
         }
     },
 
@@ -87,6 +107,6 @@ export default new Vuex.Store({
         process,
         fireregister,
         manufacturedblind,
-        targetperformance
+        targetperformance,
     }
 })

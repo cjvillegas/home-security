@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class UsersController extends Controller
@@ -181,8 +182,19 @@ class UsersController extends Controller
     public function getAuthUser()
     {
         $user = auth()->user();
+
         $user->permissions = $user->getPermissionsPerModules('qc_tag');
 
         return response()->json($user);
+    }
+
+    /**
+     * Check if user has privacy mode on
+     *
+     * @return void
+     */
+    public function checkPrivacy()
+    {
+        return response()->json(Gate::allows('privacy_on'));
     }
 }

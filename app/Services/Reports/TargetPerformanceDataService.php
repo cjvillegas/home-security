@@ -57,7 +57,7 @@ class TargetPerformanceDataService extends ReportDataService
 
         $query = $this->buildQuery()->applyFilters();
         $this->getProcesses();
-        Log::info($this->dateRange);
+
         $this->employees = $this->getFilterValue('employees');
         $from = Carbon::parse($this->dateRange[0]);
         $to = Carbon::parse($this->dateRange[1]);
@@ -204,6 +204,18 @@ class TargetPerformanceDataService extends ReportDataService
                         );
                     }
 
+                    if ($this->getFilterValue('type') == 'trade' && $this->isNewJoiner) {
+                        $totalQcPercentage = $totalTradeNewJoiner != 0 ? (number_format(($totalQcTagged/$totalTradeNewJoiner) * 100, 2, '.', ' ')) : 0;
+                    }
+                    if ($this->getFilterValue('type') == 'internet' && $this->isNewJoiner) {
+                        $totalQcPercentage =  $totalInternetNewJoiner != 0 ? (number_format(($totalQcTagged/ $totalInternetNewJoiner) * 100, 2, '.', ' ')) : 0;
+                    }
+                    if ($this->getFilterValue('type') == 'trade' && !$this->isNewJoiner) {
+                        $totalQcPercentage =  $totalTradeTarget != 0 ? (number_format(($totalQcTagged/ $totalTradeTarget) * 100, 2, '.', ' ')) : 0;
+                    }
+                    if ($this->getFilterValue('type') == 'internet' && !$this->isNewJoiner) {
+                        $totalQcPercentage =  $totalInternetTarget != 0 ? (number_format(($totalQcTagged/ $totalInternetTarget) * 100, 2, '.', ' ')) : 0;
+                    }
                     $processesData->push(
                         [
                             'process_name' => $process['name'],
@@ -217,7 +229,7 @@ class TargetPerformanceDataService extends ReportDataService
                             'internet_target_percentage' => $totalInternetTarget != 0 ? (number_format(($totalScannersCount/$totalInternetTarget) * 100, 2, '.', ' ')) : 0,
                             'trade_new_joiner_percentage' => $totalTradeNewJoiner != 0 ? (number_format(($totalScannersCount/$totalTradeNewJoiner) * 100, 2, '.', ' ')) : 0,
                             'internet_new_joiner_percentage' => $totalInternetNewJoiner != 0 ? (number_format(($totalScannersCount/$totalInternetNewJoiner) * 100, 2, '.', ' ')) : 0,
-                            'total_qc_percentage' => $totalTradeTarget != 0 ? (number_format(($totalQcTagged/$totalTradeTarget) * 100, 2, '.', ' ')) : 0,
+                            'total_qc_percentage' => $totalQcPercentage,
                             'data' => $dateList
                         ]
                     );
