@@ -194,6 +194,7 @@
                 ]
 
                 let additional = [
+                    {key: 'packed_shipped_blinds', label: 'Packed & Shipped Blinds', count: 0},
                     {key: 'shipped_consignments', label: 'Shipped Consignments', count: 0},
                     {key: 'invoiced_orders', label: 'Invoiced Orders', count: 0},
                 ]
