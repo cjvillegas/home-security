@@ -28,6 +28,9 @@ class Export extends Model
     // manufactured blinds report
     const MANUFACTURED_BLIND_REPORT = 'manufactured_blind_export';
 
+    // Fire register report
+    const FIRE_REGISTER_REPORT = 'fire_register_export';
+
     /**
      * Export Status
      */

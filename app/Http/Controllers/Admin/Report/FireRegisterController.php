@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin\Report;
 
 use App\Http\Controllers\Controller;
+use App\Models\Employee;
 use App\Models\Scanner;
+use App\Models\User;
+use App\Services\CsvExporterService;
+use App\Services\Reports\FireRegisterDataService;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Gate;
@@ -36,16 +40,36 @@ class FireRegisterController extends Controller
     {
         abort_if(Gate::denies('fire_register_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $from = date('Y-m-d').' '.$request->from;
-        //if selected shift is 3, it should fetch for tomorrow's date.
-        $to = $request->shifts == 3 ? date('Y-m-d', strtotime("+1 day")).' '.$request->to : date('Y-m-d').' '.$request->to;
-        $employees = DB::table('employees')
-                        ->select('employees.fullname', 'scanners.scannedtime', 'employees.clock_num')
-                        ->join('scanners', 'employees.barcode', '=', 'scanners.employeeid')
-                        ->whereBetween('scannedtime', [$from, $to])
-                        ->groupBy('employees.id', 'scanners.employeeid')
-                        ->get();
+        $employees = [];
+
+        $service = new FireRegisterDataService($request->all());
+        $employees = $service->getData('list');
 
         return response()->json(['employees' => $employees]);
+    }
+
+    public function exportFireRegister(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $service = new FireRegisterDataService($request->all());
+
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Fire Register')
+            ->setPath('exports')
+            ->setHeaders([
+                'id' => 'Employee ID',
+                'fullname' => 'Fullname',
+                'scannedtime' => 'Operation Started At',
+                'clock_num' => 'Clock Num',
+                'clock_in' => 'Clock In',
+                'clock_out' => 'Clock Out',
+                'time_in'=> 'Time In'
+            ])
+            ->export($service);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+        ]);
     }
 }
