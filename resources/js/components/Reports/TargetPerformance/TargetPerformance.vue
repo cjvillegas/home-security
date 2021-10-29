@@ -20,6 +20,13 @@
                 </div>
             </div>
             <div
+                v-if="!canExportData">
+                <el-empty
+                    description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
+                </el-empty>
+            </div >
+            <div
+                v-else
                 v-for="(employee, employeeKey) in performances"
                 :key="employeeKey"
                 class="border-bottom">

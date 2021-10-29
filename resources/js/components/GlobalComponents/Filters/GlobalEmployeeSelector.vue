@@ -4,7 +4,7 @@
             v-if="showLabel">
             {{ title }}
             <el-tooltip content="Select up to 10 Employees" placement="top">
-                <i class="bg-info fa fa-info-circle" aria-hidden="true"></i>
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
             </el-tooltip>
         </label>
         <el-select
