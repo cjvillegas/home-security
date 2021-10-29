@@ -39,8 +39,8 @@ class EmployeeTimeclock extends CronDatabasePopulator
     {
         parent::__construct();
 
-        // $this->employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
-        //     ->get();
+        $this->employees = Employee::select('id', 'user_id', 'fullname', 'clock_num')
+            ->get();
     }
 
     /**
