@@ -50,6 +50,9 @@ const TeamConfiguration = () => import('../components/Teams/TeamConfiguration')
 const StockInventoryDefault = () => import('../components/InHouse/StockInventory/StockInventoryDefault')
 const StockInventoryIndex = () => import('../components/InHouse/StockInventory/StockInventoryIndex')
 const StockInventoryForm = () => import('../components/InHouse/StockInventory/StockInventoryForm')
+const StockInventoryDraftOrders = () => import('../components/InHouse/StockInventory/StockInventoryDraftOrders')
+const StockInventoryPendingOrders = () => import('../components/InHouse/StockInventory/StockInventoryPendingOrders')
+const StockInventoryApprovedOrders = () => import('../components/InHouse/StockInventory/StockInventoryApprovedOrders')
 
 export default new VueRouter({
     linkActiveClass: 'active',
@@ -177,7 +180,7 @@ export default new VueRouter({
             ]
         },
         {
-            path: '/stock-inventories',
+            path: '/stock-orders',
             name: 'Stock Inventory Default',
             component: StockInventoryDefault,
             props: true,
@@ -192,6 +195,30 @@ export default new VueRouter({
                     path: 'form',
                     name: 'Stock Inventory Form',
                     component: StockInventoryForm,
+                    props: true,
+                },
+                {
+                    path: 'form/:id',
+                    name: 'Stock Inventory Form View',
+                    component: StockInventoryForm,
+                    props: true,
+                },
+                {
+                    path: 'draft-orders',
+                    name: 'Stock Inventory Draft Orders',
+                    component: StockInventoryDraftOrders,
+                    props: true,
+                },
+                {
+                    path: 'pending-orders',
+                    name: 'Stock Inventory Pending Orders',
+                    component: StockInventoryPendingOrders,
+                    props: true,
+                },
+                {
+                    path: 'approved-orders',
+                    name: 'Stock Inventory Approved Orders',
+                    component: StockInventoryApprovedOrders,
                     props: true,
                 },
             ]

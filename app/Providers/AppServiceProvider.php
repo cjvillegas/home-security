@@ -10,6 +10,14 @@ use Illuminate\Pagination\Paginator;
 class AppServiceProvider extends ServiceProvider
 {
     /**
+     * All of the container bindings that should be registered.
+     *
+     * @var array
+     */
+    public $bindings = [
+    ];
+
+    /**
      * Register any application services.
      *
      * @return void

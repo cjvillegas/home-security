@@ -20,6 +20,8 @@ import EmployeeEmployee from './Employee/Employee'
 
 // Stock Order Collections
 import StockOrder from './StockOrder/StockOrder'
+import StockLevel from './StockOrder/StockLevel'
+import PurchaseOrder from './StockOrder/PurchaseOrder'
 
 export default {
     Orders,
@@ -43,5 +45,7 @@ export default {
     EmployeeEmployee,
 
     // Stock Order dedicated endpoints
-    StockOrder
+    StockOrder,
+    StockLevel,
+    PurchaseOrder
 }

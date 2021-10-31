@@ -44,7 +44,7 @@
                             </span>
                         </template>
                         <template v-else-if="column.prop === 'created_at'">
-                            {{ scope.row.created_at | fixDateByFormat }}
+                            {{ scope.row.created_at | fixDateTimeByFormat }}
                         </template>
                     </template>
                 </el-table-column>

@@ -38,7 +38,7 @@
                 sortable>
                 <template
                     slot-scope="scope">
-                    {{ scope.row.created_at | fixDateByFormat('MMMM DD, YYYY hh:mm:ss a') }}
+                    {{ scope.row.created_at | fixDateTimeByFormat('MMMM DD, YYYY hh:mm:ss a') }}
                 </template>
             </el-table-column>
         </el-table>

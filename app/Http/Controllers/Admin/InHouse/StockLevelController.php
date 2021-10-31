@@ -61,4 +61,21 @@ class StockLevelController extends Controller
 
         return response()->json(['lastSync' => $lastSync]);
     }
+
+    /**
+     * Fetch total count of out of stock items
+     *
+     * @return JsonResponse
+     */
+    public function outOfStockTotalCount(): JsonResponse
+    {
+        $totalCount = StockLevel::where('stock_levels.available_stock', '<=', 0)
+            ->distinct()
+            ->count('stock_levels.id');
+
+        return response()->json([
+            'message' => 'Out of stock items total count.',
+            'data' => $totalCount
+        ]);
+    }
 }

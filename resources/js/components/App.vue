@@ -27,7 +27,7 @@ export default {
 
             console.log(pathname, hash)
 
-            if (pathname === '/admin/in-house/stock-inventories' && hash === '#/') {
+            if (pathname === '/admin/in-house/stock-orders' && hash === '#/') {
                 this.$router.push({name: 'Stock Inventory Index', params: {}})
             }
 

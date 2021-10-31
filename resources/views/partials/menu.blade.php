@@ -227,7 +227,7 @@
             <ul class="c-sidebar-nav-dropdown-items">
                 @can('stock_items_access')
                     <li class="c-sidebar-nav-item">
-                        <a href="{{ route('admin.in-house.stock-inventories.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-inventories.index") ? "c-active" : "" }}">
+                        <a href="{{ route('admin.in-house.stock-orders.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.in-house.stock-orders.index") ? "c-active" : "" }}">
                             <i class="fa-fw fas fa-boxes c-sidebar-nav-icon"></i>
                             Inventory
                         </a>

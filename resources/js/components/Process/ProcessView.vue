@@ -79,7 +79,7 @@
                             <i class="fas fa-calendar-check"></i>
                             Process Manufacturing Time
                         </template>
-                        {{ process.process_manufacturing_time | fixDateByFormat }}
+                        {{ process.process_manufacturing_time | fixDateTimeByFormat }}
                     </el-descriptions-item>
 
                     <el-descriptions-item>

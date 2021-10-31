@@ -26,7 +26,7 @@
                         {{ scope.row[column.key] | ucWords }}
                     </template>
                     <template v-else-if="column.key === 'scannedtime'">
-                        <span>{{ scope.row[column.key] | fixDateByFormat }}</span>
+                        <span>{{ scope.row[column.key] | fixDateTimeByFormat }}</span>
                     </template>
                     <template v-else>
                         <span>{{ scope.row[column.key] }}</span>
