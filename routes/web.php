@@ -32,6 +32,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::patch('users/{user}/status-change', 'UsersController@changeStatus')->name('users.status-change');
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::get('users/get-auth-user', 'UsersController@getAuthUser')->name('users.get-auth-user');
+    Route::get('users/check-privacy', 'UsersController@checkPrivacy')->name('users.check-privacy');
     Route::resource('users', 'UsersController');
 
     // User Alerts
