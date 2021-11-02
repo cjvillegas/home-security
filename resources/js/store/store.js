@@ -7,6 +7,7 @@ import orders from './modules/orders'
 import process from './modules/process'
 import fireregister from './modules/fireregister'
 import manufacturedblind from './modules/report/manufacturedblind'
+import targetperformance from './modules/report/targetperformance'
 
 Vue.use(Vuex)
 
@@ -19,7 +20,9 @@ export default new Vuex.Store({
         qualityControls: [],
         teams: [],
         shifts: [],
-        products: []
+        products: [],
+        user: {},
+        privacy: false
     },
     getters: {
         users(state) {
@@ -42,6 +45,12 @@ export default new Vuex.Store({
         },
         products(state) {
             return state.products
+        },
+        user(state) {
+            return state.user
+        },
+        privacy(state) {
+            return state.privacy
         }
     },
     mutations: {
@@ -65,6 +74,12 @@ export default new Vuex.Store({
         },
         SET_PRODUCTS(state, products) {
             state.products = products
+        },
+        SET_USER(state, user) {
+            state.user = user
+        },
+        SET_PRIVACY(state, privacy) {
+            state.privacy = privacy
         }
     },
     actions: {
@@ -88,6 +103,12 @@ export default new Vuex.Store({
         },
         setProducts({commit}, products) {
             commit('SET_PRODUCTS', products)
+        },
+        setUser({commit}, user) {
+            commit('SET_USER', user)
+        },
+        setPrivacy({commit}, privacy) {
+            commit('SET_PRIVACY', privacy)
         }
     },
 
@@ -96,5 +117,6 @@ export default new Vuex.Store({
         process,
         fireregister,
         manufacturedblind,
+        targetperformance,
     }
 })

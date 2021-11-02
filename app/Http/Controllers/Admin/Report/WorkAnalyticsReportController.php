@@ -116,7 +116,7 @@ class WorkAnalyticsReportController extends Controller
                 SELECT COUNT(DISTINCT order_invoices.id)
                 FROM `order_invoices`
                     INNER JOIN `orders` AS `o` ON `o`.`order_no` = `order_invoices`.`order_no`
-                    INNER JOIN `scanners` AS `sc` ON `sc`.`blindid` = `o`.`serial_id` AND sc.processid IN ('P1012', 'P1013', 'P1014')
+                    INNER JOIN `scanners` AS `sc` ON `sc`.`blindid` = `o`.`serial_id`
                 WHERE `order_invoices`.`date` = '{$yesterday}' AND `order_invoices`.`deleted_at` IS NULL
                     GROUP BY order_invoices.id
             ) AS fu
@@ -132,8 +132,18 @@ class WorkAnalyticsReportController extends Controller
             ) AS fu
         ")[0]->aggregate;
 
+        $total_packed_and_shipped_blinds_yesterday = DB::select("
+            SELECT COUNT(DISTINCT scanners.blindid) as total
+            FROM
+            orders
+            INNER JOIN scanners ON orders.serial_id = scanners.blindid
+            INNER JOIN order_invoices ON orders.order_no = order_invoices.order_no
+            where order_invoices.date = '{$yesterday}'
+        ")[0]->total;
+
         $counter = array_merge($counter,
             [
+                'total_packed_and_shipped_blinds_yesterday' => $total_packed_and_shipped_blinds_yesterday,
                 'total_invoiced_orders_yesterday' => $total_invoiced_orders_yesterday,
                 'total_shipped_consignments_yesterday' => $total_shipped_consignments_yesterday
             ]);

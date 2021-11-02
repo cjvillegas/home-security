@@ -86,14 +86,8 @@ class InvoicedOrder extends CronDatabasePopulator
      */
     protected function getDataFromBlind(): Collection
     {
-        $date = date('Y-m-d', strtotime('-1 day'));
-        $day = date('l', strtotime($date));
-
-        // if it's monday, go back to friday
-        if ($day === 'Monday') {
-            $date = date('Y-m-d', strtotime('-3 day'));
-        }
-
+        $baseDate = '2021-10-01';
+        $recentInvoice = OrderInvoice::getRecentInvoice();
 
         $query = "
             SELECT
@@ -103,8 +97,13 @@ class InvoicedOrder extends CronDatabasePopulator
             FROM [User]
 	            INNER JOIN [Order] ON [User].id = [Order].user_id
 	            INNER JOIN OrderDetail ON [Order].id = OrderDetail.order_id
-            WHERE ([Order].dat_invoice BETWEEN CONVERT(DATETIME, '{$date} 00:00:00', 102) AND CONVERT(DATETIME, '{$date} 23:59:59', 102))
+            WHERE ([Order].dat_invoice >= {$baseDate})
         ";
+
+        // add condition to only get invoices not retrieved
+        if (!empty($recentInvoice)) {
+            $query .= " AND [Order].num_invoice > {$recentInvoice->invoice_no}";
+        }
 
         // execute the query
         $invoices = DB::connection('sqlsrv')->select($query);

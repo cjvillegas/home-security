@@ -73,7 +73,7 @@
                     <i class="fas fa-calendar"></i>
                     Ordered
                 </template>
-                {{ order_details.ordered_at | fixDateByFormat }}
+                {{ order_details.ordered_at | fixDateTimeByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -81,7 +81,7 @@
                     <i class="fas fa-calendar-alt"></i>
                     Requested Date
                 </template>
-                {{ order_details.requested_at | fixDateByFormat }}
+                {{ order_details.requested_at | fixDateTimeByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>
@@ -128,7 +128,7 @@
                     <i class="fas fa-address-card"></i>
                     Invoiced Date
                 </template>
-                {{ order_details.invoice_date | fixDateByFormat }}
+                {{ order_details.invoice_date | fixDateTimeByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>

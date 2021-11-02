@@ -73,7 +73,7 @@
                             {{ scope.row[column.prop] | ucWords }}
                         </template>
                         <template v-else-if="column.prop === 'email_verified_at'">
-                            {{ scope.row[column.prop] | fixDateByFormat }}
+                            {{ scope.row[column.prop] | fixDateTimeByFormat }}
                         </template>
                         <template v-else-if="column.prop === 'is_active'">
                             <el-tag

@@ -101,7 +101,12 @@ class ScannersDataService implements ServiceDataInterface
         return $this;
     }
 
-    function applyFilters()
+    /**
+     * Add query conditions based on the provided filters
+     *
+     * @return self
+     */
+    public function applyFilters(): self
     {
         $start = $this->getFilterValue('start');
         $end = $this->getFilterValue('end');

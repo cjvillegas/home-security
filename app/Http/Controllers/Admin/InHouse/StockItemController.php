@@ -29,7 +29,7 @@ class StockItemController extends Controller
 
         $user->permissions = $user->getPermissionNameByModule('stock_items');
 
-        return view('admin.inhouse.stocks-item', compact('user'));
+        return view('admin.in-house.stocks-item', compact('user'));
     }
 
     /**

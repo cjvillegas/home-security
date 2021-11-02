@@ -85,7 +85,7 @@
                             {{ scope.row[column.prop] | ucWords}}
                         </template>
                         <template v-else-if="['qc_fault_tag_at'].includes(column.prop)">
-                            {{ scope.row[column.prop] | fixDateByFormat('MMM DD, YYYY hh:mm a')}}
+                            {{ scope.row[column.prop] | fixDateTimeByFormat('MMM DD, YYYY hh:mm a')}}
                         </template>
                         <template v-else>
                             {{ scope.row[column.prop] }}

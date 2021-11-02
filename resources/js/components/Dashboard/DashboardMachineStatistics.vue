@@ -45,7 +45,7 @@
                                     <template v-else>
                                         <template>
                                             <div>Processed Blinds: {{ (scope.row[col.id] ? scope.row[col.id].processed_blinds : 0) | numFormat }}</div>
-                                            <div>Completed Orders: {{ (scope.row[col.id] ? scope.row[col.id].completed_orders : 0) | numFormat }}</div>
+                                            <div>Processed Orders: {{ (scope.row[col.id] ? scope.row[col.id].processed_orders : 0) | numFormat }}</div>
                                         </template>
                                     </template>
                                 </template>
@@ -85,7 +85,7 @@
                                     <template v-else>
                                         <template>
                                             <div>Processed Blinds: {{ (scope.row[col.id] ? scope.row[col.id].processed_blinds : 0) | numFormat }}</div>
-                                            <div>Completed Orders: {{ (scope.row[col.id] ? scope.row[col.id].completed_orders : 0) | numFormat }}</div>
+                                            <div>Processed Orders: {{ (scope.row[col.id] ? scope.row[col.id].processed_orders : 0) | numFormat }}</div>
                                         </template>
                                     </template>
                                 </template>
@@ -132,7 +132,7 @@
                                             <div v-if="['GL632', 'GL70'].includes(col.name) || col.id === 'total'">
                                                 Headrail Cut: {{ (scope.row[col.id] ? scope.row[col.id].headrail_cut : 0) | numFormat }}
                                             </div>
-                                            <div>Completed Orders: {{ (scope.row[col.id] ? scope.row[col.id].completed_orders : 0) | numFormat }}</div>
+                                            <div>Processed Orders: {{ (scope.row[col.id] ? scope.row[col.id].processed_orders : 0) | numFormat }}</div>
                                         </template>
                                     </template>
                                 </template>
@@ -176,7 +176,7 @@
                                             <div v-if="['GL632', 'GL70'].includes(col.name) || col.id === 'total'">
                                                 Headrail Cut: {{ (scope.row[col.id] ? scope.row[col.id].headrail_cut : 0) | numFormat }}
                                             </div>
-                                            <div>Completed Orders: {{ (scope.row[col.id] ? scope.row[col.id].completed_orders : 0) | numFormat }}</div>
+                                            <div>Processed Orders: {{ (scope.row[col.id] ? scope.row[col.id].processed_orders : 0) | numFormat }}</div>
                                         </template>
                                     </template>
                                 </template>

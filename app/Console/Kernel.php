@@ -58,7 +58,7 @@ class Kernel extends ConsoleKernel
         // schedule to fetch invoiced data everyday @2pm
         $schedule->command('orders:invoiced-order')
             ->weekdays()
-            ->at('14:00')
+            ->everySixHours()
             ->environments(['production', 'staging']);
     }
 

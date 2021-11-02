@@ -115,6 +115,9 @@
                     });
                 }
 
+                start += ' 00:00:00'
+                end += ' 23:59:59'
+
                 this.$API.Exports.exportRawData(start, end)
                 .then(res => {
                     if (res.data.success) {

@@ -7,7 +7,7 @@ use App\Models\StockLevel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 
 class StockLevelController extends Controller
 {
@@ -23,7 +23,7 @@ class StockLevelController extends Controller
 
         $user->permissions = $user->getPermissionNameByModule('stock_level');
 
-        return view('admin.inhouse.stock-level', compact('user'));
+        return view('admin.in-house.stock-level', compact('user'));
     }
 
     /**
@@ -33,7 +33,7 @@ class StockLevelController extends Controller
      *
      * @return JsonResponse
      */
-    public function fetchStockLevels(Request $request)
+    public function fetchStockLevels(Request $request): JsonResponse
     {
         $searchString = $request->searchString;
         $size = $request->size;
@@ -55,10 +55,27 @@ class StockLevelController extends Controller
      *
      * @return JsonResponse
      */
-    public function lastSync()
+    public function lastSync(): JsonResponse
     {
         $lastSync = StockLevel::select('created_at')->latest('created_at')->first();
 
         return response()->json(['lastSync' => $lastSync]);
+    }
+
+    /**
+     * Fetch total count of out of stock items
+     *
+     * @return JsonResponse
+     */
+    public function outOfStockTotalCount(): JsonResponse
+    {
+        $totalCount = StockLevel::where('stock_levels.available_stock', '<=', 0)
+            ->distinct()
+            ->count('stock_levels.id');
+
+        return response()->json([
+            'message' => 'Out of stock items total count.',
+            'data' => $totalCount
+        ]);
     }
 }
