@@ -265,7 +265,7 @@ class TargetPerformanceJob implements ShouldQueue
         }
 
         //Internet Target
-        if ($type == 'trade' && !$isNewJoiner) {
+        if ($type == 'internet' && !$isNewJoiner) {
             $data['cellValue'] = 'Internet Target';
             $data['targetParameter'] = 'internet_target';
             $data['targetPercentageParameter'] = 'internet_target_percentage';
