@@ -150,7 +150,7 @@ class TargetPerformanceJob implements ShouldQueue
 
 
             foreach ($performance['performances'] as $employeePerformance) {
-                $worksheet->getStyle('E'. ($perEmployeeIncrement + 2) . ':'. ($alphabet[count($dates)+3]). $perEmployeeIncrement + 2)->applyFromArray($styleArray);
+                $worksheet->getStyle('E'. ($perEmployeeIncrement + 2) . ':'. ($alphabet[count($dates)+3]). ($perEmployeeIncrement + 2))->applyFromArray($styleArray);
                 $targetValues = array();
                 $processValues = array();
                 $qcTaggedValues = array();
