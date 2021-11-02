@@ -71,7 +71,7 @@
                             <i class="fas fa-user-check"></i>
                             Email Verified At
                         </template>
-                        {{ user.email_verified_at | fixDateByFormat }}
+                        {{ user.email_verified_at | fixDateTimeByFormat }}
                     </el-descriptions-item>
                     <el-descriptions-item>
                         <template slot="label">

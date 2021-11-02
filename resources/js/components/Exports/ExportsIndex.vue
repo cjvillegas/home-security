@@ -49,7 +49,7 @@
                             {{ scope.row.type | cleanUpSnakeCaseWord }}
                         </template>
                         <template v-else-if="column.prop === 'created_at'">
-                            {{ scope.row.created_at | fixDateByFormat('MMM DD, YYYY hh:mm a') }}
+                            {{ scope.row.created_at | fixDateTimeByFormat('MMM DD, YYYY hh:mm a') }}
                         </template>
                         <template v-else>
                             {{ scope.row[column.prop] }}

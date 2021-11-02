@@ -56,7 +56,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "bootstrap/helpers/sql-helper.php"
+            "bootstrap/helpers/sql-helper.php",
+            "bootstrap/helpers/global-helper.php"
         ]
     },
     "autoload-dev": {

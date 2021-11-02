@@ -24,7 +24,7 @@
                                             :key="scannerKey">
                                             <div>
                                                 {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
-                                                <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                                <span class="float-right">{{ scanner.scannedtime | fixDateTimeByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                             </div>
                                         </div>
                                     </el-collapse-item>
@@ -36,7 +36,7 @@
                                         :key="scannerKey">
                                         <div>
                                             {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
-                                            <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                            <span class="float-right">{{ scanner.scannedtime | fixDateTimeByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                         </div>
                                     </div>
                                 </div>
