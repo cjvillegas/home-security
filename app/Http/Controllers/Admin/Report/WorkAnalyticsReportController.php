@@ -132,8 +132,18 @@ class WorkAnalyticsReportController extends Controller
             ) AS fu
         ")[0]->aggregate;
 
+        $total_packed_and_shipped_blinds_yesterday = DB::select("
+            SELECT COUNT(DISTINCT scanners.blindid) as total
+            FROM
+            orders
+            INNER JOIN scanners ON orders.serial_id = scanners.blindid
+            INNER JOIN order_invoices ON orders.order_no = order_invoices.order_no
+            where order_invoices.date = '{$yesterday}'
+        ")[0]->total;
+
         $counter = array_merge($counter,
             [
+                'total_packed_and_shipped_blinds_yesterday' => $total_packed_and_shipped_blinds_yesterday,
                 'total_invoiced_orders_yesterday' => $total_invoiced_orders_yesterday,
                 'total_shipped_consignments_yesterday' => $total_shipped_consignments_yesterday
             ]);
