@@ -287,6 +287,8 @@ class ReportController extends Controller
     /**
      * Get Performances based on Selected filters
      *
+     * @param  Request $request
+     *
      * @return JsonResponse
      */
     public function getTargetPerformances(Request $request): JsonResponse
@@ -306,6 +308,7 @@ class ReportController extends Controller
      * Export Target Performance
      *
      * @param  mixed $request
+     *
      * @return JsonResponse
      */
     public function exportTargetPerformance(Request $request): JsonResponse

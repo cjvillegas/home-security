@@ -191,7 +191,7 @@ class UsersController extends Controller
     /**
      * Check if user has privacy mode on
      *
-     * @return void
+     * @return JsonResponse
      */
     public function checkPrivacy()
     {
