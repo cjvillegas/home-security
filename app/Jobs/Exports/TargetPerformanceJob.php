@@ -120,14 +120,14 @@ class TargetPerformanceJob implements ShouldQueue
         foreach ($performances as $performance) {
             $spacerIncrement = $perEmployeeIncrement;
             // Assign Date Range values
-            $worksheet->getStyle('A'. $perEmployeeIncrement + 1)->getFont()->setBold(true);
-            $worksheet->setCellValue('A'. $perEmployeeIncrement + 1, 'DateRange');
-            $worksheet->setCellValue('B'. $perEmployeeIncrement + 1, $from->format('Y-m-d'));
-            $worksheet->setCellValue('C'. $perEmployeeIncrement + 1, $to->format('Y-m-d'));
+            $worksheet->getStyle('A'. ($perEmployeeIncrement + 1))->getFont()->setBold(true);
+            $worksheet->setCellValue('A'. ($perEmployeeIncrement + 1), 'DateRange');
+            $worksheet->setCellValue('B'. ($perEmployeeIncrement + 1), $from->format('Y-m-d'));
+            $worksheet->setCellValue('C'. ($perEmployeeIncrement + 1), $to->format('Y-m-d'));
             // Assign Employee name value
-            $worksheet->getStyle('E'. $perEmployeeIncrement + 1)->getFont()->setBold(true);
-            $worksheet->setCellValue('E'. $perEmployeeIncrement + 1, 'Employee');
-            $worksheet->setCellValue('F'. $perEmployeeIncrement + 1, $performance['employee_name']);
+            $worksheet->getStyle('E'. ($perEmployeeIncrement + 1))->getFont()->setBold(true);
+            $worksheet->setCellValue('E'. ($perEmployeeIncrement + 1), 'Employee');
+            $worksheet->setCellValue('F'. ($perEmployeeIncrement + 1), $performance['employee_name']);
 
             $styleArray = [
                 'font' => [
@@ -150,7 +150,7 @@ class TargetPerformanceJob implements ShouldQueue
 
 
             foreach ($performance['performances'] as $employeePerformance) {
-                $worksheet->getStyle('E'. $perEmployeeIncrement + 2 . ':'. ($alphabet[count($dates)+3]). $perEmployeeIncrement + 2)->applyFromArray($styleArray);
+                $worksheet->getStyle('E'. ($perEmployeeIncrement + 2) . ':'. ($alphabet[count($dates)+3]). ($perEmployeeIncrement + 2))->applyFromArray($styleArray);
                 $targetValues = array();
                 $processValues = array();
                 $qcTaggedValues = array();
@@ -159,21 +159,21 @@ class TargetPerformanceJob implements ShouldQueue
                 $worksheet->fromArray(
                     $dates,
                     '',
-                    'E'. $spacerIncrement + 2
+                    'E'. ($spacerIncrement + 2)
                 );
 
-                $worksheet->setCellValue('A'. $spacerIncrement + 4, 'Process');
-                $worksheet->setCellValue('A'. $spacerIncrement + 5, 'QC Tagged');
+                $worksheet->setCellValue('A'. ($spacerIncrement + 4), 'Process');
+                $worksheet->setCellValue('A'. ($spacerIncrement + 5), 'QC Tagged');
 
                 // check if the Selected Employee has data
                 if (is_array($employeePerformance)) {
-                    $worksheet->setCellValue('B'. $spacerIncrement + 4, $employeePerformance['process_name']);
+                    $worksheet->setCellValue('B'. ($spacerIncrement + 4), $employeePerformance['process_name']);
                     $targetPercentage = 0;
                     foreach ($employeePerformance['data'] as $data) {
 
                         $targetInformation = $this->targetInfomation($performance['type'], $performance['is_new_joiner']);
 
-                        $worksheet->setCellValue('A'. $spacerIncrement + 3, $targetInformation['cellValue']);
+                        $worksheet->setCellValue('A'. ($spacerIncrement + 3), $targetInformation['cellValue']);
                         array_push($targetValues, $data['data'][$targetInformation['targetParameter']]);
                         $targetPercentage = $employeePerformance[$targetInformation['targetPercentageParameter']];
                         $totalTargetCount = $employeePerformance[$targetInformation['totalTargetParameter']];
@@ -194,17 +194,17 @@ class TargetPerformanceJob implements ShouldQueue
                 $worksheet->fromArray(
                     $targetValues,
                     '',
-                    'E'. $spacerIncrement + 3
+                    'E'. ($spacerIncrement + 3)
                 );
                 $worksheet->fromArray(
                     $processValues,
                     '',
-                    'E'. $spacerIncrement + 4
+                    'E'. ($spacerIncrement + 4)
                 );
                 $worksheet->fromArray(
                     $qcTaggedValues,
                     '',
-                    'E'. $spacerIncrement + 5
+                    'E'. ($spacerIncrement + 5)
                 );
 
                 // Increment that used for proper next line spacing
@@ -244,7 +244,7 @@ class TargetPerformanceJob implements ShouldQueue
         if ($type == 'trade' && $isNewJoiner) {
             $data['cellValue'] = 'Trade Target New Joiner';
             $data['targetParameter'] = 'trade_target_new_joiner';
-            $data['targetPercentageParameter'] = 'trade_new_joiner';
+            $data['targetPercentageParameter'] = 'trade_new_joiner_percentage';
             $data['totalTargetParameter'] = 'total_trade_target_new_joiner';
         }
 
