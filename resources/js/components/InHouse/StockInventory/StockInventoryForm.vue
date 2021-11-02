@@ -121,7 +121,7 @@
                         <template slot-scope="scope">
                             <template v-if="col.prop === 'code'">
                                 <el-autocomplete
-                                    @select="selectItemFromSearch"
+                                    @select="handleSelectItem"
                                     :fetch-suggestions="searchStockLevels"
                                     @focus="setFocusedOrderLine(`orderCode_${scope.$index}`)"
                                     @keyup.enter.native.prevent="handleEnterCodeSelection(`orderCode_${index}`)"
@@ -675,7 +675,23 @@
                 }
             },
 
-            selectItemFromSearch(item) {
+            handleSelectItem(item) {
+                if (item.pending_order_count > 0) {
+                    this.$confirm(`You already have ${item.pending_order_count} pending orders for this item, do want to still add?`, 'Confirmation', {
+                        confirmButtonText: 'Ok, got it!',
+                        cancelButtonText: 'Nope',
+                        type: 'info'
+                    })
+                        .then(() => {
+                            this.populateItemFromSearch(item)
+                        })
+                        .catch(() => {})
+                } else {
+                    this.populateItemFromSearch(item)
+                }
+            },
+
+            populateItemFromSearch(item) {
                 let focusedField = this.getFocusedFieldSections()
                 let index = focusedField.index
 
