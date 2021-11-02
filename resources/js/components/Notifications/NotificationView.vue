@@ -62,7 +62,7 @@
                         </template>
                         {{ notification.data.from | ucWords }}
                         <span v-if="notification.data.from === 'cron'">
-                            : {{ notification.data.cron | ucWords }} @ {{ notification.data.date | fixDateByFormat('MMM DD, YYYY HH:mm') }}
+                            : {{ notification.data.cron | ucWords }} @ {{ notification.data.date | fixDateTimeByFormat('MMM DD, YYYY HH:mm') }}
                         </span>
                     </el-descriptions-item>
 
@@ -71,7 +71,7 @@
                             <i class="fas fa-clock"></i>
                             Recorded At
                         </template>
-                        {{ notification.created_at | fixDateByFormat }}
+                        {{ notification.created_at | fixDateTimeByFormat }}
                     </el-descriptions-item>
 
                     <el-descriptions-item>

@@ -185,7 +185,7 @@
         computed: {
             formattedProgress() {
                 const shifts = ['shift_1', 'shift_2', 'shift_3', 'total']
-                const processes = ['P1012', 'P1013', 'P1014', 'shipped_consignments', 'invoiced_orders']
+                const processes = ['P1012', 'P1013', 'P1014', 'packed_and_shipped_blinds', 'shipped_consignments', 'invoiced_orders']
                 let data = {}
                 let defaultValues = [
                     {key: 'P1012', label: 'Louvres Packed', count: 0},
@@ -194,6 +194,7 @@
                 ]
 
                 let additional = [
+                    {key: 'packed_and_shipped_blinds', label: 'Packed & Shipped Blinds', count: 0},
                     {key: 'shipped_consignments', label: 'Shipped Consignments', count: 0},
                     {key: 'invoiced_orders', label: 'Invoiced Orders', count: 0},
                 ]

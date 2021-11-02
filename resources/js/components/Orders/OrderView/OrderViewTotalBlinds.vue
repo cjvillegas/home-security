@@ -94,7 +94,6 @@
 
             getOrdersByOrderNo() {
                 this.loading = true
-                console.log(this.order_no)
 
                 this.$API.Orders.getOrdersByOrderNo(this.order_no)
                 .then(res => {

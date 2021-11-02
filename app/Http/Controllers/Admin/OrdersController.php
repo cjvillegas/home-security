@@ -54,7 +54,7 @@ class OrdersController extends Controller
         $order = Order::where('order_no', $order_no)->first();
         $orders = Order::where('order_no', $order_no)->paginate(50);
         $ordersem = DB::table('order')
-                     ->select('employees.fullname', 'scanners.scannedtime', 'processes.name', 'scanners.blindid', 'processes.name', 'orders.order_no', 'orders.customer', 'orders.cust_ord_ref')
+                     ->select('employees.fullname', 'employees.barcode', 'scanners.scannedtime', 'processes.name', 'scanners.blindid', 'processes.name', 'orders.order_no', 'orders.customer', 'orders.cust_ord_ref')
                      ->from('employees')
                      ->join('scanners', 'employees.barcode', '=', 'scanners.employeeid')
                      ->join('processes', 'processes.barcode', '=', 'scanners.processid')
@@ -191,6 +191,7 @@ class OrdersController extends Controller
                 'scanners.*',
                 'o.serial_id AS serial_id',
                 'e.fullname AS employee_name',
+                'e.barcode',
                 'e.id AS employee_id',
                 'p.name AS process_name',
                 'p.id AS process_id'
@@ -265,5 +266,14 @@ class OrdersController extends Controller
         $order->save();
 
         return response()->json(['message' => 'Successfully saved changes']);
+    }
+
+    public function getAllBlindType(): JsonResponse
+    {
+        $products = Order::query()
+            ->select(['order_no', 'blind_type'])
+            ->groupBy('blind_type')->get();
+
+        return response()->json($products);
     }
 }

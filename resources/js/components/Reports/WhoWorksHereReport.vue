@@ -75,7 +75,7 @@
                                 :sortable="col.sortable">
                                 <template slot-scope="scope">
                                     <template v-if="['clock_in', 'clock_out', 'first_scan', 'last_scan'].includes(col.prop)">
-                                        {{ scope.row[col.prop] | fixDateByFormat("MMM DD, YYYY hh:mm A") }}
+                                        {{ scope.row[col.prop] | fixDateTimeByFormat("MMM DD, YYYY hh:mm A") }}
                                     </template>
                                     <template v-else-if="col.prop === 'employee'">
                                         {{ scope.row[col.prop] | ucWords }}

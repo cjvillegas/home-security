@@ -62,7 +62,7 @@
                     label="Operation Started At"
                     sortable>
                     <template slot-scope="scope">
-                         {{ scope.row.scannedtime | fixDateByFormat('MMM DD, YYYY HH:mm:ss') }}
+                         {{ scope.row.scannedtime | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }}
                     </template>
                 </el-table-column>
 

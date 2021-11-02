@@ -31,6 +31,9 @@ class Export extends Model
     // Fire register report
     const FIRE_REGISTER_REPORT = 'fire_register_export';
 
+    // target performance report
+    const TARGET_PERFORMANCE_REPORT = 'target_performance_export';
+
     /**
      * Export Status
      */

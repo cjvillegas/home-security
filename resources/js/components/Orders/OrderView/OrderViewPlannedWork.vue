@@ -20,7 +20,7 @@
                 sortable>
                 <template slot-scope="scope">
                     <template v-if="['scheduled_date', 'work_date'].includes(column.key)">
-                        {{ scope.row[column.key] | fixDateByFormat }}
+                        {{ scope.row[column.key] | fixDateTimeByFormat }}
                     </template>
                     <template v-else-if="column.key === 'folder_name'">
                         <span>{{ scope.row[column.key] | ucWords }}</span>

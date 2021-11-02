@@ -8,13 +8,17 @@ use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\DashboardMachineStatisticsDataService;
 use App\Services\Reports\QualityControlFaultDataService;
+use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
 use App\Services\Reports\WhoWorksHereDataService;
+use App\Services\TargetPerformanceExporterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -73,6 +77,8 @@ class ReportController extends Controller
             'qc.qc_code AS quality_control_code',
             'pr.name AS process_name',
             'sc.blindid AS scanner_blind_id',
+            'o.order_no AS order_no',
+            'o.blind_type AS product',
             'qc_faults.description AS qc_fault_description',
             DB::raw('DATE_FORMAT(qc_faults.created_at, "%b %d, %Y %h:%i %p") AS qc_fault_tag_at'),
             DB::raw('DATE_FORMAT(qc_faults.operation_date, "%b %d, %Y %h:%i %p") AS qc_fault_operation_date'),
@@ -87,6 +93,8 @@ class ReportController extends Controller
                 'quality_control_code' => 'Quality Control',
                 'process_name' => 'Process',
                 'scanner_blind_id' => 'Blind ID',
+                'order_no' => 'Order No.',
+                'blind_type' => 'Product',
                 'qc_fault_description' => 'Description',
                 'qc_fault_operation_date' => 'Operation Date',
                 'qc_fault_tag_at' => 'Tag At',
@@ -268,5 +276,60 @@ class ReportController extends Controller
         $data = $service->getData('list');
 
         return response()->json($data);
+    }
+
+    /**
+     * Target Performance
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function targetPerformance()
+    {
+        return view('admin.reports.target-performance');
+    }
+
+    /**
+     * Get Performances based on Selected filters
+     *
+     * @param  Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getTargetPerformances(Request $request): JsonResponse
+    {
+        $service = new TargetPerformanceDataService($request->all());
+        $data = $service->getData('list');
+
+        return response()->json(
+            [
+                'performances' => $data['performances'],
+                'dates' => $data['dates']
+            ]
+        );
+    }
+
+    /**
+     * Export Target Performance
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function exportTargetPerformance(Request $request): JsonResponse
+    {
+        $user = User::find(auth()->user()->id);
+
+        $service = new TargetPerformanceDataService($request->all());
+        $exporter = new TargetPerformanceExporterService($user);
+        $exporter->setName('Target Performance Report')
+            ->setPath('exports')
+            ->export($service, $request->dateRange);
+
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+            ]
+        );
     }
 }

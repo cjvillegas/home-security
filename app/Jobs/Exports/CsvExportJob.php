@@ -93,12 +93,10 @@ class CsvExportJob implements ShouldQueue
     private function finishExport(string $path): void
     {
         $url = null;
-
         // check if the file exists and is save after the export
         if (Storage::disk()->exists($path)) {
             $url = Storage::url($path);
         }
-
         $export = $this->export->refresh();
         $export->status = Export::EXPORT_STATUS_COMPLETED;
         $export->url = $url;

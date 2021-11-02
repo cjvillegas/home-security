@@ -39,4 +39,9 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
 
     // dashboard machine statistics
     Route::get('/dashboard/machine-statistics', 'ReportController@dashboardMachineStatistics')->name('dashboard-machine-statistics');
+
+    // target performance
+    Route::get('/target-performance', 'ReportController@targetPerformance')->name('target-performance');
+    Route::post('/target-performance', 'ReportController@getTargetPerformances')->name('target-performance');
+    Route::post('/export-target-performance', 'ReportController@exportTargetPerformance')->name('export-target-performance');
 });

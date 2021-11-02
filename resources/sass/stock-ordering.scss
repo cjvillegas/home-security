@@ -1,0 +1,68 @@
+.stock-inventory {
+    .summary-container {
+        .summary-title {
+            border: 1px solid;
+            border-radius: 5px;
+            text-align: center;
+            padding: 5px;
+            box-shadow: 1px 2px #888888;
+            font-weight: 700;
+        }
+    }
+
+    .new-orders-container {
+        border-left: .5em solid #ee4526;
+    }
+
+    .draft-orders-container {
+        border-left: .5em solid #3e47a7;
+    }
+
+    .pending-orders-container {
+        border-left: .5em solid #f9c710;
+    }
+
+    .completed-orders-container {
+        border-left: .5em solid #8bcc4c;
+    }
+
+    .summary-analytic {
+        font-size: 16px;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .summary-analytic-count {
+        font-size: 20px;
+        font-weight: 700;
+        min-width: 3em;
+    }
+
+    .summary-table-container {
+        border-left: .5em solid #3e47a7;
+
+        .summary-table-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+    }
+
+    .status-0 {
+        color: #3e47a7;
+    }
+
+    .status-1 {
+        color: #f9c710;
+    }
+
+    .status-2 {
+        color: #8bcc4c;
+    }
+
+    .status-3 {
+        color: #ee4526;
+    }
+}
