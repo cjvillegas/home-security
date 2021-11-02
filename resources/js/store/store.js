@@ -7,6 +7,7 @@ import orders from './modules/orders'
 import process from './modules/process'
 import fireregister from './modules/fireregister'
 import manufacturedblind from './modules/report/manufacturedblind'
+import customers from './modules/customers'
 
 Vue.use(Vuex)
 
@@ -86,5 +87,6 @@ export default new Vuex.Store({
         process,
         fireregister,
         manufacturedblind,
+        customers
     }
 })

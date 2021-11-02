@@ -161,6 +161,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::delete('{machineCounter}/destroy', 'MachineCounterController@destroy');
     });
 
+    //Customers
+    Route::post('customers/list', 'CustomerController@fetchCustomers')->name('customers.list');
+    Route::resource('customers', 'CustomerController')->except(['create', 'edit']);
+
     require_once base_path('routes/in-house.php');
     require_once base_path('routes/src/quality-control.php');
 
