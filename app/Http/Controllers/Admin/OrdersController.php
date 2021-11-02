@@ -267,4 +267,13 @@ class OrdersController extends Controller
 
         return response()->json(['message' => 'Successfully saved changes']);
     }
+
+    public function getAllBlindType(): JsonResponse
+    {
+        $products = Order::query()
+            ->select(['order_no', 'blind_type'])
+            ->groupBy('blind_type')->get();
+
+        return response()->json($products);
+    }
 }

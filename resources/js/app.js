@@ -75,6 +75,7 @@ const app = new Vue({
             this.getEmployees()
             this.getProcesses()
             this.getQualityControls()
+            this.getProducts()
         }
 
         if (pathname === '/admin/reports/team-status') {
@@ -170,6 +171,17 @@ const app = new Vue({
             })
         },
 
+        getProducts() {
+            axios.get(`/admin/orders/all-products`)
+            .then(res => {
+                console.log(res.data)
+                this.setProducts(res.data)
+            })
+            .catch(err => {
+                console.error(`Error: Global Products Fetching Error`)
+            })
+        },
+
         getCurrentUser() {
             this.$API.User.getAuthUser()
             .then(res => {
@@ -189,7 +201,7 @@ const app = new Vue({
             })
         },
 
-        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setPrivacy'])
+        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setProducts', 'setPrivacy'])
     }
 });
 

@@ -20,6 +20,7 @@ export default new Vuex.Store({
         qualityControls: [],
         teams: [],
         shifts: [],
+        products: [],
         user: {},
         privacy: false
     },
@@ -41,6 +42,9 @@ export default new Vuex.Store({
         },
         shifts(state) {
             return state.shifts
+        },
+        products(state) {
+            return state.products
         },
         user(state) {
             return state.user
@@ -68,6 +72,9 @@ export default new Vuex.Store({
         SET_SHIFTS(state, shifts) {
             state.shifts = shifts
         },
+        SET_PRODUCTS(state, products) {
+            state.products = products
+        },
         SET_USER(state, user) {
             state.user = user
         },
@@ -93,6 +100,9 @@ export default new Vuex.Store({
         },
         setShifts({commit}, shifts) {
             commit('SET_SHIFTS', shifts)
+        },
+        setProducts({commit}, products) {
+            commit('SET_PRODUCTS', products)
         },
         setUser({commit}, user) {
             commit('SET_USER', user)
