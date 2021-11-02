@@ -48,7 +48,7 @@
                         <i class="fas fa-calendar-alt"></i>
                         Operation Date
                     </template>
-                    {{ scanner.scannedtime | fixDateByFormat }}
+                    {{ scanner.scannedtime | fixDateTimeByFormat }}
                 </el-descriptions-item>
             </el-descriptions>
 
@@ -80,7 +80,7 @@
                                 <i class="fas fa-calendar-alt"></i>
                                 Date
                             </template>
-                            {{ createdDate | fixDateByFormat }}
+                            {{ createdDate | fixDateTimeByFormat }}
                         </el-descriptions-item>
                         <el-descriptions-item>
                             <template slot="label">

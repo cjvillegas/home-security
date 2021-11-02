@@ -18,6 +18,11 @@ import Shift from './Shift'
 import EmployeeAuth from './Employee/Auth'
 import EmployeeEmployee from './Employee/Employee'
 
+// Stock Order Collections
+import StockOrder from './StockOrder/StockOrder'
+import StockLevel from './StockOrder/StockLevel'
+import PurchaseOrder from './StockOrder/PurchaseOrder'
+
 export default {
     Orders,
     Employee,
@@ -38,4 +43,9 @@ export default {
     // employee dedicated endpoints
     EmployeeAuth,
     EmployeeEmployee,
+
+    // Stock Order dedicated endpoints
+    StockOrder,
+    StockLevel,
+    PurchaseOrder
 }

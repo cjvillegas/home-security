@@ -3,7 +3,7 @@ import StringGenericService from '../services/StringGenericService'
 
 let stringService = new StringGenericService()
 
-Vue.filter('fixDateByFormat', (date, format = 'MMM DD, YYYY') => {
+Vue.filter('fixDateTimeByFormat', (date, format = 'MMM DD, YYYY') => {
     if (date) {
         if (window.timezone) {
             if (window.timezone === 'Asia/Manila') {
@@ -12,6 +12,30 @@ Vue.filter('fixDateByFormat', (date, format = 'MMM DD, YYYY') => {
 
             return moment.utc(date).tz(window.timezone).format(format)
         } else {
+            return moment.utc(date).local().format(format)
+        }
+    } else {
+        return '--:--'
+    }
+})
+
+/**
+ * Properly format date to a human readable format
+ *
+ * @param date
+ * @param format
+ *
+ * @return string
+ */
+Vue.filter('fixDateByFormat', (date, format = 'MMM DD, YYYY') => {
+    if (date) {
+        if (window.timezone) {
+            if (window.timezone === 'Asia/Manila') {
+                return moment.utc(date).tz(window.timezone).format(format) + ' MNL'
+            }
+
+            return moment.utc(date).tz(window.timezone).format(format)
+        }  else {
             return moment.utc(date).local().format(format)
         }
     } else {

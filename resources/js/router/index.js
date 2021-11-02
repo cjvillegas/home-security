@@ -46,6 +46,14 @@ const TeamIndex = () => import('../components/Teams/TeamIndex')
 const TeamList = () => import('../components/Teams/TeamList')
 const TeamConfiguration = () => import('../components/Teams/TeamConfiguration')
 
+// Stock Inventory
+const StockInventoryDefault = () => import('../components/InHouse/StockInventory/StockInventoryDefault')
+const StockInventoryIndex = () => import('../components/InHouse/StockInventory/StockInventoryIndex')
+const StockInventoryForm = () => import('../components/InHouse/StockInventory/StockInventoryForm')
+const StockInventoryDraftOrders = () => import('../components/InHouse/StockInventory/StockInventoryDraftOrders')
+const StockInventoryPendingOrders = () => import('../components/InHouse/StockInventory/StockInventoryPendingOrders')
+const StockInventoryApprovedOrders = () => import('../components/InHouse/StockInventory/StockInventoryApprovedOrders')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -167,6 +175,50 @@ export default new VueRouter({
                     path: 'view-team',
                     name: 'Team View',
                     component: TeamConfiguration,
+                    props: true,
+                },
+            ]
+        },
+        {
+            path: '/stock-orders',
+            name: 'Stock Inventory Default',
+            component: StockInventoryDefault,
+            props: true,
+            children: [
+                {
+                    path: 'index',
+                    name: 'Stock Inventory Index',
+                    component: StockInventoryIndex,
+                    props: true,
+                },
+                {
+                    path: 'form',
+                    name: 'Stock Inventory Form',
+                    component: StockInventoryForm,
+                    props: true,
+                },
+                {
+                    path: 'form/:id',
+                    name: 'Stock Inventory Form View',
+                    component: StockInventoryForm,
+                    props: true,
+                },
+                {
+                    path: 'draft-orders',
+                    name: 'Stock Inventory Draft Orders',
+                    component: StockInventoryDraftOrders,
+                    props: true,
+                },
+                {
+                    path: 'pending-orders',
+                    name: 'Stock Inventory Pending Orders',
+                    component: StockInventoryPendingOrders,
+                    props: true,
+                },
+                {
+                    path: 'approved-orders',
+                    name: 'Stock Inventory Approved Orders',
+                    component: StockInventoryApprovedOrders,
                     props: true,
                 },
             ]

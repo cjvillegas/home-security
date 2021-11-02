@@ -22,9 +22,14 @@
                                             class="overflow-auto"
                                             v-for="(scanner, scannerKey) in process.scanners"
                                             :key="scannerKey">
-                                            <div>
-                                                {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
+
+                                            <div v-if="privacy">
+                                                {{ (scanner.employee.barcode ? scanner.employee.barcode : '') | valueForEmptyText }}
                                                 <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                            </div>
+                                            <div v-else>
+                                                {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
+                                                <span class="float-right">{{ scanner.scannedtime | fixDateTimeByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                             </div>
                                         </div>
                                     </el-collapse-item>
@@ -36,7 +41,7 @@
                                         :key="scannerKey">
                                         <div>
                                             {{ (scanner.employee.fullname ? scanner.employee.fullname : '') | valueForEmptyText }}
-                                            <span class="float-right">{{ scanner.scannedtime | fixDateByFormat('MMM DD, YYYY hh:mm a') }}</span>
+                                            <span class="float-right">{{ scanner.scannedtime | fixDateTimeByFormat('MMM DD, YYYY hh:mm a') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -50,6 +55,7 @@
 </template>
 
 <script>
+    import cloneDeep from 'lodash/cloneDeep'
     import { mapActions, mapGetters } from 'vuex';
     import {dialog} from "../../mixins/dialog";
     export default {
@@ -66,6 +72,11 @@
                 loading: false
             }
         },
+
+        computed: {
+            ...mapGetters(['privacy'])
+        },
+
         methods: {
             closeForm() {
                 this.closeModal()

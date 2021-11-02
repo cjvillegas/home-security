@@ -32,6 +32,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::patch('users/{user}/status-change', 'UsersController@changeStatus')->name('users.status-change');
     Route::delete('users/destroy', 'UsersController@massDestroy')->name('users.massDestroy');
     Route::get('users/get-auth-user', 'UsersController@getAuthUser')->name('users.get-auth-user');
+    Route::get('users/check-privacy', 'UsersController@checkPrivacy')->name('users.check-privacy');
     Route::resource('users', 'UsersController');
 
     // User Alerts
@@ -81,6 +82,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/{order_no}/order-list-by-order-no', 'OrdersController@getOrdersByOrderNo')->name('orders.order-list-by-order-no');
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
     Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.product-type');
+    Route::get('orders/all-products', 'OrdersController@getAllBlindType')->name('orders.blind-type');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams

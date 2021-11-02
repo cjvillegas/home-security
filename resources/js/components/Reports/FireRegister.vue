@@ -9,6 +9,17 @@
             <div class="d-flex">
                 <div class="ml-auto">
                     <global-filter-box>
+                        <div>
+                            <label for="date">Select Date</label>
+                            <el-date-picker
+                                v-model="filters.date"
+                                placeholder="Pick a day"
+                                :clearable="false"
+                                type="date"
+                                class="w-100">
+                            </el-date-picker>
+                        </div>
+
                         <global-shift-selector
                             class="mt-3"
                             :value.sync="filters.shifts"
@@ -23,12 +34,12 @@
                             Apply Filter
                         </el-button>
                     </global-filter-box>
-                    <!-- <el-button
-                        @click="exportFireRegister"
+                    <el-button
+                        @click="clickExportData"
                         :disabled="!canExportData"
                         type="success">
                         <i class="fas fa-file-export"></i> Export
-                    </el-button> -->
+                    </el-button>
                 </div>
             </div>
             <el-table
@@ -48,10 +59,10 @@
                 </el-table-column>
 
                 <el-table-column
-                    label="Scanned Date and Time"
+                    label="Operation Started At"
                     sortable>
                     <template slot-scope="scope">
-                         {{ scope.row.scannedtime | fixDateByFormat('MMM DD, YYYY HH:mm:ss') }}
+                         {{ scope.row.scannedtime | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }}
                     </template>
                 </el-table-column>
 
@@ -60,14 +71,37 @@
                     label="Clock Num"
                     sortable>
                 </el-table-column>
+
+                <el-table-column
+                    label="Clock In"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.clock_in | fixDateByFormat('MMM DD, YYYY HH:mm:ss') }}
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                    label="Clock Out"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.clock_out | fixDateByFormat('MMM DD, YYYY HH:mm:ss') }}
+                    </template>
+                </el-table-column>
+
+                <el-table-column
+                    prop="time_in"
+                    label="Time In (H:mm:ss)"
+                    sortable>
+                </el-table-column>
             </el-table>
         </el-card>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
-    import pagination from "../../mixins/pagination";
+    import cloneDeep from 'lodash/cloneDeep'
+    import { mapActions, mapGetters } from 'vuex'
+    import pagination from "../../mixins/pagination"
 
     export default {
         name: "FireRegister",
@@ -79,6 +113,7 @@ import { mapActions, mapGetters } from 'vuex';
                     shifts: null,
                     from: null,
                     to: null,
+                    date: null
                 }
             }
         },
@@ -112,8 +147,21 @@ import { mapActions, mapGetters } from 'vuex';
                     this.filters.from = '22:00:00'
                     this.filters.to = '06:00:00'
                 }
-                this.getEmployeesList(this.filters)
-            }
+                let filters = cloneDeep(this.filters)
+
+                this.getEmployeesList(filters)
+            },
+
+            clickExportData() {
+                this.exportFireRegister(this.filters)
+                .then(() => {
+                    this.$notify({
+                        title: 'Success',
+                        message: 'Your data is being exported. Please wait a while and check the Export page for your export',
+                        type: 'success'
+                    })
+                })
+            },
         },
 
     }

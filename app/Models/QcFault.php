@@ -172,6 +172,25 @@ class QcFault extends Model
     }
 
     /**
+     * Add where clause query to filter data based on Products
+     *
+     * @param  mixed $query
+     * @param  mixed $products
+     * @return Builder
+     */
+    public function scopeFilterByProduct(Builder $query, $products): Builder
+    {
+        // checks if the passed data for employee is array of Product id
+        if (is_array($products)) {
+            $query->whereIn('o.blind_type', $products);
+        } else {
+            $query->where('o.blind_type', $products);
+        }
+
+        return $query;
+    }
+
+    /**
      * Filter qc faults using a search string and based on the passed columns to
      * do the search
      *
