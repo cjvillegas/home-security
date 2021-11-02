@@ -39,6 +39,8 @@ class QualityControlFaultDataService extends ReportDataService
         'sc.id AS scanner_id',
         'sc.blindid AS scanner_blind_id',
         'sc.scannedtime AS scanner_scanned_time',
+        'o.order_no AS order_no',
+        'o.blind_type AS product'
     ];
 
     /**
@@ -100,6 +102,7 @@ class QualityControlFaultDataService extends ReportDataService
             ->join('users AS us', 'us.id', 'qc_faults.user_id')
             ->join('processes AS pr', 'pr.id', 'qc_faults.process_id')
             ->join('scanners AS sc', 'sc.id', 'qc_faults.scanner_id')
+            ->join('orders AS o', 'o.serial_id', 'sc.blindid')
             ->groupBy('qc_faults.id')
             ->orderBy('qc_faults.id');
 
@@ -136,6 +139,11 @@ class QualityControlFaultDataService extends ReportDataService
         // if user filter is present
         if ($this->isFilterExist('qualityControls')) {
             $this->query->filterByQualityControl($this->getFilterValue('qualityControls', []));
+        }
+
+        // if user filter is present
+        if ($this->isFilterExist('products')) {
+            $this->query->filterByProduct($this->getFilterValue('products', []));
         }
 
         // if searchString is present

@@ -248,6 +248,16 @@ class User extends Authenticatable
 
         return true;
     }
+
+    /**
+     * Check if user has Privacy Mode on
+     *
+     * @return bool
+     */
+    public function checkPrivacy(): bool
+    {
+        return Gate::allows('privacy');
+    }
     /****************************
     * F U N C T I O N S  E N D *
     ****************************/

@@ -21,6 +21,7 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     //fire register
     Route::get('/fire-register', 'FireRegisterController@fireRegister')->name('fire-register');
     Route::post('/fire-register', 'FireRegisterController@getEmployees')->name('fire-register.get-employees');
+    Route::post('/export-fire-register', 'FireRegisterController@exportFireRegister')->name('export-fire-register');
 
     //manufacture blinds
     Route::get('/manufactured-blinds', 'ManufacturedBlindController@index')->name('manufactured-blinds');
@@ -38,4 +39,9 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
 
     // dashboard machine statistics
     Route::get('/dashboard/machine-statistics', 'ReportController@dashboardMachineStatistics')->name('dashboard-machine-statistics');
+
+    // target performance
+    Route::get('/target-performance', 'ReportController@targetPerformance')->name('target-performance');
+    Route::post('/target-performance', 'ReportController@getTargetPerformances')->name('target-performance');
+    Route::post('/export-target-performance', 'ReportController@exportTargetPerformance')->name('export-target-performance');
 });

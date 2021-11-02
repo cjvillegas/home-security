@@ -8,7 +8,7 @@
         <div v-if="hasScanners">
             {{ totalScanned | numFormat }} of {{ totalBlind | numFormat }} Packed Blinds
         </div>
-
+        {{ privacy }}
         <el-table
             v-if="hasScanners"
             fit
@@ -45,6 +45,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import { dialog } from '../../../mixins/dialog'
+    import { mapGetters } from 'vuex'
 
     export default {
         name: "OrderViewPackedOrders",
@@ -62,20 +63,23 @@
         },
 
         data() {
-            let columns = [
-                {label: 'Serial ID', key: 'serial_id', showTooltip: true, sortable: true},
-                {label: 'Date', key: 'scannedtime', showTooltip: true, sortable: true},
-                {label: 'Employee', key: 'employee_name', showTooltip: true, sortable: true},
-                {label: 'Operation', key: 'process_name', showTooltip: true, sortable: true},
-            ]
-
             return {
-                columns: columns,
                 packedOrders: []
             }
         },
 
         computed: {
+            ...mapGetters(['privacy']),
+
+            columns() {
+                return [
+                    {label: 'Serial ID', key: 'serial_id', showTooltip: true, sortable: true},
+                    {label: 'Date', key: 'scannedtime', showTooltip: true, sortable: true},
+                    {label: 'Employee', key: this.privacy ? 'barcode' : 'employee_name', showTooltip: true, sortable: true},
+                    {label: 'Operation', key: 'process_name', showTooltip: true, sortable: true},
+                ]
+            },
+
             hasScanners() {
                 return this.scanners && this.scanners.length
             },

@@ -152,6 +152,26 @@ class Employee extends Model
         return $this->hasMany(TimeClock::class, 'employee_id');
     }
 
+    /**
+     * First Clock In.
+     *
+     * @return HasOne
+     */
+    public function clockIn(): HasOne
+    {
+        return $this->hasOne(TimeClock::class, 'employee_id')->orderBy('swiped_at', 'asc');
+    }
+
+    /**
+     * Last Clock Out.
+     *
+     * @return HasOne
+     */
+    public function clockOut(): HasOne
+    {
+        return $this->hasOne(TimeClock::class, 'employee_id')->orderBy('swiped_at', 'desc');
+    }
+
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

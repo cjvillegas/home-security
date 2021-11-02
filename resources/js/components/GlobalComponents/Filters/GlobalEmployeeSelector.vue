@@ -1,6 +1,12 @@
 <template>
     <div>
-        <label v-if="showLabel">{{ title }}</label>
+        <label
+            v-if="showLabel">
+            {{ title }}
+            <el-tooltip content="Select up to 10 Employees" placement="top">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+            </el-tooltip>
+        </label>
         <el-select
             v-model="model"
             @change="handleChange"
@@ -10,11 +16,11 @@
             :collapse-tags="isMultiple"
             :placeholder="`Please select ${isMultiple ? 'employees' : 'an employee'}`"
             class="w-100">
-            <el-option
+            <!-- <el-option
                 v-if="isMultiple"
                 label="Select All"
                 :value="null">
-            </el-option>
+            </el-option> -->
             <el-option
                 v-for="employee in employees"
                 :key="employee.id"
@@ -36,6 +42,10 @@
                 type: Boolean,
                 default: false,
                 required: true
+            },
+            hasLimit: {
+                type: Boolean,
+                default: false,
             },
             showLabel: {
                 type: Boolean,

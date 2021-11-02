@@ -1,25 +1,27 @@
 import axios from "axios";
 
 const state = {
-    employees: [],
-
+    performances: [],
+    dates: [],
     loading: false
 };
 
 const getters = {
-    employees: state => state.employees,
+    performances: state => state.performances,
+    dates: state => state.dates,
     loading: state => state.loading
 };
 
 const actions = {
-    async getEmployeesList({state, commit}, data) {
-        let apiUrl = `/admin/reports/fire-register`
-        commit('setLoading', true)
+    async getPerformances({commit, state}, data) {
+        let apiUrl = `/admin/reports/target-performance`
 
+        commit('setLoading', true)
         await axios.post(apiUrl, data)
         .then((response) => {
             commit('setLoading', false)
-            commit('setEmployees', response.data.employees)
+            commit('setPerformances', response.data.performances)
+            commit('setDates', response.data.dates)
         })
         .catch(err => {
             console.log(err)
@@ -29,10 +31,10 @@ const actions = {
         })
     },
 
-    async exportFireRegister({state, commit}, data) {
-        let apiUrl = `/admin/reports/export-fire-register`
-        commit('setLoading', true)
+    async exportTargetPerformance({commit}, data) {
+        let apiUrl = `/admin/reports/export-target-performance`
 
+        commit('setLoading', true)
         await axios.post(apiUrl, data)
         .then((response) => {
             commit('setLoading', false)
@@ -47,11 +49,14 @@ const actions = {
 };
 
 const mutations = {
-    setEmployees(state, employees) {
-        return state.employees = employees
-    },
     setLoading(state, loading) {
         return state.loading = loading
+    },
+    setPerformances(state, performances) {
+        return state.performances = performances
+    },
+    setDates(state, dates) {
+        return state.dates = dates
     }
 };
 
