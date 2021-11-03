@@ -253,6 +253,15 @@
         </li>
         @endif
 
+        @can('stock_level_access')
+            <li class="c-sidebar-nav-item">
+                <a href="{{ route('admin.customers.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.customers.index") ? "c-active" : "" }}">
+                    <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
+                    Customers
+                </a>
+            </li>
+        @endcan
+
         @if (auth()->user()->can('reports_access') && auth()->user()->canAny(['work_analytics_reports_access', 'data_export_reports_access']))
             <li class="c-sidebar-nav-dropdown {{ request()->is("admin/reports*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
