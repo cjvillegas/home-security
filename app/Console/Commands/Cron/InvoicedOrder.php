@@ -91,7 +91,7 @@ class InvoicedOrder extends CronDatabasePopulator
 
         $query = "
             SELECT
-                DISTINCT([Order].order_id) AS OrderNumber,
+                DISTINCTs([Order].order_id) AS OrderNumber,
                 [Order].num_invoice AS InvoiceNumber,
                 CAST([Order].dat_invoice AS date) as InvoiceDate
             FROM [User]
