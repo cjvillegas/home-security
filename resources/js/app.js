@@ -95,7 +95,7 @@ const app = new Vue({
             this.getProcesses()
         }
 
-        if (pathname === '/admin/reports/time-and-attendance') {
+        if (pathname === '/admin/reports/time-and-attendance-page') {
             this.getEmployees()
         }
 
