@@ -43,8 +43,10 @@ class ProcessesController extends Controller
         $process = new Process;
         $process->name = $request->get('name');
         $process->barcode = $request->get('barcode');
-        $process->process_target = $request->get('process_target');
-        $process->new_joiner_target = $request->get('new_joiner_target');
+        $process->trade_target = $request->get('trade_target', $process->trade_target);
+        $process->internet_target = $request->get('internet_target', $process->internet_target);
+        $process->trade_target_new_joiner = $request->get('trade_target_new_joiner', $process->trade_target_new_joiner);
+        $process->internet_target_new_joiner = $request->get('internet_target_new_joiner', $process->internet_target_new_joiner);
         $process->process_manufacturing_time = $request->get('process_manufacturing_time');
         $process->stop_start_button_required = $request->get('stop_start_button_required');
         $saved = $process->save();
@@ -87,8 +89,10 @@ class ProcessesController extends Controller
 
         $process->name = $request->get('name');
         $process->barcode = $request->get('barcode');
-        $process->process_target = $request->get('process_target', $process->process_target);
-        $process->new_joiner_target = $request->get('new_joiner_target', $process->new_joiner_target);
+        $process->trade_target = $request->get('trade_target', $process->trade_target);
+        $process->internet_target = $request->get('internet_target', $process->internet_target);
+        $process->trade_target_new_joiner = $request->get('trade_target_new_joiner', $process->trade_target_new_joiner);
+        $process->internet_target_new_joiner = $request->get('internet_target_new_joiner', $process->internet_target_new_joiner);
         $process->process_manufacturing_time = $request->get('process_manufacturing_time', $process->process_manufacturing_time);
         $process->stop_start_button_required = $request->get('stop_start_button_required', $process->stop_start_button_required);
         $saved = $process->save();
