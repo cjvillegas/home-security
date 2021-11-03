@@ -44,7 +44,7 @@ class CronFailureTeamsNotification extends Notification
      */
     public function via($notifiable)
     {
-        return [MicrosoftTeamsChannel::class];
+        return ['database', MicrosoftTeamsChannel::class];
     }
 
     /**
@@ -56,7 +56,12 @@ class CronFailureTeamsNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            'type' => 'error',
+            'from' => 'cron',
+            'cron' => $this->cron,
+            'message' => 'Cron Job Failure',
+            'error_message' => $this->errorMessage,
+            'date' => now()->format('Y-m-d H:i')
         ];
     }
 
