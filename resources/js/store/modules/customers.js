@@ -35,11 +35,15 @@ const actions = {
     },
 
     async updateCustomer({commit}, data) {
+        let apiUrl = `/admin/customers/${data.id}`
 
+        return await axios.patch(apiUrl, data)
     },
 
-    async deleteCustomer({commit}, data){
+    async deleteCustomer({commit}, id){
+        let apiUrl = `/admin/customers/${id}`
 
+        return await axios.delete(apiUrl)
     }
 };
 

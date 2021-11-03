@@ -66,7 +66,7 @@
 </template>
 
 <script>
-    import { mapActions, mapGetters } from 'vuex';
+    import { mapActions, mapGetters, mapMutations } from 'vuex';
     import {dialog} from "../../mixins/dialog";
     import {formHelper} from "../../mixins/formHelper";
     export default {
@@ -113,14 +113,35 @@
             }
         },
         methods: {
+            ...mapMutations('customers', ['setLoading']),
             ...mapActions('customers', ['createNewCustomer', 'updateCustomer']),
             validate() {
                 this.$refs.customerForm.validate(valid => {
                     if (valid) {
                         this.resetErrors()
-
+                        this.setLoading(true)
                         if (this.hasModel) {
+
                             this.updateCustomer(this.customerForm)
+                            .then((response) => {
+                                if (response.data) {
+                                    this.$notify({
+                                        title: 'Success',
+                                        message: response.data.message,
+                                        type: 'success'
+                                    })
+                                    this.$EventBus.fire('CUSTOMER_UPDATE')
+                                    setTimeout(_ => {
+                                        this.closeForm(true)
+                                    }, 100)
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                            .finally(_ => {
+                                this.setLoading(false)
+                            })
 
                             return
                         }
@@ -138,6 +159,12 @@
                                     this.closeForm(true)
                                 }, 300)
                             }
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+                        .finally(_ => {
+                            this.setLoading(false)
                         })
                     }
                 })

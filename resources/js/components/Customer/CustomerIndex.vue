@@ -79,7 +79,7 @@
                                 </el-tooltip>
 
                                 <el-popconfirm
-                                    @confirm="deleteCustomer(scope.row.id)"
+                                    @confirm="clickDelete(scope.row.id)"
                                     confirm-button-text='OK'
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
@@ -98,6 +98,18 @@
                     </el-table-column>
                 </el-table>
             </div>
+
+            <el-pagination
+                class="custom-pagination-class  mt-3 float-right"
+                background
+                layout="total, sizes, prev, pager, next"
+                :total="filters.total"
+                :page-size="filters.size"
+                :page-sizes="[10, 25, 50, 100]"
+                :current-page="filters.page"
+                @size-change="handleSize"
+                @current-change="handlePage">
+            </el-pagination>
         </el-card>
 
         <customer-form
@@ -111,8 +123,10 @@
 
 <script>
     import cloneDeep from 'lodash/cloneDeep'
-    import { mapActions, mapGetters } from 'vuex'
+    import pagination from '../../mixins/pagination'
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
     export default {
+        mixins: [pagination],
         data() {
             return {
                 filters: {
@@ -125,8 +139,23 @@
         },
         created() {
             this.fetchCustomers()
+            .then((response) => {
+                this.setCustomers(response.data.customers)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+            .finally(_ => {
+                this.setLoading(false)
+            })
+            this.filters.size = 10
+            this.functionName = 'fetchCustomers'
 
             this.$EventBus.listen('CUSTOMER_CREATE', _ => {
+                this.fetchCustomers()
+            })
+
+            this.$EventBus.listen('CUSTOMER_UPDATE', _ => {
                 this.fetchCustomers()
             })
         },
@@ -134,6 +163,7 @@
             ...mapGetters('customers', ['customers', 'loading'])
         },
         methods: {
+            ...mapMutations('customers', ['setCustomers', 'setLoading']),
             ...mapActions('customers', ['fetchCustomers', 'deleteCustomer']),
             viewCustomer(customer) {
                 this.view = true
@@ -144,6 +174,26 @@
                 this.view = false
                 this.model = cloneDeep(customer)
                 this.showForm = true
+            },
+            clickDelete(id) {
+                this.setLoading(true)
+                this.deleteCustomer(id)
+                .then((response) => {
+                    if (response.data) {
+                        this.$notify({
+                            title: 'Success',
+                            message: response.data.message,
+                            type: 'success'
+                        })
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.fetchCustomers()
+                    this.setLoading(false)
+                })
             },
             closeForm() {
                 this.model = null

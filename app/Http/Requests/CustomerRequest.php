@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CustomerRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class CustomerRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +25,7 @@ class CustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'account_code' => 'required',
+            'account_code' => ['required', Rule::unique('customers')->ignore($this->id)],
             'company_name'=> 'required',
             'zoho_crm_id' => 'required'
         ];

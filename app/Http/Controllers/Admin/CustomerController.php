@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -16,6 +21,8 @@ class CustomerController extends Controller
      */
     public function index()
     {
+        //abort_if(Gate::denies('customer_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.customers.index');
     }
 
@@ -50,37 +57,24 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Customer $customer, CustomerRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $customer->update($request->all());
+            DB::commit();
+            return response()->json(['message' => 'Customer Successfully Saved']);
+        }catch (Exception $e) {
+            DB::rollBack();
+            Log::info($e);
+            return response()->json(['message' => "Something went wrong when creating a new machine."], 500);
+        }
     }
 
     /**
@@ -89,8 +83,11 @@ class CustomerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Customer $customer)
     {
-        //
+        $customer->delete();
+        DB::commit();
+
+        return response()->json(['message' => 'Successfully Deleted!']);
     }
 }
