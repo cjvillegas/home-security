@@ -60,7 +60,8 @@ class NotificationController extends Controller
         $query = Notification::
             when($searchString, function ($query) use ($searchString) {
                 $query->where('data', 'like', "%{$searchString}%");
-            });
+            })
+            ->orderBy('created_at', 'desc');
 
         $notifications = $query->paginate($size);
 

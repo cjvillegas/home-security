@@ -3,18 +3,19 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\HtmlString;
+use NotificationChannels\MicrosoftTeams\MicrosoftTeamsChannel;
+use NotificationChannels\MicrosoftTeams\MicrosoftTeamsMessage;
 
-class CronFailureNotification extends Notification
+class CronFailureTeamsNotification extends Notification
 {
     use Queueable;
 
     /**
      * @var string
      */
-    private $cron = null;
+    private $cron;
 
     /**
      * @var string|null
@@ -43,32 +44,13 @@ class CronFailureNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     *
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-                ->error()
-                ->greeting('CRON Job Failure!')
-                ->line(new HtmlString("{$this->environment}: An error occurred while running the <b>{$this->cron}</b> CRON. Please report this to your administrator."))
-                ->action('View Full Error Log', $this->getUrl())
-                ->line(new HtmlString("Click the button and view the full error log. Make sure you are authenticated before you can access the page."))
-                ->salutation(new HtmlString("Regards, <br>Dev Team"));
+        return ['database', MicrosoftTeamsChannel::class];
     }
 
     /**
      * Get the array representation of the notification.
      *
      * @param  mixed  $notifiable
-     *
      * @return array
      */
     public function toArray($notifiable)
@@ -81,6 +63,23 @@ class CronFailureNotification extends Notification
             'error_message' => $this->errorMessage,
             'date' => now()->format('Y-m-d H:i')
         ];
+    }
+
+    /**
+     * Get the MS Teams representation of the notification
+     *
+     * @param mixed $notifiable
+     *
+     * @return MicrosoftTeamsMessage
+     */
+    public function toMicrosoftTeams($notifiable)
+    {
+        return MicrosoftTeamsMessage::create()
+            ->to(config('services.teams.dev_cron_failure'))
+            ->type('error')
+            ->title("{$this->cron} Failed")
+            ->content(new HtmlString("{$this->environment}: An error occurred while running the <b>{$this->cron}</b> CRON. Please report this to your administrator."))
+            ->button('View Full Error Log', $this->getUrl());
     }
 
     /**
