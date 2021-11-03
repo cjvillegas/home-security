@@ -22,13 +22,19 @@ class User extends Authenticatable
     use Notifiable;
     use HasFactory;
 
-    public $table = 'users';
-
+    /**
+     * Columns defined here should not be shown in any retrieved instance of this model
+     *
+     * @var string[]
+     */
     protected $hidden = [
         'remember_token',
         'password',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $dates = [
         'email_verified_at',
         'created_at',
@@ -36,6 +42,9 @@ class User extends Authenticatable
         'deleted_at',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'email',
@@ -57,19 +66,52 @@ class User extends Authenticatable
         'is_active' => 'boolean',
     ];
 
+    /************************************
+     * C U S T O M  P R O P E R T I E S *
+     ***********************************/
+
     public function getIsAdminAttribute()
     {
         return $this->roles()->where('id', 1)->exists();
     }
 
-    public function userUserAlerts()
-    {
-        return $this->belongsToMany(UserAlert::class);
-    }
-
     public function getEmailVerifiedAtAttribute($value)
     {
         return $value ? Carbon::createFromFormat('Y-m-d H:i:s', $value)->format(config('panel.date_format') . ' ' . config('panel.time_format')) : null;
+    }
+
+    /**
+     * Retrieve all permissions of the user.
+     *
+     * @return array
+     */
+    public function getPermissionsAttribute(): array
+    {
+        $roles = $this->roles->pluck('id')->toArray();
+
+        $permissions = Permission::select('title')
+            ->join('permission_role AS pr', 'pr.permission_id', 'permissions.id')
+            ->whereIn('pr.role_id', $roles)
+            ->get()
+            ->pluck('title')
+            ->toArray();
+
+        $roleBasedPermissions = [];
+
+        foreach ($permissions as $permission) {
+            $roleBasedPermissions[] = $this->getPermissions($permission);
+        }
+
+        return array_merge(...$roleBasedPermissions);
+    }
+
+    /*******************************************
+     * E N D  C U S T O M  P R O P E R T I E S *
+     ******************************************/
+
+    public function userUserAlerts()
+    {
+        return $this->belongsToMany(UserAlert::class);
     }
 
     public function setEmailVerifiedAtAttribute($value)
@@ -171,35 +213,10 @@ class User extends Authenticatable
     }
 
     /**
-     * Retrieve list of permissions of the current user by module names.
-     * This is useful when you want to retrieve permissions of different modules ie. users, settings.
-     * This will automatically generate permission names for that given module ie. user_access.
-     * Typically used in our frontend when we want to have permission checking in that level.
-     *
-     * @param string $args
-     *
-     * @return array
-     */
-    public function getPermissionsPerModules(string ...$args)
-    {
-        $permissions = [];
-
-        // loop through the passed module names
-        // Note* it will not check if the permission exist or not, it will just check if
-        // the current user have permission to that name permission
-        foreach ($args as $arg) {
-            // build the permission module names
-            $permissions = array_merge($permissions, $this->getPermissionNameByModule($arg));
-        }
-
-        return $permissions;
-    }
-
-    /**
      * Retrieve list of permissions of the current user by module name.
      * This is useful when you want to retrieve permissions by module name.
      * This will automatically generate permission names for that given module ie. user_access.
-     * Typically used in our frontend when we want to have permission checking in that level.
+     * Commonly used in our frontend when we want to have permission checking in that level.
      *
      * @param string $args
      *

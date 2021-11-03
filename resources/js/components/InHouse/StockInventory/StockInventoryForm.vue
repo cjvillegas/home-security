@@ -46,7 +46,7 @@
             </el-descriptions>
 
             <div
-                v-if="isPending"
+                v-if="isPending && isApprover"
                 class="mt-3 text-right">
                 <el-tooltip
                     class="item"
@@ -292,6 +292,12 @@
 
             enableMoveButton() {
                 return !!(!!this.selectedStockOrdersLines.length && this.totalPendingCount > 1)
+            },
+
+            isApprover() {
+                let user = this.$root.user
+
+                return user && user.permissions && user.permissions.stock_ordering_approver
             }
         },
 
