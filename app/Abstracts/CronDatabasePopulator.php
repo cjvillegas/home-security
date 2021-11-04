@@ -4,6 +4,7 @@ namespace App\Abstracts;
 
 use App\Models\User;
 use App\Notifications\CronFailureNotification;
+use App\Notifications\CronFailureTeamsNotification;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -50,6 +51,16 @@ abstract class CronDatabasePopulator extends Command
         $users = (new User)->getUserAdminsWithValidEmails();
 
         Notification::send($users, new CronFailureNotification($message, $error->getMessage()));
+
+        $firstUser = $users->first();
+
+        /**
+         * for MS Teams notification we will only need to send it once.
+         * to do so
+         */
+        if ($firstUser) {
+            $firstUser->notify(new CronFailureTeamsNotification($message, $error->getMessage()));
+        }
     }
 
     /**

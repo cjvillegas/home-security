@@ -181,9 +181,10 @@ class UsersController extends Controller
      */
     public function getAuthUser()
     {
-        $user = auth()->user();
+        $user = User::where('users.id', auth()->user()->id)
+            ->first();
 
-        $user->permissions = $user->getPermissionsPerModules('qc_tag');
+        $user->append(['permissions']);
 
         return response()->json($user);
     }

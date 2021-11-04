@@ -7,6 +7,7 @@ use App\Models\StockLevel;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class PopulateStocksLevelFromSage extends CronDatabasePopulator
 {
@@ -44,7 +45,8 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
     public function handle(): void
     {
         try {
-            $this->clearTable();
+            $this->truncateTable();
+
             $stockLevels = $this->getDataFromBlind();
 
             $chunkCounter = 0;
@@ -77,6 +79,21 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
         } catch (Exception $error) {
             $this->sendFailedNotification('Populate Stock Level From Sage', $error);
         }
+    }
+
+    /**
+     * Truncate the given table. This method disables the foreign key check
+     * and enables it again after the truncation
+     */
+    private function truncateTable()
+    {
+        Schema::disableForeignKeyConstraints();
+
+        DB::connection('mysql')
+            ->table($this->table)
+            ->truncate();
+
+        Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -22,7 +22,7 @@ import locale from 'element-ui/lib/locale/lang/en'
 import router from './router'
 
 // vuex store
-import {mapActions} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import store from './store/store'
 
 // vue filters
@@ -61,6 +61,9 @@ const app = new Vue({
     router,
     store,
     data: {},
+    computed: {
+        ...mapGetters(['user'])
+    },
     created() {
         let pathname = window.location.pathname
 
@@ -92,15 +95,15 @@ const app = new Vue({
             this.getProcesses()
         }
 
-        if (pathname === '/admin/reports/time-and-attendance') {
+        if (pathname === '/admin/reports/time-and-attendance-page') {
             this.getEmployees()
         }
 
-        if (pathname == '/admin/reports/manufactured-blinds') {
+        if (pathname === '/admin/reports/manufactured-blinds') {
             this.getQualityControls()
         }
 
-        if (pathname == '/admin/reports/target-performance') {
+        if (pathname === '/admin/reports/target-performance') {
             this.getEmployees()
             this.getCurrentUser()
         }
@@ -109,8 +112,19 @@ const app = new Vue({
         }
 
         this.checkPrivacy()
+        this.getAuthUser()
     },
     methods: {
+        getAuthUser() {
+            this.$API.User.getAuthUser()
+                .then(res => {
+                    this.setUser(res.data)
+                })
+                .catch(err => {
+                    console.error('Error: Global Get Auth User Error', err)
+                })
+        },
+
         getUsers() {
             this.$API.User.getCleanUsers()
             .then(res => {
@@ -201,7 +215,7 @@ const app = new Vue({
             })
         },
 
-        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setProducts', 'setPrivacy'])
+        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setProducts', 'setPrivacy', 'setUser'])
     }
 });
 

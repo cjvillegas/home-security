@@ -26,6 +26,22 @@ class StoreProcessRequest extends FormRequest
                 'required',
                 'unique:processes',
             ],
+            'trade_target' => [
+                'numeric',
+                'nullable'
+            ],
+            'trade_target_new_joiner' => [
+                'numeric',
+                'nullable'
+            ],
+            'internet_target' => [
+                'numeric',
+                'nullable'
+            ],
+            'internet_target_new_joiner' => [
+                'numeric',
+                'nullable'
+            ]
         ];
     }
 }
