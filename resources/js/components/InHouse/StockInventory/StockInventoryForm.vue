@@ -46,7 +46,7 @@
             </el-descriptions>
 
             <div
-                v-if="isPending"
+                v-if="isPending && isApprover"
                 class="mt-3 text-right">
                 <el-tooltip
                     class="item"
@@ -249,6 +249,7 @@
             const columns = [
                 {label: 'Product', prop: 'code', sortable: true},
                 {label: 'Description', prop: 'name', sortable: false},
+                {label: 'Category', prop: 'product_category', sortable: false},
                 {label: 'Qty Needed', prop: 'order_qty', sortable: true},
                 {label: 'Qty In Stock WH', prop: 'qty_in_stock', sortable: true},
                 {label: 'Pending Orders', prop: 'pending_order_count', sortable: true},
@@ -292,6 +293,12 @@
 
             enableMoveButton() {
                 return !!(!!this.selectedStockOrdersLines.length && this.totalPendingCount > 1)
+            },
+
+            isApprover() {
+                let user = this.$root.user
+
+                return user && user.permissions && user.permissions.stock_ordering_approver
             }
         },
 
@@ -351,6 +358,7 @@
                             item.name = item.stock_level.name
                             item.code = item.stock_level.code
                             item.qty_in_stock = item.stock_level.available_stock
+                            item.product_category = item.stock_level.product_category
                             item.pending_order_count = item.stock_level.pending_order_count
                             return item
                         })
@@ -630,6 +638,7 @@
                     stock_order_id: null,
                     code: null,
                     name: null,
+                    product_category: null,
                     status: null,
                     order_qty: 0,
                     qty_in_stock: 0,
@@ -716,6 +725,7 @@
                 orderLine.stock_level_id = item.id
                 orderLine.code = item.code
                 orderLine.name = item.name
+                orderLine.product_category = item.product_category
                 orderLine.status = this.order.status
                 orderLine.qty_in_stock = item.available_stock
                 orderLine.pending_order_count = item.pending_order_count

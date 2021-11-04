@@ -174,8 +174,10 @@
                 {label: 'Name', prop: 'name', showOverflowTooltip: true, sortable: true},
                 {label: 'Barcode', prop: 'barcode', showOverflowTooltip: true, sortable: true},
                 {label: 'Categories', prop: 'categories', showOverflowTooltip: false, sortable: false},
-                {label: 'Process Target', prop: 'process_target', showOverflowTooltip: true, sortable: true},
-                {label: 'New Joiner Target', prop: 'new_joiner_target', showOverflowTooltip: true, sortable: true},
+                {label: 'Trade Target', prop: 'trade_target', showOverflowTooltip: true, sortable: true},
+                {label: 'Internet Target', prop: 'internet_target', showOverflowTooltip: true, sortable: true},
+                {label: 'Trade Target New Joiner', prop: 'trade_target_new_joiner', showOverflowTooltip: true, sortable: true},
+                {label: 'Internet Target New Joiner', prop: 'internet_target_new_joiner', showOverflowTooltip: true, sortable: true},
                 {label: 'Process Manufacturing Time', prop: 'process_manufacturing_time', showOverflowTooltip: true, sortable: true},
                 {label: 'Stop Start Button Required', prop: 'stop_start_button_required', showOverflowTooltip: true, sortable: true},
             ]
@@ -293,6 +295,7 @@
 
                 this.$API.Processes.getList(this.filters)
                     .then(res => {
+                        console.log(res.data)
                         this.processes = res.data.data
                         this.filters.total = res.data.total
                     })

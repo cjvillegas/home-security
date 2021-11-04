@@ -64,11 +64,11 @@
 
                 <div class="col-md-6">
                     <el-form-item
-                        label="Process Target"
-                        prop="process_target"
-                        :error="hasError('process_target')">
+                        label="Trade Target"
+                        prop="trade_target"
+                        :error="hasError('trade_target')">
                         <el-input
-                            v-model="processForm.process_target"
+                            v-model="processForm.trade_target"
                             type="number"
                             clearable
                             placeholder="200"
@@ -77,11 +77,37 @@
                     </el-form-item>
 
                     <el-form-item
-                        label="New Joiner Target"
-                        prop="new_joiner_target"
-                        :error="hasError('new_joiner_target')">
+                        label="Internet Target"
+                        prop="internet_target"
+                        :error="hasError('internet_target')">
                         <el-input
-                            v-model="processForm.new_joiner_target"
+                            v-model="processForm.internet_target"
+                            type="number"
+                            clearable
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Trade Target New Joiner"
+                        prop="trade_target_new_joiner"
+                        :error="hasError('trade_target_new_joiner')">
+                        <el-input
+                            v-model="processForm.trade_target_new_joiner"
+                            type="number"
+                            clearable
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Internet Target New Joiner"
+                        prop="internet_target_new_joiner"
+                        :error="hasError('internet_target_new_joiner')">
+                        <el-input
+                            v-model="processForm.internet_target_new_joiner"
                             type="number"
                             clearable
                             placeholder="200"
@@ -232,8 +258,10 @@
                     id: this.model.id,
                     name: this.model.name,
                     barcode: this.model.barcode,
-                    process_target: this.model.process_target,
-                    new_joiner_target: this.model.new_joiner_target,
+                    trade_target: this.model.trade_target,
+                    internet_target: this.model.internet_target,
+                    trade_target_new_joiner: this.model.trade_target_new_joiner,
+                    internet_target_new_joiner: this.model.internet_target_new_joiner,
                     process_manufacturing_time: this.model.process_manufacturing_time,
                     stop_start_button_required: this.model.stop_start_button_required,
                     process_categories: this.model.process_categories.map(pc => pc.id)

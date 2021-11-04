@@ -3,8 +3,14 @@
         <label
             v-if="showLabel">
             {{ title }}
-            <el-tooltip content="Select up to 10 Employees" placement="top">
-                <i class="fa fa-info-circle" aria-hidden="true"></i>
+            <el-tooltip
+                v-if="limit"
+                :content="`Select up to ${limit} Employees`"
+                placement="top">
+                <i
+                    class="fa fa-info-circle ml-2"
+                    aria-hidden="true">
+                </i>
             </el-tooltip>
         </label>
         <el-select
@@ -12,15 +18,16 @@
             @change="handleChange"
             filterable
             clearable
+            :multiple-limit="limit ? limit : null"
             :multiple="isMultiple"
             :collapse-tags="isMultiple"
             :placeholder="`Please select ${isMultiple ? 'employees' : 'an employee'}`"
             class="w-100">
-            <!-- <el-option
+            <el-option
                 v-if="isMultiple"
                 label="Select All"
                 :value="null">
-            </el-option> -->
+            </el-option>
             <el-option
                 v-for="employee in employees"
                 :key="employee.id"
@@ -43,9 +50,9 @@
                 default: false,
                 required: true
             },
-            hasLimit: {
-                type: Boolean,
-                default: false,
+            limit: {
+                type: Number,
+                default: null,
             },
             showLabel: {
                 type: Boolean,

@@ -76,7 +76,7 @@ class StockInventoryController extends Controller
             ->statusName()
             ->with(['orderItems' => function ($query) {
                 $query->with(['stockLevel' => function ($query) {
-                    $query->select(['stock_levels.id', 'stock_levels.name', 'stock_levels.code', 'stock_levels.available_stock'])
+                    $query->select(['stock_levels.id', 'stock_levels.name', 'stock_levels.code', 'stock_levels.available_stock', 'stock_levels.product_category'])
                         ->pendingOrderCount()
                         ->leftJoinStockOrderItem()
                         ->groupBy('stock_levels.id');
