@@ -136,11 +136,18 @@
 		    	Close
 		    </el-button>
 		    <el-button
-                @click="validate"
+                @click="validate(true)"
                 :disabled="disableSave"
                 type="primary"
                 class="btn-primary">
 		    	Save
+		    </el-button>
+            <el-button
+                @click="validate(false)"
+                :disabled="disableSave"
+                type="primary"
+                class="btn-info">
+		    	Save & CRM
 		    </el-button>
 		</span>
     </el-dialog>
@@ -162,7 +169,7 @@
         data() {
             return {
                 loading: false,
-                qcForm: this.getDefaultFieldValues()
+                qcForm: this.getDefaultFieldValues(),
             }
         },
         computed: {
@@ -191,7 +198,7 @@
             }
         },
         methods: {
-            validate() {
+            validate(saveOnly = true) {
                 if (!this.qcForm.quality_control_id) {
                     this.$notify({
                         title: 'QC Tagging',
@@ -212,9 +219,12 @@
                     return
                 }
 
+                if (!saveOnly) {
+                   this.qcForm.toggleCrm = true
+                }
+
                 if (this.hasModel) {
                     this.updateQcTag()
-
                     return
                 }
 
@@ -227,16 +237,20 @@
                     .then(res => {
                         if (res.data) {
                             this.$EventBus.fire('QC_TAG_CREATE', res.data)
-
                             this.$notify({
                                 title: 'Success',
                                 message: 'Tag successfully created.',
                                 type: 'success'
                             })
+                            if (res.response == 200 && this.qcForm.toggleCrm && res.data.zoho) {
+                                console.log(res.data.zoho)
+                                return
+                            } else {
+                                setTimeout(_ => {
+                                    this.closeForm()
+                                }, 300)
+                            }
 
-                            setTimeout(_ => {
-                                this.closeForm()
-                            }, 300)
                         }
                     })
                     .catch(err => {
@@ -259,10 +273,14 @@
                                 message: 'Tag successfully updated.',
                                 type: 'success'
                             })
-
-                            setTimeout(_ => {
-                                this.closeForm()
-                            }, 300)
+                            if (this.qcForm.toggleCrm) {
+                                console.log(res.data)
+                                return
+                            } else {
+                                setTimeout(_ => {
+                                    this.closeForm()
+                                }, 300)
+                            }
                         }
                     })
                     .catch(err => {
@@ -325,6 +343,7 @@
                     scanner_id: this.model.scanner_id,
                     operation_date: this.model.operation_date,
                     description: this.model.description,
+                    toggleCrm: false
                 }
             },
             getDefaultFieldValues() {
@@ -337,6 +356,7 @@
                     scanner_id: this.scanner ? this.scanner.id : null,
                     operation_date: this.scanner ? this.scanner.scannedtime : null,
                     description: null,
+                    toggleCrm: false
                 }
             },
             resetForm() {

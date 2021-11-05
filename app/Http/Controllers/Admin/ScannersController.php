@@ -11,12 +11,16 @@ use App\Http\Requests\StoreScannerRequest;
 use App\Http\Requests\UpdateScannerRequest;
 use App\Models\QcFault;
 use App\Models\Scanner;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
+use GuzzleHttp\Client;
 
 class ScannersController extends Controller
 {
@@ -188,9 +192,13 @@ class ScannersController extends Controller
     public function qcTag(StoreQcTag $request)
     {
         $qcTag = new QcFault();
-        $qcTag->fill($request->all());
+        $qcTag->fill($request->except(['toggleCrm']));
         $qcTag->operation_date = date('Y-m-d H:i:s', strtotime($request->get('operation_date')));
         $qcTag->save();
+
+        if ($request->toggleCrm) {
+            $this->qcWebHook($qcTag);
+        }
 
         return response()->json($qcTag);
     }
@@ -204,10 +212,15 @@ class ScannersController extends Controller
      */
     public function updateQcTag(UpdateQcTag $request, QcFault $qcFault)
     {
-        $qcFault->fill($request->all());
+        $qcFault->fill($request->except(['toggleCrm']));
         $qcFault->save();
+        $response = $qcFault->refresh();
 
-        return response()->json($qcFault->refresh());
+        if ($request->toggleCrm) {
+            $response = $this->qcWebHook($qcFault);
+        }
+
+        return response()->json($response);
     }
 
     /**
@@ -227,5 +240,52 @@ class ScannersController extends Controller
         $qcFault->delete();
 
         return response()->json($qcFault->refresh());
+    }
+
+    /**
+     * This will create POST request to Zoho Workflow
+     *
+     * @return void
+     */
+    public function qcWebHook(QcFault $qcFault)
+    {
+        try {
+            $data = null;
+            $client = new Client(
+                [
+                    'header' => [
+                        'Accept' => 'application/json',
+                    ]
+                ]
+            );
+            $qcObj = new stdClass();
+            $qcObj->affected_blinds = optional($qcFault->scanner->order)->quantity;
+            $qcObj->productOne = optional($qcFault->scanner->order)->blind_type;
+            $qcObj->productDetailsOne = optional($qcFault->qualityControl)->description;
+            $qcObj->faultDesciptionOne = $qcFault->description;
+            $qcObj->invoiceNumberOne = optional($qcFault->scanner->order->orderInvoice)->invoice_no;
+            $qcObj->dateManufactured = Carbon::parse($qcFault->scanner->scannedtime)->format('Y-m-d');
+            $qcObj->orderNo = optional($qcFault->scanner->order)->order_no;
+            $qcObj->subject = optional($qcFault->scanner->order)->order_no. '-'. optional($qcFault->scanner)->blindid;
+            $qcObj->customerRef = optional($qcFault->scanner->order)->customer_order_no;
+            Log::info(json_encode($qcObj));
+            $response = $client->request('POST',
+                'https://flow.zoho.eu/20072020916/flow/webhook/incoming?zapikey=1001.40222ef9da7201f84e79ca319833e3cc.8831df67f2639bebd931b02b447ea8b5&isdebug=false', [
+                'json' => json_encode($qcObj)
+            ]);
+
+            $data = [
+                'zoho' => 'Responso from zoho here',
+                'message' => 'Successfully POST request'
+            ];
+
+        } catch (\GuzzleHttp\Exception\ClientException $e) {
+            $data = [
+                'zoho' => 'Fail posting a request',
+                'message' => 'Fail'
+            ];
+        }
+
+        return $data;
     }
 }
