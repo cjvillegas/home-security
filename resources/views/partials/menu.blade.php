@@ -357,12 +357,14 @@
             </li>
         @endif
 
-         <li class="c-sidebar-nav-item {{ request()->is('admin/exports*') ? 'c-show' : '' }}">
-            <a href="{{ route("admin.exports.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/exports") ? "c-active" : "" }}">
-                <i class="fas fa-folder-open fa-fw c-sidebar-nav-icon"></i>
-                Exports
-            </a>
-        </li>
+        @can('download_export_access')
+            <li class="c-sidebar-nav-item {{ request()->is('admin/exports*') ? 'c-show' : '' }}">
+                <a href="{{ route("admin.exports.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/exports") ? "c-active" : "" }}">
+                    <i class="fas fa-folder-open fa-fw c-sidebar-nav-icon"></i>
+                    Exports
+                </a>
+            </li>
+        @endcan
 
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
