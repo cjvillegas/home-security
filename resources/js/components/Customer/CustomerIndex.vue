@@ -36,7 +36,7 @@
                         </el-empty>
                     </template>
                     <el-table-column
-                        prop="account_code"
+                        prop="code"
                         label="Account Code"
                         sortable>
                     </el-table-column>
@@ -84,7 +84,7 @@
                                     cancel-button-text='No, Thanks'
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this?">
+                                    title="Are you sure to delete this customer?">
                                     <el-button
                                         type="text"
                                         class="text-danger ml-2"
@@ -100,7 +100,7 @@
             </div>
 
             <el-pagination
-                class="custom-pagination-class  mt-3 float-right"
+                class="custom-pagination-class mt-3 mb-3 float-right"
                 background
                 layout="total, sizes, prev, pager, next"
                 :total="filters.total"

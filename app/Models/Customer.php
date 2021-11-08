@@ -17,8 +17,8 @@ class Customer extends Model
      * @var array
      */
     protected $fillable = [
-        'account_code',
-        'company_name',
+        'code',
+        'name',
         'zoho_crm_id'
     ];
 }

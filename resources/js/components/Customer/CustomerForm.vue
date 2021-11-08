@@ -11,10 +11,10 @@
             v-loading="loading">
             <el-form-item
                 label="Account Code"
-                prop="account_code"
-                :error="hasError('account_code')">
+                prop="code"
+                :error="hasError('code')">
                 <el-input
-                    v-model="customerForm.account_code"
+                    v-model="customerForm.code"
                     :disabled="isView"
                     clearable
                     placeholder="ABC1234"
@@ -23,10 +23,10 @@
             </el-form-item>
             <el-form-item
                 label="Company Name"
-                prop="company_name"
-                :error="hasError('company_name')">
+                prop="name"
+                :error="hasError('name')">
                 <el-input
-                    v-model="customerForm.company_name"
+                    v-model="customerForm.name"
                     :disabled="isView"
                     clearable
                     placeholder="ABC1234 SOLUTIONS LTD"
@@ -80,8 +80,8 @@
             return {
                 customerForm: this.getDefaultFieldValues(),
                 rules: {
-                    account_code: {required: true, message: 'Account Code field is required.', trigger: ['blur', 'change']},
-                    company_name: {required: true, message: 'Company Name field is required.', trigger: ['blur', 'change']},
+                    code: {required: true, message: 'Account Code field is required.', trigger: ['blur', 'change']},
+                    name: {required: true, message: 'Company Name field is required.', trigger: ['blur', 'change']},
                     zoho_crm_id: {required: true, message: 'Zoho CRM ID field is required.', trigger: ['blur', 'change']},
                 }
             }
@@ -172,8 +172,8 @@
             getDefaultFieldValues() {
                 return {
                     id: null,
-                    account_code: null,
-                    company_name: null,
+                    code: null,
+                    name: null,
                     zoho_crm_id:null
                 }
             },
@@ -184,8 +184,8 @@
 
                 this.customerForm = {
                     id: this.model.id,
-                    account_code: this.model.account_code,
-                    company_name: this.model.company_name,
+                    code: this.model.code,
+                    name: this.model.name,
                     zoho_crm_id: this.model.zoho_crm_id
                 }
             },
