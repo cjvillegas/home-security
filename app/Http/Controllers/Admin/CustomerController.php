@@ -92,7 +92,7 @@ class CustomerController extends Controller
 
         if ($deleted) {
             // modify the deleted code so that it will not cause conflict
-            // to the newly created process category.
+            // to the newly created customers.
             // This is useful because the code column is unique in the DB level, and we are only soft deleting
             // data in the customers table
             $now = now()->unix();
