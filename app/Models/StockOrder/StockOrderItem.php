@@ -72,7 +72,7 @@ class StockOrderItem extends SbgModel
      */
     public function getOrderNoAttribute(): string
     {
-        return str_pad($this->id, 10, '0', STR_PAD_LEFT) .  'INT';
+        return str_pad($this->stock_order_id, 10, '0', STR_PAD_LEFT) .  'INT';
     }
 
     /*******************************************
