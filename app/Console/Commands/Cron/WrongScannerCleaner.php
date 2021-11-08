@@ -35,9 +35,9 @@ class WrongScannerCleaner extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         Scanner::whereRaw(DB::raw("CHAR_LENGTH(scanners.blindid) != 7"))
             ->delete();
