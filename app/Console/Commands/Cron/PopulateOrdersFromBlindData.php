@@ -122,7 +122,14 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                 END AS ProductType,
                 bt.code AS ProductCode,
                 o.dat_order AS Ordered,
-                o.username AS OrderEnteredBy
+                o.username AS OrderEnteredBy,
+                u.sageaccount AS AccountCode,
+                od.width_man as Width,
+                od.drop_man as [Drop],
+                f.code as StockCode,
+                f.fabric_type as FabricRange,
+                f.colour as Colour,
+                od.nett_price as ItemPrice
             FROM
                 OrderDetail od
                 INNER JOIN [Order] o ON od.order_id = o.id
@@ -185,6 +192,13 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
         $order['ordered_at'] = $sageOrder['Ordered'];
         $order['required_date'] = $sageOrder['RequiredDate'];
         $order['order_entered_by'] = $sageOrder['OrderEnteredBy'];
+        $order['account_code'] = $sageOrder['AccountCode'];
+        $order['width'] = $sageOrder['Width'];
+        $order['drop'] = $sageOrder['Drop'];
+        $order['stock_code'] = $sageOrder['StockCode'];
+        $order['fabric_range'] = $sageOrder['FabricRange'];
+        $order['color'] = $sageOrder['Colour'];
+        $order['item_price'] = $sageOrder['ItemPrice'];
         $order['created_at'] = now('UTC')->format('Y-m-d H:i:s');
 
         return $order;
