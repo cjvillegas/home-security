@@ -60,6 +60,11 @@ class Kernel extends ConsoleKernel
             ->weekdays()
             ->everySixHours()
             ->environments(['production', 'staging']);
+
+        // deletes invalid scanner data
+        $schedule->command('scanners:invalid-scanner-cleaner')
+            ->dailyAt('00:00')
+            ->timezone('BST');
     }
 
     /**
