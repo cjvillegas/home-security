@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|Response
      */
     public function index()
     {
@@ -29,7 +30,7 @@ class CustomerController extends Controller
     /**
      * Fetch Customers
      *
-     * @param  mixed $request
+     * @param  Request $request
      *
      * @return JsonResponse
      */
@@ -43,8 +44,8 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  Request  $request
+     * @return JsonResponse
      */
     public function store(CustomerRequest $request)
     {
@@ -59,9 +60,10 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Customer  $customer
+     * @param  CustomerRequest $request
+     *
+     * @return JsonResponse
      */
     public function update(Customer $customer, CustomerRequest $request)
     {
@@ -70,7 +72,7 @@ class CustomerController extends Controller
             $customer->update($request->all());
             DB::commit();
             return response()->json(['message' => 'Customer Successfully Saved']);
-        }catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             Log::info($e);
             return response()->json(['message' => "Something went wrong when creating a new machine."], 500);
@@ -80,13 +82,25 @@ class CustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  Customer $customer
+     *
+     * @return JsonResponse
      */
     public function destroy(Customer $customer)
     {
-        $customer->delete();
-        DB::commit();
+        $deleted = $customer->delete();
+
+        if ($deleted) {
+            // modify the deleted code so that it will not cause conflict
+            // to the newly created customers.
+            // This is useful because the code column is unique in the DB level, and we are only soft deleting
+            // data in the customers table
+            $now = now()->unix();
+            $customer->code = "{$customer->code}_deleted_{$now}";
+            $customer->save();
+
+            DB::commit();
+        }
 
         return response()->json(['message' => 'Successfully Deleted!']);
     }
