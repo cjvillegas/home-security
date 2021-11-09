@@ -156,8 +156,10 @@
 <script>
     import {dialog} from "../../mixins/dialog";
     import {formHelper} from "../../mixins/formHelper";
+import QcCrmResponse from './QcCrmResponse.vue';
 
     export default {
+  components: { QcCrmResponse },
         name: "QcTagForm",
         mixins: [dialog, formHelper],
         props: {
@@ -219,8 +221,12 @@
                     return
                 }
 
+                if (saveOnly) {
+                   this.qcForm.toggleCrm = false
+                }
+
                 if (!saveOnly) {
-                   this.qcForm.toggleCrm = true
+                    this.qcForm.toggleCrm = true
                 }
 
                 if (this.hasModel) {
@@ -235,15 +241,24 @@
 
                 this.$API.Scanners.qcTag(this.qcForm)
                     .then(res => {
-                        if (res.data) {
+                        if (res.status === 200) {
                             this.$EventBus.fire('QC_TAG_CREATE', res.data)
                             this.$notify({
                                 title: 'Success',
                                 message: 'Tag successfully created.',
                                 type: 'success'
                             })
-                            if (res.response == 200 && this.qcForm.toggleCrm && res.data.zoho) {
-                                console.log(res.data.zoho)
+                            if (this.qcForm.toggleCrm) {
+                                this.$confirm(res.data.message, 'Zoho Response', {
+                                    confirmButtonText: 'OK',
+                                    cancelButtonText: 'Close',
+                                    type: 'success'
+                                }).then(() => {
+                                    this.$message({
+                                        type: 'success',
+                                        message: 'QC Tagging and Zoho CRM completed'
+                                    });
+                                })
                                 return
                             } else {
                                 setTimeout(_ => {
@@ -252,9 +267,20 @@
                             }
 
                         }
+
                     })
                     .catch(err => {
-
+                        console.log(err)
+                        this.$confirm(res.data.message, 'Zoho Response', {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Close',
+                            type: 'warning'
+                        }).then(() => {
+                            this.$message({
+                                type: 'warning',
+                                message: 'QC Tagging and Zoho CRM completed'
+                            });
+                        })
                     })
                     .finally(_ => {
                         this.loading = false
@@ -274,7 +300,16 @@
                                 type: 'success'
                             })
                             if (this.qcForm.toggleCrm) {
-                                console.log(res.data)
+                                this.$confirm(res.data.message, 'Zoho Response', {
+                                    confirmButtonText: 'OK',
+                                    cancelButtonText: 'Close',
+                                    type: 'success'
+                                }).then(() => {
+                                    this.$message({
+                                        type: 'success',
+                                        message: 'QC Tagging and Zoho CRM completed'
+                                    });
+                                })
                                 return
                             } else {
                                 setTimeout(_ => {
@@ -285,6 +320,17 @@
                     })
                     .catch(err => {
                         console.log(err)
+                        this.$confirm(res.data.message, 'Zoho Response', {
+                            confirmButtonText: 'OK',
+                            cancelButtonText: 'Close',
+                            type: 'warning'
+                        }).then(() => {
+                            this.$message({
+                                type: 'warning',
+                                message: 'QC Tagging and Zoho CRM completed'
+                            });
+                        })
+
                     })
                     .finally(_ => {
                         this.loading = false
