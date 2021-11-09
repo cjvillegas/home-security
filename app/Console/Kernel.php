@@ -28,37 +28,31 @@ class Kernel extends ConsoleKernel
         // fetches new orders from BLINDDATA. This CRON will only run when the env is production or staging
         $schedule->command('orders:populate-orders-from-blind-data')
             ->everyThirtyMinutes()
-            ->timezone('BST')
             ->environments(['production', 'staging']);
 
         // runs a CRON daily to fetch data from the T&A database
         $schedule->command('employees:fetch-timeclock-from-t-and-a')
             ->dailyAt('00:00')
-            ->timezone('BST')
             ->environments(['production', 'staging']);
 
         // runs a CRON daily to fetch data from SAGE database
         $schedule->command('stocks:populate-stock-levels-from-sage')
             ->everyThirtyMinutes()
-            ->timezone('BST')
             ->environments(['production', 'staging']);
 
         // runs a CRON to fetch shift assignments
         $schedule->command('shifts:populate-shift-assignment-table')
             ->everyTwoHours()
             ->between('06:00', '17:00')
-            ->timezone('BST')
             ->environments(['production', 'staging']);
 
         // runs a cron that will delete a month old or older notifications
         $schedule->command('notifications:delete-a-month-old-notifications')
-            ->timezone('BST')
             ->dailyAt('00:00');
 
         // runs a cron that fetch Purchase Orders every 30 minutes from SAGE database
         $schedule->command('orders:populate-purchase-orders-from-sage')
             ->everyThirtyMinutes()
-            ->timezone('BST')
             ->environments(['production', 'staging']);
 
         // schedule to fetch invoiced data everyday @2pm
@@ -69,8 +63,11 @@ class Kernel extends ConsoleKernel
 
         // deletes invalid scanner data
         $schedule->command('scanners:invalid-scanner-cleaner')
-            ->dailyAt('00:00')
-            ->timezone('BST');
+            ->dailyAt('00:00');
+
+        // deletes invalid scanner data
+        $schedule->command('orders:rdds-checking-and-import')
+            ->hourlyAt('5');
     }
 
     /**
