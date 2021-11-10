@@ -65,7 +65,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('scanners:invalid-scanner-cleaner')
             ->dailyAt('00:00');
 
-        // deletes invalid scanner data
+        // checks for RDDS orders per shift and import them
         $schedule->command('orders:rdds-checking-and-import')
             ->hourlyAt('5');
     }
