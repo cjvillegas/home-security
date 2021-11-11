@@ -7,3 +7,8 @@ Route::namespace('QualityControl')->as('quality-control.')->prefix('quality-cont
     Route::patch('/{qualityControl}/update', 'QualityControlController@update');
     Route::delete('/{qualityControl}/destroy', 'QualityControlController@destroy');
 });
+Route::namespace('QualityControl')->group(function() {
+    Route::get('remake-checker', 'QcRemakeCheckerController@index')->name('remake-checker.index');
+    Route::post('remake-checker/get-orders', 'QcRemakeCheckerController@getOrders')->name('remake-checker.get-orders');
+});
+
