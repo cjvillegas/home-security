@@ -44,7 +44,7 @@ class PublicDashboardDataService
         foreach ($processes as $process) {
             $item = [];
             $item['name'] = $process->name;
-            $item['scanners'] = $scanners;
+            $item['scanners'] = [];
             $item['internet_target'] = $index == 1 ? $process->trade_target : $process->internet_target;
             $item['hourly_target'] = round($item['internet_target'] / 7.5, 0);
             $item['scheduled'] = 0;
@@ -59,6 +59,7 @@ class PublicDashboardDataService
                     continue;
                 }
 
+                array_push($item['scanners'], $scanner);
                 $item['scheduled'] += $scanner->folder_name ? true : false;
                 $item['completed'] += $scanner->processid == $process->barcode ? true : false;
 
