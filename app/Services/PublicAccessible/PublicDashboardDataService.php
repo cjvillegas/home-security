@@ -59,9 +59,9 @@ class PublicDashboardDataService
                     continue;
                 }
 
-                array_push($item['scanners'], $scanner);
+                $item['scanners'][] = $scanner;
                 $item['scheduled'] += $scanner->folder_name ? true : false;
-                $item['completed'] += $scanner->processid == $process->barcode ? true : false;
+                $item['completed']++;
 
                 // this is for the hourly data
                 $scannedTime =  Carbon::parse($scanner->scannedtime, __env_timezone());
