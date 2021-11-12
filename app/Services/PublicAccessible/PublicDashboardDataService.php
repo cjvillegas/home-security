@@ -120,6 +120,7 @@ class PublicDashboardDataService
             ->whereIn('scanners.processid', self::PROCESS_CODES)
             ->whereBetween('scanners.scannedtime', $dates)
             ->groupBy('scanners.blindid')
+            ->orderBy('scanners.scannedtime', 'asc')
             ->get();
     }
 
