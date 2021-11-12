@@ -119,7 +119,7 @@ class PublicDashboardDataService
             ])
             ->leftJoin('shift_assignments AS sa', function ($join) use ($nowStart, $nowEnd) {
                 $join->on('sa.serial_id', 'scanners.blindid')
-                    ->whereIn('folder_name', ["Shift {$this->filters['index']} Team 1", "Shift {$this->filters['index']} Team 2"])
+                    ->whereIn('folder_name', ["Roller - Shift {$this->filters['index']} Team 1", "Roller - Shift {$this->filters['index']} Team 2"])
                     ->whereBetween('work_date', [$nowStart, $nowEnd]);
             })
             ->whereIn('scanners.processid', self::PROCESS_CODES)
