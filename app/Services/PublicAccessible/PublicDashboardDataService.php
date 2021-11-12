@@ -2,7 +2,6 @@
 
 namespace App\Services\PublicAccessible;
 
-use App\Models\Order;
 use App\Models\Process;
 use App\Models\Scanner;
 use Carbon\Carbon;

@@ -192,3 +192,20 @@
         }
     }
 </script>
+
+<style lang="scss">
+    .c-app,
+    .c-wrapper,
+    .c-body,
+    .c-main,
+    .container-fluid,
+    .public-accessible,
+    .el-card,
+    .el-card__body {
+        height: 100vh;
+    }
+
+    .cell {
+        font-weight: 800;
+    }
+</style>
