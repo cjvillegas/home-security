@@ -118,8 +118,16 @@ class PublicDashboardDataService
                 'sa.folder_name'
             ])
             ->leftJoin('shift_assignments AS sa', function ($join) use ($nowStart, $nowEnd) {
+                $folderNames = ["Roller - Shift {$this->filters['index']} Team 1", "Roller - Shift {$this->filters['index']} Team 2"];
+
+                // if shift 1, append this folder names
+                if ($this->filters['index'] == 1) {
+                    $folderNames[] = 'Roller Add - Shift 1 Team 1';
+                    $folderNames[] = 'Roller Add - Shift 1 Team 2';
+                }
+
                 $join->on('sa.serial_id', 'scanners.blindid')
-                    ->whereIn('folder_name', ["Roller - Shift {$this->filters['index']} Team 1", "Roller - Shift {$this->filters['index']} Team 2"])
+                    ->whereIn('folder_name', $$folderNames)
                     ->whereBetween('work_date', [$nowStart, $nowEnd]);
             })
             ->whereIn('scanners.processid', self::PROCESS_CODES)
