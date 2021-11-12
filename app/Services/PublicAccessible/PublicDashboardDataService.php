@@ -58,7 +58,7 @@ class PublicDashboardDataService
                 $item['completed'] += $scanner->processid == $process->barcode ? true : false;
 
                 // this is for the hourly data
-                $scannedTime =  Carbon::parse($scanner->scannedtime);
+                $scannedTime =  Carbon::parse($scanner->scannedtime, __env_timezone());
                 $key = $scannedTime->format('H') . '-' . $scannedTime->clone()->addHour()->format('H');
 
                 if (isset($item[$key])) {
