@@ -47,7 +47,7 @@ class PublicDashboardDataService
             $item['name'] = $process->name;
             $item['scanners'] = $scanners;
             $item['internet_target'] = $index == 1 ? $process->trade_target : $process->internet_target;
-            $item['hourly_target'] = $process->hourly_target;
+            $item['hourly_target'] = round($item['internet_target'] / 7.5, 0);
             $item['scheduled'] = 0;
             $item['completed'] = 0;
             $item['to_be_completed'] = $process->internet_target ?? 0;
@@ -133,7 +133,6 @@ class PublicDashboardDataService
         return Process::whereIn('barcode', self::PROCESS_CODES)
             ->select([
                 'processes.*',
-                DB::raw("(CASE WHEN trade_target IS NOT NULL THEN CAST(ROUND(internet_target / 7.5, 2) AS SIGNED) ELSE 0 END) as hourly_target"),
                 DB::raw("(
                     CASE
                         WHEN barcode = 'P1000' THEN 0
