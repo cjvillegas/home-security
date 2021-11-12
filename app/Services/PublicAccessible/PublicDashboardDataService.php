@@ -37,6 +37,7 @@ class PublicDashboardDataService
         // the roller processes and sort it based on the designed sort_order
         $processes = $this->getProcesses()->sortBy('sort_order');
         $scanners = $this->getScanners();
+        $index = $this->filters['index'];
 
         $formatted = [];
 
@@ -45,7 +46,7 @@ class PublicDashboardDataService
             $item = [];
             $item['name'] = $process->name;
             $item['scanners'] = $scanners;
-            $item['internet_target'] = $process->internet_target;
+            $item['internet_target'] = $index === 1 ? $process->trade_target : $process->internet_target;
             $item['hourly_target'] = $process->hourly_target;
             $item['scheduled'] = 0;
             $item['completed'] = 0;
