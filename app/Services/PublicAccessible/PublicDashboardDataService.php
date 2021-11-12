@@ -54,6 +54,11 @@ class PublicDashboardDataService
 
             // loop through each scanners data
             foreach ($scanners as $scanner) {
+                // we make sure that we only process the scanners with the same barcode of the current process
+                if ($scanner->processid != $process->barcode) {
+                    continue;
+                }
+
                 $item['scheduled'] += $scanner->folder_name ? true : false;
                 $item['completed'] += $scanner->processid == $process->barcode ? true : false;
 
