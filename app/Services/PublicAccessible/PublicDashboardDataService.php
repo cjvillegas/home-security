@@ -127,7 +127,7 @@ class PublicDashboardDataService
                 }
 
                 $join->on('sa.serial_id', 'scanners.blindid')
-                    ->whereIn('folder_name', $$folderNames)
+                    ->whereIn('folder_name', $folderNames)
                     ->whereBetween('work_date', [$nowStart, $nowEnd]);
             })
             ->whereIn('scanners.processid', self::PROCESS_CODES)
