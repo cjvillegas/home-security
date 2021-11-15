@@ -2,10 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Process;
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateProcessRequest extends FormRequest
 {
@@ -41,6 +39,16 @@ class UpdateProcessRequest extends FormRequest
             'internet_target_new_joiner' => [
                 'numeric',
                 'nullable'
+            ],
+            'team_trade_target' => [
+                'integer',
+                'required',
+                'min:1'
+            ],
+            'team_internet_target' => [
+                'integer',
+                'required',
+                'min:1'
             ]
         ];
     }

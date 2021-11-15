@@ -193,19 +193,20 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .c-app,
     .c-wrapper,
     .c-body,
     .c-main,
     .container-fluid,
-    .public-accessible,
-    .el-card,
-    .el-card__body {
-        height: 100vh;
-    }
+    .public-accessible {
+        .el-card,
+        .el-card__body {
+            height: 100vh;
+        }
 
-    .cell {
-        font-weight: 800;
+        .cell {
+            font-weight: 800;
+        }
     }
 </style>
