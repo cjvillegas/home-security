@@ -15,7 +15,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-
 use Symfony\Component\HttpFoundation\Response;
 
 class ProcessesController extends Controller
@@ -49,6 +48,8 @@ class ProcessesController extends Controller
         $process->internet_target_new_joiner = $request->get('internet_target_new_joiner', $process->internet_target_new_joiner);
         $process->process_manufacturing_time = $request->get('process_manufacturing_time');
         $process->stop_start_button_required = $request->get('stop_start_button_required');
+        $process->team_trade_target = $request->get('team_trade_target');
+        $process->team_internet_target = $request->get('team_internet_target');
         $saved = $process->save();
 
         // if a new process is successfully added and process categories are present
@@ -95,6 +96,8 @@ class ProcessesController extends Controller
         $process->internet_target_new_joiner = $request->get('internet_target_new_joiner', $process->internet_target_new_joiner);
         $process->process_manufacturing_time = $request->get('process_manufacturing_time', $process->process_manufacturing_time);
         $process->stop_start_button_required = $request->get('stop_start_button_required', $process->stop_start_button_required);
+        $process->team_trade_target = $request->get('team_trade_target', $process->team_trade_target);
+        $process->team_internet_target = $request->get('team_internet_target', $process->team_internet_target);
         $saved = $process->save();
 
         if ($saved) {
