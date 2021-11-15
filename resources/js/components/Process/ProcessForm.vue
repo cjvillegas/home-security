@@ -60,9 +60,7 @@
                         prop="stop_start_button_required">
                         <el-switch v-model="processForm.stop_start_button_required"></el-switch>
                     </el-form-item>
-                </div>
 
-                <div class="col-md-6">
                     <el-form-item
                         label="Trade Target"
                         prop="trade_target"
@@ -88,7 +86,9 @@
                             class="w-100">
                         </el-input>
                     </el-form-item>
+                </div>
 
+                <div class="col-md-6">
                     <el-form-item
                         label="Trade Target New Joiner"
                         prop="trade_target_new_joiner"
@@ -110,6 +110,34 @@
                             v-model="processForm.internet_target_new_joiner"
                             type="number"
                             clearable
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Team Trade Target"
+                        prop="team_trade_target"
+                        :error="hasError('team_trade_target')">
+                        <el-input
+                            v-model="processForm.team_trade_target"
+                            type="number"
+                            clearable
+                            :min="1"
+                            placeholder="200"
+                            class="w-100">
+                        </el-input>
+                    </el-form-item>
+
+                    <el-form-item
+                        label="Team Internet Target"
+                        prop="team_internet_target"
+                        :error="hasError('team_internet_target')">
+                        <el-input
+                            v-model="processForm.team_internet_target"
+                            type="number"
+                            clearable
+                            :min="1"
                             placeholder="200"
                             class="w-100">
                         </el-input>
@@ -167,7 +195,8 @@
                 loading: false,
                 processForm: {},
                 rules: {
-
+                    team_trade_target: {required: true, message: 'Team trade target field is required.'},
+                    team_internet_target: {required: true, message: 'Team internet target field is required.'},
                 }
             }
         },
@@ -264,6 +293,8 @@
                     internet_target_new_joiner: this.model.internet_target_new_joiner,
                     process_manufacturing_time: this.model.process_manufacturing_time,
                     stop_start_button_required: this.model.stop_start_button_required,
+                    team_trade_target: this.model.team_trade_target,
+                    team_internet_target: this.model.team_internet_target,
                     process_categories: this.model.process_categories.map(pc => pc.id)
                 }
             },
@@ -277,6 +308,8 @@
                     new_joiner_target: null,
                     process_manufacturing_time: null,
                     stop_start_button_required: false,
+                    team_trade_target: null,
+                    team_internet_target: null,
                     process_categories: []
                 }
             },
@@ -316,6 +349,8 @@
             model(value) {
                 if (value) {
                     this.initializeForm()
+                } else {
+                    this.getDefaultFieldValues()
                 }
             }
         }
