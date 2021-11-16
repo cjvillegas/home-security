@@ -165,7 +165,6 @@
             },
 
             getShiftStartEnd(shift, index) {
-                let date = '2021-11-15'
                 let hourNow = moment(date).hour()
                 let now = (hourNow < 6 && hourNow > 0) ? moment(date).subtract(1, 'day').format('YYYY-MM-DD') : moment(date).format('YYYY-MM-DD')
                 let start = now
