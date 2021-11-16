@@ -42,7 +42,6 @@
 <script>
     import * as Shifts from '../../constants/shifts'
     import moment from "moment"
-    import cloneDeep from "lodash/cloneDeep";
 
     export default {
         name: "PublicDashboard",
@@ -69,7 +68,7 @@
             cellClassNamePicker({row, column, rowIndex, columnIndex}) {
                 let property = column.property
                 // ignore these properties
-                if (['name', 'internet_target', 'hourly_target', 'scheduled', 'completed', 'to_be_completed'].includes(property)) {
+                if (['name', 'team_target', 'hourly_target', 'scheduled', 'completed', 'to_be_completed'].includes(property)) {
                     return
                 }
 
@@ -81,9 +80,6 @@
                 }
                 if (hourlyTarget > propValue) {
                     return 'background-red'
-                }
-                if (hourlyTarget < propValue) {
-                    return 'background-purple'
                 }
             },
 
@@ -135,11 +131,12 @@
             getDefaultHeaders() {
                 return [
                     {label: 'Roller', prop: 'name', sortable: false, showOverflowTooltip: false},
-                    {label: 'Target', prop: 'internet_target', sortable: false, showOverflowTooltip: false},
+                    {label: 'Target', prop: 'team_target', sortable: false, showOverflowTooltip: false},
                     {label: 'HT', prop: 'hourly_target', sortable: false, showOverflowTooltip: false},
                     {label: 'Scheduled', prop: 'scheduled', sortable: false, showOverflowTooltip: false},
                     {label: 'Completed', prop: 'completed', sortable: false, showOverflowTooltip: false},
                     {label: 'To be Completed', prop: 'to_be_completed', sortable: false, showOverflowTooltip: false},
+                    {label: '%', prop: 'percentage', sortable: false, showOverflowTooltip: false},
                 ]
             },
 
@@ -168,8 +165,9 @@
             },
 
             getShiftStartEnd(shift, index) {
-                let hourNow = moment().hour()
-                let now = (hourNow < 6 && hourNow > 0) ? moment().subtract(1, 'day').format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')
+                let date = '2021-11-15'
+                let hourNow = moment(date).hour()
+                let now = (hourNow < 6 && hourNow > 0) ? moment(date).subtract(1, 'day').format('YYYY-MM-DD') : moment(date).format('YYYY-MM-DD')
                 let start = now
                 let end = now
 
@@ -182,7 +180,7 @@
                     end = `${end} ${shift[1]}`
                 }
                 if (index === 3) {
-                    let nowAddOne = moment().add(1, 'day').format('YYYY-MM-DD')
+                    let nowAddOne = moment(date).add(1, 'day').format('YYYY-MM-DD')
                     start = `${start} ${shift[0]}`
                     end = `${nowAddOne} ${shift[1]}`
                 }
