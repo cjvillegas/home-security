@@ -65,10 +65,10 @@ class PublicDashboardDataService
 
             // filter scanners based on process barcodes
             $filteredScanners = $scanners->filter(function ($value) use ($process) {
-                $addi = true;
-
                 if ($process->barcode === 'P1000' && $value->product_type === 'Vertical') {
                     $addi = false;
+                } else {
+                    $addi = true;
                 }
 
                 return $value->processid === $process->barcode && $addi;
