@@ -84,7 +84,12 @@ class PublicDashboardDataService
             }
 
             $item['to_be_completed'] = $item['completed'] > $scheduled ? $item['completed'] : $scheduled - $item['completed'];
-            $item['percentage'] = round(($scheduled / $item['completed']) * 100) . '%';
+
+            if ($item['completed'] <= 0) {
+                $item['percentage'] = 0 . '%';
+            } else {
+                $item['percentage'] = round(($scheduled / $item['completed']) * 100) . '%';
+            }
 
             $formatted[] = $item;
         }
