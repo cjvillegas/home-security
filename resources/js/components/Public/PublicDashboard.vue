@@ -60,7 +60,7 @@
                     <template slot="label">
                         R
                     </template>
-                    <span class="font-weight-bold">Process</span>
+                    <span class="font-weight-bold">Roller</span>
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template slot="label">
