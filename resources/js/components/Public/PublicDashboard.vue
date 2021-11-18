@@ -215,7 +215,7 @@
                     let header = [...this.getDefaultHeaders(), ...this.generateShiftHeaders(shift, index)]
                     this.dataWithHeader.push({
                         headers: header,
-                        name: `Shift ${index}`,
+                        name: `Roller Shift ${index}`,
                         tab_name: `shift_${index}`,
                         data: []
                     })
