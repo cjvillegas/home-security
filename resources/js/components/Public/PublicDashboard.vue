@@ -66,12 +66,6 @@
                 border>
                 <el-descriptions-item>
                     <template slot="label">
-                        R
-                    </template>
-                    <span class="font-weight-bold">Roller</span>
-                </el-descriptions-item>
-                <el-descriptions-item>
-                    <template slot="label">
                         T
                     </template>
                     <span class="font-weight-bold">Target</span>
