@@ -16,9 +16,9 @@ class CreateQcRemakesTable extends Migration
         Schema::create('qc_remakes', function (Blueprint $table) {
             $table->id();
             $table->string('report_no')->unique();
-            $table->string('barcode')->unique();
+            $table->string('order_no');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('qc_remake_validated_id');
+            $table->boolean('is_fully_verified')->default(false);
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();

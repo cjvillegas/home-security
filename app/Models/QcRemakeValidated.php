@@ -10,6 +10,18 @@ class QcRemakeValidated extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'blind_id',
+        'barcode',
+        'question_key',
+        'reason',
+        'is_fully_verified'
+    ];
+
+    protected $casts = [
+        'question_key' => 'array'
+    ];
+
     /**
      * Qc Remake
      *
@@ -18,5 +30,15 @@ class QcRemakeValidated extends Model
     public function qcRemake(): BelongsTo
     {
         return $this->belongsTo(QcRemake::class);
+    }
+
+    /**
+     * Blinds
+     *
+     * @return BelongsTo
+     */
+    public function blind(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'blind_id', 'serial_id');
     }
 }

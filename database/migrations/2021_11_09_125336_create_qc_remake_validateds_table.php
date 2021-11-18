@@ -17,8 +17,10 @@ class CreateQcRemakeValidatedsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('qc_remake_id');
             $table->string('blind_id');
-            $table->string('question_key');
-            $table->boolean('status');
+            $table->string('barcode')->unique();
+            $table->string('question_key')->nullable();
+            $table->string('reason')->nullable();
+            $table->boolean('is_fully_verified')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
         });

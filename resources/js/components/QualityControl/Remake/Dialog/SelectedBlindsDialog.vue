@@ -28,7 +28,7 @@
     }
 </style>
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
     import {dialog} from "../../../../mixins/dialog"
 
     export default {

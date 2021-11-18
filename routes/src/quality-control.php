@@ -10,5 +10,10 @@ Route::namespace('QualityControl')->as('quality-control.')->prefix('quality-cont
 Route::namespace('QualityControl')->group(function() {
     Route::get('remake-checker', 'QcRemakeCheckerController@index')->name('remake-checker.index');
     Route::post('remake-checker/get-orders', 'QcRemakeCheckerController@getOrders')->name('remake-checker.get-orders');
+    Route::post('remake-checker', 'QcRemakeCheckerController@storeOrderRemakeChecker')->name('remake-checker.store');
+
+    //remake reports
+    Route::get('remake-report', 'QcRemakeCheckerController@orderRemakeReport')->name('remake-checker.report');
+    Route::post('remake-report/get-list', 'QcRemakeCheckerController@getOrderRemake');
 });
 

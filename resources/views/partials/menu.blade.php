@@ -356,18 +356,18 @@
 
                         <li class="c-sidebar-nav-item">
                             <a href="{{ route('admin.remake-checker.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.remake-checker.index") ? "c-active" : "" }}">
-                                <i class="fa-fw fas fa-list-alt c-sidebar-nav-icon"></i>
+                                <i class="fa-fw fas fa-check-square c-sidebar-nav-icon"></i>
                                 Remake Checker
                             </a>
                         </li>
 
 
-                        {{-- <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.quality-control.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.quality-control.index") ? "c-active" : "" }}">
-                                <i class="fa-fw fas fa-list-alt c-sidebar-nav-icon"></i>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.remake-checker.report') }}" class="c-sidebar-nav-link {{ request()->is("admin.remake-checker.report") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-bar-chart c-sidebar-nav-icon"></i>
                                 Remake Reports
                             </a>
-                        </li> --}}
+                        </li>
 
                 </ul>
             </li>

@@ -100,7 +100,7 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['selectedOrderNo', 'orders', 'loading']),
+            ...mapGetters('remakechecker', ['selectedOrderNo', 'selectedBlindId', 'orders', 'loading']),
         },
         methods: {
             ...mapActions('remakechecker', ['backToMainScreen']),
@@ -109,6 +109,14 @@
                 this.setSelectedBlindId(val)
             },
             confirmDialog() {
+                if (this.selectedOrderNo.length == 0) {
+                    this.$notify({
+                        title: 'Invalid input',
+                        message: 'Must select atleast one Blind ID',
+                        type: 'error'
+                    })
+                    return
+                }
                 this.showBlindsDialog = true
             },
             cancelAction() {
