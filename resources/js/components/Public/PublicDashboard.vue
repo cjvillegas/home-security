@@ -30,8 +30,7 @@
                     v-for="item in dataWithHeader"
                     :key="item.tab_name"
                     :name="item.tab_name"
-                    :label="item.name"
-                    :disabled="true">
+                    :label="item.name">
                     <el-table
                         border
                         fit
