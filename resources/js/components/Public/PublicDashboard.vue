@@ -101,9 +101,31 @@
                 let hourlyTarget = Number(row.hourly_target)
                 let propValue = Number(row[property])
 
-                if (hourlyTarget === propValue) {
+                if (property === 'percentage') {
+                    propValue = row.percentage
+                    let percentage = propValue.substring(0, propValue.length - 1)
+                    let number = Number(percentage)
+
+                    if (number >= 0 && number < 60) {
+                        return 'background-red'
+                    }
+
+                    if (number >= 61 && number < 99) {
+                        return 'background-orange'
+                    }
+
+                    if (number >= 100) {
+                        return 'background-green'
+                    }
+                }
+
+
+                console.log(hourlyTarget, propValue, property)
+
+                if (hourlyTarget < propValue) {
                     return 'background-green'
                 }
+
                 if (hourlyTarget > propValue) {
                     return 'background-red'
                 }
@@ -192,7 +214,7 @@
             },
 
             getShiftStartEnd(shift, index) {
-                let date = moment().format('YYYY-MM-DD')
+                let date = moment('2021-11-15').format('YYYY-MM-DD')
                 let hourNow = moment(date).hour()
                 let now = (hourNow < 6 && hourNow > 0) ? moment(date).subtract(1, 'day').format('YYYY-MM-DD') : moment(date).format('YYYY-MM-DD')
                 let start = now
