@@ -6,35 +6,48 @@
                     <el-button
                         round
                         size="mini"
-                        type="info">
+                        type="info"
+                        class="page-info">
+                        View Change In: {{ countDownDisplay }}
+                    </el-button>
+
+                    <el-button
+                        round
+                        size="mini"
+                        type="info"
+                        class="page-info">
                         Last Update: {{ lastUpdate }}
                     </el-button>
                 </div>
             </div>
-            <div
-                v-for="item in dataWithHeader"
-                class="mt-3">
-                <div class="mb-2">
-                    <el-button
-                        round
-                        size="mini"
-                        type="info">
-                        {{ item.name }}
-                    </el-button>
-                </div>
-                <el-table
-                    fit
-                    :data="item.data"
-                    :cell-class-name="cellClassNamePicker">
-                    <el-table-column
-                        v-for="col in item.headers"
-                        :key="col.prop"
-                        :label="col.label"
-                        :prop="col.prop"
-                        :fixed="col.prop === 'name'">
-                    </el-table-column>
-                </el-table>
-            </div>
+
+            <el-tabs
+                @tab-click="shiftChanger"
+                v-model="activeTab"
+                type="border-card"
+                class="mt-4">
+                <el-tab-pane
+                    v-for="item in dataWithHeader"
+                    :key="item.tab_name"
+                    :name="item.tab_name"
+                    :label="item.name"
+                    :disabled="true">
+                    <el-table
+                        border
+                        fit
+                        :data="item.data"
+                        :cell-class-name="cellClassNamePicker"
+                        class="mt-3 mb-3">
+                        <el-table-column
+                            v-for="col in item.headers"
+                            :key="col.prop"
+                            :label="col.label"
+                            :prop="col.prop"
+                            :fixed="col.prop === 'name'">
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
         </el-card>
     </div>
 </template>
@@ -50,7 +63,10 @@
             return {
                 Shifts,
                 dataWithHeader: [],
-                lastUpdate: moment().format('MMM DD, YYYY hh:mm a')
+                lastUpdate: moment().format('MMM DD, YYYY hh:mm a'),
+                activeTab: 'shift_1',
+                nextChangeDate: moment().add(5, 'minutes'),
+                countDownDisplay: '05:00'
             }
         },
 
@@ -59,9 +75,20 @@
 
             this.getDataPershift()
 
+            // infinitely call the request to populate the table data with 10 minutes interval
             setInterval(_ => {
                 this.getDataPershift()
-            }, 180000)
+            }, 600000)
+
+            // tab changer with 5 minutes interval
+            setInterval(_ => {
+                this.shiftChanger()
+            }, 300000)
+
+            // count down changer
+            setInterval(_ => {
+                this.countDownDisplay = this.countDownTimer()
+            }, 1000)
         },
 
         methods: {
@@ -122,6 +149,7 @@
                     this.dataWithHeader.push({
                         headers: header,
                         name: `Shift ${index}`,
+                        tab_name: `shift_${index}`,
                         data: []
                     })
                     index++
@@ -165,6 +193,7 @@
             },
 
             getShiftStartEnd(shift, index) {
+                let date = moment().format('YYYY-MM-DD')
                 let hourNow = moment(date).hour()
                 let now = (hourNow < 6 && hourNow > 0) ? moment(date).subtract(1, 'day').format('YYYY-MM-DD') : moment(date).format('YYYY-MM-DD')
                 let start = now
@@ -185,6 +214,28 @@
                 }
 
                 return {start, end}
+            },
+
+            shiftChanger() {
+                let shiftIndex = Number(this.activeTab.split('_')[1])
+
+                if (shiftIndex === 3) {
+                    this.activeTab = 'shift_1'
+                } else {
+                    this.activeTab = `shift_${shiftIndex + 1}`
+                }
+
+                this.nextChangeDate = moment().add(5, 'minutes')
+            },
+
+            countDownTimer() {
+                let toDateUnix = this.nextChangeDate.unix()
+                let nowUnix = moment().unix()
+                let duration = moment.duration((toDateUnix - nowUnix) * 1000)
+
+                let seconds = duration.seconds() < 10 ? `0${duration.seconds()}` : duration.seconds()
+
+                return `0${duration.minutes()}:${seconds}`
             }
         }
     }
@@ -200,10 +251,6 @@
         .el-card,
         .el-card__body {
             height: 100vh;
-        }
-
-        .cell {
-            font-weight: 800;
         }
     }
 </style>

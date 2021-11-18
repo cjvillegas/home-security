@@ -71,3 +71,22 @@
 
     }
 }
+
+.public-accessible {
+    .page-info {
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .el-table {
+        .cell {
+            font-size: 25px;
+            font-weight: 800;
+        }
+    }
+
+    .el-tabs__item {
+        font-size: 22px;
+        font-weight: 800;
+    }
+}
