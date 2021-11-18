@@ -1,13 +1,16 @@
 .background-green {
-    background-color: #8dd7cf !important;
+    background-color: #67c23a !important;
+    color: #fff !important;
 }
 
 .background-red {
-    background-color: #e9a2ad !important;
+    background-color: #f56c6c !important;
+    color: #fff !important;
 }
 
 .background-orange {
-    background-color: #f3c19d !important;
+    background-color: #e6a23c !important;
+    color: #fff !important;
 }
 
 .sbg-process-circle-container {
@@ -80,8 +83,9 @@
 
     .el-table {
         .cell {
-            font-size: 25px;
+            font-size: 40px;
             font-weight: 800;
+            line-height: 45px;
         }
     }
 

@@ -45,22 +45,11 @@ class PublicDashboardDataService
 
         // loop through the processes, this will give us the static process data
         foreach ($processes as $process) {
-            $employeeCount = $this->getEmployeeWorkCount($process->barcode);
-
             $item = [];
             $item['name'] = $process->name;
             $item['scanners'] = [];
             $item['team_target'] = $index == 1 ? $process->team_trade_target : $process->team_internet_target;
-            $item['hourly_target'] = $item['team_target'] / 7.5;
-
-            // we need to make sure that the value is greater than 0 so we will not have an infinite result
-            if ($employeeCount > 0) {
-                $item['hourly_target'] = $item['hourly_target'] / $employeeCount;
-            }
-
-            // round the result
-            $item['hourly_target'] = round($item['hourly_target']);
-
+            $item['hourly_target'] = round($scheduled / 7.5);
             $item['scheduled'] = $scheduled;
             $item['completed'] = 0;
             $item['to_be_completed'] = $item['team_target'] ?? 0;
@@ -165,25 +154,6 @@ class PublicDashboardDataService
                     ) as sort_order")
             ])
             ->get();
-    }
-
-    /**
-     * Get the number of employees that worked on a particular shift
-     * and particular process
-     *
-     * @param string $process
-     *
-     * @return int
-     */
-    private function getEmployeeWorkCount(string $process): int
-    {
-        $dates = [$this->filters['start'], $this->filters['end']];
-
-        return Scanner::where('processid', $process)
-            ->select(['scanners.employeeid'])
-            ->whereBetween('scanners.scannedtime', $dates)
-            ->distinct()
-            ->count('scanners.employeeid');
     }
 
     /**

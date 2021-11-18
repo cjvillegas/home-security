@@ -34,6 +34,7 @@
                     <el-table
                         border
                         fit
+                        size="medium"
                         :data="item.data"
                         :cell-class-name="cellClassNamePicker"
                         class="mt-3 mb-3">
@@ -42,11 +43,53 @@
                             :key="col.prop"
                             :label="col.label"
                             :prop="col.prop"
-                            :fixed="col.prop === 'name'">
+                            :fixed="col.prop === 'name'"
+                            align="center">
                         </el-table-column>
                     </el-table>
                 </el-tab-pane>
             </el-tabs>
+
+            <el-descriptions
+                class="mt-5"
+                title="Legend"
+                :column="4"
+                size="medium"
+                border>
+                <el-descriptions-item>
+                    <template slot="label">
+                        R
+                    </template>
+                    <span class="font-weight-bold">Roller</span>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        T
+                    </template>
+                    <span class="font-weight-bold">Target</span>
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template slot="label">
+                        S
+                    </template>
+                    <span class="font-weight-bold">Scheduled</span>
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template slot="label">
+                        C
+                    </template>
+                    <span class="font-weight-bold">Completed</span>
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template slot="label">
+                        TC
+                    </template>
+                    <span class="font-weight-bold">To be Completed</span>
+                </el-descriptions-item>
+            </el-descriptions>
         </el-card>
     </div>
 </template>
@@ -123,7 +166,7 @@
                     return 'background-green'
                 }
 
-                if (hourlyTarget > propValue) {
+                if (hourlyTarget >= propValue) {
                     return 'background-red'
                 }
             },
@@ -176,12 +219,12 @@
 
             getDefaultHeaders() {
                 return [
-                    {label: 'Roller', prop: 'name', sortable: false, showOverflowTooltip: false},
-                    {label: 'Target', prop: 'team_target', sortable: false, showOverflowTooltip: false},
+                    {label: 'R', prop: 'name', sortable: false, showOverflowTooltip: false},
+                    {label: 'T', prop: 'team_target', sortable: false, showOverflowTooltip: false},
                     {label: 'HT', prop: 'hourly_target', sortable: false, showOverflowTooltip: false},
-                    {label: 'Scheduled', prop: 'scheduled', sortable: false, showOverflowTooltip: false},
-                    {label: 'Completed', prop: 'completed', sortable: false, showOverflowTooltip: false},
-                    {label: 'To be Completed', prop: 'to_be_completed', sortable: false, showOverflowTooltip: false},
+                    {label: 'S', prop: 'scheduled', sortable: false, showOverflowTooltip: false},
+                    {label: 'C', prop: 'completed', sortable: false, showOverflowTooltip: false},
+                    {label: 'TC', prop: 'to_be_completed', sortable: false, showOverflowTooltip: false},
                     {label: '%', prop: 'percentage', sortable: false, showOverflowTooltip: false},
                 ]
             },
@@ -193,7 +236,7 @@
                 let endMoment = moment(end)
 
                 while (startMoment < endMoment) {
-                    let label = `${startMoment.format('HH')} - ${startMoment.clone().add(1, 'hour').format('HH')}`
+                    let label = `${startMoment.format('HH')}`
                     let key = `${startMoment.format('HH')}-${startMoment.clone().add(1, 'hour').format('HH')}`
                     let header = {
                         label: label,
