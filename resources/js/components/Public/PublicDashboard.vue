@@ -22,7 +22,7 @@
             </div>
 
             <el-tabs
-                @tab-click="shiftChanger"
+                @tab-click="tabChanged"
                 v-model="activeTab"
                 type="border-card"
                 class="mt-4">
@@ -65,7 +65,10 @@
                 lastUpdate: moment().format('MMM DD, YYYY hh:mm a'),
                 activeTab: 'shift_1',
                 nextChangeDate: moment().add(5, 'minutes'),
-                countDownDisplay: '05:00'
+                countDownDisplay: '05:00',
+                intervals: {
+                    shiftChanger: null,
+                }
             }
         },
 
@@ -79,10 +82,7 @@
                 this.getDataPershift()
             }, 600000)
 
-            // tab changer with 5 minutes interval
-            setInterval(_ => {
-                this.shiftChanger()
-            }, 300000)
+            this.runChangerShiftInterval()
 
             // count down changer
             setInterval(_ => {
@@ -235,6 +235,21 @@
                 let seconds = duration.seconds() < 10 ? `0${duration.seconds()}` : duration.seconds()
 
                 return `0${duration.minutes()}:${seconds}`
+            },
+
+            tabChanged() {
+                this.nextChangeDate = moment().add(5, 'minutes')
+
+                clearInterval(this.intervals.shiftChanger)
+
+                this.runChangerShiftInterval()
+            },
+
+            runChangerShiftInterval() {
+                // tab changer with 5 minutes interval
+                this.intervals.shiftChanger = setInterval(_ => {
+                    this.shiftChanger()
+                }, 60000)
             }
         }
     }
