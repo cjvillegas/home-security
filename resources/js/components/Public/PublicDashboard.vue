@@ -155,11 +155,11 @@
                     let percentage = propValue.substring(0, propValue.length - 1)
                     let number = Number(percentage)
 
-                    if (number >= 0 && number < 60) {
+                    if (number >= 0 && number <= 60) {
                         return 'background-red'
                     }
 
-                    if (number >= 61 && number < 99) {
+                    if (number >= 61 && number <= 99) {
                         return 'background-orange'
                     }
 
