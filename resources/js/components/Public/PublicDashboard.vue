@@ -51,7 +51,7 @@
             </el-tabs>
 
             <el-descriptions
-                class="mt-5"
+                class="mt-3"
                 title="Legend"
                 :column="4"
                 size="medium"
