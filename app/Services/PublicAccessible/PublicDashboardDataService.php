@@ -56,7 +56,6 @@ class PublicDashboardDataService
             $item['hourly_target'] = round($scheduled / 7.5);
             $item['scheduled'] = $scheduled;
             $item['completed'] = 0;
-            $item['to_be_completed'] = $item['team_target'] ?? 0;
             $item = array_merge($item, $this->generateKeysFromDates());
 
             // filter scanners based on process barcodes
@@ -84,9 +83,8 @@ class PublicDashboardDataService
                 }
             }
 
-            $item['to_be_completed'] -= $item['completed'] > $item['to_be_completed'] ? $item['to_be_completed'] : $item['completed'];
-//            $item['percentage'] = round(($item['completed'] / $item['team_target']) * 100) . '%';
-            $item['percentage'] = 99 . '%';
+            $item['to_be_completed'] -= $item['completed'] > $scheduled ? $item['completed'] : $scheduled - $item['completed'];
+            $item['percentage'] = round(($item['completed'] / $item['team_target']) * 100) . '%';
 
             $formatted[] = $item;
         }
