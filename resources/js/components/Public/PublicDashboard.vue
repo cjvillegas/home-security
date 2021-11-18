@@ -119,9 +119,6 @@
                     }
                 }
 
-
-                console.log(hourlyTarget, propValue, property)
-
                 if (hourlyTarget < propValue) {
                     return 'background-green'
                 }
@@ -214,7 +211,7 @@
             },
 
             getShiftStartEnd(shift, index) {
-                let date = moment('2021-11-15').format('YYYY-MM-DD')
+                let date = moment().format('YYYY-MM-DD')
                 let hourNow = moment(date).hour()
                 let now = (hourNow < 6 && hourNow > 0) ? moment(date).subtract(1, 'day').format('YYYY-MM-DD') : moment(date).format('YYYY-MM-DD')
                 let start = now

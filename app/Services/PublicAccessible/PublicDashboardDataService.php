@@ -4,6 +4,7 @@ namespace App\Services\PublicAccessible;
 
 use App\Models\Process;
 use App\Models\Scanner;
+use App\Models\ShiftAssignment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,8 @@ class PublicDashboardDataService
         // the roller processes and sort it based on the designed sort_order
         $processes = $this->getProcesses()->sortBy('sort_order');
         $scanners = $this->getScanners();
+        $scheduled = $this->getScheduledBlinds();
+
         $index = $this->filters['index'];
 
         $formatted = [];
@@ -58,7 +61,7 @@ class PublicDashboardDataService
             // round the result
             $item['hourly_target'] = round($item['hourly_target']);
 
-            $item['scheduled'] = 0;
+            $item['scheduled'] = $scheduled;
             $item['completed'] = 0;
             $item['to_be_completed'] = $item['team_target'] ?? 0;
             $item = array_merge($item, $this->generateKeysFromDates());
@@ -77,7 +80,6 @@ class PublicDashboardDataService
             // loop through each scanners data
             foreach ($filteredScanners as $scanner) {
                 $item['scanners'][] = $scanner;
-                $item['scheduled'] += $scanner->folder_name ? true : false;
                 $item['completed']++;
 
                 // this is for the hourly data
@@ -126,30 +128,13 @@ class PublicDashboardDataService
      */
     private function getScanners(): Collection
     {
-        $now = now(__env_timezone());
-        $nowStart = $now->clone()->startOfDay()->toDateTimeString();
-        $nowEnd = $now->clone()->endOfDay()->toDateTimeString();
         $dates = [$this->filters['start'], $this->filters['end']];
 
         return Scanner::
             select([
                 'scanners.*',
-                'sa.folder_name',
                 'o.product_type'
             ])
-            ->leftJoin('shift_assignments AS sa', function ($join) use ($nowStart, $nowEnd) {
-                $folderNames = ["Roller - Shift {$this->filters['index']} Team 1", "Roller - Shift {$this->filters['index']} Team 2"];
-
-                // if shift 1, append this folder names
-                if ($this->filters['index'] == 1) {
-                    $folderNames[] = 'Roller Add - Shift 1 Team 1';
-                    $folderNames[] = 'Roller Add - Shift 1 Team 2';
-                }
-
-                $join->on('sa.serial_id', 'scanners.blindid')
-                    ->whereIn('folder_name', $folderNames)
-                    ->whereBetween('work_date', [$nowStart, $nowEnd]);
-            })
             ->join('orders as o', 'o.serial_id', 'scanners.blindid')
             ->whereIn('scanners.processid', self::PROCESS_CODES)
             ->whereBetween('scanners.scannedtime', $dates)
@@ -199,5 +184,28 @@ class PublicDashboardDataService
             ->whereBetween('scanners.scannedtime', $dates)
             ->distinct()
             ->count('scanners.employeeid');
+    }
+
+    /**
+     * Return the count of scheduled blinds
+     *
+     * @return int
+     */
+    private function getScheduledBlinds(): int
+    {
+        $folderNames = ["Roller - Shift {$this->filters['index']} Team 1", "Roller - Shift {$this->filters['index']} Team 2"];
+
+        // if shift 1, append this folder names
+        if ($this->filters['index'] == 1) {
+            $folderNames[] = 'Roller Add - Shift 1 Team 1';
+            $folderNames[] = 'Roller Add - Shift 1 Team 2';
+        }
+
+        $now = now(__env_timezone());
+
+        return ShiftAssignment::whereIn('folder_name', $folderNames)
+            ->where('work_date', $now->format('Y-m-d'))
+            ->distinct()
+            ->count('id');
     }
 }
