@@ -47,6 +47,10 @@ class PublicDashboardDataService
         foreach ($processes as $process) {
             $item = [];
             $item['name'] = $process->name;
+            if ($process->barcode === 'P1000') {
+                $item['name'] = 'Tube Cut';
+            }
+
             $item['scanners'] = [];
             $item['team_target'] = $index == 1 ? $process->team_trade_target : $process->team_internet_target;
             $item['hourly_target'] = round($scheduled / 7.5);
