@@ -138,6 +138,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel-notification-channels/microsoft-teams" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/predis/predis" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/horizon" />
+      <excludeFolder url="file://$MODULE_DIR$/public/js" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -69,6 +69,11 @@ const app = new Vue({
 
         console.log(pathname)
 
+        // if on public
+        if (pathname.includes('/public/')) {
+            return
+        }
+
         /**
          * optionally load the data on specific pages. since we only use vuex in
          * selected pages, we will only load the data in those pages, not to all pages
