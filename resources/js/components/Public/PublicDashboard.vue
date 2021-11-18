@@ -60,7 +60,7 @@
                     <template slot="label">
                         R
                     </template>
-                    <span class="font-weight-bold">Roller</span>
+                    <span class="font-weight-bold">Process</span>
                 </el-descriptions-item>
                 <el-descriptions-item>
                     <template slot="label">
@@ -225,7 +225,7 @@
 
             getDefaultHeaders() {
                 return [
-                    {label: 'R', prop: 'name', sortable: false, showOverflowTooltip: false},
+                    {label: 'P', prop: 'name', sortable: false, showOverflowTooltip: false},
                     {label: 'T', prop: 'team_target', sortable: false, showOverflowTooltip: false},
                     {label: 'HT', prop: 'hourly_target', sortable: false, showOverflowTooltip: false},
                     {label: 'S', prop: 'scheduled', sortable: false, showOverflowTooltip: false},
