@@ -88,14 +88,14 @@
                     <template slot="label">
                         C
                     </template>
-                    <span class="font-weight-bold">Completed</span>
+                    <span class="font-weight-bold">Completed Scanners</span>
                 </el-descriptions-item>
 
                 <el-descriptions-item>
                     <template slot="label">
                         TC
                     </template>
-                    <span class="font-weight-bold">To be Completed</span>
+                    <span class="font-weight-bold">Left to do</span>
                 </el-descriptions-item>
             </el-descriptions>
         </el-card>
