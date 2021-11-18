@@ -136,6 +136,12 @@
         methods: {
             cellClassNamePicker({row, column, rowIndex, columnIndex}) {
                 let property = column.property
+
+                if (property === 'name') {
+                    return 'custom-roller-column'
+                }
+
+
                 // ignore these properties
                 if (['name', 'team_target', 'hourly_target', 'scheduled', 'completed', 'to_be_completed'].includes(property)) {
                     return
