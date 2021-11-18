@@ -83,7 +83,7 @@ class PublicDashboardDataService
                 }
             }
 
-            $item['to_be_completed'] = $item['completed'] > $scheduled ? $item['completed'] : $scheduled - $item['completed'];
+            $item['to_be_completed'] = $item['completed'] > $scheduled ? 0 : $scheduled - $item['completed'];
 
             if ($item['completed'] <= 0) {
                 $item['percentage'] = 0 . '%';
