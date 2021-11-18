@@ -8,6 +8,14 @@
                         size="mini"
                         type="info"
                         class="page-info">
+                        Clock: {{ clock }}
+                    </el-button>
+
+                    <el-button
+                        round
+                        size="mini"
+                        type="info"
+                        class="page-info">
                         View Change In: {{ countDownDisplay }}
                     </el-button>
 
@@ -111,7 +119,8 @@
                 countDownDisplay: '05:00',
                 intervals: {
                     shiftChanger: null,
-                }
+                },
+                clock: moment().format('MMM DD, YYYY hh:mm:ss a')
             }
         },
 
@@ -130,6 +139,11 @@
             // count down changer
             setInterval(_ => {
                 this.countDownDisplay = this.countDownTimer()
+            }, 1000)
+
+            // clock
+            setInterval(_ => {
+                this.clock = moment().format('MMM DD, YYYY hh:mm:ss a')
             }, 1000)
         },
 
