@@ -331,7 +331,7 @@
                 // tab changer with 5 minutes interval
                 this.intervals.shiftChanger = setInterval(_ => {
                     this.shiftChanger()
-                }, 60000)
+                }, 300000)
             }
         }
     }
