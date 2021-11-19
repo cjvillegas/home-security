@@ -64,12 +64,12 @@
                 :column="4"
                 size="medium"
                 border>
-                <el-descriptions-item>
-                    <template slot="label">
-                        T
-                    </template>
-                    <span class="font-weight-bold">Target</span>
-                </el-descriptions-item>
+<!--                <el-descriptions-item>-->
+<!--                    <template slot="label">-->
+<!--                        T-->
+<!--                    </template>-->
+<!--                    <span class="font-weight-bold">Target</span>-->
+<!--                </el-descriptions-item>-->
 
                 <el-descriptions-item>
                     <template slot="label">
@@ -109,8 +109,8 @@
                 dataWithHeader: [],
                 lastUpdate: moment().format('MMM DD, YYYY hh:mm a'),
                 activeTab: 'shift_1',
-                nextChangeDate: moment().add(5, 'minutes'),
-                countDownDisplay: '05:00',
+                nextChangeDate: moment().add(1.5, 'minutes'),
+                countDownDisplay: '01:30',
                 intervals: {
                     shiftChanger: null,
                 },
@@ -234,7 +234,7 @@
             getDefaultHeaders() {
                 return [
                     {label: 'P', prop: 'name', sortable: false, showOverflowTooltip: false},
-                    {label: 'T', prop: 'team_target', sortable: false, showOverflowTooltip: false},
+                    // {label: 'T', prop: 'team_target', sortable: false, showOverflowTooltip: false},
                     {label: 'HT', prop: 'hourly_target', sortable: false, showOverflowTooltip: false},
                     {label: 'S', prop: 'scheduled', sortable: false, showOverflowTooltip: false},
                     {label: 'C', prop: 'completed', sortable: false, showOverflowTooltip: false},
@@ -300,7 +300,7 @@
                     this.activeTab = `shift_${shiftIndex + 1}`
                 }
 
-                this.nextChangeDate = moment().add(5, 'minutes')
+                this.nextChangeDate = moment().add(1.5, 'minutes')
             },
 
             countDownTimer() {
@@ -314,7 +314,7 @@
             },
 
             tabChanged() {
-                this.nextChangeDate = moment().add(5, 'minutes')
+                this.nextChangeDate = moment().add(1.5, 'minutes')
 
                 clearInterval(this.intervals.shiftChanger)
 
@@ -325,7 +325,7 @@
                 // tab changer with 5 minutes interval
                 this.intervals.shiftChanger = setInterval(_ => {
                     this.shiftChanger()
-                }, 300000)
+                }, 90000)
             }
         }
     }
