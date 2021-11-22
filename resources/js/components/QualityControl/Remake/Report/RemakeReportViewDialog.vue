@@ -4,17 +4,29 @@
         :title="dialogTitle"
         :before-close="closeForm"
         width="60%">
-        <el-row>
+        <el-row
+            :gutter="12">
             <el-col
                 :span="12"
                 v-for="(blind, blindKey) in viewOrderRemake"
                 :key="blindKey">
-                <el-card class="box-card border border-success">
+                <el-card
+                    class="box-card border border-secondary mt-2"
+                    :body-style="{height: '270px'}">
+                    <div class="d-flex">
+                        <div class="ml-auto">
+                            <u>
+                                Serial ID: {{ blind.blind_id }}
+                            </u>
+                        </div>
+                    </div>
                     <el-checkbox
                         v-for="question in validationQuestions.QUESTIONS"
                         :key="question.key"
                         :label="question.key"
-                        :checked="isChecked(question.key, blind.question_key)">
+                        :checked="isChecked(question.key, blind.question_key)"
+                        text-color="#199f6b"
+                        disabled>
                         <div v-if="question.key==1">
                             {{ question.value }} {{ blind.blind.width }}
                         </div>
@@ -24,14 +36,17 @@
                         <div v-else-if="question.key==3">
                             {{ question.value }} {{ blind.blind.fabric_range }}
                         </div>
-                        <div v-else>
+                        <p v-else>
                             {{ question.value }}
-                        </div>
+                        </p>
                     </el-checkbox>
-                    <div v-if="isPartiallyVerified(validationQuestions.QUESTIONS, blind.question_key)">
+                    <div>
                         <el-button
-                            type="primary">
-                            Tanga
+                            class="mt-2"
+                            v-if="isPartiallyVerified(validationQuestions.QUESTIONS, blind.question_key)"
+                            type="default"
+                            @click="viewReason(blind.reason, blind.blind_id)">
+                            See Reason
                         </el-button>
                     </div>
                 </el-card>
@@ -73,6 +88,14 @@
                     }
                 })
                 return selected
+            },
+            viewReason(data, blindid) {
+                this.$alert(data, `Blind Serial No: ${blindid} Validation Report Reason:`, {
+                    confirmButtonText: 'OK',
+                    center: true,
+                    type: 'warning',
+                    iconClass: 'fa fa-info-circle'
+                });
             },
             isPartiallyVerified(questions, answers)
             {

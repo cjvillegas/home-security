@@ -13,7 +13,11 @@ const state = {
 
     //reports
     orderRemakes: [],
-    viewOrderRemake: []
+    orderRemakesTotal: 0,
+    viewOrderRemake: [],
+
+    //email
+    emails: []
 };
 
 const getters = {
@@ -29,7 +33,11 @@ const getters = {
 
     //reports
     orderRemakes: state => state.orderRemakes,
-    viewOrderRemake: state => state.viewOrderRemake
+    orderRemakesTotal: state => state.orderRemakesTotal,
+    viewOrderRemake: state => state.viewOrderRemake,
+
+    //email
+    emails: state => state.emails
 };
 
 const actions = {
@@ -60,8 +68,8 @@ const actions = {
         commit('setLoading', true)
         await axios.post(apiUrl, data)
             .then((res) => {
-                console.log(res.data.orderRemake)
                 commit('setOrderRemakeResponse', res.data.orderRemake)
+                commit('setLoading', false)
             })
             .catch((err) => {
                 console.log(err)
@@ -87,13 +95,61 @@ const actions = {
         commit('setLoading', true)
         await axios.post(apiUrl, data)
             .then((res) => {
-                commit('setOrderRemakes', res.data.orderRemakes)
+                commit('setOrderRemakes', res.data.orderRemakes.data)
+                commit('setOrderRemakesTotal', res.data.orderRemakes.total)
             })
             .catch((err) => {
                 console.log(err)
             })
             .finally(() => {
                 commit('setLoading', false)
+            })
+    },
+
+    //email
+    async getEmails({commit}, data) {
+        let apiUrl = `/admin/email/get-list`
+        commit('setLoading', true)
+        await axios.post(apiUrl, data)
+            .then((res) => {
+                commit('setEmails', res.data.emails)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+            .finally(() => {
+                commit('setLoading', false)
+            })
+    },
+
+    async storeEmail({commit}, data) {
+        let apiUrl = `/admin/email/store`
+        commit('setLoading', true)
+        await axios.post(apiUrl, data)
+            .then((res) => {
+
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+            .finally(() => {
+                commit('setLoading', false)
+            })
+    },
+
+    async deleteEmail({commit, dispatch}, id) {
+        let apiUrl = `/admin/${id}/destroy`
+        commit('setLoading', true)
+        await axios.delete(apiUrl)
+            .then((res) => {
+
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+            .finally(() => {
+                commit('setLoading', false)
+                dispatch('getEmails', {})
             })
     }
 };
@@ -128,8 +184,17 @@ const mutations = {
     setOrderRemakes(state, orderRemakes) {
         return state.orderRemakes = orderRemakes
     },
+    setOrderRemakesTotal(state, orderRemakesTotal) {
+        console.log(orderRemakesTotal)
+        return state.orderRemakesTotal = orderRemakesTotal
+    },
     setViewOrderRemake(state, viewOrderRemake) {
         return state.viewOrderRemake = viewOrderRemake
+    },
+
+    //email
+    setEmails(state, emails) {
+        return state.emails = emails
     }
 };
 

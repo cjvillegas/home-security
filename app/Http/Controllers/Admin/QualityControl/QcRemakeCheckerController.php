@@ -3,13 +3,20 @@
 namespace App\Http\Controllers\Admin\QualityControl;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\QcEmailRequest;
+use App\Mail\QcRemakeCheckerMail;
 use App\Models\Order;
+use App\Models\QcEmail;
 use App\Models\QcRemake;
 use Exception;
+use Gate;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\Response;
 
 class QcRemakeCheckerController extends Controller
 {
@@ -20,6 +27,8 @@ class QcRemakeCheckerController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('quality_control_remake_checker'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.quality-control.remake');
     }
 
@@ -70,7 +79,12 @@ class QcRemakeCheckerController extends Controller
             $qcRemake->order_no = $orderNo;
             $qcRemake->save();
             DB::commit();
+
             $qcRemake = QcRemake::with('validatedBlinds')->where('id', $qcRemake->id)->first();
+
+            foreach (QcEmail::all() as $email) {
+                Mail::to($email)->send(new QcRemakeCheckerMail($qcRemake));
+            }
 
             return response()->json(
                 [
@@ -88,20 +102,96 @@ class QcRemakeCheckerController extends Controller
 
     public function orderRemakeReport()
     {
+        abort_if(Gate::denies('qc_remake_checker_report'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.quality-control.remake-report');
     }
 
     public function getOrderRemake(Request $request)
     {
-        Log::info($request->all());
+        $reportNumber = $request->reportNumber;
+        $orderNumber = $request->orderNumber;
+        $size = $request->size;
+
         $orderRemakes = QcRemake::
             orderBy('created_at')
             ->with('user')
             ->with('order')
             ->with('validatedBlinds.blind')
-            ->get();
+            ->when(!is_null($reportNumber), function ($query) use ($reportNumber) {
+                $query->where('report_no', 'like', "%{$reportNumber}%");
+            })
+            ->when(!is_null($orderNumber), function ($query) use ($orderNumber) {
+                $query->where('order_no', 'like', "%{$orderNumber}%");
+            });
+
+        $orderRemakes = $orderRemakes->paginate($size);
+
         return response()->json([
             'orderRemakes' => $orderRemakes
+        ]);
+    }
+
+    public function orderRemakeEmailNotification()
+    {
+        abort_if(Gate::denies('qc_remake_email_settings'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return view('admin.quality-control.email');
+    }
+
+    /**
+     * Get Emails
+     *
+     * @return JsonResponse
+     */
+    public function getEmails(): JsonResponse
+    {
+        $emails = QcEmail::all();
+
+        return response()->json([
+            'emails' => $emails
+        ]);
+    }
+
+    /**
+     * Store Qc Email
+     *
+     * @param  mixed $request
+     * @return JsonResponse
+     */
+    public function storeEmail(QcEmailRequest $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'email|required'
+        ]);
+        DB::beginTransaction();
+        try {
+            $emails = QcEmail::create($request->all());
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Email successfully saved'
+            ]);
+        } catch(Exception $e) {
+            DB::rollBack();
+            Log::info($e);
+            return response()->json([
+                'message' => 'Error while saving Email'
+            ]);
+        }
+    }
+
+    /**
+     * Delete Email
+     *
+     * @param  mixed $qcEmail
+     * @return JsonResponse
+     */
+    public function deleteEmail(QcEmail $qcEmail): JsonResponse
+    {
+        $qcEmail->delete();
+        return response()->json([
+            'message' => 'Successfully Deleted'
         ]);
     }
 }

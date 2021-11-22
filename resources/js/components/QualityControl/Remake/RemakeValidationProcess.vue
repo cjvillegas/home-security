@@ -87,30 +87,32 @@
                     </p>
                 </span>
                 <div class="row">
-                    <div class="col-md-4"></div>
-                    <div class="col-md-4">
-                        <el-checkbox-group v-model="addedConfirmationValidations">
+                    <div class="col-md-3"></div>
+                    <div class="col-md-6">
+                        <el-checkbox-group
+                            v-model="addedConfirmationValidations"
+                            size="medium">
                             <el-checkbox
                                 v-for="question in unconfirmedValidation"
                                 :key="question.key"
                                 :label="question.key"
                                 @change="toggleCheckbox()">
-                                <div v-if="question.key==1">
+                                <p v-if="question.key==1">
                                     {{ question.value }} {{ dialogBlindData.width }}
-                                </div>
-                                <div v-else-if="question.key==2">
+                                </p>
+                                <p v-else-if="question.key==2">
                                     {{ question.value }} {{ dialogBlindData.drop }}
-                                </div>
-                                <div v-else-if="question.key==3">
+                                </p>
+                                <p v-else-if="question.key==3">
                                     {{ question.value }} {{ dialogBlindData.fabric_range }}
-                                </div>
-                                <div v-else>
+                                </p>
+                                <p v-else>
                                     {{ question.value }}
-                                </div>
+                                </p>
                             </el-checkbox>
                         </el-checkbox-group>
                     </div>
-                    <div class="col-md-4"></div>
+                    <div class="col-md-3"></div>
                 </div>
                 <span slot="footer" class="dialog-footer">
                     <el-button type="danger" @click="cancelChanges">No</el-button>

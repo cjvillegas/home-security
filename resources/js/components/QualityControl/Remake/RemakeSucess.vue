@@ -26,13 +26,21 @@
                 <i class="el-icon-printer el-icon-right">
                 </i>
             </el-button>
+            <el-button
+                size="medium"
+                type="default"
+                @click="backToMainScreen">
+                Remake Checker
+                <i class="fa fa-undo">
+                </i>
+            </el-button>
         </span>
     </div>
 </template>
 
 
 <script>
-import { mapGetters } from 'vuex'
+    import { mapActions, mapGetters } from 'vuex'
     export default {
         name: "RemakeSucess",
         data(){
@@ -52,6 +60,7 @@ import { mapGetters } from 'vuex'
             }
         },
         methods: {
+            ...mapActions('remakechecker', ['backToMainScreen']),
             printBarcode() {
                 let baseUrl = window.location.origin
 
@@ -67,9 +76,10 @@ import { mapGetters } from 'vuex'
 
 
                 content += "<body class='text-center'>"
+
                 this.orderRemakeResponse.validated_blinds.forEach(blind => {
                     content += `<div class="text-uppercase f-size-14">QC Verified</div>`
-                    content += `<div> ${this.orderRemakeResponse.report_no} - ${blind.barcode} </div>`
+                    content += `<div style="font-size: 7px"> ${this.orderRemakeResponse.report_no} - ${blind.barcode} </div>`
                     content += `<svg id="barcode${blind.id}"></svg>`
                 })
                 content += "</body></head></html>"

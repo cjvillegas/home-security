@@ -15,5 +15,11 @@ Route::namespace('QualityControl')->group(function() {
     //remake reports
     Route::get('remake-report', 'QcRemakeCheckerController@orderRemakeReport')->name('remake-checker.report');
     Route::post('remake-report/get-list', 'QcRemakeCheckerController@getOrderRemake');
+
+    //email notifications
+    Route::get('email', 'QcRemakeCheckerController@orderRemakeEmailNotification')->name('remake-checker.email');
+    Route::post('email/get-list', 'QcRemakeCheckerController@getEmails');
+    Route::post('email/store', 'QcRemakeCheckerController@storeEmail');
+    Route::delete('{qcEmail}/destroy', 'QcRemakeCheckerController@deleteEmail');
 });
 
