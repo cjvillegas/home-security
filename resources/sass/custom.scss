@@ -1,3 +1,18 @@
+.background-green {
+    background-color: #67c23a !important;
+    color: #fff !important;
+}
+
+.background-red {
+    background-color: #f56c6c !important;
+    color: #fff !important;
+}
+
+.background-orange {
+    background-color: #e6a23c !important;
+    color: #fff !important;
+}
+
 .sbg-process-circle-container {
     display: flex;
     justify-content: center;
@@ -57,5 +72,32 @@
 
     .item-description {
 
+    }
+}
+
+.public-accessible {
+    .page-info {
+        font-size: 40px;
+        font-weight: 800;
+    }
+
+    .el-table {
+        .cell {
+            font-size: 35px;
+            font-weight: 800;
+            line-height: 55px;
+        }
+    }
+
+    .el-tabs__item {
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .custom-roller-column {
+        .cell {
+            font-size: 20px !important;
+            line-height: 20px;
+        }
     }
 }
