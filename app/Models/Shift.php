@@ -28,12 +28,20 @@ class Shift extends Model
 
     public $table = 'shifts';
 
+    /**
+     * Dates related column
+     *
+     * @var string[]
+     */
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'created_at',
