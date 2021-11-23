@@ -92,8 +92,6 @@ class PublicDashboardHourlyReport extends Command
             $index++;
         }
 
-        dd($perShiftData);
-
         $filePath = "public-dashboard/Public Dashboard.xlsx";
         ((new PublicDashboardReportExport(collect($perShiftData))))->store($filePath, 'public');
 
