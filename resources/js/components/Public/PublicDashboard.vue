@@ -11,13 +11,13 @@
                         Clock: {{ clock }}
                     </el-button>
 
-                    <el-button
-                        round
-                        size="mini"
-                        type="info"
-                        class="page-info">
-                        View Change In: {{ countDownDisplay }}
-                    </el-button>
+<!--                    <el-button-->
+<!--                        round-->
+<!--                        size="mini"-->
+<!--                        type="info"-->
+<!--                        class="page-info">-->
+<!--                        View Change In: {{ countDownDisplay }}-->
+<!--                    </el-button>-->
 
                     <el-button
                         round
@@ -36,6 +36,7 @@
                 class="mt-4">
                 <el-tab-pane
                     v-for="item in dataWithHeader"
+                    v-if="item.tab_name === activeTab"
                     :key="item.tab_name"
                     :name="item.tab_name"
                     :label="item.name">
@@ -119,16 +120,10 @@
         },
 
         created() {
-            this.generateHeaders()
-
-            this.getDataPershift()
-
             // infinitely call the request to populate the table data with 10 minutes interval
             setInterval(_ => {
                 this.getDataPershift()
             }, 600000)
-
-            this.runChangerShiftInterval()
 
             // count down changer
             setInterval(_ => {
@@ -139,6 +134,10 @@
             setInterval(_ => {
                 this.clock = moment().format('MMM DD, YYYY hh:mm:ss a')
             }, 1000)
+
+            this.generateHeaders()
+
+            this.getDataPershift()
         },
 
         methods: {
@@ -188,6 +187,12 @@
             getDataPershift() {
                 let index = 1
                 for (let shift of Shifts.SHIFT_TIME_LIST) {
+                    // we should not fetch data if it is not for the current shift
+                    if (this.activeTab !== `shift_${index}`) {
+                        index++
+                        continue
+                    }
+
                     this.getData(shift, index)
                     index++
                 }
@@ -326,6 +331,42 @@
                 this.intervals.shiftChanger = setInterval(_ => {
                     this.shiftChanger()
                 }, 90000)
+            }
+        },
+
+        watch: {
+            clock: {
+                handler(oldVal, newVal) {
+                    let momentNew = moment(newVal)
+
+                    let index = 1
+                    for (let shift of Shifts.SHIFT_TIME_LIST) {
+                        let shiftStartEnd = this.getShiftStartEnd(shift, index)
+
+                        if (momentNew.isBetween(shiftStartEnd.start, shiftStartEnd.end, null, '[)')) {
+                            console.log('Love')
+
+                            switch(index) {
+                                case 1:
+                                    this.activeTab = 'shift_1'
+                                    break;
+                                case 2:
+                                    this.activeTab = 'shift_2'
+                                    break;
+                                case 3:
+                                    this.activeTab = 'shift_3'
+                                    break;
+                                default:
+                                    this.activeTab = 'shift_1'
+                            }
+
+                            return
+                        }
+
+                        index++
+                    }
+                },
+                immediate: true
             }
         }
     }

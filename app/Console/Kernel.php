@@ -71,6 +71,11 @@ class Kernel extends ConsoleKernel
         $schedule->command('scanners:invalid-scanner-cleaner')
             ->dailyAt('00:00')
             ->timezone('BST');
+
+        // public dashboard hourly report
+        $schedule->command('reports:public-dashboard-hourly-report')
+            ->hourly()
+            ->timezone(__env_timezone());
     }
 
     /**
