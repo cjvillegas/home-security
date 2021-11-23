@@ -288,7 +288,7 @@
                     end = `${end} ${shift[1]}`
                 }
                 if (index === 3) {
-                    let nowAddOne = moment(date).add(1, 'day').format('YYYY-MM-DD')
+                    let nowAddOne = moment(now).add(1, 'day').format('YYYY-MM-DD')
                     start = `${start} ${shift[0]}`
                     end = `${nowAddOne} ${shift[1]}`
                 }
@@ -344,8 +344,6 @@
                         let shiftStartEnd = this.getShiftStartEnd(shift, index)
 
                         if (momentNew.isBetween(shiftStartEnd.start, shiftStartEnd.end, null, '[)')) {
-                            console.log('Love')
-
                             switch(index) {
                                 case 1:
                                     this.activeTab = 'shift_1'

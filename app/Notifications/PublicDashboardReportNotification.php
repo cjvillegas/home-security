@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -26,6 +25,16 @@ class PublicDashboardReportNotification extends Notification
     public function __construct(string $url)
     {
         $this->url = $url;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function tags()
+    {
+        return [
+            'public-dashboard-report-notification'
+        ];
     }
 
     /**

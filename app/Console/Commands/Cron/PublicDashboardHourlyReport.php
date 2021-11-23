@@ -92,8 +92,7 @@ class PublicDashboardHourlyReport extends Command
             $index++;
         }
 
-        $unique = now(__env_timezone())->timestamp;
-        $filePath = "public-dashboard/Public Dashboard - {$unique}.xlsx";
+        $filePath = "public-dashboard/Public Dashboard.xlsx";
         ((new PublicDashboardReportExport(collect($perShiftData))))->store($filePath, 'public');
 
         $this->sendEmail($filePath);
@@ -152,7 +151,7 @@ class PublicDashboardHourlyReport extends Command
                 $end = "{$end} {$shift[1]}";
                 break;
             case 3:
-                $nowAddOne = $now->clone()->addDay()->format('Y-m-d');
+                $nowAddOne = Carbon::parse($date)->addDay()->format('Y-m-d');
                 $start = "{$start} {$shift[0]}";
                 $end = "{$nowAddOne} {$shift[1]}";
                 break;
@@ -203,7 +202,7 @@ class PublicDashboardHourlyReport extends Command
 
             array_push($headers, $header);
 
-            $startCarbon = $startCarbon->addHour();
+            $startCarbon = $startCarbon->clone()->addHour();
         }
 
         return array_merge(...$headers);
