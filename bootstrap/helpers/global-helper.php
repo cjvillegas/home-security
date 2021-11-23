@@ -23,3 +23,13 @@ function __env_timezone($timezone = 'GMT'): string
 {
     return env('UK_TIMEZONE', $timezone);
 }
+
+/**
+ * Determines if the app is running in production.
+ *
+ * @return bool
+ */
+function __is_production(): bool
+{
+    return env('APP_ENV') === 'production';
+}

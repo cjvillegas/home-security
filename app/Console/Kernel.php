@@ -68,6 +68,11 @@ class Kernel extends ConsoleKernel
         // checks for RDDS orders per shift and import them
         $schedule->command('orders:rdds-checking-and-import')
             ->hourlyAt('5');
+
+        // public dashboard hourly report
+        $schedule->command('reports:public-dashboard-hourly-report')
+            ->hourly()
+            ->timezone(__env_timezone());
     }
 
     /**

@@ -23,6 +23,9 @@ import StockOrder from './StockOrder/StockOrder'
 import StockLevel from './StockOrder/StockLevel'
 import PurchaseOrder from './StockOrder/PurchaseOrder'
 
+// Publicly Accessible routes
+import Public from "./Public"
+
 export default {
     Orders,
     Employee,
@@ -47,5 +50,8 @@ export default {
     // Stock Order dedicated endpoints
     StockOrder,
     StockLevel,
-    PurchaseOrder
+    PurchaseOrder,
+
+    // Publicly Accessible routes
+    Public,
 }
