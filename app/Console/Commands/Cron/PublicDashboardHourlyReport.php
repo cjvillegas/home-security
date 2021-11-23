@@ -92,6 +92,8 @@ class PublicDashboardHourlyReport extends Command
             $index++;
         }
 
+        dd($perShiftData);
+
         $filePath = "public-dashboard/Public Dashboard.xlsx";
         ((new PublicDashboardReportExport(collect($perShiftData))))->store($filePath, 'public');
 
@@ -112,7 +114,7 @@ class PublicDashboardHourlyReport extends Command
             return;
         }
 
-        $url = Storage::url($path);
+        $url = storage_path() . '/app/public/' . $path;
         $emails = $this->getEmails();
 
         // loop through the emails
