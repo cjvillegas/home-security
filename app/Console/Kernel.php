@@ -30,6 +30,12 @@ class Kernel extends ConsoleKernel
             ->everyThirtyMinutes()
             ->environments(['production', 'staging']);
 
+        // fetches new orders from BLINDDATA. This CRON will only run when the env is production or staging
+        $schedule->command('orders:populate-orders-from-blind-data --checking')
+            ->dailyAt('02:00')
+            ->environments(['production', 'staging'])
+            ->timezone('BST');
+
         // runs a CRON daily to fetch data from the T&A database
         $schedule->command('employees:fetch-timeclock-from-t-and-a')
             ->dailyAt('00:00')

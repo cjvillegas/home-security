@@ -7,15 +7,21 @@ use App\Models\Order;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class PopulateOrdersFromBlindData extends CronDatabasePopulator
 {
+    /**
+     * @var bool
+     */
+    private $checking;
+
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'orders:populate-orders-from-blind-data {--load-all}';
+    protected $signature = 'orders:populate-orders-from-blind-data {--load-all} {--checking}';
 
     /**
      * The console command description.
@@ -43,6 +49,9 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
      */
     public function handle(): void
     {
+        // initialize it here
+        $this->checking = $this->option('checking');
+
         try {
             $loadAll = $this->option('load-all');
 
@@ -61,6 +70,17 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                 // foreach to each instance of retrieved order
                 $newOrders = [];
                 foreach ($chunk as $order) {
+                    // check if the CRON runs to check for missing orders
+                    // this property relies on the switch coming from the command
+                    if ($this->checking) {
+                        $exists = Order::where('serial_id', $order['SerialID'])->exists();
+
+                        // if the order is already present in our production DB, ignore it.
+                        if ($exists) {
+                            continue;
+                        }
+                    }
+
                     // perform insertion of the order
                     $sanitized = $this->sanitize((array) $order);
 
@@ -83,8 +103,15 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                     usleep(100000);
                 }
             }
-        } catch (Exception $error) {
-            $this->sendFailedNotification('Populate Orders From Blind Data', $error);
+        } catch (Exception $exception) {
+            $name = $this->checking ? 'Populate Orders From Blind Data - Order Checking' : 'Populate Orders From Blind Data';
+            $this->sendFailedNotification($name, $exception);
+
+            // we need to log for tracking
+            Log::info($name, [
+                'checking' => $this->checking,
+                'exception' => $exception
+            ]);
         }
     }
 
@@ -108,17 +135,18 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                 u.company AS Customer,
                 o.cust_ref AS CustRef,
                 o.cust_no AS CustNo,
-                CASE WHEN ml.location = 'Aluminium' THEN 'Aluminium'
-                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' AND bt.code NOT LIKE '%RIGID%' THEN 'Vertical'
-                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description LIKE '%Louvers%' AND bt.code NOT LIKE 'LO89-RIGID-PVC' THEN 'LouversOnly'
-                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' THEN 'HeadrailOnly'
-                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%'AND bt.code LIKE '%RIGID%' AND bt.description NOT LIKE '%Louvers%' THEN 'VerticalRigidPVC'
-                WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.code LIKE '%RIGID%' AND bt.description LIKE '%Louvers%' THEN 'LouversOnlyRigidPVC'
-                WHEN ml.location = 'Roller Express' AND o.order_id NOT IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) THEN 'RollerExpress'
-                WHEN (NOT(od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS') AND o.order_id IS NOT NULL) OR ((ml.location = 'Rollers' OR ml.location = 'RDRS') AND od.option_list NOT LIKE '%Motor%' AND o.order_id IS NOT NULL) OR (bt.code = 'ROLLEXP' AND o.order_id IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) AND o.order_id IS NOT NULL) THEN 'Roller'
-                WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Chain%' THEN 'TechnicalChained'
-                WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Crank%' THEN 'TechnicalCrank'
-                WHEN (o.order_id IS NOT NULL AND ml.location = 'Contracts Department' AND od.option_list LIKE '%Motor%') OR (o.order_id IS NOT NULL AND (od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS')) THEN 'TechnicalMotorised'
+                CASE
+                    WHEN ml.location = 'Aluminium' THEN 'Aluminium'
+                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' AND bt.code NOT LIKE '%RIGID%' THEN 'Vertical'
+                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description LIKE '%Louvers%' AND bt.code NOT LIKE 'LO89-RIGID-PVC' THEN 'LouversOnly'
+                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' THEN 'HeadrailOnly'
+                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%'AND bt.code LIKE '%RIGID%' AND bt.description NOT LIKE '%Louvers%' THEN 'VerticalRigidPVC'
+                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.code LIKE '%RIGID%' AND bt.description LIKE '%Louvers%' THEN 'LouversOnlyRigidPVC'
+                    WHEN ml.location = 'Roller Express' AND o.order_id NOT IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) THEN 'RollerExpress'
+                    WHEN (NOT(od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS') AND o.order_id IS NOT NULL) OR ((ml.location = 'Rollers' OR ml.location = 'RDRS') AND od.option_list NOT LIKE '%Motor%' AND o.order_id IS NOT NULL) OR (bt.code = 'ROLLEXP' AND o.order_id IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) AND o.order_id IS NOT NULL) THEN 'Roller'
+                    WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Chain%' THEN 'TechnicalChained'
+                    WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Crank%' THEN 'TechnicalCrank'
+                    WHEN (o.order_id IS NOT NULL AND ml.location = 'Contracts Department' AND od.option_list LIKE '%Motor%') OR (o.order_id IS NOT NULL AND (od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS')) THEN 'TechnicalMotorised'
                 END AS ProductType,
                 bt.code AS ProductCode,
                 o.dat_order AS Ordered,
@@ -147,10 +175,14 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                 AND (bt.id <> '382')
         ";
 
-        // if a blind_id present add additional condition to only load
-        // data after this specified blind_id
-        if ($latestSerialId && !$loadAll) {
+        // retrieve only from the most recent serial_id fetched + not load all + not order checking
+        if ($latestSerialId && !$loadAll && !$this->checking) {
             $query .= "\t AND (sdl.id > {$latestSerialId})";
+        }
+
+        // if order checking
+        if ($this->checking) {
+            $query .= "\t AND o.dat_order >= DATEADD(day, -7, GETDATE())";
         }
 
         // execute the query
