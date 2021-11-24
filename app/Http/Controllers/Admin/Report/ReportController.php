@@ -332,4 +332,14 @@ class ReportController extends Controller
             ]
         );
     }
+
+    /**
+     * Target Performance
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function shiftPerformance()
+    {
+        return view('admin.reports.shift-performance');
+    }
 }

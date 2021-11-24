@@ -334,6 +334,12 @@
                             Target Performance
                         </a>
                     </li>
+                    <li class="c-sidebar-nav-item">
+                        <a href="{{ route('admin.reports.shift-performance') }}" class="c-sidebar-nav-link {{ request()->is("admin.reports.shift-performance") ? "c-active" : "" }}">
+                            <i class="fa-fw fas fa-clipboard-list c-sidebar-nav-icon"></i>
+                            Shift Performance
+                        </a>
+                    </li>
                 </ul>
             </li>
         @endif
