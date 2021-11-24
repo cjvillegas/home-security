@@ -30,16 +30,15 @@
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     import {dialog} from "../../../../mixins/dialog"
-
     export default {
         name: "SelectedBlindsDialog",
         mixins: [dialog],
+
         computed: {
             ...mapGetters('remakechecker', ['selectedBlindId'])
         },
+
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen']),
-            ...mapMutations('remakechecker', ['setActiveForm']),
             proceedRemake() {
                 this.setActiveForm('blindValidationProcess')
                 this.$notify({
@@ -48,6 +47,7 @@
                     type: 'success'
                 })
             },
+
             cancelRemake() {
                 this.backToMainScreen()
                 setTimeout(_ => {
@@ -60,9 +60,13 @@
                     type: 'warning'
                 })
             },
+
             closeDialog() {
                 this.closeModal()
-            }
+            },
+
+            ...mapActions('remakechecker', ['backToMainScreen']),
+            ...mapMutations('remakechecker', ['setActiveForm']),
         }
     }
 </script>

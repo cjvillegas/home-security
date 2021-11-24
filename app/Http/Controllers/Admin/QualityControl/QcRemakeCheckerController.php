@@ -32,7 +32,14 @@ class QcRemakeCheckerController extends Controller
         return view('admin.quality-control.remake');
     }
 
-    public function getOrders(Request $request)
+    /**
+     * Get Order's lists based on order_no
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function getOrders(Request $request): JsonResponse
     {
         $orders = Order::where('order_no', $request->order_no)
             ->get();
@@ -42,6 +49,13 @@ class QcRemakeCheckerController extends Controller
         ]);
     }
 
+    /**
+     * To save all checked checklist(s) on all Order Checker
+     *
+     * @param  mixed $request
+     *
+     * @return void
+     */
     public function storeOrderRemakeChecker(Request $request)
     {
         $payload = $request->all();
@@ -49,7 +63,7 @@ class QcRemakeCheckerController extends Controller
         try {
             $qcRemake = new QcRemake;
             $isFullyVerified = true;
-            $reportNumber = (new QcRemake())->generateReportNumber();
+            $reportNumber = $qcRemake->generateReportNumber();
 
             $qcRemake->report_no = $reportNumber;
             $qcRemake->user_id = Auth::user()->id;
@@ -57,7 +71,6 @@ class QcRemakeCheckerController extends Controller
             $qcRemake->save();
 
             $orderNo = null;
-
             // iterate and save each validated Blinds
             foreach ($payload as $data) {
 
@@ -83,23 +96,23 @@ class QcRemakeCheckerController extends Controller
             $qcRemake = QcRemake::with('validatedBlinds')->where('id', $qcRemake->id)->first();
 
             foreach (QcEmail::all() as $email) {
-                Mail::to($email)->send(new QcRemakeCheckerMail($qcRemake));
+                Mail::to($email)->queue(new QcRemakeCheckerMail($qcRemake));
             }
 
-            return response()->json(
-                [
-                    'orderRemake' => $qcRemake
-                ]
-            );
+            return response()->json(['orderRemake' => $qcRemake]);
         }
-        catch (Exception $e) {
+        catch (Exception $exception) {
             DB::rollBack();
-            Log::info($e);
-            return response()->json(['message' => "Something went wrong when saving Order Remake."], 500);
+            return response()->json(['message' => "Something went wrong when saving Order Remake.", "errors" => $exception], 500);
         }
 
     }
 
+    /**
+     * View for QC Remake Checker Report
+     *
+     * @return view
+     */
     public function orderRemakeReport()
     {
         abort_if(Gate::denies('qc_remake_checker_report'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -107,6 +120,13 @@ class QcRemakeCheckerController extends Controller
         return view('admin.quality-control.remake-report');
     }
 
+    /**
+     * Get all data for QC Remake Checker Report
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
     public function getOrderRemake(Request $request)
     {
         $reportNumber = $request->reportNumber;
@@ -132,6 +152,11 @@ class QcRemakeCheckerController extends Controller
         ]);
     }
 
+    /**
+     * View for Email Notifications
+     *
+     * @return void
+     */
     public function orderRemakeEmailNotification()
     {
         abort_if(Gate::denies('qc_remake_email_settings'), Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -161,9 +186,6 @@ class QcRemakeCheckerController extends Controller
      */
     public function storeEmail(QcEmailRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'email|required'
-        ]);
         DB::beginTransaction();
         try {
             $emails = QcEmail::create($request->all());
@@ -172,11 +194,11 @@ class QcRemakeCheckerController extends Controller
             return response()->json([
                 'message' => 'Email successfully saved'
             ]);
-        } catch(Exception $e) {
+        } catch(Exception $exception) {
             DB::rollBack();
-            Log::info($e);
             return response()->json([
-                'message' => 'Error while saving Email'
+                'message' => 'Error while saving Email',
+                'errors' => $exception
             ]);
         }
     }
@@ -185,6 +207,7 @@ class QcRemakeCheckerController extends Controller
      * Delete Email
      *
      * @param  mixed $qcEmail
+     *
      * @return JsonResponse
      */
     public function deleteEmail(QcEmail $qcEmail): JsonResponse

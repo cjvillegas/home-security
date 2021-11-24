@@ -10,6 +10,11 @@ class QcRemakeValidated extends Model
 {
     use HasFactory;
 
+    /**
+     * Mass assignable fields
+     *
+     * @var array
+     */
     protected $fillable = [
         'blind_id',
         'barcode',

@@ -53,7 +53,7 @@
 </style>
 <script>
     import {dialog} from "../../../../mixins/dialog"
-    import * as validationQuestions from '../../../../constants/remake-validation-questions'
+    import * as ValidationQuestions from '../../../../constants/remake-validation-questions'
     export default {
         name: "RemakeValidationDialog",
         mixins: [dialog],
@@ -70,13 +70,13 @@
         },
         data() {
             return {
-                validationQuestions,
+                ValidationQuestions,
                 addedConfirmationValidations: []
             }
         },
         computed: {
             unconfirmedValidation() {
-                let data = this.validationQuestions.QUESTIONS.filter(
+                let data = this.ValidationQuestions.QUESTIONS.filter(
                     question => !this.confirmedQuestions.includes(question.key)
                 )
                 return data

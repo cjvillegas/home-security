@@ -15,6 +15,11 @@ class QcRemake extends Model
 
     public $table = 'qc_remakes';
 
+    /**
+     * Mass assignable fields
+     *
+     * @var array
+     */
     protected $fillable = [
         'report_no',
         'user_id',
@@ -72,7 +77,7 @@ class QcRemake extends Model
         if (!$code) {
             $lastQcRemake = self::orderBy('id', 'DESC')->first();
 
-            $code = is_null($lastQcRemake) ? 1 : (int) substr($lastQcRemake->report_no, 4);
+            $code = is_null($lastQcRemake) ? 1 : substr($lastQcRemake->report_no, 4);
         }
 
         $code++;

@@ -27,7 +27,10 @@ class QcEmailRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'email' => ['required', Rule::unique('machines')->ignore($this->id)],
+            'email' => [
+                'required',
+                Rule::unique('machines')->ignore($this->id)
+            ],
         ];
     }
 }

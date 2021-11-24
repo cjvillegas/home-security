@@ -41,11 +41,11 @@ const getters = {
 };
 
 const actions = {
-    async getOrders({commit}, data) {
+    getOrders({commit}, data) {
         let apiUrl = `/admin/remake-checker/get-orders`
         commit('setLoading', true)
 
-        return await axios.post(apiUrl, data)
+        return axios.post(apiUrl, data)
             .then((res) => {
                 if (res.data.orders.length > 0) {
                     commit('setOrders', res.data.orders)
@@ -63,10 +63,10 @@ const actions = {
             })
     },
 
-    async saveOrderRemake({commit}, data) {
+    saveOrderRemake({commit}, data) {
         let apiUrl = `/admin/remake-checker`
         commit('setLoading', true)
-        await axios.post(apiUrl, data)
+        axios.post(apiUrl, data)
             .then((res) => {
                 commit('setOrderRemakeResponse', res.data.orderRemake)
                 commit('setLoading', false)
@@ -90,10 +90,10 @@ const actions = {
 
 
     //reports
-    async getOrderRemakes({commit}, data) {
+    getOrderRemakes({commit}, data) {
         let apiUrl = `/admin/remake-report/get-list`
         commit('setLoading', true)
-        await axios.post(apiUrl, data)
+        axios.post(apiUrl, data)
             .then((res) => {
                 commit('setOrderRemakes', res.data.orderRemakes.data)
                 commit('setOrderRemakesTotal', res.data.orderRemakes.total)
@@ -107,10 +107,10 @@ const actions = {
     },
 
     //email
-    async getEmails({commit}, data) {
+    getEmails({commit}, data) {
         let apiUrl = `/admin/email/get-list`
         commit('setLoading', true)
-        await axios.post(apiUrl, data)
+        axios.post(apiUrl, data)
             .then((res) => {
                 commit('setEmails', res.data.emails)
             })
@@ -122,10 +122,10 @@ const actions = {
             })
     },
 
-    async storeEmail({commit}, data) {
+    storeEmail({commit}, data) {
         let apiUrl = `/admin/email/store`
         commit('setLoading', true)
-        await axios.post(apiUrl, data)
+        axios.post(apiUrl, data)
             .then((res) => {
 
             })
@@ -137,10 +137,10 @@ const actions = {
             })
     },
 
-    async deleteEmail({commit, dispatch}, id) {
+    deleteEmail({commit, dispatch}, id) {
         let apiUrl = `/admin/${id}/destroy`
         commit('setLoading', true)
-        await axios.delete(apiUrl)
+        axios.delete(apiUrl)
             .then((res) => {
 
             })
