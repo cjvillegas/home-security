@@ -19,6 +19,7 @@ class TimeClock extends Model
     protected $fillable = [
         'employee_id',
         'clock_num',
+        'pay_rate',
         'swiped_at',
         'created_at',
         'updated_at',
