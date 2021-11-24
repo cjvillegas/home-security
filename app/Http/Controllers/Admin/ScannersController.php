@@ -273,7 +273,6 @@ class ScannersController extends Controller
             $response = $client->post('https://hooks.zapier.com/hooks/catch/5247499/bdb71r3/', [
                 'json' => $qcObj
             ]);
-            Log::info($response->getBody());
 
             $data = [
                 'zoho' => 'Responso from zoho here',
