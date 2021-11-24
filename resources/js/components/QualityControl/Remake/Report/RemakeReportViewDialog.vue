@@ -8,11 +8,11 @@
             :gutter="12">
             <el-col
                 :span="12"
-                v-for="(blind, blindKey) in viewOrderRemake"
+                v-for="(blind, blindKey) in viewOrderRemake.validated_blinds"
                 :key="blindKey">
                 <el-card
                     class="box-card border border-secondary mt-2"
-                    :body-style="{height: '270px'}">
+                    :body-style="{height: '380px'}">
                     <div class="d-flex">
                         <div class="ml-auto">
                             <u>
@@ -46,9 +46,17 @@
                             v-if="isPartiallyVerified(validationQuestions.QUESTIONS, blind.question_key)"
                             type="default"
                             @click="viewReason(blind.reason, blind.blind_id)">
-                            See Reason
+                            View Reason
                         </el-button>
                     </div>
+                    <span class="mt-5">
+                        <p style="magin: 0px">
+                            Validated By: {{ viewOrderRemake.user.name }}
+                        </p>
+                        <p style="magin: 0px">
+                            Validated At: {{ viewOrderRemake.created_at | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }}
+                        </p>
+                    </span>
                 </el-card>
             </el-col>
         </el-row>
@@ -69,7 +77,7 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['viewOrderRemake']),
+            ...mapGetters('remakechecker', ['viewOrderRemake', 'verifiedBy']),
             dialogTitle() {
                 return `Remake Report`
             },

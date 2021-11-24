@@ -71,7 +71,7 @@
                     <template slot-scope="scope">
                         <template>
                             <el-button
-                            @click="openViewDialog(scope.row.validated_blinds)"
+                            @click="openViewDialog(scope.row)"
                                 type="text"
                                 class="ml-2 text-secondary">
                                 <i class="fas fa-eye"></i>
@@ -133,7 +133,7 @@
         },
         methods: {
             ...mapActions('remakechecker', ['getOrderRemakes']),
-            ...mapMutations('remakechecker', ['setViewOrderRemake']),
+            ...mapMutations('remakechecker', ['setViewOrderRemake', 'setVerifiedBy']),
             searchReportNumber() {
                 this.getOrderRemakes(this.filters)
             },

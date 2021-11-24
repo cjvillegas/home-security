@@ -185,7 +185,6 @@ const mutations = {
         return state.orderRemakes = orderRemakes
     },
     setOrderRemakesTotal(state, orderRemakesTotal) {
-        console.log(orderRemakesTotal)
         return state.orderRemakesTotal = orderRemakesTotal
     },
     setViewOrderRemake(state, viewOrderRemake) {
