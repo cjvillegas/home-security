@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
@@ -36,7 +35,18 @@ class CustomerController extends Controller
      */
     public function fetchCustomers(Request $request)
     {
-        $customers = Customer::all();
+        $searchString = $request->get('searchString');
+        $size = $request->get('size');
+
+        $customers =  Customer::
+            orderBy('name', 'ASC')
+            ->when($searchString, function ($query) use ($searchString) {
+                $query->where('name', 'like', "%{$searchString}%");
+                $query->orWhere('code', 'like', "%{$searchString}%");
+                $query->orWhere('zoho_crm_id', 'like', "%{$searchString}%");
+            });
+
+        $customers = $customers->paginate($size);
 
         return response()->json(['customers' => $customers]);
     }
@@ -45,16 +55,15 @@ class CustomerController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  Request  $request
+     *
      * @return JsonResponse
      */
     public function store(CustomerRequest $request)
     {
         Customer::create($request->all());
-        return response()->json(
-            [
-                'message' => 'Customer Succesfully created.'
-            ]
-        );
+        return response()->json([
+            'message' => 'Customer Succesfully created.'
+        ]);
     }
 
     /**
@@ -75,7 +84,7 @@ class CustomerController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e);
-            return response()->json(['message' => "Something went wrong when creating a new machine."], 500);
+            return response()->json(['message' => "Something went wrong when creating a new customer."], 500);
         }
     }
 

@@ -2,22 +2,25 @@ import axios from "axios";
 
 const state = {
     customers: [],
+    customersTotal: 0,
 
     loading: false,
 };
 
 const getters = {
     customers: state => state.customers,
+    customersTotal: state => state.customersTotal,
     loading: state => state.loading
 };
 
 const actions = {
-    async fetchCustomers({commit}, data) {
+    fetchCustomers({commit}, data) {
         let apiUrl = `/admin/customers/list`
 
-        await axios.post(apiUrl, data)
+        axios.post(apiUrl, data)
         .then((response) => {
-            commit('setCustomers', response.data.customers)
+            commit('setCustomers', response.data.customers.data)
+            commit('setCustomersTotal', response.data.customers.total)
         })
         .catch(err => {
             console.log(err)
@@ -27,29 +30,32 @@ const actions = {
         })
     },
 
-    async createNewCustomer({commit}, data) {
+    createNewCustomer({commit}, data) {
         let apiUrl = `/admin/customers`
 
         commit('setLoading', true)
-        return await axios.post(apiUrl, data)
+        return axios.post(apiUrl, data)
     },
 
-    async updateCustomer({commit}, data) {
+    updateCustomer({commit}, data) {
         let apiUrl = `/admin/customers/${data.id}`
 
-        return await axios.patch(apiUrl, data)
+        return axios.patch(apiUrl, data)
     },
 
-    async deleteCustomer({commit}, id){
+    deleteCustomer({commit}, id){
         let apiUrl = `/admin/customers/${id}`
 
-        return await axios.delete(apiUrl)
+        return axios.delete(apiUrl)
     }
 };
 
 const mutations = {
     setCustomers(state, customers) {
         return state.customers = customers
+    },
+    setCustomersTotal(state, customersTotal) {
+        return state.customersTotal = customersTotal
     },
     setLoading(state, loading) {
         return state.loading = loading

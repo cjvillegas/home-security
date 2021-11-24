@@ -11,6 +11,7 @@ use App\Http\Requests\StoreScannerRequest;
 use App\Http\Requests\UpdateScannerRequest;
 use App\Models\QcFault;
 use App\Models\Scanner;
+use App\Services\QcWebhookService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class ScannersController extends Controller
 {
@@ -194,8 +196,10 @@ class ScannersController extends Controller
         $qcTag->operation_date = date('Y-m-d H:i:s', strtotime($request->get('operation_date')));
         $qcTag->save();
 
+        //if the decided to push a webhook and clicked "Save and CRM"
         if ($request->toggleCrm) {
             $response = $this->qcWebHook($qcTag);
+
             return response()->json($response, $response['status']);
         }
 
@@ -249,44 +253,8 @@ class ScannersController extends Controller
      */
     public function qcWebHook(QcFault $qcFault)
     {
-        try {
-            $data = null;
-            $client = new Client(
-                [
-                    'header' => [
-                        'Content-Type' => 'application/json',
-                    ]
-                ]
-            );
-            $qcObj = new stdClass();
-            $qcObj->customer_zoho_crm_id = optional($qcFault->scanner->order->customer)->code;
-            $qcObj->affected_blinds = optional($qcFault->scanner->order)->quantity;
-            $qcObj->productOne = optional($qcFault->scanner->order)->blind_type;
-            $qcObj->productDetailsOne = optional($qcFault->qualityControl)->description;
-            $qcObj->faultDesciptionOne = optional($qcFault)->description;
-            $qcObj->invoiceNumberOne = optional($qcFault->scanner->order->orderInvoice)->invoice_no;
-            $qcObj->dateManufactured = Carbon::parse($qcFault->scanner->scannedtime)->format('Y-m-d');
-            $qcObj->orderNo = optional($qcFault->scanner->order)->order_no;
-            $qcObj->subject = optional($qcFault->scanner->order)->order_no. '-'. optional($qcFault->scanner)->blindid;
-            $qcObj->customerRef = optional($qcFault->scanner->order)->customer_order_no;
-
-            $response = $client->post('https://hooks.zapier.com/hooks/catch/5247499/bdb71r3/', [
-                'json' => $qcObj
-            ]);
-
-            $data = [
-                'zoho' => 'Responso from zoho here',
-                'message' => 'You have successfully saved QC Tag. Please check Zoho to confirm.',
-                'status' => 200
-            ];
-
-        } catch (\GuzzleHttp\Exception\ClientException $e) {
-            $data = [
-                'zoho' => 'Fail posting a request',
-                'message' => 'Error occured while sending a request to Zoho Webhook',
-                'status' => 410
-            ];
-        }
+        $service = new QcWebhookService();
+        $data = $service->qcWebHook($qcFault);
 
         return $data;
     }

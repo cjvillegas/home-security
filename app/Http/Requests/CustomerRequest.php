@@ -25,7 +25,10 @@ class CustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => ['required', Rule::unique('customers')->ignore($this->id)],
+            'code' => [
+                'required',
+                Rule::unique('customers')->ignore($this->id)
+            ],
             'name'=> 'required',
             'zoho_crm_id' => 'required'
         ];

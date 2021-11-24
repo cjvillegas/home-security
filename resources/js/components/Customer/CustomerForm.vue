@@ -66,9 +66,9 @@
 </template>
 
 <script>
-    import { mapActions, mapGetters, mapMutations } from 'vuex';
-    import {dialog} from "../../mixins/dialog";
-    import {formHelper} from "../../mixins/formHelper";
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
+    import {dialog} from "../../mixins/dialog"
+    import {formHelper} from "../../mixins/formHelper"
     export default {
         name: "CustomerForm",
         mixins: [dialog, formHelper],
@@ -88,12 +88,15 @@
         },
         computed: {
             ...mapGetters('customers', ['loading']),
+
             hasModel() {
                 return this.model && this.model.id
             },
+
             dialogTitle() {
                 return (this.isView == true) ? 'View Customer' : this.hasModel ? 'Update Customer' : 'Create New Customer'
             },
+
             hasFormChange() {
                 for (let x in this.customerForm) {
                     // if mode is create and the field is is_active, skip
@@ -112,16 +115,14 @@
                 return false
             }
         },
+
         methods: {
-            ...mapMutations('customers', ['setLoading']),
-            ...mapActions('customers', ['createNewCustomer', 'updateCustomer']),
             validate() {
                 this.$refs.customerForm.validate(valid => {
                     if (valid) {
                         this.resetErrors()
                         this.setLoading(true)
                         if (this.hasModel) {
-
                             this.updateCustomer(this.customerForm)
                             .then((response) => {
                                 if (response.data) {
@@ -169,6 +170,7 @@
                     }
                 })
             },
+
             getDefaultFieldValues() {
                 return {
                     id: null,
@@ -177,6 +179,7 @@
                     zoho_crm_id:null
                 }
             },
+
             initializeForm() {
                 if (!this.model || !this.model.id) {
                     return
@@ -189,6 +192,7 @@
                     zoho_crm_id: this.model.zoho_crm_id
                 }
             },
+
             closeForm(ignoreChecker = false) {
                 if (!ignoreChecker && this.hasFormChange) {
                     this.$confirm(`Are you sure you want to close this form?`, 'Confirm', {
@@ -208,6 +212,7 @@
                 this.resetForm()
                 this.closeModal()
             },
+
             resetForm() {
                 this.customerForm = this.getDefaultFieldValues()
 
@@ -217,10 +222,12 @@
                     },200)
                 }
             },
+            ...mapMutations('customers', ['setLoading']),
+            ...mapActions('customers', ['createNewCustomer', 'updateCustomer']),
         },
+
         watch: {
             model(value) {
-                console.log(value)
                 if (value) {
                     this.initializeForm()
                 }

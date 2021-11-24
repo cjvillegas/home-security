@@ -127,6 +127,7 @@
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     export default {
         mixins: [pagination],
+
         data() {
             return {
                 filters: {
@@ -137,17 +138,9 @@
                 showForm: false
             }
         },
+
         created() {
-            this.fetchCustomers()
-            .then((response) => {
-                this.setCustomers(response.data.customers)
-            })
-            .catch(err => {
-                console.log(err)
-            })
-            .finally(_ => {
-                this.setLoading(false)
-            })
+            this.fetchCustomers(this.filters)
             this.filters.size = 10
             this.functionName = 'fetchCustomers'
 
@@ -159,22 +152,24 @@
                 this.fetchCustomers()
             })
         },
+
         computed: {
-            ...mapGetters('customers', ['customers', 'loading'])
+            ...mapGetters('customers', ['customers', 'customersTotal', 'loading'])
         },
+
         methods: {
-            ...mapMutations('customers', ['setCustomers', 'setLoading']),
-            ...mapActions('customers', ['fetchCustomers', 'deleteCustomer']),
             viewCustomer(customer) {
                 this.view = true
                 this.model = cloneDeep(customer)
                 this.showForm = true
             },
+
             stageCustomer(customer) {
                 this.view = false
                 this.model = cloneDeep(customer)
                 this.showForm = true
             },
+
             clickDelete(id) {
                 this.setLoading(true)
                 this.deleteCustomer(id)
@@ -195,10 +190,23 @@
                     this.setLoading(false)
                 })
             },
+
             closeForm() {
                 this.model = null
                 this.showForm = false
             },
+
+            ...mapMutations('customers', ['setCustomers', 'setLoading']),
+            ...mapActions('customers', ['fetchCustomers', 'deleteCustomer']),
+        },
+        watch: {
+            customersTotal: {
+                handler() {
+                    console.log(this.customersTotal)
+                    this.filters.total = this.customersTotal
+                },
+                immediate: true
+            }
         }
     }
 </script>
