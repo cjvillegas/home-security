@@ -359,6 +359,33 @@
                             </a>
                         </li>
                     @endcan
+                    @can('quality_control_remake_checker')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.remake-checker.index') }}" class="c-sidebar-nav-link {{ request()->is("admin.remake-checker.index") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-check-square c-sidebar-nav-icon"></i>
+                                Remake Checker
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('qc_remake_checker_report')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.remake-checker.report') }}" class="c-sidebar-nav-link {{ request()->is("admin.remake-checker.report") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-bar-chart c-sidebar-nav-icon"></i>
+                                Remake Reports
+                            </a>
+                        </li>
+                    @endcan
+
+                    @can('qc_remake_email_settings')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route('admin.remake-checker.email') }}" class="c-sidebar-nav-link {{ request()->is("admin.remake-checker.email") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa fa-reply-all c-sidebar-nav-icon"></i>
+                                Email Notifications
+                            </a>
+                        </li>
+                    @endcan
+
                 </ul>
             </li>
         @endif

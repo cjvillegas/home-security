@@ -109,6 +109,7 @@ class EmployeeTimeclock extends CronDatabasePopulator
         $sanitizedTimeClock['employee_id'] = optional($employee)->id;
         $sanitizedTimeClock['trans_id'] = $timeClock['TransID'];
         $sanitizedTimeClock['clock_num'] = $timeClock['ClockNum'];
+        $sanitizedTimeClock['pay_rate'] = $timeClock['PayRate'];
         $sanitizedTimeClock['swiped_at'] = $timeClock['SwipeDateTime'];
 
         return $sanitizedTimeClock;
@@ -128,11 +129,12 @@ class EmployeeTimeclock extends CronDatabasePopulator
                 TOP 10000
                 dbo.Employee.ClockNum,
                 dbo.ClockTransactions.SwipeDateTime,
-                dbo.ClockTransactions.TransID
+                dbo.ClockTransactions.TransID,
+                dbo.EmpExtra.PayRate
             FROM
                 dbo.ClockTransactions
-            INNER JOIN
-                dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
+            INNER JOIN dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransaction0s.EmpID
+            INNER JOIN dbo.EmpExtra ON dbo.EmpExtra.EmpID = dbo.Employee.EmpID
         ";
 
         // if the table is already populated get the most latest timeclock
