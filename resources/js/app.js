@@ -115,6 +115,9 @@ const app = new Vue({
         if (pathname === '/admin/reports/who-works-here-page') {
             this.getEmployees()
         }
+        if (pathname === '/admin/reports/shift-performance') {
+            this.getShifts()
+        }
 
         this.checkPrivacy()
         this.getAuthUser()
