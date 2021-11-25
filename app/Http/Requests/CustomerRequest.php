@@ -29,8 +29,8 @@ class CustomerRequest extends FormRequest
                 'required',
                 Rule::unique('customers')->ignore($this->id)
             ],
-            'name'=> 'required',
-            'zoho_crm_id' => 'required'
+            'name'=> 'string|required',
+            'zoho_crm_id' => 'string|required'
         ];
     }
 }

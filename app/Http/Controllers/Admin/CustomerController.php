@@ -83,7 +83,6 @@ class CustomerController extends Controller
             return response()->json(['message' => 'Customer Successfully Saved']);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info($e);
             return response()->json(['message' => "Something went wrong when creating a new customer."], 500);
         }
     }
