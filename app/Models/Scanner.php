@@ -33,6 +33,7 @@ class Scanner extends Model
         'created_at',
         'updated_at',
         'deleted_at',
+        'flag',
     ];
 
     /**
@@ -43,26 +44,6 @@ class Scanner extends Model
     protected $casts = [
         'blindid' => 'integer'
     ];
-
-    /**
-     * Custom properties that will get appended to all instances
-     * and data collection of this scanners
-     *
-     * @var array
-     */
-    protected $appends = [
-        'is_checked'
-    ];
-
-    public function getIsCheckedAttribute()
-    {
-        return '';
-    }
-
-    public function setScannedtimeAttribute($value)
-    {
-        $this->attributes['scannedtime'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
-    }
 
     /********************
     * R E L A T I O N S *
@@ -103,7 +84,7 @@ class Scanner extends Model
      *
      * @return HasOne
      */
-    public function qcFault()
+    public function qcFault(): HasOne
     {
         return $this->hasOne(QcFault::class, 'scanner_id', 'id');
     }
@@ -111,9 +92,9 @@ class Scanner extends Model
     /**
      * Get the order invoiced related to this Scanner
      *
-     * @return void
+     * @return HasOne
      */
-    public function orderInvoice()
+    public function orderInvoice(): HasOne
     {
         return $this->hasOne(OrderInvoice::class, 'order_no', 'blindid');
     }

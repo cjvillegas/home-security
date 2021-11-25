@@ -15,9 +15,9 @@ class Shift extends Model
     use HasFactory;
 
     // define the start and of time of each shift
-    const SHIFT_ONE_TIME = ['06:00', '14:00'];
-    const SHIFT_TWO_TIME = ['14:00', '22:00'];
-    const SHIFT_THREE_TIME = ['22:00', '06:00'];
+    const SHIFT_ONE_TIME = ['06:00:00', '13:59:59'];
+    const SHIFT_TWO_TIME = ['14:00:00', '21:59:59'];
+    const SHIFT_THREE_TIME = ['22:00:00', '05:59:59'];
 
     // list for convenience
     const SHIFT_TIME_LIST = [
@@ -28,12 +28,20 @@ class Shift extends Model
 
     public $table = 'shifts';
 
+    /**
+     * Dates related column
+     *
+     * @var string[]
+     */
     protected $dates = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
 
+    /**
+     * @var string[]
+     */
     protected $fillable = [
         'name',
         'created_at',

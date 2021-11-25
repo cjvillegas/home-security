@@ -18,6 +18,9 @@ class Process extends Model
 
     public $table = 'processes';
 
+    /**
+     * @var string[]
+     */
     protected $dates = [
         'created_at',
         'updated_at',
@@ -36,6 +39,8 @@ class Process extends Model
         'new_joiner_target',
         'process_manufacturing_time',
         'stop_start_button_required',
+        'team_trade_target',
+        'team_internet_target',
         'created_at',
         'updated_at',
         'deleted_at',

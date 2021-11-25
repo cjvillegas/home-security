@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Admin\OrdersController;
 
+// route collection for reports
+require_once base_path('routes/public.php');
+
 Route::redirect('/', '/login');
 Route::get('/home', function () {
     if (session('status')) {
