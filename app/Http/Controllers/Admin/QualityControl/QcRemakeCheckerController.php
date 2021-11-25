@@ -93,7 +93,7 @@ class QcRemakeCheckerController extends Controller
             $qcRemake->save();
             DB::commit();
 
-            $qcRemake = QcRemake::with('validatedBlinds')->where('id', $qcRemake->id)->first();
+            $qcRemake = QcRemake::with('validatedBlinds', 'user')->where('id', $qcRemake->id)->first();
 
             foreach (QcEmail::all() as $email) {
                 Mail::to($email)->queue(new QcRemakeCheckerMail($qcRemake));
