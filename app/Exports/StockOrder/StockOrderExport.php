@@ -77,7 +77,7 @@ class StockOrderExport implements
             'Delivery Address 3',
             'Delivery Address 4',
             'Delivery City',
-            'Delivery Country',
+            'Delivery County',
             'Delivery Postcode',
             'Delivery Country',
             'Delivery Contact',
@@ -98,7 +98,7 @@ class StockOrderExport implements
             $formatted = new stdClass;
 
             $formatted->customer_account_no = 'STEVE';
-            $formatted->sales_order_date = Carbon::parse($item->created_at, 'UTC')->setTimezone($timezone)->format('M d, Y h:i A');
+            $formatted->sales_order_date = Carbon::parse($item->created_at, 'UTC')->setTimezone($timezone)->format('d/m/Y');
             $formatted->requested_delivery_date = '';
             $formatted->promised_delivery_date = '';
             $formatted->customer_order_ref = $item->order_no;

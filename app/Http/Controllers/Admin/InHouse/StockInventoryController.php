@@ -11,6 +11,7 @@ use App\Models\StockOrder\StockOrder;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Excel;
 
 class StockInventoryController extends Controller
 {
@@ -188,7 +189,7 @@ class StockInventoryController extends Controller
             ->first();
 
         $export = new StockOrderExport($stockOrder);
-        $export->store("stock-order/{$stockOrder->order_no}.xlsx");
+        $export->store("stock-order/{$stockOrder->order_no}.xlsx", 'public', Excel::XLSX);
 
         return response()->json([
             'message' => 'Stock order approved.',
