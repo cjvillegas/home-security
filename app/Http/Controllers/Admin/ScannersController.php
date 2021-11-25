@@ -11,12 +11,16 @@ use App\Http\Requests\StoreScannerRequest;
 use App\Http\Requests\UpdateScannerRequest;
 use App\Models\QcFault;
 use App\Models\Scanner;
+use App\Services\QcWebhookService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 use Symfony\Component\HttpFoundation\Response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class ScannersController extends Controller
 {
@@ -188,9 +192,16 @@ class ScannersController extends Controller
     public function qcTag(StoreQcTag $request)
     {
         $qcTag = new QcFault();
-        $qcTag->fill($request->all());
+        $qcTag->fill($request->except(['toggleCrm']));
         $qcTag->operation_date = date('Y-m-d H:i:s', strtotime($request->get('operation_date')));
         $qcTag->save();
+
+        //if the decided to push a webhook and clicked "Save and CRM"
+        if ($request->toggleCrm) {
+            $response = $this->qcWebHook($qcTag);
+
+            return response()->json($response, $response['status']);
+        }
 
         return response()->json($qcTag);
     }
@@ -204,10 +215,16 @@ class ScannersController extends Controller
      */
     public function updateQcTag(UpdateQcTag $request, QcFault $qcFault)
     {
-        $qcFault->fill($request->all());
+        $qcFault->fill($request->except(['toggleCrm']));
         $qcFault->save();
+        $response = $qcFault->refresh();
 
-        return response()->json($qcFault->refresh());
+        if ($request->toggleCrm) {
+            $response = $this->qcWebHook($qcFault);
+            return response()->json($response, $response['status']);
+        }
+
+        return response()->json($response);
     }
 
     /**
@@ -227,5 +244,18 @@ class ScannersController extends Controller
         $qcFault->delete();
 
         return response()->json($qcFault->refresh());
+    }
+
+    /**
+     * This will create POST request to Zoho Workflow
+     *
+     * @return void
+     */
+    public function qcWebHook(QcFault $qcFault)
+    {
+        $service = new QcWebhookService();
+        $data = $service->qcWebHook($qcFault);
+
+        return $data;
     }
 }

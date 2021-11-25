@@ -7,6 +7,7 @@ import orders from './modules/orders'
 import process from './modules/process'
 import fireregister from './modules/fireregister'
 import manufacturedblind from './modules/report/manufacturedblind'
+import customers from './modules/customers'
 import targetperformance from './modules/report/targetperformance'
 import remakeChecker from './modules/remakechecker'
 
@@ -119,6 +120,7 @@ export default new Vuex.Store({
         fireregister,
         manufacturedblind,
         targetperformance,
+        customers,
         remakeChecker
     }
 })
