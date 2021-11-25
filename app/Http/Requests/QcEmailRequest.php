@@ -29,7 +29,7 @@ class QcEmailRequest extends FormRequest
             'name' => 'required',
             'email' => [
                 'required',
-                Rule::unique('machines')->ignore($this->id)
+                Rule::unique('qc_emails')->ignore($this->id)
             ],
         ];
     }
