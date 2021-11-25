@@ -129,11 +129,11 @@
 
         },
         computed: {
-            ...mapGetters('remakechecker', ['orderRemakes', 'orderRemakesTotal', 'loading']),
+            ...mapGetters('remakeChecker', ['orderRemakes', 'orderRemakesTotal', 'loading']),
         },
         methods: {
-            ...mapActions('remakechecker', ['getOrderRemakes']),
-            ...mapMutations('remakechecker', ['setViewOrderRemake', 'setVerifiedBy']),
+            ...mapActions('remakeChecker', ['getOrderRemakes']),
+            ...mapMutations('remakeChecker', ['setViewOrderRemake', 'setVerifiedBy']),
             searchReportNumber() {
                 this.getOrderRemakes(this.filters)
             },

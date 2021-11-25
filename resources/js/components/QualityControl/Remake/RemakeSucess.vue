@@ -49,7 +49,7 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['loading', 'orderRemakeResponse',  'selectedBlindId']),
+            ...mapGetters('remakeChecker', ['loading', 'orderRemakeResponse',  'selectedBlindId']),
 
             selectedBlinds() {
                 let formattedArray = []

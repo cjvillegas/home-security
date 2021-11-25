@@ -66,10 +66,10 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['loading']),
+            ...mapGetters('remakeChecker', ['loading']),
         },
         methods: {
-            ...mapActions('remakechecker', ['storeEmail', 'getEmails']),
+            ...mapActions('remakeChecker', ['storeEmail', 'getEmails']),
             validate() {
                 this.$refs.form.validate(valid => {
                     if (valid) {

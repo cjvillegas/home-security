@@ -46,11 +46,11 @@
         },
 
         computed: {
-            ...mapGetters('remakechecker', ['orders', 'loading'])
+            ...mapGetters('remakeChecker', ['orders', 'loading'])
         },
 
         methods: {
-            ...mapActions('remakechecker', ['getOrders']),
+            ...mapActions('remakeChecker', ['getOrders']),
 
             getOrdersAction() {
                 this.getOrders(this.filters)

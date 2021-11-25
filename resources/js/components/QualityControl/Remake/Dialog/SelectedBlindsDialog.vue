@@ -35,7 +35,7 @@
         mixins: [dialog],
 
         computed: {
-            ...mapGetters('remakechecker', ['selectedBlindId'])
+            ...mapGetters('remakeChecker', ['selectedBlindId'])
         },
 
         methods: {

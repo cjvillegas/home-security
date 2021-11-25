@@ -148,7 +148,7 @@
             this.blindValidationData = this.validationFormData
         },
         computed: {
-            ...mapGetters('remakechecker', ['selectedOrderNo', 'selectedBlindId', 'loading']),
+            ...mapGetters('remakeChecker', ['selectedOrderNo', 'selectedBlindId', 'loading']),
             validationFormData() {
                 let data = []
                 this.selectedBlindId.forEach(blind => {

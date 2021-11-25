@@ -77,13 +77,13 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['viewOrderRemake', 'verifiedBy']),
+            ...mapGetters('remakeChecker', ['viewOrderRemake', 'verifiedBy']),
             dialogTitle() {
                 return `Remake Report`
             },
         },
         methods: {
-            ...mapMutations('remakechecker', ['setViewOrderRemake']),
+            ...mapMutations('remakeChecker', ['setViewOrderRemake']),
             closeForm() {
                 this.setViewOrderRemake([])
                 this.closeModal()

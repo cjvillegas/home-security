@@ -100,7 +100,7 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['selectedOrderNo', 'selectedBlindId', 'orders', 'loading']),
+            ...mapGetters('remakeChecker', ['selectedOrderNo', 'selectedBlindId', 'orders', 'loading']),
         },
         methods: {
             ...mapActions('remakechecker', ['backToMainScreen']),
