@@ -167,8 +167,8 @@
             }
         },
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen', 'saveOrderRemake']),
-            ...mapMutations('remakechecker', ['setBlindValidationData', 'setAnsweredQuestions', 'setLoading']),
+            ...mapActions('remakeChecker', ['backToMainScreen', 'saveOrderRemake']),
+            ...mapMutations('remakeChecker', ['setBlindValidationData', 'setAnsweredQuestions', 'setLoading']),
             toggleCheckbox(){
 
             },

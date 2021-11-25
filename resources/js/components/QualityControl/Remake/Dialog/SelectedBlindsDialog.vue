@@ -65,8 +65,8 @@
                 this.closeModal()
             },
 
-            ...mapActions('remakechecker', ['backToMainScreen']),
-            ...mapMutations('remakechecker', ['setActiveForm']),
+            ...mapActions('remakeChecker', ['backToMainScreen']),
+            ...mapMutations('remakeChecker', ['setActiveForm']),
         }
     }
 </script>

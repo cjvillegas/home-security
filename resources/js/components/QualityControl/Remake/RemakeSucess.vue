@@ -60,7 +60,7 @@
             }
         },
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen']),
+            ...mapActions('remakeChecker', ['backToMainScreen']),
             printBarcode() {
                 let baseUrl = window.location.origin
 

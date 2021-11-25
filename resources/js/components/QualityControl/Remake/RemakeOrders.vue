@@ -103,8 +103,8 @@
             ...mapGetters('remakeChecker', ['selectedOrderNo', 'selectedBlindId', 'orders', 'loading']),
         },
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen']),
-            ...mapMutations('remakechecker', ['setSelectedBlindId']),
+            ...mapActions('remakeChecker', ['backToMainScreen']),
+            ...mapMutations('remakeChecker', ['setSelectedBlindId']),
             handleSelectionChange(val) {
                 this.setSelectedBlindId(val)
             },
