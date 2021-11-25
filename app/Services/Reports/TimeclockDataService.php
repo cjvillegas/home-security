@@ -126,12 +126,13 @@ class TimeclockDataService extends ReportDataService
                     $timeclock[$item->employee_id]['clock_in'] = date("M d, Y H:i", strtotime($item->swiped_at));
                     $timeclock[$item->employee_id]['clock_out'] = null;
                     $timeclock[$item->employee_id]['time_in'] = '--:--';
+                    $timeclock[$item->employee_id]['minutes_worked'] = 0;
                 } else {
                     $start = Carbon::parse($timeclock[$item->employee_id]['clock_in']);
                     $end = Carbon::parse($item->swiped_at);
 
                     // don't let the rendered hours greater than 12 hours
-                    if ($end->diff($start)->h <= 12) {
+                    if ($end->diff($start)->h <= 16) {
                         $timeclock[$item->employee_id]['clock_out'] = date("M d, Y H:i", strtotime($item->swiped_at));
                     }
                 }
@@ -140,7 +141,12 @@ class TimeclockDataService extends ReportDataService
                 if (!empty($timeclock[$item->employee_id]['clock_in']) && !empty($timeclock[$item->employee_id]['clock_out'])) {
                     $start = Carbon::parse($timeclock[$item->employee_id]['clock_in']);
                     $end = Carbon::parse($timeclock[$item->employee_id]['clock_out']);
-                    $timeclock[$item->employee_id]['time_in'] = "{$start->diff($end)->h} hours";
+                    $hours = $start->diffInHours($end);
+                    $minutes = $start->clone()->addHours($hours)->diffInMinutes($end);
+                    $minuteText = $minutes > 0 ? 'minutes' : 'minute';
+                    $hourText = $hours > 0 ? 'hours' : 'hour';
+                    $timeclock[$item->employee_id]['time_in'] = "{$hours} {$hourText} and {$minutes} {$minuteText}";
+                    $timeclock[$item->employee_id]['minutes_worked'] = $start->diffInMinutes($end);
                 }
             }
         }

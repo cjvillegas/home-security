@@ -7,6 +7,7 @@ use App\Models\ProcessSequence\ProcessSequence;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -119,6 +120,17 @@ class Order extends Model
     public function orderInvoice(): HasOne
     {
         return $this->hasOne(OrderInvoice::class, 'order_no', 'order_no');
+    }
+
+
+    /**
+     * Get Order's customer info
+     *
+     * @return BelongsTo
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class, 'account_code', 'code');
     }
     /********************************
     * E N D  O F  R E L A T I O N S *

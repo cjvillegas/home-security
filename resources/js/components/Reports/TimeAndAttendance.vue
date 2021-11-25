@@ -6,6 +6,9 @@
             v-loading="loading"
             class="box-card mt-3">
             <div class="d-flex">
+                <h4>
+                    Total: {{ getTotalHours }} hours
+                </h4>
                 <div class="ml-auto">
                     <global-filter-box>
                         <label>Select Date</label>
@@ -49,7 +52,8 @@
 
             <el-table
                 fit
-                :data="timeclocks">
+                :data="timeclocks"
+                :row-class-name="rowClassNamePicker">
                 <template
                     slot="empty">
                     <el-empty
@@ -110,6 +114,14 @@
 
             disableApplyFilterButton() {
                 return !this.filters.date
+            },
+
+            getTotalHours() {
+                let totalMinutesWorked = this.timeclocks.reduce((acc, cur) => {
+                    return acc += cur.minutes_worked
+                }, 0)
+
+                return (totalMinutesWorked / 60).toFixed(0)
             }
         },
 
@@ -198,6 +210,12 @@
             sanitizeFilter(filters) {
                 if (filters.employees.every(e => e === null)) {
                     delete filters.employees
+                }
+            },
+
+            rowClassNamePicker({row, rowIndex}) {
+                if (row.clock_in === null || row.clock_out === null) {
+                    return 'background-yellow'
                 }
             }
         }
