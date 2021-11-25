@@ -15,7 +15,7 @@ class QcEmailRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows('qc_remake_checker_view');
+        return Gate::allows('qc_remake_email_settings');
     }
 
     /**
