@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Auth\Access\Gate;
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

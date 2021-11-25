@@ -30,7 +30,7 @@
                 <template
                     slot="empty">
                     <el-empty
-                        description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
+                        description="No Records Found...">
                     </el-empty>
                 </template>
                 <el-table-column
