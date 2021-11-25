@@ -8,6 +8,7 @@ import process from './modules/process'
 import fireregister from './modules/fireregister'
 import manufacturedblind from './modules/report/manufacturedblind'
 import targetperformance from './modules/report/targetperformance'
+import remakeChecker from './modules/remakechecker'
 
 Vue.use(Vuex)
 
@@ -118,5 +119,6 @@ export default new Vuex.Store({
         fireregister,
         manufacturedblind,
         targetperformance,
+        remakeChecker
     }
 })
