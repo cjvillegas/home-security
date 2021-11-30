@@ -8,6 +8,7 @@ use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\DashboardMachineStatisticsDataService;
 use App\Services\Reports\QualityControlFaultDataService;
+use App\Services\Reports\ShiftPerformanceDataService;
 use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -334,12 +336,27 @@ class ReportController extends Controller
     }
 
     /**
-     * Target Performance
+     * Shift Performance View
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function shiftPerformance()
     {
         return view('admin.reports.shift-performance');
+    }
+
+    /**
+     * Run Shift Performance
+     *
+     * @return JsonResponse
+     */
+    public function runReportShiftPerformance(Request $request): JsonResponse
+    {
+        $shifts = $request->selectedShifts;
+        $service = new ShiftPerformanceDataService($request->all());
+        $data = $service->getData('list');
+
+        dd($data);
+        return response()->json();
     }
 }

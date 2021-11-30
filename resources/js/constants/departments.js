@@ -8,16 +8,20 @@ export const DEPARTMENTS = [
         'value': 'Roller',
     },
     {
-        'key': 2,
+        'key': 3,
         'value': 'Roller Express',
     },
     {
-        'key': 3,
+        'key': 4,
         'value': 'Technical',
     },
     {
-        'key': 3,
+        'key': 5,
         'value': 'Despatch',
     },
+    {
+        'key': 6,
+        'value': 'Vertical'
+    }
 
 ]

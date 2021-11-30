@@ -34,6 +34,9 @@ class Export extends Model
     // target performance report
     const TARGET_PERFORMANCE_REPORT = 'target_performance_export';
 
+    // shift performance report
+    const SHIFT_PERFORMANCE_REPORT = 'shift_performance_report';
+
     /**
      * Export Status
      */

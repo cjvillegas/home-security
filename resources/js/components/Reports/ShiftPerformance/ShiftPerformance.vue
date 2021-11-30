@@ -8,46 +8,93 @@
                         <el-form label-width="250px">
                             <el-form-item
                                 label="Please select the Department: ">
-                                <el-select v-model="selectedDepartments" placeholder="please select your zone">
+                                <el-select
+                                    v-model="form.selectedDepartments"
+                                    placeholder="Departments"
+                                    :multiple="isMultiple"
+                                    :collapse-tags="isMultiple">
                                     <el-option
                                         v-for="(department, departmentKey) in departments.DEPARTMENTS"
                                         :label="department.value"
-                                        :value="department.key"
+                                        :value="department.value"
                                         :key="departmentKey">
                                     </el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item
                                 label="Please select the Shift: ">
-                                <el-select placeholder="please select your zone">
-                                    <el-option label="Zone one" value="shanghai"></el-option>
-                                    <el-option label="Zone two" value="beijing"></el-option>
+                                <el-select
+                                    v-model="form.selectedShifts"
+                                    placeholder="Shifts"
+                                    :multiple="isMultiple"
+                                    :collapse-tags="isMultiple">
+                                    <el-option
+                                        v-for="shift in shifts"
+                                        :key="shift.id"
+                                        :value="shift.id"
+                                        :label="shift.name | ucWords">
+                                    </el-option>
                                 </el-select>
                             </el-form-item>
                             <el-form-item
                                 label="Please select the Date Range: ">
-                                <el-select placeholder="please select your zone">
-                                    <el-option label="Zone one" value="shanghai"></el-option>
-                                    <el-option label="Zone two" value="beijing"></el-option>
-                                </el-select>
+                                <el-date-picker
+                                    v-model="form.dateRange"
+                                    @change="handleChange"
+                                    type="daterange"
+                                    range-separator="~"
+                                    start-placeholder="Start date"
+                                    end-placeholder="End date">
+                                </el-date-picker>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button
+                                    type="primary"
+                                    @click="runReport">
+                                    Run Report
+                                </el-button>
                             </el-form-item>
                         </el-form>
+                        <p>
+                            Please note this report will include only the final processes and the number of blinds planned for the specific date.
+                        </p>
                     </div>
                 <div class="col-md-3"></div>
             </div>
-
         </el-card>
     </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
     import * as departments from '../../../constants/departments'
     export default {
         data() {
             return {
                 departments,
-                selectedDepartments: [],
+                form: {
+                    selectedDepartments: [],
+                    selectedShifts: [],
+                    dateRange: null
+                }
             }
+        },
+
+        computed: {
+            isMultiple() {
+                return true
+            },
+            ...mapGetters(['shifts']),
+        },
+
+        methods: {
+            handleChange() {
+
+            },
+            runReport() {
+                this.runShiftPerformanceReport(this.form)
+            },
+            ...mapActions('shiftPerformance', ['runShiftPerformanceReport'])
         }
     }
 </script>
