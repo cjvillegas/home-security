@@ -30,15 +30,19 @@
             </el-table-column>
 
             <el-table-column
-                prop="width"
                 label="Width"
                 sortable>
+                <template slot-scope="scope">
+                    {{ scope.row.width | removeDecimalPlaces }}
+                </template>
             </el-table-column>
 
             <el-table-column
-                prop="drop"
                 label="Drop"
                 sortable>
+                <template slot-scope="scope">
+                    {{ scope.row.drop | removeDecimalPlaces }}
+                </template>
             </el-table-column>
 
             <el-table-column
