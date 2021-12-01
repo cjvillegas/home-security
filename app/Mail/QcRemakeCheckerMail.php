@@ -34,6 +34,8 @@ class QcRemakeCheckerMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.qc-remake-checker-mail');
+        $qcRemake = $this->qcRemake;
+        return $this->subject('QC Remake. Order No.'. $qcRemake->order_no)
+            ->markdown('emails.qc-remake-checker-mail');
     }
 }

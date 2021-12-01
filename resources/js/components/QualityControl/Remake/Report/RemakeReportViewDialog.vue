@@ -27,6 +27,9 @@
                                 type="default">
                                 View Reason
                             </el-button>
+
+                            <p style="magin: 0px">Validated By: {{ viewOrderRemake.user.name }} </p>
+                            <p style="magin: 0px">Validated At: {{ viewOrderRemake.created_at | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }} </p>
                             </th>
                         </tr>
                     </thead>
@@ -53,11 +56,11 @@
                     </tbody>
                 </table>
                 <span class="mt-5">
-                    <p style="magin: 0px">
-                        Validated By: {{ viewOrderRemake.user.name }}
+
+
                     </p>
                     <p style="magin: 0px">
-                        Validated At: {{ viewOrderRemake.created_at | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }}
+
                     </p>
                 </span>
             </el-col>

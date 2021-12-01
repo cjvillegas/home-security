@@ -11,7 +11,7 @@ Report number: {{ $qcRemake->report_no }}</h2>
 
 @foreach ($qcRemake->validatedBlinds as $validatedBlind)
 
-<table class="table mt-2">
+<table class="table">
     <thead>
         <tr>
             <th>Blind ID: {{ $validatedBlind->barcode }} </th>
