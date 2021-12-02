@@ -64,8 +64,11 @@ class ShiftPerformanceDataService extends ReportDataService
             case 'list':
                 $data = $this->buildCollection();
                 break;
+
+            case 'export':
+                $data = $this->buildCollection();
+                break;
         }
-        dd($data);
         return $data;
     }
 
@@ -105,6 +108,7 @@ class ShiftPerformanceDataService extends ReportDataService
                         $fullyManufactured = $this->manufacturedBlindsQuery($from, $to, $department, $shift);
                         $plannedWork = $this->totalPlannedQuery($from, $to, $department, $shift);
                         $peopleWorked = $this->peopleWorkedQuery($from, $to, $department);
+
                     }
                     if (Carbon::parse($date)->isWeekDay() || ($fullyManufactured > 0 && $plannedWork > 0 && $peopleWorked> 0)) {
                         if ($department == 'Vertical') {
@@ -112,12 +116,14 @@ class ShiftPerformanceDataService extends ReportDataService
                             foreach ($verticalTypes as $type) { // do this because Vertical department has three different types per Shift
                                 $verticalManufacturedBlinds += $this->manufacturedBlindsQuery($from, $to, $department, $shift, $type);
                             }
+                            $targetPerformance = $this->targetPerformanceTransformer($verticalManufacturedBlinds, $plannedWork);
                             $shiftData->push([
                                 'shift' => $shift,
                                 'date' => Carbon::parse($date)->format('Y-m-d'),
                                 'fully_manufactured' => $verticalManufacturedBlinds,
-                                'total_planned' => $this->totalPlannedQuery($from, $to, $department, $shift),
-                                'people_worked' => $this->peopleWorkedQuery($from, $to, $department),
+                                'total_planned' => $plannedWork,
+                                'people_worked' => $peopleWorked,
+                                'target_performance' => $targetPerformance
                             ]);
                         } else
                         if ($department == 'Despatch') {
@@ -130,6 +136,7 @@ class ShiftPerformanceDataService extends ReportDataService
                                 'people_worked' => $this->peopleWorkedQuery($from, $to, $department)
                             ]);
                         } else {
+                            $targetPerformance = $this->targetPerformanceTransformer($fullyManufactured, $plannedWork);
                             //get only weekdays data, if weekend has data return it.
                             $shiftData->push([
                                 'shift' => $shift,
@@ -137,19 +144,21 @@ class ShiftPerformanceDataService extends ReportDataService
                                 'fully_manufactured' => $fullyManufactured,
                                 'total_planned' => $plannedWork,
                                 'people_worked' => $peopleWorked,
+                                'target_performance' => $targetPerformance
                             ]);
                         }
                     }
                 }
-                $departmentData->push([
+                $data->push([
+                    'department' => $department,
                     'shift' => $shift,
                     'data' => $shiftData
                 ]);
             }
-            $data->push([
-                'department' => $department,
-                'data' => $departmentData
-            ]);
+            // $data->push([
+            //     'department' => $department,
+            //     'data' => $departmentData
+            // ]);
         }
 
         return $data;
@@ -320,12 +329,55 @@ class ShiftPerformanceDataService extends ReportDataService
             }
         }
 
+        if ($department == 'Vertical') {
+            if ($shift == 1) {
+                $folders = [
+                    'Vertical - Shift 1 Team 1',
+                    'Vertical - Shift 1 Team 2',
+                    'Vertical - Shift 1 Team 3',
+                    'Vertical - Shift 1 Team 4',
+                    'Vertical - Shift 1 Team 5',
+                    'Vertical - Shift 1 Team 6',
+                    'Vertical Add - Shift 1 Team 1',
+                    'Vertical Add - Shift 1 Team 2',
+                    'Vertical Add - Shift 1 Team 3', 'Vertical Add - Shift 1 Team 4',
+                    'Vertical Add - Shift 1 Team 5', 'Vertical Add - Shift 1 Team 6'
+                ];
+            }
+
+            if ($shift == 2) {
+                $folders = [
+                    'Vertical - Shift 2 Team 1',
+                    'Vertical - Shift 2 Team 2',
+                    'Vertical - Shift 2 Team 3',
+                    'Vertical - Shift 2 Team 4',
+                    'Vertical - Shift 2 Team 5',
+                    'Vertical Add - Shift 2 Team 1',
+                    'Vertical Add - Shift 2 Team 2',
+                    'Vertical Add - Shift 2 Team 3'
+                ];
+            }
+
+            if ($shift == 3) {
+                $folders = [
+                    'Vertical - Shift 3 Team 1',
+                    'Vertical - Shift 3 Team 2',
+                    'Vertical - Shift 3 Team 3',
+                    'Vertical - Shift 3 Team 4',
+                    'Vertical - Shift 3 Team 5',
+                    'Vertical Add - Shift 3 Team 1',
+                    'Vertical Add - Shift 3 Team 2',
+                    'Vertical Add - Shift 3 Team 3'
+                ];
+            }
+        }
+
         $query = ShiftAssignment::query()
-                ->select([DB::raw('COUNT(DISTINCT shift_assignments.serial_id) as total')])
-                ->join('orders', 'shift_assignments.serial_id', 'orders.serial_id')
-                ->whereIn('shift_assignments.folder_name', $folders)
-                ->whereDate('shift_assignments.work_date', Carbon::parse($from)->format('Y-m-d'))
-                ->first();
+            ->select([DB::raw('COUNT(DISTINCT shift_assignments.serial_id) as total')])
+            ->join('orders', 'shift_assignments.serial_id', 'orders.serial_id')
+            ->whereIn('shift_assignments.folder_name', $folders)
+            ->whereDate('shift_assignments.work_date', Carbon::parse($from)->format('Y-m-d'))
+            ->first();
         return $query['total'];
     }
 
@@ -400,6 +452,30 @@ class ShiftPerformanceDataService extends ReportDataService
         return $query['total'];
     }
 
+    private function targetPerformanceTransformer($manufactured, $planned)
+    {
+        Log::info($manufactured);
+        Log::info('-');
+        Log::info($planned);
+        if ($manufactured < $planned) {
+            return [
+                'value' => $planned - $manufactured,
+                'message' => $planned - $manufactured . ' left for next Shift to complete'
+            ];
+        }
+        if ($manufactured > $planned) {
+            return [
+                'value' => $planned - $manufactured,
+                'message' => abs($planned - $manufactured). ' Extra made'
+            ];
+        }
+        if ($manufactured == $planned) {
+            return [
+                'value' => $planned - $manufactured,
+                'message' => 'Target Completed'
+            ];
+        }
+    }
     public function buildQuery(): self
     {
         return $this;

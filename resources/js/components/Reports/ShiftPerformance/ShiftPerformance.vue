@@ -1,8 +1,8 @@
 <template>
     <div>
         <global-page-header title="Shift Performance"></global-page-header>
-        <el-card class="box-card mt-2">
-            <div class="row">
+        <el-card class="box-card mt-2" v-loading="loading">
+            <div class="row" v-if="!shiftPerformanceView">
                 <div class="col-md-4"></div>
                     <div class="col-md-5">
                         <el-form label-width="250px">
@@ -61,12 +61,15 @@
                     </div>
                 <div class="col-md-3"></div>
             </div>
+
+            <shift-performance-view v-if="shiftPerformanceView">
+            </shift-performance-view>
         </el-card>
     </div>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
     import * as departments from '../../../constants/departments'
     export default {
         data() {
@@ -85,6 +88,7 @@ import { mapActions, mapGetters } from 'vuex'
                 return true
             },
             ...mapGetters(['shifts']),
+            ...mapGetters('shiftPerformance', ['shiftPerformanceView', 'loading'])
         },
 
         methods: {
@@ -92,9 +96,11 @@ import { mapActions, mapGetters } from 'vuex'
 
             },
             runReport() {
+                this.setForm(this.form)
                 this.runShiftPerformanceReport(this.form)
             },
-            ...mapActions('shiftPerformance', ['runShiftPerformanceReport'])
+            ...mapActions('shiftPerformance', ['runShiftPerformanceReport']),
+            ...mapMutations('shiftPerformance', ['setForm'])
         }
     }
 </script>

@@ -13,6 +13,7 @@ use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
 use App\Services\Reports\WhoWorksHereDataService;
+use App\Services\ShiftPerformanceExporterService;
 use App\Services\TargetPerformanceExporterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -356,7 +357,24 @@ class ReportController extends Controller
         $service = new ShiftPerformanceDataService($request->all());
         $data = $service->getData('list');
 
-        dd($data);
-        return response()->json();
+
+        return response()->json([
+            'shiftPerformances' => $data
+        ]);
+    }
+
+    public function exportShiftPerformances(Request $request): JsonResponse
+    {
+        $user = User::find(auth()->user()->id);
+        $service = new ShiftPerformanceDataService($request->all());
+        $exporter = new ShiftPerformanceExporterService($user);
+        $exporter->setName('Shift Performance Export')
+            ->setPath('exports')
+            ->export($service, $request->dateRange);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+        ]);
     }
 }
