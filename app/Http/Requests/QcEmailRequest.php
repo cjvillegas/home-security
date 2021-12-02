@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Auth\Access\Gate;
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,7 +15,7 @@ class QcEmailRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows('qc_remake_checker_view');
+        return Gate::allows('qc_remake_email_settings');
     }
 
     /**
@@ -29,7 +29,7 @@ class QcEmailRequest extends FormRequest
             'name' => 'required',
             'email' => [
                 'required',
-                Rule::unique('machines')->ignore($this->id)
+                Rule::unique('qc_emails')->ignore($this->id)
             ],
         ];
     }

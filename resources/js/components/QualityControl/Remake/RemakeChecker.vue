@@ -26,7 +26,7 @@ import { mapGetters } from 'vuex'
     export default {
         name: "RemakeChecker",
         computed: {
-            ...mapGetters('remakechecker', ['activeForm'])
+            ...mapGetters('remakeChecker', ['activeForm'])
         }
     }
 </script>

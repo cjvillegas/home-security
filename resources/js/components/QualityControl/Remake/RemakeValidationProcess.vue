@@ -148,7 +148,7 @@
             this.blindValidationData = this.validationFormData
         },
         computed: {
-            ...mapGetters('remakechecker', ['selectedOrderNo', 'selectedBlindId', 'loading']),
+            ...mapGetters('remakeChecker', ['selectedOrderNo', 'selectedBlindId', 'loading']),
             validationFormData() {
                 let data = []
                 this.selectedBlindId.forEach(blind => {
@@ -167,8 +167,8 @@
             }
         },
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen', 'saveOrderRemake']),
-            ...mapMutations('remakechecker', ['setBlindValidationData', 'setAnsweredQuestions', 'setLoading']),
+            ...mapActions('remakeChecker', ['backToMainScreen', 'saveOrderRemake']),
+            ...mapMutations('remakeChecker', ['setBlindValidationData', 'setAnsweredQuestions', 'setLoading']),
             toggleCheckbox(){
 
             },

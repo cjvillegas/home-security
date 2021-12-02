@@ -49,7 +49,7 @@
             }
         },
         computed: {
-            ...mapGetters('remakechecker', ['loading', 'orderRemakeResponse',  'selectedBlindId']),
+            ...mapGetters('remakeChecker', ['loading', 'orderRemakeResponse',  'selectedBlindId']),
 
             selectedBlinds() {
                 let formattedArray = []
@@ -60,7 +60,7 @@
             }
         },
         methods: {
-            ...mapActions('remakechecker', ['backToMainScreen']),
+            ...mapActions('remakeChecker', ['backToMainScreen']),
             printBarcode() {
                 let baseUrl = window.location.origin
 

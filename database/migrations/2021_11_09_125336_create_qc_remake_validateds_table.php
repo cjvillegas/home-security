@@ -15,7 +15,7 @@ class CreateQcRemakeValidatedsTable extends Migration
     {
         Schema::create('qc_remake_validateds', function (Blueprint $table) {
             $table->id();
-            $table->foreign('qc_remake_id')->references('id')->on('qc_remakes');
+            $table->unsignedBigInteger('qc_remake_id');
             $table->string('blind_id');
             $table->string('barcode')->unique();
             $table->string('question_key')->nullable();
@@ -23,6 +23,8 @@ class CreateQcRemakeValidatedsTable extends Migration
             $table->boolean('is_fully_verified')->nullable();
             $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
+
+            $table->foreign('qc_remake_id')->references('id')->on('qc_remakes')->onUpdate('CASCADE')->onDelete('CASCADE');
         });
     }
 

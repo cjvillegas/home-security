@@ -35,7 +35,7 @@
         mixins: [dialog],
 
         computed: {
-            ...mapGetters('remakechecker', ['selectedBlindId'])
+            ...mapGetters('remakeChecker', ['selectedBlindId'])
         },
 
         methods: {
@@ -65,8 +65,8 @@
                 this.closeModal()
             },
 
-            ...mapActions('remakechecker', ['backToMainScreen']),
-            ...mapMutations('remakechecker', ['setActiveForm']),
+            ...mapActions('remakeChecker', ['backToMainScreen']),
+            ...mapMutations('remakeChecker', ['setActiveForm']),
         }
     }
 </script>

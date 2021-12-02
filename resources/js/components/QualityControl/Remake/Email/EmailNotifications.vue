@@ -30,7 +30,7 @@
                 <template
                     slot="empty">
                     <el-empty
-                        description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
+                        description="No Records Found...">
                     </el-empty>
                 </template>
                 <el-table-column
@@ -90,10 +90,10 @@
             this.getEmails()
         },
         computed: {
-            ...mapGetters('remakechecker', ['emails', 'loading'])
+            ...mapGetters('remakeChecker', ['emails', 'loading'])
         },
         methods: {
-            ...mapActions('remakechecker', ['getEmails', 'deleteEmail']),
+            ...mapActions('remakeChecker', ['getEmails', 'deleteEmail']),
             confirmDeleteTitle(name) {
                 return `Are you sure you want to remove the following user: ${name} to receive Email Notification when a new report is created?`
             },
