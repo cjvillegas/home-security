@@ -98,7 +98,6 @@
         },
 
         methods: {
-            ...mapActions('shiftPerformance', ['backToFilters', 'exportShiftPerformances']),
             clickExport() {
                 this.exportShiftPerformances(this.form)
                 .then(() => {
@@ -108,7 +107,9 @@
                         type: 'success'
                     })
                 })
-            }
+            },
+
+            ...mapActions('shiftPerformance', ['backToFilters', 'exportShiftPerformances'])
         }
     }
 </script>

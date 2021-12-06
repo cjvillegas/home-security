@@ -5,14 +5,12 @@ namespace App\Services\Reports;
 use App\Models\Export;
 use App\Models\Order;
 use App\Models\Scanner;
-use App\Models\Shift;
 use App\Models\ShiftAssignment;
 use App\Services\Reports\ReportDataService;
 use Illuminate\Support\Collection AS SupCollection;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ShiftPerformanceDataService extends ReportDataService
 {
@@ -73,7 +71,7 @@ class ShiftPerformanceDataService extends ReportDataService
     }
 
     /**
-     * buildCollection
+     * Fetch and format the ShiftPerformance Data
      *
      * @return SupCollection
      */
@@ -91,6 +89,9 @@ class ShiftPerformanceDataService extends ReportDataService
             $departmentData = collect();
             foreach ($this->shifts as $shift) { //To iterate every shift
                 $shiftData = collect();
+                $totalManufacturedBlinds = 0;
+                $totalPlannedWork = 0;
+
                 foreach ($dates as $date) {
                     if ($shift == 1) {
                         $from = Carbon::parse($date)->format('Y-m-d').' '. '06:00:00';
@@ -125,8 +126,11 @@ class ShiftPerformanceDataService extends ReportDataService
                                 'people_worked' => $peopleWorked,
                                 'target_performance' => $targetPerformance
                             ]);
-                        } else
-                        if ($department == 'Despatch') {
+
+                            $totalManufacturedBlinds += $verticalManufacturedBlinds;
+                            $totalPlannedWork += $plannedWork;
+
+                        } elseif ($department == 'Despatch') {
                             $shiftData->push([
                                 'shift' => $shift,
                                 'date' => Carbon::parse($date)->format('Y-m-d'),
@@ -146,24 +150,54 @@ class ShiftPerformanceDataService extends ReportDataService
                                 'people_worked' => $peopleWorked,
                                 'target_performance' => $targetPerformance
                             ]);
+
+                            $totalManufacturedBlinds += $fullyManufactured;
+                            $totalPlannedWork += $plannedWork;
                         }
                     }
                 }
+
+                // To get the total date range selected
+                $fromStart = Carbon::parse($this->dateRange[0])->startOfDay()->addHours(6);
+                $toEnd = Carbon::parse($this->dateRange[1])->addDay()->format('Y-m-d').' '. '05:59:59';
+
+                // Add rows for Overall Total per column
+                $totalRows = [
+                    'shift' => $shift,
+                    'date' => 'Total',
+                    'fully_manufactured' => $totalManufacturedBlinds,
+                    'total_planned' => $totalPlannedWork,
+                    'people_worked' => $this->peopleWorkedQuery($fromStart, $toEnd, $department),
+                    'target_performance' => $this->targetPerformanceTransformer($totalManufacturedBlinds, $totalPlannedWork, true),
+                ];
+
+                if ($department != 'Despatch') {
+                    $shiftData->push($totalRows);
+                }
+
                 $data->push([
                     'department' => $department,
                     'shift' => $shift,
                     'data' => $shiftData
                 ]);
             }
-            // $data->push([
-            //     'department' => $department,
-            //     'data' => $departmentData
-            // ]);
         }
 
         return $data;
     }
 
+    /**
+     * Fetch number of Manufactured Blinds
+     *
+     * @param  mixed $from
+     * @param  mixed $to
+     * @param  mixed $department
+     * @param  mixed $shift
+     * @param  mixed $verticalType
+     * @param  mixed $despatchType
+     *
+     * @return Array
+     */
     private function manufacturedBlindsQuery($from, $to, $department, $shift, $verticalType = null, $despatchType = null)
     {
         if ($department == 'Technical') {
@@ -224,6 +258,16 @@ class ShiftPerformanceDataService extends ReportDataService
         return $query['total'];
     }
 
+    /**
+     *Fetch number of Total Planned
+     *
+     * @param  mixed $from
+     * @param  mixed $to
+     * @param  mixed $department
+     * @param  mixed $shift
+     *
+     * @return Array
+     */
     private function totalPlannedQuery($from, $to, $department, $shift)
     {
         $folders = [];
@@ -381,6 +425,15 @@ class ShiftPerformanceDataService extends ReportDataService
         return $query['total'];
     }
 
+    /**
+     * Fetch number of People Worked
+     *
+     * @param  mixed $from
+     * @param  mixed $to
+     * @param  mixed $department
+     *
+     * @return Array
+     */
     private function peopleWorkedQuery($from, $to, $department)
     {
         $processes = [];
@@ -452,11 +505,24 @@ class ShiftPerformanceDataService extends ReportDataService
         return $query['total'];
     }
 
-    private function targetPerformanceTransformer($manufactured, $planned)
+    /**
+     * Transformer value for 'Target Performance' column.
+     *
+     * @param  mixed $manufactured
+     * @param  mixed $planned
+     * @return void
+     */
+    private function targetPerformanceTransformer($manufactured, $planned, $isOverallTotal = false)
     {
-        Log::info($manufactured);
-        Log::info('-');
-        Log::info($planned);
+        if ($isOverallTotal) {
+            $targetPerformanceTotal = $planned != 0 ? (($manufactured / $planned) * 100)  : 0;
+            return [
+                'value' => $targetPerformanceTotal,
+                'message' => number_format((float)$targetPerformanceTotal, 2, '.', ''). '% Efficiency'
+            ];
+        }
+
+
         if ($manufactured < $planned) {
             return [
                 'value' => $planned - $manufactured,
@@ -476,6 +542,7 @@ class ShiftPerformanceDataService extends ReportDataService
             ];
         }
     }
+
     public function buildQuery(): self
     {
         return $this;

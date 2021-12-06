@@ -40,7 +40,8 @@
                                 label="Please select the Date Range: ">
                                 <el-date-picker
                                     v-model="form.dateRange"
-                                    @change="handleChange"
+                                    @change="datesChange"
+                                    :picker-options="pickerOption"
                                     type="daterange"
                                     range-separator="~"
                                     start-placeholder="Start date"
@@ -69,16 +70,43 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
+    import moment from "moment"
     import * as departments from '../../../constants/departments'
     export default {
         data() {
+            let defaultProps = {
+                date: moment().format('YYYY-MM-DD')
+            }
+
             return {
                 departments,
                 form: {
                     selectedDepartments: [],
                     selectedShifts: [],
                     dateRange: null
+                },
+                onPick: [],
+                pickerOption: {
+                    disabledDate: time => {
+                        if (!this.onPick || !this.onPick.length) {
+                            return false
+                        }
+
+                        let momentTime = moment(this.onPick[0])
+                        let momentNow = moment(time)
+
+                        /**
+                         * prevent selection of dates that will be more than 31 days
+                         * this logic is to prevent stack overflow error in our server when users
+                         * want to export loads of data.
+                         */
+                        return Math.abs(momentTime.diff(momentNow, 'days')) > 31
+                    },
+                    onPick: ({minDate, maxDate}) => {
+                        this.onPick[0] = minDate
+                        this.onPick[1] = maxDate
+                    }
                 }
             }
         },
@@ -87,18 +115,32 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
             isMultiple() {
                 return true
             },
+
             ...mapGetters(['shifts']),
             ...mapGetters('shiftPerformance', ['shiftPerformanceView', 'loading'])
         },
 
         methods: {
-            handleChange() {
-
-            },
             runReport() {
                 this.setForm(this.form)
                 this.runShiftPerformanceReport(this.form)
             },
+
+            datesChange() {
+                if (this.selectedFilters.date && this.selectedFilters.date.length) {
+                    let [start, end] = this.selectedFilters.date
+                    if (Math.abs(moment(end).diff(moment(start), 'days')) > 31) {
+                        this.selectedFilters.date = []
+
+                        this.$notify.error({
+                            title: 'Invalid Input',
+                            message: "You can't select dates more than 31 days. If you have any concerns please report this to your administrator."
+                        });
+                    }
+
+                }
+            },
+
             ...mapActions('shiftPerformance', ['runShiftPerformanceReport']),
             ...mapMutations('shiftPerformance', ['setForm'])
         }
