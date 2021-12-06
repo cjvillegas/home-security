@@ -24,6 +24,23 @@ abstract class ReportDataService implements ServiceDataInterface
     protected $query;
 
     /**
+     * @param string $type
+     *
+     * @return mixed
+     */
+    abstract public function getData(string $type);
+
+    /**
+     * @return self
+     */
+    abstract public function buildQuery();
+
+    /**
+     * @return self
+     */
+    abstract public function applyFilters();
+
+    /**
      * ReportDataService constructor
      *
      * @param array $filters
@@ -86,21 +103,4 @@ abstract class ReportDataService implements ServiceDataInterface
     {
         return $this->filters[$key] ?? $default;
     }
-
-    /**
-     * @param string $type
-     *
-     * @return mixed
-     */
-    abstract public function getData(string $type);
-
-    /**
-     * @return self
-     */
-    abstract public function buildQuery();
-
-    /**
-     * @return self
-     */
-    abstract public function applyFilters();
 }

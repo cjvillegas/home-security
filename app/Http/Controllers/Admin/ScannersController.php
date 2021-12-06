@@ -12,15 +12,10 @@ use App\Http\Requests\UpdateScannerRequest;
 use App\Models\QcFault;
 use App\Models\Scanner;
 use App\Services\QcWebhookService;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use stdClass;
 use Symfony\Component\HttpFoundation\Response;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
 
 class ScannersController extends Controller
 {

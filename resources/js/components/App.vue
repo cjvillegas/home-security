@@ -55,6 +55,10 @@ export default {
                 this.$router.push({name: 'Order List', params: {}})
             }
 
+            if (pathname === '/admin/orders/order-search' && hash === '#/') {
+                this.$router.push({name: 'Order Search View', params: {}})
+            }
+
             if (pathname === '/admin/reports/work-analytics' && hash === '#/') {
                 this.$router.push({name: 'Work Analytics', params: {}})
             }

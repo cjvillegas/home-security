@@ -103,10 +103,10 @@
                 class="custom-pagination-class mt-3 mb-3 float-right"
                 background
                 layout="total, sizes, prev, pager, next"
-                :total="filters.total"
-                :page-size="filters.size"
+                :total="pagination.total"
+                :page-size="pagination.size"
                 :page-sizes="[10, 25, 50, 100]"
-                :current-page="filters.page"
+                :current-page="pagination.page"
                 @size-change="handleSize"
                 @current-change="handlePage">
             </el-pagination>
@@ -140,8 +140,9 @@
         },
 
         created() {
+            let params = {...this.filters, ...this.pagination}
             this.fetchCustomers(this.filters)
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchCustomers'
 
             this.$EventBus.listen('CUSTOMER_CREATE', _ => {
@@ -203,7 +204,7 @@
             customersTotal: {
                 handler() {
                     console.log(this.customersTotal)
-                    this.filters.total = this.customersTotal
+                    this.pagination.total = this.customersTotal
                 },
                 immediate: true
             }

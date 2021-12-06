@@ -115,6 +115,11 @@ class PublicDashboardHourlyReport extends Command
         $url = storage_path() . '/app/public/' . $path;
         $emails = $this->getEmails();
 
+        // sanity check: make sure there are valid email addresses
+        if (empty($emails)) {
+            return;
+        }
+
         // loop through the emails
         foreach ($emails as $email) {
             Notification::route('mail', $email)
@@ -213,6 +218,11 @@ class PublicDashboardHourlyReport extends Command
      */
     private function getEmails()
     {
+        // if environment is in local, make sure we don't send any email
+        if (__is_local()) {
+            return [];
+        }
+
         if (__is_production()) {
             $emails = self::EMAILS;
         } else {

@@ -50,7 +50,11 @@ class ExportDataAsCollectionFromService implements
     */
     public function collection(): SupportCollection
     {
-        return $this->service->getData('export')->chunk(1000);
+        return $this->service->getData('export')
+            ->map(function($item) {
+                return $item->only($this->headerKeys);
+            })
+            ->chunk(500);
     }
 
     /**
