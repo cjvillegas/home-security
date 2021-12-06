@@ -86,7 +86,6 @@ class OrderDataService extends ReportDataService
     {
         $query = Order::select([
                 'orders.id',
-                'orders.row_color',
                 'orders.ordered_at',
                 'orders.order_no',
                 'orders.serial_id',
@@ -111,7 +110,8 @@ class OrderDataService extends ReportDataService
                         'scanners.blindid',
                         'scanners.scannedtime AS last_updated_at',
                         'emp.fullname AS updated_by',
-                        'pr.name AS order_status'
+                        'pr.name AS order_status',
+                        'pr.color AS color'
                     ])
                     ->leftJoin('employees AS emp', 'emp.barcode', 'scanners.employeeid')
                     ->leftJoin('processes AS pr', 'pr.barcode', 'scanners.processid')

@@ -155,6 +155,13 @@
                             class="w-100">
                         </el-input>
                     </el-form-item>
+
+                    <el-form-item
+                        label="Color"
+                        prop="color"
+                        :error="hasError('color')">
+                        <el-color-picker v-model="processForm.color"></el-color-picker>
+                    </el-form-item>
                 </div>
             </div>
         </el-form>
@@ -295,7 +302,8 @@
                     stop_start_button_required: this.model.stop_start_button_required,
                     team_trade_target: this.model.team_trade_target,
                     team_internet_target: this.model.team_internet_target,
-                    process_categories: this.model.process_categories.map(pc => pc.id)
+                    process_categories: this.model.process_categories.map(pc => pc.id),
+                    color: this.model.color
                 }
             },
 
@@ -310,7 +318,8 @@
                     stop_start_button_required: false,
                     team_trade_target: null,
                     team_internet_target: null,
-                    process_categories: []
+                    process_categories: [],
+                    color: null
                 }
             },
 

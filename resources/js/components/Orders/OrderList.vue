@@ -67,11 +67,13 @@
                 height="65vh"
                 class="mt-3"
                 width="100%"
-                ref="ordersTable">
+                ref="ordersTable"
+                :cell-style="getCellStyle">
                 <el-table-column
                     v-for="col in columns"
                     v-if="!selectedColumns.length || selectedColumns.includes(col.prop)"
                     :key="col.prop"
+                    :prop="col.prop"
                     :label="col.label"
                     :fixed="col.isFixed"
                     :min-width="col.width">
@@ -171,6 +173,7 @@
 
             return {
                 loading: false,
+                showColumnManager: false,
                 searchString: null,
                 pagination: {},
                 orders: [],
@@ -298,6 +301,16 @@
                         this.$refs.ordersTable.doLayout()
                     }
                 })
+            },
+
+            getCellStyle({row, column, rowIndex, columnIndex}) {
+                if (column.property === 'order_status' && row.scanner) {
+                    let color = row.scanner.color || ''
+                    return `
+                        background-color: ${color};
+                        color: ${color ? '#fff' : '#000'}
+                    `
+                }
             }
         }
     }
