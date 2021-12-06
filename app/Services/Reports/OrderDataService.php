@@ -50,7 +50,7 @@ class OrderDataService extends ReportDataService
 
                 break;
             case 'export':
-                $this->query->limit(10);
+                $this->query->limit(10000);
                 $orders = $query->getResultInCollection()->map(function ($item) {
                     $item->scanners_id = $item->scanner ? $item->scanner->scanner_id : null;
                     $item->blindid = $item->scanner ? $item->scanner->blindid : null;
