@@ -94,19 +94,6 @@
                         </template>
                     </template>
                 </el-table-column>
-
-                <el-table-column
-                    fixed="right"
-                    label="Action"
-                    width="60">
-                    <template slot-scope="scope">
-                        <el-button
-                            @click="colorPickerClicked(scope.row)"
-                            type="text"
-                            icon="el-icon-s-check">
-                        </el-button>
-                    </template>
-                </el-table-column>
             </el-table>
 
             <div class="text-right">
