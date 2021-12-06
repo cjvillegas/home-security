@@ -104,6 +104,8 @@ class OrderDataService extends ReportDataService
                 'sa.work_date'
             ])
             ->with(['scanner' => function($query) {
+                $employees = $this->getFilterValue('employees');
+                $processes = $this->getFilterValue('processes');
                 $query
                     ->select([
                         'scanners.id AS scanners_id',
@@ -115,6 +117,12 @@ class OrderDataService extends ReportDataService
                     ])
                     ->leftJoin('employees AS emp', 'emp.barcode', 'scanners.employeeid')
                     ->leftJoin('processes AS pr', 'pr.barcode', 'scanners.processid')
+                    ->when(!empty($employees) && is_array($employees), function ($query) use ($employees) {
+                        $query->whereIn('emp.id', $employees);
+                    })
+                    ->when(!empty($processes) && is_array($processes), function ($query) use ($processes) {
+                        $query->whereIn('pr.id', $processes);
+                    })
                     ->orderBy('scanners.id', 'DESC');
             }])
             ->leftJoin('shift_assignments AS sa', 'sa.serial_id', 'orders.serial_id')
