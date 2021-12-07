@@ -193,10 +193,10 @@
                     class="mt-3"
                     background
                     layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
+                    :total="pagination.total"
+                    :page-size="pagination.size"
                     :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
+                    :current-page="pagination.page"
                     @size-change="handleSize"
                     @current-change="handlePage">
                 </el-pagination>
@@ -267,10 +267,12 @@
             getList() {
                 this.loading = true
 
-                this.$API.User.getList(this.filters)
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.User.getList(params)
                     .then(res => {
                         this.users = res.data.data
-                        this.filters.total = res.data.total
+                        this.pagination.total = res.data.total
                     })
                     .catch(err => {
                         console.log(err)

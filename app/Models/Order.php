@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\Order\OrderInvoice;
 use App\Models\ProcessSequence\ProcessSequence;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -75,6 +75,16 @@ class Order extends Model
     }
 
     /**
+     * Retrieve single instance of an order's scanner
+     *
+     * @return HasOne
+     */
+    public function scanner(): HasOne
+    {
+        return $this->hasOne(Scanner::class, 'blindid', 'serial_id');
+    }
+
+    /**
      * This will return list of Order Trackings
      *
      * @return HasOne
@@ -135,4 +145,27 @@ class Order extends Model
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/
+
+    /**************
+    * S C O P E S *
+    **************/
+
+    /**
+     * Add a condition to filter only data where the specified date column is
+     * in between the passed dates.
+     *
+     * @param Builder $query
+     * @param array $dates
+     *
+     * @return Builder
+     */
+    public function scopeInBetweenDates(Builder $query, array $dates): Builder
+    {
+        return $query->whereBetween('orders.ordered_at', $dates);
+    }
+
+
+    /**************************
+    * E N D  O F  S C O P E S *
+    **************************/
 }

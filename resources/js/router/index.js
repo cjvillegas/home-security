@@ -12,8 +12,9 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 // Order Components
-const OrderList = () => import('../components/Orders/OrderIndex')
+const OrderSearchView = () => import('../components/Orders/OrderSearchView')
 const OrderView = () => import('../components/Orders/OrderView')
+const OrderList = () => import('../components/Orders/OrderList')
 
 // Dashboard Components
 const DashboardIndex = () => import('../components/Dashboard/DashboardIndex')
@@ -61,6 +62,12 @@ export default new VueRouter({
         return { x: 0, y: 0 }
     },
     routes: [
+        {
+            path: '/search-view',
+            name: 'Order Search View',
+            component: OrderSearchView,
+            props: true
+        },
         {
             path: '/list',
             name: 'Order List',

@@ -105,7 +105,7 @@
                     })
             },
             backToOrderList() {
-                this.$router.push({name: 'Order List'})
+                this.$router.push({name: 'Order Search View'})
             },
         },
 

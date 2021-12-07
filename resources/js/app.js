@@ -80,7 +80,6 @@ const app = new Vue({
          */
         if (pathname === '/admin/reports/qc-report') {
             this.getUsers()
-            this.getEmployees()
             this.getProcesses()
             this.getQualityControls()
             this.getProducts()
@@ -96,12 +95,7 @@ const app = new Vue({
         }
         if (pathname === '/admin/reports/work-analytics') {
             this.getShifts()
-            this.getEmployees()
             this.getProcesses()
-        }
-
-        if (pathname === '/admin/reports/time-and-attendance-page') {
-            this.getEmployees()
         }
 
         if (pathname === '/admin/reports/manufactured-blinds') {
@@ -109,13 +103,14 @@ const app = new Vue({
         }
 
         if (pathname === '/admin/reports/target-performance') {
-            this.getEmployees()
             this.getCurrentUser()
         }
-        if (pathname === '/admin/reports/who-works-here-page') {
-            this.getEmployees()
+
+        if (pathname === '/admin/orders') {
+            this.getProcesses()
         }
 
+        this.getEmployees()
         this.checkPrivacy()
         this.getAuthUser()
     },

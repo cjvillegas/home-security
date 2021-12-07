@@ -34,6 +34,9 @@ class Export extends Model
     // target performance report
     const TARGET_PERFORMANCE_REPORT = 'target_performance_export';
 
+    // orders export report type
+    const ORDERS_EXPORT_REPORT = 'orders_export';
+
     /**
      * Export Status
      */

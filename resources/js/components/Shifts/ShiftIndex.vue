@@ -86,10 +86,10 @@
                         class="mt-3"
                         background
                         layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
+                        :total="pagination.total"
+                        :page-size="pagination.size"
                         :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
+                        :current-page="pagination.page"
                         @size-change="handleSize"
                         @current-change="handlePage">
                     </el-pagination>
@@ -166,7 +166,7 @@
 
         computed: {
             dialogTitle() {
-                return (this.dialogType == 'Add') ? 'Add Shift' : (this.dialogType == 'Edit') ? 'Edit Shift' : 'View Shift'
+                return (this.dialogType === 'Add') ? 'Add Shift' : (this.dialogType === 'Edit') ? 'Edit Shift' : 'View Shift'
             }
         },
 
@@ -183,10 +183,12 @@
             fetchShifts() {
                 this.loading = true
 
-                this.$API.Shift.getList(this.filters)
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.Shift.getList(params)
                 .then((response) => {
                     this.shifts = response.data.shifts.data
-                    this.filters.total = response.data.shifts.total
+                    this.pagination.total = response.data.shifts.total
                 })
                 .catch((err) => {
                     console.log(err)

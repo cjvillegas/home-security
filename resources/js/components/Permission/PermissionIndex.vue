@@ -78,10 +78,10 @@
                         class="mt-3"
                         background
                         layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
+                        :total="pagination.total"
+                        :page-size="pagination.size"
                         :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
+                        :current-page="pagination.page"
                         @size-change="handleSize"
                         @current-change="handlePage">
                     </el-pagination>
@@ -104,7 +104,7 @@
                     :error="hasError('title')">
                     <el-input
                         v-model="form.title"
-                        :disabled="this.dialogType == 'View'"
+                        :disabled="this.dialogType === 'View'"
                         clearable
                         class="w-100">
                     </el-input>
@@ -114,7 +114,7 @@
             <span
                 slot="footer"
                 class="dialog-footer"
-                v-if="this.dialogType != 'View'">
+                v-if="this.dialogType !== 'View'">
                 <el-button
                     @click="clearForm">
                     Cancel
@@ -122,13 +122,13 @@
                 <el-button
                     type="primary"
                     @click="validate"
-                    v-show="this.dialogType == 'Add'">
+                    v-show="this.dialogType === 'Add'">
                     Save
                 </el-button>
                 <el-button
                     type="primary"
                     @click="validate"
-                    v-show="this.dialogType == 'Edit'">
+                    v-show="this.dialogType === 'Edit'">
                     Update
                 </el-button>
             </span>
@@ -143,6 +143,7 @@
 
     export default {
         mixins: [pagination, formHelper],
+
         data() {
             return {
                 formDialogVisible: false,
@@ -163,7 +164,7 @@
         },
 
         created() {
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchPermissions'
         },
 
@@ -176,10 +177,12 @@
                 let apiUrl = `/admin/permissions/list`
                 this.loading = true
 
-                axios.post(apiUrl, this.filters)
+                let params = {...this.filters, ...this.pagination}
+
+                axios.post(apiUrl, params)
                 .then((response) => {
                     this.permissions = response.data.permissions.data
-                    this.filters.total = response.data.permissions.total
+                    this.pagination.total = response.data.permissions.total
                 })
                 .catch((err) => {
                     console.log(err)
@@ -244,7 +247,7 @@
             },
 
             addNew() {
-                if(this.dialogType == 'Edit') {
+                if (this.dialogType === 'Edit') {
                     this.clearForm()
                 }
                 this.dialogType = 'Add'
@@ -259,6 +262,7 @@
 
             deletePermission(id) {
                 let apiUrl = `/admin/permissions/${id}`
+
                 axios.delete(apiUrl)
                 .then( (response) => {
                     this.$notify({
@@ -274,7 +278,7 @@
                 this.$refs.form.validate(valid => {
                     if (valid) {
                         this.resetErrors()
-                        if (this.dialogType == 'Edit') {
+                        if (this.dialogType === 'Edit') {
                             this.updatePermission()
 
                             return
@@ -290,7 +294,6 @@
                 }
 
                 this.form.title = null
-
                 this.formDialogVisible = false
             }
         }

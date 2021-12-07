@@ -106,10 +106,10 @@
                         class="mt-3"
                         background
                         layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
+                        :total="pagination.total"
+                        :page-size="pagination.size"
                         :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
+                        :current-page="pagination.page"
                         @size-change="handleSize"
                         @current-change="handlePage">
                     </el-pagination>
@@ -226,7 +226,7 @@
         },
 
         created() {
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchTeams'
         },
 
@@ -258,10 +258,12 @@
             fetchTeams() {
                 this.loading = true
 
-                this.$API.Team.getList(this.filter)
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.Team.getList(params)
                 .then((response) => {
                     this.teams = response.data.teams.data
-                    this.filters.total = response.data.teams.total
+                    this.pagination.total = response.data.teams.total
                 })
                 .catch((err) => {
                     console.log(err)

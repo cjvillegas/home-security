@@ -49,7 +49,8 @@ class UpdateProcessRequest extends FormRequest
                 'integer',
                 'required',
                 'min:1'
-            ]
+            ],
+            'color' => 'string|nullable'
         ];
     }
 }
