@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
 class OrderDataService extends ReportDataService
 {
     /**
-     * TimeclockDataService constructor.
+     * OrderDataService constructor.
      */
     public function __construct(array $filters)
     {

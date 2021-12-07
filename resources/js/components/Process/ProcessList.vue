@@ -297,7 +297,6 @@
 
                 this.$API.Processes.getList(params)
                     .then(res => {
-                        console.log(res.data)
                         this.processes = res.data.data
                         this.pagination.total = res.data.total
                     })

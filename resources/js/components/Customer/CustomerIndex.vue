@@ -203,7 +203,6 @@
         watch: {
             customersTotal: {
                 handler() {
-                    console.log(this.customersTotal)
                     this.pagination.total = this.customersTotal
                 },
                 immediate: true
