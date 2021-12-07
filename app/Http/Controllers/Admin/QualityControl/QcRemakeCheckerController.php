@@ -93,16 +93,17 @@ class QcRemakeCheckerController extends Controller
             $qcRemake->save();
             DB::commit();
 
-            $qcRemake = QcRemake::with('validatedBlinds', 'user')->where('id', $qcRemake->id)->first();
+            $qcRemake = QcRemake::with('validatedBlinds', 'user', 'order')->where('id', $qcRemake->id)->first();
 
             foreach (QcEmail::all() as $email) {
-                Mail::to($email)->queue(new QcRemakeCheckerMail($qcRemake));
+                Mail::to($email)->send(new QcRemakeCheckerMail($qcRemake));
             }
 
             return response()->json(['orderRemake' => $qcRemake]);
         }
         catch (Exception $exception) {
             DB::rollBack();
+            Log::info($exception);
             return response()->json(['message' => "Something went wrong when saving Order Remake.", "errors" => $exception], 500);
         }
 

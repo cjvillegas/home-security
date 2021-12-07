@@ -99,10 +99,10 @@
                     class="mt-3"
                     background
                     layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
+                    :total="pagination.total"
+                    :page-size="pagination.size"
                     :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
+                    :current-page="pagination.page"
                     @size-change="handleSize"
                     @current-change="handlePage">
                 </el-pagination>
@@ -164,7 +164,7 @@
 
         methods: {
             applySearch() {
-                this.filters.page = 1
+                this.pagination.page = 1
 
                 this.getList()
             },
@@ -172,10 +172,12 @@
             getList() {
                 this.loading = true
 
-                this.$API.Reports.getQcList(this.filters)
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.Reports.getQcList(params)
                 .then(res => {
                     this.qualityControls = res.data.data
-                    this.filters.total = res.data.total
+                    this.pagination.total = res.data.total
                 })
                 .catch(err => {
                     console.log(err)

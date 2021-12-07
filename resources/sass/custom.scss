@@ -106,3 +106,12 @@
         }
     }
 }
+
+.global-modal-color-picker {
+    .el-color-picker {
+        width: 100% !important;
+        .el-color-picker__trigger {
+            width: 100%;
+        }
+    }
+}

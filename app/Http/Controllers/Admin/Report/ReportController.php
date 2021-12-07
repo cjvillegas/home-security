@@ -8,17 +8,17 @@ use App\Services\CsvExporterService;
 use App\Services\MachineCounterReportService;
 use App\Services\Reports\DashboardMachineStatisticsDataService;
 use App\Services\Reports\QualityControlFaultDataService;
+use App\Services\Reports\ShiftPerformanceDataService;
 use App\Services\Reports\TargetPerformanceDataService;
 use App\Services\Reports\TeamStatusDataService;
 use App\Services\Reports\TimeclockDataService;
 use App\Services\Reports\WhoWorksHereDataService;
+use App\Services\ShiftPerformanceExporterService;
 use App\Services\TargetPerformanceExporterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -331,5 +331,56 @@ class ReportController extends Controller
                 'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
             ]
         );
+    }
+
+    /**
+     * Shift Performance View
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function shiftPerformance()
+    {
+        return view('admin.reports.shift-performance');
+    }
+
+    /**
+     * Run Shift Performance based on Selected data on Filters
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function runReportShiftPerformance(Request $request): JsonResponse
+    {
+        $shifts = $request->selectedShifts;
+        $service = new ShiftPerformanceDataService($request->all());
+        $data = $service->getData('list');
+
+
+        return response()->json([
+            'shiftPerformances' => $data
+        ]);
+    }
+
+    /**
+     * Export generated Shift Performance Report into excel file
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function exportShiftPerformances(Request $request): JsonResponse
+    {
+        $user = User::find(auth()->user()->id);
+        $service = new ShiftPerformanceDataService($request->all());
+        $exporter = new ShiftPerformanceExporterService($user);
+        $exporter->setName('Shift Performance Export')
+            ->setPath('exports')
+            ->export($service, $request->dateRange);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.'
+        ]);
     }
 }

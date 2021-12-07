@@ -98,6 +98,7 @@ class ProcessesController extends Controller
         $process->stop_start_button_required = $request->get('stop_start_button_required', $process->stop_start_button_required);
         $process->team_trade_target = $request->get('team_trade_target', $process->team_trade_target);
         $process->team_internet_target = $request->get('team_internet_target', $process->team_internet_target);
+        $process->color = $request->has('color') ? $request->get('color') : $process->color;
         $saved = $process->save();
 
         if ($saved) {

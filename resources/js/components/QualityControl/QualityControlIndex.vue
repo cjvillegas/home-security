@@ -33,7 +33,7 @@
                             </el-select>
 
                             <el-button
-                                @click="fetchQualityControls"
+                                @click="applyFilters"
                                 type="primary"
                                 class="w-100 mt-4">
                                 Apply Filter
@@ -128,10 +128,10 @@
                         class="mt-3"
                         background
                         layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
+                        :total="pagination.total"
+                        :page-size="pagination.size"
                         :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
+                        :current-page="pagination.page"
                         @size-change="handleSize"
                         @current-change="handlePage">
                     </el-pagination>
@@ -205,6 +205,7 @@
 <script>
     import pagination from '../../mixins/pagination'
     import { formHelper } from '../../mixins/formHelper'
+
     export default {
         mixins: [pagination, formHelper],
         data() {
@@ -226,19 +227,26 @@
         },
 
         mounted() {
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchQualityControls'
             this.fetchQualityControls()
         },
 
         methods: {
+            applyFilters() {
+                this.pagination.page = 1
+
+                this.fetchQualityControls()
+            },
+
             fetchQualityControls() {
                 let apiUrl = `/admin/quality-control/list`
                 this.loading = true
-                axios.post(apiUrl, this.filters)
+                let params = {...this.filters, ...this.pagination}
+                axios.post(apiUrl, params)
                 .then((response) => {
                     this.qualityControls = response.data.qualityControls.data
-                    this.filters.total = response.data.qualityControls.total
+                    this.pagination.total = response.data.qualityControls.total
                 })
                 .catch(err => {
                     console.log(err)

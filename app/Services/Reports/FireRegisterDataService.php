@@ -62,7 +62,6 @@ class FireRegisterDataService extends ReportDataService
                 break;
 
         }
-        Log::info($data);
         return $data;
     }
 

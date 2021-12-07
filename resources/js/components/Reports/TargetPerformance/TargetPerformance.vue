@@ -181,20 +181,6 @@
     </div>
 </template>
 
-<style scoped>
-    .card-body {
-        min-height: 150px;
-        min-width: 150px;
-        margin-right: 5px;
-    }
-    .list-group  > .list-group-horizontal > .list-group-item {
-        width: 150px !important;
-    }
-    td {
-        width: 150px !important;
-        white-space:nowrap;
-    }
-</style>
 <script>
     import { mapActions, mapGetters } from 'vuex'
     export default {
@@ -221,8 +207,6 @@
         },
 
         methods: {
-            ...mapActions('targetperformance', ['exportTargetPerformance']),
-
             openFilter() {
                 this.showFilterDialog = true
             },
@@ -253,7 +237,24 @@
                         type: 'success'
                     })
                 })
-            }
+            },
+
+            ...mapActions('targetperformance', ['exportTargetPerformance']),
         }
     }
 </script>
+
+<style scoped>
+    .card-body {
+        min-height: 150px;
+        min-width: 150px;
+        margin-right: 5px;
+    }
+    .list-group  > .list-group-horizontal > .list-group-item {
+        width: 150px !important;
+    }
+    td {
+        width: 150px !important;
+        white-space:nowrap;
+    }
+</style>

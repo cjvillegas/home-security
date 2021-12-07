@@ -2,6 +2,36 @@ import axios from 'axios'
 
 export default {
     /**
+     * Fetch order list
+     *
+     * @param params
+     *
+     * @handler Admin\OrdersController@orderList
+     *
+     * @return Promise
+     */
+    orderList(params) {
+        return axios.get(`/admin/orders/order-list`, {
+            params: params
+        })
+    },
+
+    /**
+     * Export orders to a CSV file
+     *
+     * @param params
+     *
+     * @handler Admin\OrdersController@exportOrders
+     *
+     * @return Promise
+     */
+    exportOrders(params) {
+        return axios.get(`/admin/orders/export-orders`, {
+            params: params
+        })
+    },
+
+    /**
      * API endpoint that searches and order based on the provided field
      * the field parameter is a DB column and the search string is the
      * search query
