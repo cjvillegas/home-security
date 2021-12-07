@@ -189,7 +189,7 @@ class StockInventoryController extends Controller
             ->first();
 
         $export = new StockOrderExport($stockOrder);
-        $export->store("stock-order/{$stockOrder->order_no}.xlsx", 'public', Excel::XLSX);
+        $export->store("stock-order/{$stockOrder->order_no}.csv", 'public', Excel::CSV);
 
         return response()->json([
             'message' => 'Stock order approved.',
