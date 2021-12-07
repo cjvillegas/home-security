@@ -14,7 +14,7 @@
                                     :multiple="isMultiple"
                                     :collapse-tags="isMultiple">
                                     <el-option
-                                        v-for="(department, departmentKey) in departments.DEPARTMENTS"
+                                        v-for="(department, departmentKey) in DEPARTMENTS.DEPARTMENTS"
                                         :label="department.value"
                                         :value="department.value"
                                         :key="departmentKey">
@@ -72,7 +72,7 @@
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     import moment from "moment"
-    import * as departments from '../../../constants/departments'
+    import * as DEPARTMENTS from '../../../constants/departments'
     export default {
         data() {
             let defaultProps = {
@@ -80,7 +80,7 @@
             }
 
             return {
-                departments,
+                DEPARTMENTS,
                 form: {
                     selectedDepartments: [],
                     selectedShifts: [],
@@ -136,6 +136,7 @@
             datesChange() {
                 if (this.selectedFilters.date && this.selectedFilters.date.length) {
                     let [start, end] = this.selectedFilters.date
+
                     if (Math.abs(moment(end).diff(moment(start), 'days')) > 31) {
                         this.selectedFilters.date = []
 
@@ -144,7 +145,6 @@
                             message: "You can't select dates more than 31 days. If you have any concerns please report this to your administrator."
                         });
                     }
-
                 }
             },
 

@@ -46,11 +46,21 @@
                     <tr
                     v-for="(departmentData, departmentDataKey) in shiftPerformance.data"
                     :key="departmentDataKey">
-                        <td>{{ departmentData.date }}</td>
-                        <td>{{ departmentData.fully_manufactured }}</td>
-                        <td>{{ departmentData.date }}</td>
-                        <td>{{ departmentData.total_planned }}</td>
-                        <td>{{ departmentData.people_worked }}</td>
+                        <td>
+                            {{ departmentData.date }}
+                        </td>
+                        <td>
+                            {{ departmentData.fully_manufactured }}
+                        </td>
+                        <td>
+                            {{ departmentData.date }}
+                        </td>
+                        <td>
+                            {{ departmentData.total_planned }}
+                        </td>
+                        <td>
+                            {{ departmentData.people_worked }}
+                        </td>
                         <td v-bind:class="[(departmentData.target_performance['value'] == 0) ? 'bg-info' : departmentData.target_performance['value'] > 0 ? 'bg-warning' : 'bg-success']" style="color: black">
                             {{ departmentData.target_performance['message'] }}
                         </td>
@@ -72,11 +82,21 @@
                 <tr
                     v-for="(departmentData, departmentDataKey) in shiftPerformance.data"
                     :key="departmentDataKey">
-                        <td>{{ departmentData.date }}</td>
-                        <td>{{ departmentData.machine_packed }}</td>
-                        <td>{{ departmentData.headrail_packed }}</td>
-                        <td>{{ departmentData.louvres_packed }}</td>
-                        <td>{{ departmentData.people_worked }}</td>
+                        <td>
+                            {{ departmentData.date }}
+                        </td>
+                        <td>
+                            {{ departmentData.machine_packed }}
+                        </td>
+                        <td>
+                            {{ departmentData.headrail_packed }}
+                        </td>
+                        <td>
+                            {{ departmentData.louvres_packed }}
+                        </td>
+                        <td>
+                            {{ departmentData.people_worked }}
+                        </td>
                     </tr>
             </table>
         </div>
@@ -87,6 +107,7 @@
     import { mapActions, mapGetters } from 'vuex'
     export default {
         name: "ShiftPerformanceView",
+
         data() {
             return {
 

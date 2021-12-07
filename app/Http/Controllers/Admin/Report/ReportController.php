@@ -19,9 +19,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PHPUnit\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReportController extends Controller
@@ -347,7 +344,9 @@ class ReportController extends Controller
     }
 
     /**
-     * Run Shift Performance
+     * Run Shift Performance based on Selected data on Filters
+     *
+     * @param  mixed $request
      *
      * @return JsonResponse
      */
@@ -363,6 +362,13 @@ class ReportController extends Controller
         ]);
     }
 
+    /**
+     * Export generated Shift Performance Report into excel file
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
     public function exportShiftPerformances(Request $request): JsonResponse
     {
         $user = User::find(auth()->user()->id);

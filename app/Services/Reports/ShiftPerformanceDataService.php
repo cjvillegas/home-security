@@ -210,6 +210,7 @@ class ShiftPerformanceDataService extends ReportDataService
                 ->first();
         }
 
+        //Assign Process ID based on selected Department
         if ($department == 'Venetian') $processId = 'P1021';
         if ($department == 'Roller Express') $processId = 'P1024';
         if ($department == 'Roller') $processId = 'P1002';
@@ -224,7 +225,7 @@ class ShiftPerformanceDataService extends ReportDataService
                 ->first();
         }
 
-
+        // For the Vertical, add up these three query to get the Total Manufactured blinds
         if ($department == 'Vertical') {
             // Vertical - LouvresOnly, HeadRailOnly, RigidPVC
             if ($verticalType == 'louvresHeadRailRigidOnly') {
@@ -276,6 +277,8 @@ class ShiftPerformanceDataService extends ReportDataService
 
         // Technical
         if ($department == 'Technical') {
+
+            //Different folders per Shifts
             if ($shift == 1) {
                 $folders = [
                     'Contract - Shift 1 Team 1',
@@ -514,27 +517,33 @@ class ShiftPerformanceDataService extends ReportDataService
      */
     private function targetPerformanceTransformer($manufactured, $planned, $isOverallTotal = false)
     {
+        // To determine if we want to get all the Overall Efficiency on Target Performance
         if ($isOverallTotal) {
             $targetPerformanceTotal = $planned != 0 ? (($manufactured / $planned) * 100)  : 0;
+
             return [
                 'value' => $targetPerformanceTotal,
                 'message' => number_format((float)$targetPerformanceTotal, 2, '.', ''). '% Efficiency'
             ];
         }
 
-
+        // The manufactured blinds are lower than Planned Work
         if ($manufactured < $planned) {
             return [
                 'value' => $planned - $manufactured,
                 'message' => $planned - $manufactured . ' left for next Shift to complete'
             ];
         }
+
+        // The manufactured blinds exceeded the Planned Work
         if ($manufactured > $planned) {
             return [
                 'value' => $planned - $manufactured,
                 'message' => abs($planned - $manufactured). ' Extra made'
             ];
         }
+
+        // The manufactured blinds completed all Planned work without extra
         if ($manufactured == $planned) {
             return [
                 'value' => $planned - $manufactured,
