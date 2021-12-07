@@ -29,7 +29,7 @@
         },
         methods: {
             applySearch() {
-                this.filters.page = 1
+                this.pagination.page = 1
 
                 this.fetch()
             },
@@ -37,13 +37,13 @@
                 this.loading = true
 
                 this.$API.Orders.fetch(
-                    this.filters.size,
-                    this.filters.page,
+                    this.pagination.size,
+                    this.pagination.page,
                     this.filters.searchString
                 )
                 .then(res => {
                     this.orders = cloneDeep(res.data.data || [])
-                    this.filters.total = res.data.total
+                    this.pagination.total = res.data.total
                 })
                 .catch(err => {
                     console.log(err)

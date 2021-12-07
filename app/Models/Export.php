@@ -37,6 +37,9 @@ class Export extends Model
     // shift performance report
     const SHIFT_PERFORMANCE_REPORT = 'shift_performance_report';
 
+    // orders export report type
+    const ORDERS_EXPORT_REPORT = 'orders_export';
+
     /**
      * Export Status
      */

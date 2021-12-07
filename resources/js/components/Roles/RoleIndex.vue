@@ -100,10 +100,10 @@
                         class="mt-3"
                         background
                         layout="total, sizes, prev, pager, next"
-                        :total="filters.total"
-                        :page-size="filters.size"
+                        :total="pagination.total"
+                        :page-size="pagination.size"
                         :page-sizes="[10, 25, 50, 100]"
-                        :current-page="filters.page"
+                        :current-page="pagination.page"
                         @size-change="handleSize"
                         @current-change="handlePage">
                     </el-pagination>
@@ -186,6 +186,7 @@
 <script>
     import pagination from '../../mixins/pagination'
     import { formHelper } from '../../mixins/formHelper'
+
     export default {
         mixins: [pagination, formHelper],
         data() {
@@ -231,10 +232,12 @@
             fetchRoles() {
                 this.loading = true
 
-                this.$API.Role.getList(this.filters)
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.Role.getList(params)
                 .then((response) => {
                     this.roles = response.data.roles.data
-                    this.filters.total = response.data.roles.total
+                    this.pagination.total = response.data.roles.total
                 })
                 .catch((err) => {
                     console.log(err)
@@ -354,13 +357,13 @@
             },
 
             toggleSelectAll() {
-                if(this.is_select_all) {
-                    if(this.form.permissions.length <=0) {
+                if (this.is_select_all) {
+                    if (this.form.permissions.length <=0) {
                         this.permissions.forEach(permission => {
                             this.form.permissions.push(permission.id)
                         });
                     }
-                }else {
+                } else {
                     this.form.permissions = []
                 }
             },

@@ -12,7 +12,10 @@ use App\Models\OrderTracking;
 use App\Models\ProcessSequence\ProcessSequence;
 use App\Models\Scanner;
 use App\Models\ShiftAssignment;
+use App\Models\User;
 use App\Repositories\Orders\OrderRepository;
+use App\Services\CsvExporterService;
+use App\Services\Reports\OrderDataService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +47,62 @@ class OrdersController extends Controller
 
         return view('admin.orders.index', [
             'type' => $request->get('type')
+        ]);
+    }
+
+    /**
+     * Page where user could do order searching
+     *
+     * @param Request $request
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function orderSearch(Request $request)
+    {
+        abort_if(Gate::denies('order_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return view('admin.orders.order-search', [
+            'type' => $request->get('type')
+        ]);
+    }
+
+    /**
+     * Get orders data and list it in our front-end
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function orderList(Request $request): JsonResponse
+    {
+        $service = new OrderDataService($request->all());
+        $orders = $service->getData('list');
+
+        return response()->json($orders);
+    }
+
+    /**
+     * Exports orders data to a xlsx file
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function exportOrders(Request $request)
+    {
+        $user = User::find(auth()->user()->id);
+        $headers = (array) json_decode($request->get('headers'));
+        $filters = (array) json_decode($request->get('filters'));
+        $service = new OrderDataService($filters);
+        $exporter = new CsvExporterService($user);
+        $exporter->setName('Orders')
+            ->setPath('exports')
+            ->setHeaders($headers)
+            ->export($service);
+
+        return response()->json([
+            'message' => 'Your data is being exported. Please wait a while and check the Export page for your export.',
+            'success' => true
         ]);
     }
 

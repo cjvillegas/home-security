@@ -33,3 +33,14 @@ function __is_production(): bool
 {
     return env('APP_ENV') === 'production';
 }
+
+
+/**
+ * Determines if the app is running in local.
+ *
+ * @return bool
+ */
+function __is_local(): bool
+{
+    return env('APP_ENV') === 'local';
+}

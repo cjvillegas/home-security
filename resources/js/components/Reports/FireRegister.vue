@@ -101,7 +101,6 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import { mapActions, mapGetters } from 'vuex'
-    import pagination from "../../mixins/pagination"
 
     export default {
         name: "FireRegister",

@@ -118,7 +118,6 @@
             ...mapGetters('manufacturedblind', ['blinds', 'loading']),
 
             canExportData() {
-                console.log(this.blinds)
                 return this.blinds.length > 0
             },
 

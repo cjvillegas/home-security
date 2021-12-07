@@ -14,6 +14,8 @@ class QcRemakeCheckerMail extends Mailable
 
     public $qcRemake;
 
+    public $verifications;
+
     /**
      * Create a new message instance.
      *
@@ -22,6 +24,7 @@ class QcRemakeCheckerMail extends Mailable
     public function __construct(QcRemake $qcRemake)
     {
         $this->qcRemake = $qcRemake;
+        $this->verifications = QcRemake::VERIFICATION_CHECKLISTS;
     }
 
     /**
@@ -31,6 +34,8 @@ class QcRemakeCheckerMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.qc-remake-checker-mail');
+        $qcRemake = $this->qcRemake;
+        return $this->subject('QC Remake. Order No.'. $qcRemake->order_no)
+            ->markdown('emails.qc-remake-checker-mail');
     }
 }

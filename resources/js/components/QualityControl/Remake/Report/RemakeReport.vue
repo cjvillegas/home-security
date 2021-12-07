@@ -85,10 +85,10 @@
                 class="custom-pagination-class  mt-3 float-right"
                 background
                 layout="total, sizes, prev, pager, next"
-                :total="filters.total"
-                :page-size="filters.size"
+                :total="pagination.total"
+                :page-size="pagination.size"
                 :page-sizes="[10, 25, 50, 100]"
-                :current-page="filters.page"
+                :current-page="pagination.page"
                 @size-change="handleSize"
                 @current-change="handlePage">
             </el-pagination>
@@ -100,14 +100,11 @@
         </remake-report-view-dialog>
     </div>
 </template>
-<style>
-    .el-message-box {
-        width: 40% !important;
-    }
-</style>
+
 <script>
     import { mapActions, mapGetters, mapMutations } from 'vuex'
     import pagination from '../../../../mixins/pagination'
+
     export default {
         mixins: [pagination],
         data() {
@@ -120,42 +117,59 @@
             }
         },
         created() {
-            this.filters.size = 30
+            this.pagination.size = 30
+
             this.functionName = 'getOrderRemakes'
         },
+
         mounted() {
-            this.getOrderRemakes(this.filters)
-
-
+            this.getOrderRemakes(this.buildParams())
         },
+
         computed: {
             ...mapGetters('remakeChecker', ['orderRemakes', 'orderRemakesTotal', 'loading']),
         },
+
         methods: {
-            ...mapActions('remakeChecker', ['getOrderRemakes']),
-            ...mapMutations('remakeChecker', ['setViewOrderRemake', 'setVerifiedBy']),
             searchReportNumber() {
-                this.getOrderRemakes(this.filters)
+                this.getOrderRemakes(this.build())
             },
+
             searchOrderNumber() {
-                this.getOrderRemakes(this.filters)
+                this.getOrderRemakes(this.build())
             },
+
             openViewDialog(data) {
                 this.setViewOrderRemake(data)
                 this.reportViewDialog = true
             },
+
             closeForm() {
                 this.setViewOrderRemake([])
                 this.reportViewDialog = false
             },
+
+            buildParams() {
+                return {...this.filters, ...this.pagination}
+            },
+
+            ...mapActions('remakeChecker', ['getOrderRemakes']),
+            ...mapMutations('remakeChecker', ['setViewOrderRemake', 'setVerifiedBy'])
         },
+
         watch: {
             orderRemakesTotal: {
                 handler(val) {
-                    this.filters.total = val
+                    this.pagination.total = val
                 },
                 immediate: true
             }
         }
     }
 </script>
+
+<style>
+    .el-message-box {
+        width: 40% !important;
+    }
+</style>

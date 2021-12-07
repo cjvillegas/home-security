@@ -13,6 +13,8 @@ import Machine from './Machine'
 import Role from './Role'
 import Team from './Team'
 import Shift from './Shift'
+import Filters from './Filters'
+import TableColumnManager from './TableColumnManager'
 
 // Employee endpoint collections
 import EmployeeAuth from './Employee/Auth'
@@ -42,6 +44,8 @@ export default {
     Role,
     Team,
     Shift,
+    Filters,
+    TableColumnManager,
 
     // employee dedicated endpoints
     EmployeeAuth,

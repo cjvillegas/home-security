@@ -153,6 +153,16 @@
                 </ul>
             </li>
         @endcan
+
+        @can('order_management_access')
+            <li class="c-sidebar-nav-item">
+              <a href="{{ route("admin.orders.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") || request()->is("admin/orders/*") ? "c-active" : "" }}">
+                  <i class="fa-fw fas fa-cart-plus c-sidebar-nav-icon"></i>
+                  Orders
+              </a>
+          </li>
+        @endcan
+
         @can('scanner_access')
             {{-- <li class="c-sidebar-nav-item">
                 <a href="{{ route("admin.scanners.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/scanners") || request()->is("admin/scanners/*") ? "c-active" : "" }}">
@@ -164,7 +174,7 @@
             </li> --}}
         @endcan
         @can('order_management_access')
-            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders*") ? "c-show" : "" }} {{ request()->is("admin/orderhistories*") ? "c-show" : "" }}">
+            <li class="c-sidebar-nav-dropdown {{ request()->is("admin/orders/order-search") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-search-plus c-sidebar-nav-icon"></i>
                     Search
@@ -172,7 +182,7 @@
                 <ul class="c-sidebar-nav-dropdown-items">
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.orders.index', ['type' => 'order_no']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.order-search', ['type' => 'order_no']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders/order-search") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-angle-double-right c-sidebar-nav-icon"></i>
                                 Search By Order No
                             </a>
@@ -180,7 +190,7 @@
                     @endcan
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.orders.index', ['type' => 'serial_id']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.order-search', ['type' => 'serial_id']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders/order-search") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-angle-double-right c-sidebar-nav-icon"></i>
                                 Search By Serial ID
                             </a>

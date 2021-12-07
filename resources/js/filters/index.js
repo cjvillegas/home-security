@@ -94,3 +94,12 @@ Vue.filter('valueForEmptyText', text => {
 
     return text
 })
+
+/**
+ * Format a string to remove decimal places
+ */
+Vue.filter('removeDecimalPlaces', (string) => {
+    if (string) {
+        return Math.round(string)
+    }
+})

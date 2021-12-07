@@ -86,6 +86,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('orders/trackings/', 'OrdersController@fetchTrackings')->name('orders.trackings');
     Route::patch('orders/{order}/update-product-type', 'OrdersController@updateProductType')->name('orders.product-type');
     Route::get('orders/all-products', 'OrdersController@getAllBlindType')->name('orders.blind-type');
+    Route::get('/orders/order-search', 'OrdersController@orderSearch')->name('orders.order-search');
+    Route::get('/orders/order-list', 'OrdersController@orderList')->name('orders.order-list');
+    Route::get('/orders/export-orders', 'OrdersController@exportOrders')->name('orders.export-orders');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams
@@ -176,6 +179,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     // notifications
     Route::get('/notifications/get-list', 'NotificationController@getList')->name('notifications.get-list');
     Route::resource('notifications', 'NotificationController')->only(['index', 'show', 'destroy']);
+
+    // Filters route collection
+    Route::get('/filters/get-by-type', 'FilterController@getByType')->name('filters.get-by-type');
+    Route::resource('filters', 'FilterController')->only(['store', 'update', 'show']);
+
+    // Column Manager route collection
+    Route::get('/table-column-managers/get-by-type', 'TableColumnManagerController@getByType')->name('table-column-managers.get-by-type');
+    Route::resource('table-column-managers', 'TableColumnManagerController')->only(['store', 'update', 'show']);
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password
