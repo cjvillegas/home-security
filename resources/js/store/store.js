@@ -10,6 +10,7 @@ import manufacturedblind from './modules/report/manufacturedblind'
 import customers from './modules/customers'
 import targetperformance from './modules/report/targetperformance'
 import remakeChecker from './modules/remakechecker'
+import shiftPerformance from './modules/report/shiftperformance'
 
 Vue.use(Vuex)
 
@@ -121,6 +122,7 @@ export default new Vuex.Store({
         manufacturedblind,
         targetperformance,
         customers,
-        remakeChecker
+        remakeChecker,
+        shiftPerformance
     }
 })

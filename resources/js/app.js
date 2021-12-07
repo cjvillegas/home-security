@@ -109,6 +109,9 @@ const app = new Vue({
         if (pathname === '/admin/orders') {
             this.getProcesses()
         }
+        if (pathname === '/admin/reports/shift-performance') {
+            this.getShifts()
+        }
 
         this.getEmployees()
         this.checkPrivacy()

@@ -44,4 +44,9 @@ Route::group(['prefix' => 'reports', 'as' => 'reports.', 'namespace' => 'Report'
     Route::get('/target-performance', 'ReportController@targetPerformance')->name('target-performance');
     Route::post('/target-performance', 'ReportController@getTargetPerformances')->name('target-performance');
     Route::post('/export-target-performance', 'ReportController@exportTargetPerformance')->name('export-target-performance');
+
+    // Shift performance
+    Route::get('/shift-performance', 'ReportController@shiftPerformance')->name('shift-performance');
+    Route::post('/shift-performance/get-report', 'ReportController@runReportShiftPerformance')->name('shift-performance.run-report');
+    Route::post('/export-shift-performance', 'ReportController@exportShiftPerformances')->name('export-shift-performance');
 });
