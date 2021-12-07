@@ -80,10 +80,10 @@
                 <el-pagination
                     background
                     layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
+                    :total="pagination.total"
+                    :page-size="pagination.size"
                     :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
+                    :current-page="pagination.page"
                     @size-change="handleSize"
                     @current-change="handlePage">
                 </el-pagination>
@@ -104,7 +104,7 @@
 <script>
     import cloneDeep from 'lodash/cloneDeep'
     import pagination from "../../mixins/pagination";
-import { mapGetters } from 'vuex';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "OrderScanners",
@@ -150,9 +150,9 @@ import { mapGetters } from 'vuex';
             filteredScanners() {
                 let scanners = cloneDeep(this.scanners)
 
-                let page = this.filters.page
-                let offset = (page - 1) * this.filters.size
-                let size = this.filters.size * page
+                let page = this.pagination.page
+                let offset = (page - 1) * this.pagination.size
+                let size = this.pagination.size * page
 
                 // checks if the search query is present
                 if (this.search) {
@@ -171,7 +171,7 @@ import { mapGetters } from 'vuex';
                             || blindStatus.indexOf(query) > -1 || serialId.indexOf(query) > -1
                     })
                 }
-                this.filters.total = scanners.length
+                this.pagination.total = scanners.length
                 // do local pagination
                 // this retrieve scanners in between the current offset and the limit
                 scanners = scanners.filter((item, index) => (index + 1) > offset && (index + 1) <= size)
