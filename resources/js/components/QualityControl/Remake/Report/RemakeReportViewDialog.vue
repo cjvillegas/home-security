@@ -10,54 +10,59 @@
                 :span="12"
                 v-for="(blind, blindKey) in viewOrderRemake.validated_blinds"
                 :key="blindKey">
-                <el-card
-                    class="box-card border border-secondary mt-2"
-                    :body-style="{height: '380px'}">
-                    <div class="d-flex">
-                        <div class="ml-auto">
-                            <u>
-                                Serial ID: {{ blind.blind_id }}
-                            </u>
-                        </div>
-                    </div>
-                    <el-checkbox
-                        v-for="question in validationQuestions.QUESTIONS"
-                        :key="question.key"
-                        :label="question.key"
-                        :checked="isChecked(question.key, blind.question_key)"
-                        text-color="#199f6b"
-                        disabled>
-                        <div v-if="question.key==1">
-                            {{ question.value }} {{ blind.blind.width }}
-                        </div>
-                        <div v-else-if="question.key==2">
-                            {{ question.value }} {{ blind.blind.drop }}
-                        </div>
-                        <div v-else-if="question.key==3">
-                            {{ question.value }} {{ blind.blind.fabric_range }}
-                        </div>
-                        <p v-else>
-                            {{ question.value }}
-                        </p>
-                    </el-checkbox>
-                    <div>
-                        <el-button
-                            class="mt-2"
-                            v-if="isPartiallyVerified(validationQuestions.QUESTIONS, blind.question_key)"
-                            type="default"
-                            @click="viewReason(blind.reason, blind.blind_id)">
-                            View Reason
-                        </el-button>
-                    </div>
-                    <span class="mt-5">
-                        <p style="magin: 0px">
-                            Validated By: {{ viewOrderRemake.user.name }}
-                        </p>
-                        <p style="magin: 0px">
-                            Validated At: {{ viewOrderRemake.created_at | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }}
-                        </p>
-                    </span>
-                </el-card>
+                <table class="table mt-2">
+                    <thead>
+                        <tr class="table-info">
+                            <th>
+                                Serial ID: {{ blind.blind_id }} -
+                            <el-button
+                                v-if="isPartiallyVerified(validationQuestions.QUESTIONS, blind.question_key)"
+                                type="warning"
+                                @click="viewReason(blind.reason, blind.blind_id)">
+                                View Reason
+                            </el-button>
+                            <el-button
+                                v-else
+                                disabled
+                                type="default">
+                                View Reason
+                            </el-button>
+
+                            <p style="magin: 0px">Validated By: {{ viewOrderRemake.user.name }} </p>
+                            <p style="magin: 0px">Validated At: {{ viewOrderRemake.created_at | fixDateTimeByFormat('MMM DD, YYYY HH:mm:ss') }} </p>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="question in validationQuestions.QUESTIONS"
+                            :key="question.key"
+                            v-bind:class="[isChecked(question.key, blind.question_key) ? 'table-success' : 'table-danger']">
+                            <td>
+                                <div v-if="question.key==1">
+                                {{ question.value }} {{ blind.blind.width }}
+                                </div>
+                                <div v-else-if="question.key==2">
+                                    {{ question.value }} {{ blind.blind.drop }}
+                                </div>
+                                <div v-else-if="question.key==3">
+                                    {{ question.value }} {{ blind.blind.fabric_range }}
+                                </div>
+                                <p v-else>
+                                    {{ question.value }}
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <span class="mt-5">
+
+
+                    </p>
+                    <p style="magin: 0px">
+
+                    </p>
+                </span>
             </el-col>
         </el-row>
     </el-dialog>
