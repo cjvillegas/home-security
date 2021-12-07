@@ -122,6 +122,13 @@
 
         methods: {
             runReport() {
+                if (this.form.selectedDepartments.length  == 0 || this.form.selectedShifts.length == 0 || this.form.dateRange == null) {
+                    this.$notify.error({
+                        title: 'Invalid Input',
+                        message: "Please fill up all the required filters."
+                    });
+                    return
+                }
                 this.setForm(this.form)
                 this.runShiftPerformanceReport(this.form)
             },
