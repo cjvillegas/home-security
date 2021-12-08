@@ -45,7 +45,7 @@ export default {
         getFilterByType(type) {
             return this.$API.Filters.showByType(type)
                 .then(res => {
-                    if (res.data) {
+                    if (res.data && res.data.id) {
                         this.filters = res.data
                     } else {
                         // make sure this is implemented in the component using this mixing and this method

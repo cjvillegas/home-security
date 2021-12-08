@@ -133,7 +133,7 @@ class EmployeeTimeclock extends CronDatabasePopulator
                 dbo.EmpExtra.PayRate
             FROM
                 dbo.ClockTransactions
-            INNER JOIN dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransaction0s.EmpID
+            INNER JOIN dbo.Employee ON dbo.Employee.EmpID = dbo.ClockTransactions.EmpID
             INNER JOIN dbo.EmpExtra ON dbo.EmpExtra.EmpID = dbo.Employee.EmpID
         ";
 

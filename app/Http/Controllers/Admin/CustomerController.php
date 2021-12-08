@@ -39,7 +39,7 @@ class CustomerController extends Controller
         $size = $request->get('size');
 
         $customers =  Customer::
-            orderBy('name', 'ASC')
+            orderBy('company_name', 'ASC')
             ->when($searchString, function ($query) use ($searchString) {
                 $query->where('name', 'like', "%{$searchString}%");
                 $query->orWhere('code', 'like', "%{$searchString}%");
