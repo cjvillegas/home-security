@@ -207,7 +207,6 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
         if (empty($sageOrder['SerialID']) ||
             empty($sageOrder['OrderNo']) ||
             empty($sageOrder['Customer']) ||
-            empty($sageOrder['CustRef']) ||
             empty($sageOrder['ProductType']) ||
             empty($sageOrder['ProductCode'])) {
 
