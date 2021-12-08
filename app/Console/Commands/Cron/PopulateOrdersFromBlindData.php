@@ -73,7 +73,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                     // check if the CRON runs to check for missing orders
                     // this property relies on the switch coming from the command
                     if ($this->checking) {
-                        $exists = Order::where('serial_id', $order['SerialID'])->exists();
+                        $exists = Order::where('serial_id', $order->SerialID)->exists();
 
                         // if the order is already present in our production DB, ignore it.
                         if ($exists) {
