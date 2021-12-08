@@ -456,7 +456,7 @@ class ShiftPerformanceDataService extends ReportDataService
             $query = Order::query()
                 ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
                 ->join('scanners', 'orders.serial_id', 'scanners.blindid')
-                ->where('orders.product_type', $department)
+                ->where('orders.product_type', 'LIKE',  '%'.$department.'%')
                 ->whereIn('scanners.processid', $processes)
                 ->whereBetween('scanners.scannedtime', [$from, $to])
                 ->first();
@@ -494,6 +494,18 @@ class ShiftPerformanceDataService extends ReportDataService
                 'P1012',
                 'P1013',
                 'P1014'
+            ];
+        }
+
+        if ($department == 'Vertical') {
+            $processes = [
+                'P1002',
+                'P1003',
+                'P1004',
+                'P1005',
+                'P1007',
+                'P1008',
+                'P1010'
             ];
         }
 
