@@ -113,7 +113,9 @@ class OrdersController extends Controller
         if (empty($order)) {
             return response()->json([
                 'errors' => [
-                    'serial_id' => "Order doesn't exist in Blind Data."
+                    'serial_id' => [
+                        "Order doesn't exist in Blind Data."
+                    ]
                 ]
             ], 422);
         }
@@ -130,7 +132,9 @@ class OrdersController extends Controller
 
             return response()->json([
                 'message' => [
-                    'serial_id' => "Invalid order data coming from Blind Data."
+                    'serial_id' => [
+                        "Invalid order data coming from Blind Data."
+                    ]
                 ]
             ], 422);
         }
