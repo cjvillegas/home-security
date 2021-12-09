@@ -43,9 +43,15 @@ class OrderRepository
      */
     public function generateBaseQueryForBlindData(string $where = null, int $limit = null): string
     {
-        $query = "
-            SELECT
-                sdl.id AS SerialID,
+        $query = "SELECT";
+
+        // add the limit
+        if (!empty($limit)) {
+            $query .= "\t TOP {$limit}";
+        }
+
+        $query .= "
+                \t sdl.id AS SerialID,
                 o.order_id AS OrderNo,
                 o.dat_required AS RequiredDate,
                 u.company AS Customer,
@@ -90,11 +96,6 @@ class OrderRepository
         // append the where conditions
         if (!empty($where)) {
             $query .= "\t WHERE {$where}";
-        }
-
-        // add the limit
-        if (!empty($limit)) {
-            $query .= "\t LIMIT {$limit}";
         }
 
         return $query;
