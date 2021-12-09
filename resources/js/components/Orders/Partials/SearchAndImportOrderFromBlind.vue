@@ -102,6 +102,10 @@
                         });
 
                         this.$emit('imported', res.data)
+
+                        setTimeout(_ => {
+                            this.closeForm()
+                        }, 300)
                     }
                 })
                 .catch(err => {
