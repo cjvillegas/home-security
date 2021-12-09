@@ -102,7 +102,7 @@ class OrdersController extends Controller
 
         // initialize the query
         $query = $this->repository->generateBaseQueryForBlindData(
-            "sdl.id = {$serialId}",
+            "sdl.id = '{$serialId}'",
             1
         );
 
