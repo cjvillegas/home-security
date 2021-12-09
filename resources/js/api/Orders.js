@@ -32,6 +32,19 @@ export default {
     },
 
     /**
+     * Import orders directly from Blind Data
+     *
+     * @param serialId
+     *
+     * @handler Admin\OrdersController@importFromBlind
+     *
+     * @return Promise
+     */
+    importFromBlind(serialId) {
+        return axios.get(`/admin/orders/import-from-blind?serial_id=${serialId}`)
+    },
+
+    /**
      * API endpoint that searches and order based on the provided field
      * the field parameter is a DB column and the search string is the
      * search query

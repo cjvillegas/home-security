@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Factories\Order\OrderFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\CsvImportTrait;
 use App\Http\Requests\MassDestroyOrderRequest;
+use App\Http\Requests\Order\ImportOrderFromBlindRequest;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
@@ -29,11 +31,17 @@ class OrdersController extends Controller
     use CsvImportTrait;
 
     /**
+     * @var OrderFactory
+     */
+    private $factory;
+
+    /**
      * OrdersController constructor.
      */
-    public function __construct(OrderRepository $repository)
+    public function __construct(OrderRepository $repository, OrderFactory $orderFactory)
     {
         $this->repository = $repository;
+        $this->factory = $orderFactory;
     }
 
     /**
@@ -79,6 +87,57 @@ class OrdersController extends Controller
         $orders = $service->getData('list');
 
         return response()->json($orders);
+    }
+
+    /**
+     * Import order directly from blind data
+     *
+     * @param ImportOrderFromBlindRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function importFromBlind(ImportOrderFromBlindRequest $request): JsonResponse
+    {
+        $serialId = $request->get('serial_id');
+
+        // initialize the query
+        $query = $this->repository->generateBaseQueryForBlindData(
+            "sdl.id = {$serialId}",
+            1
+        );
+
+        // execute the query
+        $order = DB::connection('sqlsrv')->select($query);
+
+        // make sure that the order exists in the BlindData
+        if (empty($order)) {
+            return response()->json([
+                'errors' => [
+                    'serial_id' => "Order doesn't exist in Blind Data."
+                ]
+            ], 422);
+        }
+
+        // get the very first instance
+        $sageOrder = $order[0];
+
+        // do a sanity check of the required data
+        if (empty($sageOrder->SerialID) ||
+            empty($sageOrder->OrderNo) ||
+            empty($sageOrder->Customer) ||
+            empty($sageOrder->ProductType) ||
+            empty($sageOrder->ProductCode)) {
+
+            return response()->json([
+                'message' => [
+                    'serial_id' => "Invalid order data coming from Blind Data."
+                ]
+            ], 422);
+        }
+
+        $newOrder = $this->factory->createOrderFromBlind((array) $sageOrder);
+
+        return response()->json($newOrder);
     }
 
     /**

@@ -115,3 +115,9 @@
         }
     }
 }
+
+.sbg-compact-modal {
+    .el-dialog__body {
+        padding: 0px 20px !important;
+    }
+}
