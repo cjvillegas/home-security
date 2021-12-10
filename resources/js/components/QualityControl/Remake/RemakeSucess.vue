@@ -78,8 +78,8 @@
                 content += "<body class='text-center'>"
 
                 this.orderRemakeResponse.validated_blinds.forEach(blind => {
-                    content += `<div class="text-uppercase f-size-14">QC Verified</div>`
-                    content += `<div style="font-size: 7px"> ${this.orderRemakeResponse.report_no} - ${blind.barcode} </div>`
+                    content += `<div class="text-uppercase f-size-13">QC Verified</div>`
+                    content += `<div style="font-size: 9px"> ${this.orderRemakeResponse.report_no} - ${blind.barcode} </div>`
                     content += `<svg id="barcode${blind.id}"></svg>`
                 })
                 content += "</body></head></html>"
@@ -93,8 +93,8 @@
                     anotherScript["id" + blind.id] = document.createElement("script")
                     anotherScript["id" + blind.id].text += `setTimeout(_ => {
                         JsBarcode("#barcode${blind.id}", "${blind.barcode}", {
-                            height: 35,
-                            fontSize: 14
+                            height: 32,
+                            fontSize: 11
                         })
                     }, 200)`
                 })
