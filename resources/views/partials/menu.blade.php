@@ -114,6 +114,12 @@
                             </a>
                         </li>
                     @endcan
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings") || request()->is("admin/overtime-bookings/*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Slots
+                            </a>
+                        </li>
                 </ul>
             </li>
         @endif

@@ -11,6 +11,7 @@ import customers from './modules/customers'
 import targetperformance from './modules/report/targetperformance'
 import remakeChecker from './modules/remakechecker'
 import shiftPerformance from './modules/report/shiftperformance'
+import overtimeBooking from './modules/overtimebooking/overtimebooking'
 
 Vue.use(Vuex)
 
@@ -123,6 +124,7 @@ export default new Vuex.Store({
         targetperformance,
         customers,
         remakeChecker,
-        shiftPerformance
+        shiftPerformance,
+        overtimeBooking
     }
 })

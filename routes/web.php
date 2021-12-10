@@ -108,6 +108,14 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('shifts/all-shifts', 'ShiftsController@getAllShifts')->name('shifts.all-shifts');
     Route::resource('shifts', 'ShiftsController')->only(['index', 'store', 'update', 'destroy']);
 
+    // Overtime Booking
+    Route::group(['prefix' => 'overtime-bookings', 'as' => 'overtime-bookings', 'namespace' => 'OvertimeBooking'], function () {
+        Route::get('/', 'OvertimeBookingController@index');
+        Route::post('/', 'OvertimeBookingController@getSlots');
+        Route::post('/save', 'OvertimeBookingController@store')->name('overtime-bookings.store');
+    });
+
+
     // Audit Logs
     Route::resource('audit-logs', 'AuditLogsController', ['except' => ['create', 'store', 'edit', 'update', 'destroy']]);
 
