@@ -69,6 +69,7 @@
                         this.user = res.data
                     })
             },
+
             loadData() {
                 this.getOrderDetails()
             },
@@ -76,7 +77,13 @@
             getOrderScannersData() {
                 this.$refs.scanners ? this.$refs.scanners.loading = true : null
 
-                this.$API.Orders.getOrderScannersData(this.order.order_no)
+                let params = {}
+
+                if (this.field === 'blindid' && !this.order) {
+                    params.is_blind = true
+                }
+
+                this.$API.Orders.getOrderScannersData(this.order.order_no, params)
                 .then(res => {
                     this.scanners = res.data
                     this.order.scanners = cloneDeep(res.data)
@@ -88,9 +95,12 @@
                     this.$refs.scanners ? this.$refs.scanners.loading = false : null
                 })
             },
+
             getOrderDetails() {
                 this.loading = true
-                this.$API.Orders.getOrderDetails(this.field, this.toSearch)
+                let field = this.field === 'blindid' ? 'serial_id' : this.field
+
+                this.$API.Orders.getOrderDetails(field, this.toSearch)
                     .then(res => {
                         this.order = cloneDeep(res.data)
 

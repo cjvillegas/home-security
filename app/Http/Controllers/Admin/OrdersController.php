@@ -309,6 +309,8 @@ class OrdersController extends Controller
      */
     public function getOrderScanners(Request $request, $orderNo): JsonResponse
     {
+        $isBlind = $request->get('is_blind');
+
         $scanners = Scanner::select([
                 'scanners.*',
                 'o.serial_id AS serial_id',
@@ -319,10 +321,16 @@ class OrdersController extends Controller
                 'p.id AS process_id'
             ])
             ->with('qcFault')
-            ->join('orders AS o', 'o.serial_id', 'scanners.blindid')
+            ->leftJoin('orders AS o', 'o.serial_id', 'scanners.blindid')
             ->leftJoin('employees AS e', 'e.barcode', 'scanners.employeeid')
             ->leftJoin('processes AS p', 'p.barcode', 'scanners.processid')
-            ->where('o.order_no', $orderNo)
+            ->where(function ($query) use ($orderNo, $isBlind) {
+                if ($isBlind) {
+                    $query->where('scanners.blindid', $orderNo);
+                } else {
+                    $query->where('o.order_no', $orderNo);
+                }
+            })
             ->groupBy('scanners.id')
             ->get();
 

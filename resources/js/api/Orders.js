@@ -88,11 +88,14 @@ export default {
      * Retrieve orders' scanners data based on the provided order no
      *
      * @param orderNo
+     * @param params
      *
      * @returns Promise
      */
-    getOrderScannersData(orderNo) {
-        return axios.get(`/admin/orders/${orderNo}/scanners`)
+    getOrderScannersData(orderNo, params) {
+        return axios.get(`/admin/orders/${orderNo}/scanners`, {
+            params
+        })
     },
 
     /**
