@@ -25,7 +25,7 @@
             </el-form-item>
 
             <el-form-item
-                label="Serial ID"
+                :label="importForm.field === 'order_no' ? 'Order No' : 'Serial ID'"
                 prop="value"
                 :error="hasError('value')"
                 class="mb-0">
