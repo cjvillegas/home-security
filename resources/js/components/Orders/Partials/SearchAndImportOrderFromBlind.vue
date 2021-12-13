@@ -111,18 +111,16 @@
 
                 this.$API.Orders.importFromBlind(this.importForm.field, this.importForm.value)
                 .then(res => {
-                    if (res.data && res.data.id) {
-                        this.$notify.success({
-                            title: 'Order Import',
-                            message: "Order successfully imported from BlindData."
-                        });
+                    this.$notify.success({
+                        title: 'Order Import',
+                        message: "Order successfully imported from BlindData."
+                    });
 
-                        this.$emit('imported', res.data)
+                    this.$emit('imported')
 
-                        setTimeout(_ => {
-                            this.closeForm()
-                        }, 300)
-                    }
+                    setTimeout(_ => {
+                        this.closeForm()
+                    }, 300)
                 })
                 .catch(err => {
                     console.log(err)

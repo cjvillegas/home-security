@@ -151,7 +151,7 @@ class OrdersController extends Controller
             $insertCount++;
         }
 
-        return response()->json($newOrder);
+        return response()->json(true);
     }
 
     /**
