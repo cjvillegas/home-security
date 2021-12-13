@@ -113,6 +113,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::get('/', 'OvertimeBookingController@index');
         Route::post('/', 'OvertimeBookingController@getSlots');
         Route::post('/save', 'OvertimeBookingController@store')->name('overtime-bookings.store');
+        Route::patch('/{overtimeBooking}/toggle-lock', 'OvertimeBookingController@toggleSlot')->name('overtime-bookings.toggle');
     });
 
 

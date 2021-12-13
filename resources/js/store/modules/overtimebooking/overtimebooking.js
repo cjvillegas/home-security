@@ -30,10 +30,10 @@ const actions = {
         return axios.post(apiUrl, data)
     },
 
-    toggleLockSlot({commit}, data) {
-        let apiUrl = `/admin/overtime-bookings/toggle-lock`
+    toggleLockSlot({commit}, id) {
+        let apiUrl = `/admin/overtime-bookings/${id}/toggle-lock`
 
-        return axios.patch(apiUrl, data)
+        return axios.patch(apiUrl)
     }
 };
 

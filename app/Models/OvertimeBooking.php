@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 
 class OvertimeBooking extends Model
 {
@@ -12,16 +13,13 @@ class OvertimeBooking extends Model
     use HasFactory;
 
     /**
-     * Toggle Lock/Unlock on Slot
+     * Mass assignable fields
      *
-     * @return void
+     * @var string[]
      */
-    public function toggleLock()
-    {
-        if ($this->is_locked) {
-            $this->update(['is_locked', false]);
-        } else {
-            $this->update(['is_locked', true]);
-        }
-    }
+    protected $fillable = [
+        'available_date',
+        'working_hours',
+        'is_locked'
+    ];
 }

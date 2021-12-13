@@ -60,9 +60,12 @@
         data() {
             return {
                 loading: false,
-                slotForm: this.getDefaultFieldValues(),
+                slotForm: {
+                    dates: [],
+                    working_hours: null,
+                },
                 rules: {
-                    dates: {required: true, message: 'Available Date field is required.'},
+                    dates: {required: true, message: 'Available Date(s) field is required.'},
                     working_hours: {required: true, message: 'Working Hours field is required.'},
                 },
                 workingHours: [
@@ -111,6 +114,7 @@
             },
             resetForm() {
                 this.slotForm = this.getDefaultFieldValues
+                this.resetErrors()
             },
 
             closeForm(ignoreChecker = false) {
