@@ -11,12 +11,26 @@
             v-loading="loading"
             ref="importForm">
             <el-form-item
-                label="Serial ID"
-                prop="serial_id"
-                :error="hasError('serial_id')"
+                label="Search By"
+                prop="field"
+                :error="hasError('field')"
+                class="mb-3">
+                <el-select
+                    v-model="importForm.field"
+                    placeholder="Select to search field"
+                    class="w-100">
+                    <el-option value="order_no" label="Order No."></el-option>
+                    <el-option value="serial_id" label="Serial ID"></el-option>
+                </el-select>
+            </el-form-item>
+
+            <el-form-item
+                :label="importForm.field === 'order_no' ? 'Order No' : 'Serial ID'"
+                prop="value"
+                :error="hasError('value')"
                 class="mb-0">
                 <el-input
-                    v-model="importForm.serial_id"
+                    v-model="importForm.value"
                     clearable
                     placeholder="Enter serial id"
                     class="w-100">
@@ -60,17 +74,19 @@
             return {
                 loading: false,
                 importForm: {
-                    serial_id: null
+                    field: 'order_no',
+                    value: null
                 },
                 rules: {
-                    serial_id: {required: true, message: 'Please provide the serial ID that you want to import.', trigger: 'blur'}
+                    field: {required: true, message: 'Please provide field that you want to import.', trigger: 'change'},
+                    value: {required: true, message: 'Please provide the value that you want to import.', trigger: 'blur'}
                 }
             }
         },
 
         computed: {
             disableImport() {
-                return !this.importForm.serial_id
+                return !this.importForm.value || !this.importForm.field
             }
         },
 
@@ -93,20 +109,18 @@
             importOrder() {
                 this.loading = true
 
-                this.$API.Orders.importFromBlind(this.importForm.serial_id)
+                this.$API.Orders.importFromBlind(this.importForm.field, this.importForm.value)
                 .then(res => {
-                    if (res.data && res.data.id) {
-                        this.$notify.success({
-                            title: 'Order Import',
-                            message: "Order successfully imported from BlindData."
-                        });
+                    this.$notify.success({
+                        title: 'Order Import',
+                        message: "Order successfully imported from BlindData."
+                    });
 
-                        this.$emit('imported', res.data)
+                    this.$emit('imported')
 
-                        setTimeout(_ => {
-                            this.closeForm()
-                        }, 300)
-                    }
+                    setTimeout(_ => {
+                        this.closeForm()
+                    }, 300)
                 })
                 .catch(err => {
                     console.log(err)
@@ -121,7 +135,8 @@
             },
 
             closeForm() {
-                this.importForm.serial_id = null
+                this.importForm.field = 'order_no'
+                this.importForm.value = null
 
                 if (this.$refs.importForm) {
                     this.$refs.importForm.clearValidate()

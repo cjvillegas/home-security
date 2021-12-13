@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Order;
 
-use App\Rules\OrderNotExistsRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ImportOrderFromBlindRequest extends FormRequest
@@ -25,10 +24,13 @@ class ImportOrderFromBlindRequest extends FormRequest
     public function rules()
     {
         return [
-            'serial_id' => [
+            'field' => [
                 'required',
-                'string',
-                new OrderNotExistsRule('serial_id')
+                'in:order_no,serial_id'
+            ],
+            'value' => [
+                'required',
+                'string'
             ]
         ];
     }

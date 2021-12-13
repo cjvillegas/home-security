@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Factories\Order\OrderFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\CsvImportTrait;
-use App\Http\Requests\MassDestroyOrderRequest;
 use App\Http\Requests\Order\ImportOrderFromBlindRequest;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
 use App\Models\Order;
 use App\Models\OrderTracking;
 use App\Models\ProcessSequence\ProcessSequence;
@@ -21,10 +18,8 @@ use App\Services\Reports\OrderDataService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
@@ -98,19 +93,25 @@ class OrdersController extends Controller
      */
     public function importFromBlind(ImportOrderFromBlindRequest $request): JsonResponse
     {
-        $serialId = $request->get('serial_id');
+        $value = $request->get('value');
+
+        $where = "sdl.id = '{$value}'";
+
+        if ($request->get('field') === 'order_no') {
+            $where = "o.order_id = '{$value}'";
+        }
 
         // initialize the query
         $query = $this->repository->generateBaseQueryForBlindData(
-            "sdl.id = '{$serialId}'",
+            $where,
             1
         );
 
         // execute the query
-        $order = DB::connection('sqlsrv')->select($query);
+        $orders = DB::connection('sqlsrv')->select($query);
 
         // make sure that the order exists in the BlindData
-        if (empty($order)) {
+        if (empty($orders)) {
             return response()->json([
                 'errors' => [
                     'serial_id' => [
@@ -120,28 +121,32 @@ class OrdersController extends Controller
             ], 422);
         }
 
-        // get the very first instance
-        $sageOrder = $order[0];
+        $insertCount = 0;
+        // loop through all retrieved data
+        foreach ($orders as $order) {
+            // do a sanity check of the required data
+            if (empty($order->SerialID) ||
+                empty($order->OrderNo) ||
+                empty($order->Customer) ||
+                empty($order->ProductType) ||
+                empty($order->ProductCode)) {
 
-        // do a sanity check of the required data
-        if (empty($sageOrder->SerialID) ||
-            empty($sageOrder->OrderNo) ||
-            empty($sageOrder->Customer) ||
-            empty($sageOrder->ProductType) ||
-            empty($sageOrder->ProductCode)) {
+                continue;
+            }
 
-            return response()->json([
-                'message' => [
-                    'serial_id' => [
-                        "Invalid order data coming from Blind Data."
-                    ]
-                ]
-            ], 422);
+            $exists = Order::where('serial_id', $order->SerialID)->exists();
+
+            // make sure we don't get duplicate entry
+            if ($exists) {
+                continue;
+            }
+
+            $newOrder = $this->factory->createOrderFromBlind((array) $order);
+
+            $insertCount++;
         }
 
-        $newOrder = $this->factory->createOrderFromBlind((array) $sageOrder);
-
-        return response()->json($newOrder);
+        return response()->json(true);
     }
 
     /**

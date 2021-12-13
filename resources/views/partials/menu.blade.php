@@ -1,6 +1,6 @@
 <div id="sidebar" class="c-sidebar c-sidebar-fixed c-sidebar-lg-show">
 
-    <div class="c-sidebar-brand d-md-down-none">
+    <div class="c-sidebar-brand d-lg-down-none">
         <a class="c-sidebar-brand-full h4" href="#">
             Employee Tracker
         </a>
