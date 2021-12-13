@@ -10,7 +10,9 @@ use App\Services\CsvExporterService;
 use App\Services\Reports\ScannersDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Gate;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExportController extends Controller
 {
@@ -21,6 +23,8 @@ class ExportController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('download_export_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.exports.index');
     }
 
