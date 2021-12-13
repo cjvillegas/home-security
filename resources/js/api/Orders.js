@@ -34,14 +34,15 @@ export default {
     /**
      * Import orders directly from Blind Data
      *
-     * @param serialId
+     * @param field
+     * @param value
      *
      * @handler Admin\OrdersController@importFromBlind
      *
      * @return Promise
      */
-    importFromBlind(serialId) {
-        return axios.get(`/admin/orders/import-from-blind?serial_id=${serialId}`)
+    importFromBlind(field, value) {
+        return axios.get(`/admin/orders/import-from-blind?value=${value}&field=${field}`)
     },
 
     /**

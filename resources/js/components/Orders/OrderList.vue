@@ -127,7 +127,6 @@
 
         <search-and-import-order-from-blind
             :visible.sync="showOrderImporterWizard"
-            @imported="handleOrderImported"
             @close="showOrderImporterWizard = false">
         </search-and-import-order-from-blind>
     </div>
@@ -310,10 +309,6 @@
                         color: ${color ? '#fff' : '#000'}
                     `
                 }
-            },
-
-            handleOrderImported() {
-
             }
         }
     }
