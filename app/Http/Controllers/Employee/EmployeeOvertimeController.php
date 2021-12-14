@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Employee;
 
 use App\Http\Controllers\Controller;
+use App\Models\OvertimeBooking;
+use Carbon\Carbon;
 
 class EmployeeOvertimeController extends Controller
 {
@@ -14,5 +16,24 @@ class EmployeeOvertimeController extends Controller
     public function index()
     {
         return view('employee.overtime.overtime-booking');
+    }
+
+    /**
+     * Get all Available Slots for Overtime
+     *
+     * @param  mixed $request
+     *
+     * @return JsonResponse
+     */
+    public function getAvailableSlots()
+    {
+        $slots = OvertimeBooking::
+            whereDate('available_date', '>', Carbon::now())
+            ->where('is_locked', false)
+            ->get();
+
+        return response()->json([
+            'slots' => $slots
+        ]);
     }
 }

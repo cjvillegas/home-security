@@ -11,5 +11,6 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.', 'namespace' => 'Emplo
 
         //Overtime
         Route::get('/overtime-booking', 'EmployeeOvertimeController@index');
+        Route::get('/overtime-bookings/available', 'EmployeeOvertimeController@getAvailableSlots');
     });
 });

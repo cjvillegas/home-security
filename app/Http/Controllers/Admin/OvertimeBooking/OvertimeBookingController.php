@@ -89,5 +89,5 @@ class OvertimeBookingController extends Controller
         return response()->json([
             'message' => 'Successfully '. $message. ' Slot'
         ]);
-    }
+    },
 }
