@@ -54,6 +54,11 @@
                     </el-button>
 
                     <el-button
+                        @click="showOrderImporterWizard = !showOrderImporterWizard">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </el-button>
+
+                    <el-button
                         @click="exportOrders"
                         type="success">
                         <i class="fas fa-file-export"></i> Export
@@ -119,6 +124,11 @@
             @change="updateSelectedColumns"
             @close="closeColumnManager">
         </global-column-manager>
+
+        <search-and-import-order-from-blind
+            :visible.sync="showOrderImporterWizard"
+            @close="showOrderImporterWizard = false">
+        </search-and-import-order-from-blind>
     </div>
 </template>
 
@@ -161,6 +171,7 @@
             return {
                 loading: false,
                 showColumnManager: false,
+                showOrderImporterWizard: false,
                 searchString: null,
                 pagination: {},
                 orders: [],

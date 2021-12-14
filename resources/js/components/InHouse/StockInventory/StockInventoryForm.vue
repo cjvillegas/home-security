@@ -134,7 +134,8 @@
                                     :select-when-unmatched="true"
                                     :highlight-first-item="true"
                                     :ref="`orderCode_${scope.$index}`"
-                                    class="w-100">
+                                    class="w-100"
+                                    popper-class="sbg-custom-popper">
                                     <template slot-scope="{item}">
                                         <div class="sbg-select-item">
                                             <div class="item-title">{{ item.code }}</div>

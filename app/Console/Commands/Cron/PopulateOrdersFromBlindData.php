@@ -4,6 +4,7 @@ namespace App\Console\Commands\Cron;
 
 use App\Abstracts\CronDatabasePopulator;
 use App\Models\Order;
+use App\Repositories\Orders\OrderRepository;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use \Illuminate\Support\Collection;
@@ -73,7 +74,7 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
                     // check if the CRON runs to check for missing orders
                     // this property relies on the switch coming from the command
                     if ($this->checking) {
-                        $exists = Order::where('serial_id', $order['SerialID'])->exists();
+                        $exists = Order::where('serial_id', $order->SerialID)->exists();
 
                         // if the order is already present in our production DB, ignore it.
                         if ($exists) {
@@ -125,65 +126,23 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
     public function getDataFromBlind($loadAll = false): Collection
     {
         $latestSerialId = Order::getLatestSerialId();
+        $factory = new OrderRepository();
 
-        // initialize the query
-        $query = "
-            SELECT
-                sdl.id AS SerialID,
-                o.order_id AS OrderNo,
-                o.dat_required AS RequiredDate,
-                u.company AS Customer,
-                o.cust_ref AS CustRef,
-                o.cust_no AS CustNo,
-                CASE
-                    WHEN ml.location = 'Aluminium' THEN 'Aluminium'
-                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' AND bt.code NOT LIKE '%RIGID%' THEN 'Vertical'
-                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.description LIKE '%Louvers%' AND bt.code NOT LIKE 'LO89-RIGID-PVC' THEN 'LouversOnly'
-                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type LIKE '%Headrail%' AND bt.description NOT LIKE '%Louvers%' THEN 'HeadrailOnly'
-                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%'AND bt.code LIKE '%RIGID%' AND bt.description NOT LIKE '%Louvers%' THEN 'VerticalRigidPVC'
-                    WHEN ml.location LIKE '%Vertical%' AND f.fabric_type NOT LIKE '%Headrail%' AND bt.code LIKE '%RIGID%' AND bt.description LIKE '%Louvers%' THEN 'LouversOnlyRigidPVC'
-                    WHEN ml.location = 'Roller Express' AND o.order_id NOT IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) THEN 'RollerExpress'
-                    WHEN (NOT(od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS') AND o.order_id IS NOT NULL) OR ((ml.location = 'Rollers' OR ml.location = 'RDRS') AND od.option_list NOT LIKE '%Motor%' AND o.order_id IS NOT NULL) OR (bt.code = 'ROLLEXP' AND o.order_id IN (SELECT o.order_id FROM [Order] o INNER JOIN OrderDetail od ON o.id = od.order_id INNER JOIN Fabric f ON od.fabric_id = f.id INNER JOIN BlindType bt ON od.blindtype_id = bt.id WHERE (f.code LIKE '%AP' OR f.code LIKE '%AV' OR f.code LIKE 'NTW%') AND bt.code = 'ROLLEXP' AND o.order_id IS NOT NULL) AND o.order_id IS NOT NULL) THEN 'Roller'
-                    WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Chain%' THEN 'TechnicalChained'
-                    WHEN ml.location = 'Contracts Department' AND od.option_list LIKE '%Crank%' THEN 'TechnicalCrank'
-                    WHEN (o.order_id IS NOT NULL AND ml.location = 'Contracts Department' AND od.option_list LIKE '%Motor%') OR (o.order_id IS NOT NULL AND (od.option_list LIKE '%Motor%' AND od.option_list NOT LIKE '%No Motor%') AND (ml.location = 'Rollers' OR ml.location = 'RDRS')) THEN 'TechnicalMotorised'
-                END AS ProductType,
-                bt.code AS ProductCode,
-                o.dat_order AS Ordered,
-                o.username AS OrderEnteredBy,
-                u.sageaccount AS AccountCode,
-                od.width_man as Width,
-                od.drop_man as [Drop],
-                f.code as StockCode,
-                f.fabric_type as FabricRange,
-                f.colour as Colour,
-                od.nett_price as ItemPrice
-            FROM
-                OrderDetail od
-                INNER JOIN [Order] o ON od.order_id = o.id
-                INNER JOIN [User] u ON o.user_id = u.id
-                INNER JOIN BlindType bt ON od.blindtype_id = bt.id
-                INNER JOIN Fabric f ON od.fabric_id = f.id
-                INNER JOIN OrderStatus os ON o.orderstatus_id = os.id
-                INNER JOIN DetailStatus ds ON od.detailstatus_id = ds.id
-                INNER JOIN ManLocation ml ON bt.manlocation_id = ml.id
-                INNER JOIN SerialDetailLine sdl ON od.id = sdl.OrderDetail_id
-                INNER JOIN [Category] c ON bt.category_id = c.id
-            WHERE
-                (o.order_id IS NOT NULL)
-                AND (os.id <> '7')
-                AND (bt.id <> '382')
-        ";
+        $where = "(o.order_id IS NOT NULL)
+            AND (os.id <> '7')
+            AND (bt.id <> '382')";
 
         // retrieve only from the most recent serial_id fetched + not load all + not order checking
         if ($latestSerialId && !$loadAll && !$this->checking) {
-            $query .= "\t AND (sdl.id > {$latestSerialId})";
+            $where .= "\t AND (sdl.id > {$latestSerialId})";
         }
 
         // if order checking
         if ($this->checking) {
-            $query .= "\t AND o.dat_order >= DATEADD(day, -7, GETDATE())";
+            $where .= "\t AND o.dat_order >= DATEADD(day, -7, GETDATE())";
         }
+
+        $query = $factory->generateBaseQueryForBlindData($where);
 
         // execute the query
         $orders = DB::connection('sqlsrv')->select($query);
@@ -207,7 +166,6 @@ class PopulateOrdersFromBlindData extends CronDatabasePopulator
         if (empty($sageOrder['SerialID']) ||
             empty($sageOrder['OrderNo']) ||
             empty($sageOrder['Customer']) ||
-            empty($sageOrder['CustRef']) ||
             empty($sageOrder['ProductType']) ||
             empty($sageOrder['ProductCode'])) {
 

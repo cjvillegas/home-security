@@ -89,6 +89,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('/orders/order-search', 'OrdersController@orderSearch')->name('orders.order-search');
     Route::get('/orders/order-list', 'OrdersController@orderList')->name('orders.order-list');
     Route::get('/orders/export-orders', 'OrdersController@exportOrders')->name('orders.export-orders');
+    Route::get('/orders/import-from-blind', 'OrdersController@importFromBlind')->name('orders.import-from-blind');
     Route::resource('orders', 'OrdersController')->only(['index']);
 
     // Teams

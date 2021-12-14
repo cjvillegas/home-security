@@ -32,6 +32,20 @@ export default {
     },
 
     /**
+     * Import orders directly from Blind Data
+     *
+     * @param field
+     * @param value
+     *
+     * @handler Admin\OrdersController@importFromBlind
+     *
+     * @return Promise
+     */
+    importFromBlind(field, value) {
+        return axios.get(`/admin/orders/import-from-blind?value=${value}&field=${field}`)
+    },
+
+    /**
      * API endpoint that searches and order based on the provided field
      * the field parameter is a DB column and the search string is the
      * search query
@@ -75,11 +89,14 @@ export default {
      * Retrieve orders' scanners data based on the provided order no
      *
      * @param orderNo
+     * @param params
      *
      * @returns Promise
      */
-    getOrderScannersData(orderNo) {
-        return axios.get(`/admin/orders/${orderNo}/scanners`)
+    getOrderScannersData(orderNo, params) {
+        return axios.get(`/admin/orders/${orderNo}/scanners`, {
+            params
+        })
     },
 
     /**

@@ -1,6 +1,6 @@
 <div id="sidebar" class="c-sidebar c-sidebar-fixed c-sidebar-lg-show">
 
-    <div class="c-sidebar-brand d-md-down-none">
+    <div class="c-sidebar-brand d-lg-down-none">
         <a class="c-sidebar-brand-full h4" href="#">
             Employee Tracker
         </a>
@@ -190,7 +190,7 @@
                     @endcan
                     @can('order_access')
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route('admin.orders.order-search', ['type' => 'serial_id']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders/order-search") ? "c-active" : "" }}">
+                            <a href="{{ route('admin.orders.order-search', ['type' => 'blindid']) }}" class="c-sidebar-nav-link {{ request()->is("admin/orders/order-search") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-angle-double-right c-sidebar-nav-icon"></i>
                                 Search By Serial ID
                             </a>
@@ -409,12 +409,14 @@
             </li>
         @endif
 
-         <li class="c-sidebar-nav-item {{ request()->is('admin/exports*') ? 'c-show' : '' }}">
-            <a href="{{ route("admin.exports.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/exports") ? "c-active" : "" }}">
-                <i class="fas fa-folder-open fa-fw c-sidebar-nav-icon"></i>
-                Exports
-            </a>
-        </li>
+        @can('download_export_access')
+            <li class="c-sidebar-nav-item {{ request()->is('admin/exports*') ? 'c-show' : '' }}">
+                <a href="{{ route("admin.exports.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/exports") ? "c-active" : "" }}">
+                    <i class="fas fa-folder-open fa-fw c-sidebar-nav-icon"></i>
+                    Exports
+                </a>
+            </li>
+        @endcan
 
         @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
             @can('profile_password_edit')
