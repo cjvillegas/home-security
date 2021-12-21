@@ -79,6 +79,10 @@ class Kernel extends ConsoleKernel
         $schedule->command('reports:public-dashboard-hourly-report')
             ->hourly()
             ->timezone(__env_timezone());
+
+        // updates sage order no field in stock order from sage
+        $schedule->command('stocks:update-sage-order-no')
+            ->everyFiveMinutes();
     }
 
     /**
