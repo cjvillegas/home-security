@@ -78,6 +78,9 @@ class Kernel extends ConsoleKernel
         // public dashboard hourly report
         $schedule->command('reports:public-dashboard-hourly-report')
             ->hourly()
+            ->when(function () {
+                return false;
+            })
             ->timezone(__env_timezone());
     }
 
