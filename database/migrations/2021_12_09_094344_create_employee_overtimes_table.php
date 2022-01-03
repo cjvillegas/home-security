@@ -18,7 +18,11 @@ class CreateEmployeeOvertimesTable extends Migration
             $table->unsignedBigInteger('overtime_booking_id');
             $table->string('employee_id');
             $table->boolean('is_approved')->default(false);
+            $table->string('department')->nullable();
+            $table->string('shift')->nullable();
+            $table->unsignedBigInteger('checked_by')->nullable();
             $table->dateTime('approved_at')->nullable();
+            $table->dateTime('created_at')->nullable();
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
         });

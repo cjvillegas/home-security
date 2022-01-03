@@ -115,9 +115,21 @@
                         </li>
                     @endcan
                         <li class="c-sidebar-nav-item">
-                            <a href="{{ route("admin.overtime-bookings") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings") || request()->is("admin/overtime-bookings/*") ? "c-active" : "" }}">
+                            <a href="{{ route("admin.overtime-bookings.employee") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings/employee") || request()->is("admin/overtime-bookings/employee*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
-                                Slots
+                                Employee Overtime Lists
+                            </a>
+                        </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Overtime Slots
+                            </a>
+                        </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings.requests") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings/requests") || request()->is("admin/overtime-bookings/requests*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Overtime Requests
                             </a>
                         </li>
                 </ul>

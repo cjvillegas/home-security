@@ -114,6 +114,17 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         Route::post('/', 'OvertimeBookingController@getSlots');
         Route::post('/save', 'OvertimeBookingController@store')->name('overtime-bookings.store');
         Route::patch('/{overtimeBooking}/toggle-lock', 'OvertimeBookingController@toggleSlot')->name('overtime-bookings.toggle');
+
+        Route::get('/employee', 'OvertimeBookingController@employeesOvertime')->name('.employee');
+        Route::get('/requests', 'OvertimeBookingController@overtimeRequests')->name('.requests');
+        Route::post('/requests', 'OvertimeBookingController@getEmployeeOvertimeRequests')->name('overtime-bookings.get-employee-overtime-requests');
+        Route::post('/requests/update', 'OvertimeBookingController@updateEmployeeOvertimeRequests')->name('overtime-bookings.update-requests');
+        Route::post('/confirmations', 'OvertimeBookingController@getOvertimeConfirmations')->name('overtime-bookings.confirmations');
+        Route::post('/show-employee-overtimes', 'OvertimeBookingController@showEmployeeOvertimeRequests')->name('overtime-bookings.show-employee-overtimes');
+
+        //overtime confirmations
+        Route::get('/get-all-slots', 'OvertimeBookingController@getAllSlots')->name('overtime-bookings.get-all-slots');
+        Route::post('/save-manual-entry', 'OvertimeBookingController@saveEmployeeOvertime')->name('overtime-bookings.save-manual-entry');
     });
 
 

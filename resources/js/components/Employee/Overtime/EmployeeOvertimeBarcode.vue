@@ -11,7 +11,7 @@
                     <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
                         <el-input
                             placeholder="E100"
-                            @keyup.enter.native.prevent="enterBarcode(barcode)"
+                            @keyup.enter.native.prevent="verifyBarcode"
                             v-model="barcode"
                             size="small"
                             clearable
@@ -29,9 +29,13 @@
             </div>
         </el-card>
 
-        <employee-available-booking-slot v-if="page == 'bookingSlot'">
-
+        <employee-available-booking-slot
+            v-if="page == 'bookingSlot'">
         </employee-available-booking-slot>
+
+        <employee-overtime-success-dialog
+            v-if="page == 'sucessForm'">
+        </employee-overtime-success-dialog>
     </div>
 </template>
 
@@ -55,9 +59,43 @@
             ...mapGetters('employeeOvertimeBooking', ['page'])
         },
 
+        created() {
+            setTimeout(_ => {
+                console.log('asdasdasd')
+            },5000)
+        },
+
         methods: {
+            verifyBarcode() {
+                this.setLoading(true)
+
+                this.enterBarcode(this.barcode)
+                .then((res) =>{
+                    if (res.status == 201) {
+                        this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        });
+                    }
+
+                    if (res.status == 200) {
+                        this.setBarcode(this.barcode),
+                        this.setEmployee(res.data.employee)
+
+                        this.setEmployeeConfirmedSlots(res.data.employee.confirmed_slots)
+                        this.setPage('bookingSlot')
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {
+                    this.setLoading(false)
+                })
+
+            },
             ...mapActions('employeeOvertimeBooking', ['enterBarcode']),
-            ...mapMutations('employeeOvertimeBooking', ['setBarcode'])
+            ...mapMutations('employeeOvertimeBooking', ['setBarcode', 'setEmployee', 'setEmployeeConfirmedSlots', 'setLoading', 'setPage'])
         }
     }
 </script>

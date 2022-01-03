@@ -91,16 +91,20 @@
             validate() {
                 this.$refs.slotForm.validate(valid => {
                     if (valid) {
-                        console.log(this.$refs.slotForm)
                         this.resetErrors()
 
                         this.saveSlot(this.slotForm)
                         .then((res) => {
                             this.$notify({
                                 title: 'Success',
-                                message: response.data.message,
+                                message: res.data.message,
                                 type: 'success'
                             })
+
+                            setTimeout(_ => {
+                                this.closeForm()
+                                this.getSlots()
+                            },200)
                         })
                     }
                 })
@@ -122,7 +126,7 @@
                 this.closeModal()
             },
 
-            ...mapActions('overtimeBooking', ['saveSlot'])
+            ...mapActions('overtimeBooking', ['saveSlot', 'getSlots'])
         }
     }
 </script>

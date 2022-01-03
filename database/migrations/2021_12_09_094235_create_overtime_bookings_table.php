@@ -17,7 +17,7 @@ class CreateOvertimeBookingsTable extends Migration
             $table->id();
             $table->dateTime('available_date');
             $table->tinyInteger('working_hours');
-            $table->boolean('is_locked')->default(true);
+            $table->boolean('is_locked')->default(false);
             $table->dateTime('created_at');
             $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();

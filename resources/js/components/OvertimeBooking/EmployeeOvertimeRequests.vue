@@ -1,0 +1,159 @@
+<template>
+    <div>
+        <global-page-header title="Overtime Requests"></global-page-header>
+
+        <el-card
+            class="box-card mt-3"
+            v-loading="loading">
+            <div class="d-flex">
+                <div>
+                    <el-date-picker
+                        v-model="filters.dateRange"
+                        range-separator="~"
+                        start-placeholder="Start date"
+                        end-placeholder="End date"
+                        :clearable="false"
+                        type="daterange"
+                        class="w-100">
+                    </el-date-picker>
+
+                </div>
+                <el-button
+                    @click="applyFilter"
+                    type="default">
+                    Apply Filter
+                </el-button>
+                <div class="ml-auto">
+                     <el-button
+                        @click="confirm"
+                        type="primary">
+                        <i class="fa fa-check-square"></i> Action
+                    </el-button>
+                </div>
+            </div>
+
+            <el-table
+                ref="multipleTable"
+                :data="overtimeRequests"
+                @selection-change="handleSelectionChange"
+                class="w-100"
+                fit>
+                <template
+                    slot="empty">
+                    <el-empty
+                        description="No Records Found. Please select filters and click apply to see the data you want to get displayed.">
+                    </el-empty>
+                </template>
+                <el-table-column
+                    type="selection"
+                    width="55">
+                </el-table-column>
+                <el-table-column
+                    prop="barcode"
+                    label="Employee Barcode"
+                    sortable>
+                </el-table-column>
+                <el-table-column
+                    prop="fullname"
+                    label="Employee Fullname"
+                    sortable>
+                </el-table-column>
+                <el-table-column
+                    label="Date"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.available_date | fixDateTimeByFormat('MMM DD, YYYY') }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="Working Day"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.available_date | fixDateTimeByFormat('dddd') }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="Department"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.department | ucWords }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="Shift"
+                    sortable>
+                    <template slot-scope="scope">
+                         {{ scope.row.shift | ucWords }}
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    label="Status"
+                    sortable>
+                    <template slot-scope="scope">
+                        <el-tag
+                            size="mini"
+                            :type="scope.row.is_approved ? 'success' : 'danger'"
+                            effect="dark">
+                            {{ scope.row.is_approved ? 'Approved' : 'Rejected' }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </el-card>
+
+        <confirm-dialog
+            :visible.sync="confirmDialog"
+            :date-range="filters.dateRange"
+            @close="closeForm">
+        </confirm-dialog>
+    </div>
+</template>
+
+<script>
+    import { mapActions, mapGetters, mapMutations } from 'vuex'
+    export default {
+        data() {
+            return {
+                filters: {
+                    dateRange: null
+                },
+
+                confirmDialog: false
+            }
+        },
+
+        computed: {
+            ...mapGetters('overtimeBooking', ['overtimeRequests', 'loading', 'selectedOvertimeRequests'])
+        },
+
+        methods: {
+            applyFilter() {
+                if (this.filters.dateRange.length == 0) {
+                    this.$notify({
+                        title: 'Warning!',
+                        message: 'Please select Date Range',
+                        type: 'warning'
+                    });
+
+                    return
+                }
+                this.getEmployeeOvertimeRequests(this.filters)
+            },
+
+            handleSelectionChange(item) {
+                this.setSelectedOvertimeRequests(item)
+            },
+
+            confirm() {
+                this.confirmDialog = true
+            },
+
+            closeForm() {
+                this.confirmDialog = false
+            },
+
+            ...mapActions('overtimeBooking', ['getEmployeeOvertimeRequests']),
+            ...mapMutations('overtimeBooking', ['setSelectedOvertimeRequests'])
+        }
+    }
+</script>

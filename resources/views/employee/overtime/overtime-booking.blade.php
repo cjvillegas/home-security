@@ -1,4 +1,4 @@
 @extends('layouts.employee')
 @section('content')
-    <employee-overtime-index> </employee-overtime-index>
+    <employee-overtime-barcode> </employee-overtime-barcode>
 @endsection

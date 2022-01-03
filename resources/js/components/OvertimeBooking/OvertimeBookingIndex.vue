@@ -20,6 +20,7 @@
             </div>
 
             <el-table
+                v-loading="loading"
                 :data="slots"
                 fit>
                 <template
@@ -72,6 +73,17 @@
                         </template>
                 </el-table-column>
             </el-table>
+            <el-pagination
+                class="custom-pagination-class mt-3 mb-3 float-right"
+                background
+                layout="total, sizes, prev, pager, next"
+                :total="pagination.total"
+                :page-size="pagination.size"
+                :page-sizes="[10, 25, 50, 100]"
+                :current-page="pagination.page"
+                @size-change="handleSize"
+                @current-change="handlePage">
+            </el-pagination>
         </el-card>
 
         <overtime-booking-form-dialog
@@ -83,9 +95,11 @@
 
 <script>
     import { mapActions, mapGetters } from 'vuex'
-
+    import pagination from '../../mixins/pagination'
     export default {
         name: "OvertimeBookingIndex",
+        mixins: [pagination],
+
         data() {
             return {
                 filters: {
@@ -95,12 +109,15 @@
             }
         },
 
-        mounted() {
+        created() {
+            this.pagination.size = 10
             this.getSlots(this.filters)
+
+            this.functionName = 'getSlots'
         },
 
         computed: {
-            ...mapGetters('overtimeBooking', ['slots'])
+            ...mapGetters('overtimeBooking', ['slots', 'slotsTotal', 'loading'])
         },
 
         methods: {
@@ -126,5 +143,14 @@
 
             ...mapActions('overtimeBooking', ['getSlots', 'saveSlot', 'toggleLockSlot'])
         },
+
+        watch: {
+            slotsTotal: {
+                handler() {
+                    this.pagination.total = this.slotsTotal
+                },
+                immediate: true
+            }
+        }
     }
 </script>

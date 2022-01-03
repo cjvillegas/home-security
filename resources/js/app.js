@@ -74,6 +74,14 @@ const app = new Vue({
             return
         }
 
+        if (pathname.includes('/overtime-booking') && !pathname.includes('/admin')) {
+            return
+        }
+
+        if (pathname === '/admin') {
+            return
+        }
+
         /**
          * optionally load the data on specific pages. since we only use vuex in
          * selected pages, we will only load the data in those pages, not to all pages
