@@ -12,21 +12,19 @@
                 :key="overtime.id"
                 class="col-md-3">
 
-                <el-card
-                    v-if="overtime.checked_by == null">
-                    <div class="card bg-danger" style="max-width: 18rem;">
-                        <div class="card-body">
-                            <p class="text-center"> {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('dddd') }} </p>
-                            <p class="text-center"> {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('MMMM Do YYYY') }} </p>
-                            <p class="text-center"> {{ overtime.overtime_booking.working_hours }} Hours available </p>
-                        </div>
+                <div
+                    v-if="overtime.checked_by == null"
+                    class="card bg-danger w-250">
+                    <div class="card-body">
+                        <p class="text-center"> {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('dddd') }} </p>
+                        <p class="text-center"> {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('MMMM Do YYYY') }} </p>
+                        <p class="text-center"> {{ overtime.overtime_booking.working_hours }} Hours available </p>
                     </div>
-                </el-card>
-                <el-card
-                    v-if="overtime.checked_by != null">
+                </div>
+                <div v-if="overtime.checked_by != null">
                     <div
                         v-if="overtime.is_approved"
-                        class="card text-white bg-success" style="max-width: 18rem;">
+                        class="card text-white bg-success w-250">
                         <div class="card-body">
                             <p class="text-center"> Approved By: {{ overtime.checked_by.name }} </p>
                             <p class="text-center"> Approved Date: {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('MMMM Do YYYY') }} </p>
@@ -35,20 +33,22 @@
                     </div>
                     <div
                         v-else
-                        class="card text-white bg-danger" style="max-width: 18rem;">
+                        class="card text-white bg-danger w-250">
                         <div class="card-body">
                             <p class="text-center"> Rejected By: {{ overtime.checked_by.name }} </p>
                             <p class="text-center"> Rejected Date: {{ overtime.overtime_booking.available_date | fixDateTimeByFormat('MMMM Do YYYY') }} </p>
                             <p class="text-center"> Hours: {{ overtime.overtime_booking.working_hours }} </p>
                         </div>
                     </div>
-                </el-card>
-
+                </div>
             </div>
         </div>
     </el-dialog>
 </template>
 
+<style scoped>
+
+</style>
 <script>
     import { mapActions, mapGetters } from 'vuex'
     import {dialog} from "../../../mixins/dialog"

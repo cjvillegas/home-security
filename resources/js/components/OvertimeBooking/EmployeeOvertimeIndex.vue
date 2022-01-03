@@ -1,6 +1,6 @@
 <template>
     <div>
-         <global-page-header title="Overtime Confirmations"></global-page-header>
+         <global-page-header title="Overtime List"></global-page-header>
 
          <el-card
             class="box-card mt-3"
@@ -16,13 +16,13 @@
                         type="daterange"
                         class="w-100">
                     </el-date-picker>
-                    <el-button
-                        @click="applyFilter"
-                        type="default">
-                        Apply Filter
-                    </el-button>
-                </div>
 
+                </div>
+                <el-button
+                    @click="applyFilter"
+                    type="default">
+                    Apply Filter
+                </el-button>
                 <div class="ml-auto">
                     <el-button
                         @click="openManualEntry"
@@ -44,10 +44,6 @@
                         description="No Records Found">
                     </el-empty>
                 </template>
-                <el-table-column
-                    type="selection"
-                    width="55">
-                </el-table-column>
                 <el-table-column
                     prop="fullname"
                     label="Employee Fullname"

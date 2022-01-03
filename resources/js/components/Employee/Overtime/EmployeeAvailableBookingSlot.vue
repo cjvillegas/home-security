@@ -31,7 +31,7 @@
                     <div class="card" style="width: 18rem;">
                         <el-button
                             @click="addSelectedSlot(slot)"
-                            :disabled="isInArray(slot.id, employeeConfirmedSlots, true) || slot.is_locked"
+                            :disabled="isInArray(slot.id, employeeConfirmedSlots, true)"
                             :type="isSelected(slot.id, slot.is_locked)">
                             <h5 class="card-title">{{ convertToDayName(slot.available_date) }}</h5>
                             <h5 class="card-text">{{ slot.available_date | fixDateTimeByFormat('DD, MMMM, YYYY') }}</h5>
@@ -227,6 +227,7 @@
             },
 
             isInArray(value, array, isAlreadyConfirmed = false) {
+
                 if (isAlreadyConfirmed) {
                     let obj = array.find(item => item.overtime_booking_id == value)
                     return obj != null

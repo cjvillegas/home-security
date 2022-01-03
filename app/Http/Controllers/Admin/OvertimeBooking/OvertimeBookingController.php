@@ -31,7 +31,7 @@ class OvertimeBookingController extends Controller
         $dateRange = $request->dateRange;
 
         $slots = OvertimeBooking::
-            orderBy('available_date', 'ASC')
+            orderBy('available_date', 'DESC')
             ->when($dateRange, function ($query) use ($dateRange) {
                 $query->whereBetween('available_date', $dateRange);
             });
@@ -275,7 +275,6 @@ class OvertimeBookingController extends Controller
     {
         $overtimeRequests = $request->overtimeRequests;
         $attribute = $request->value;
-
         DB::beginTransaction();
         try {
             foreach ($overtimeRequests as $overtimeRequest) {

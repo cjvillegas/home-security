@@ -3,7 +3,6 @@
         :visible.sync="showDialog"
         title="Overtime Requests"
         :before-close="closeForm">
-        {{ dateRange }}
         <el-form
             ref="employeeOvertimeForm"
             :model="employeeOvertimeForm"
@@ -13,6 +12,7 @@
                 label="Date"
                 prop="overtime_booking_id"
                 :error="hasError('overtime_booking_id')">
+                <i class="fa fa-info"> Leave this blank if you wish to not modify the Employee(s) prefered dates </i>
                 <el-select
                     v-model="employeeOvertimeForm.overtime_booking_id"
                     filterable
@@ -219,6 +219,10 @@
                     shift: null,
                     is_approved: false
                 }
+            },
+
+            dateDisplay(date, workingHours) {
+                return `${moment(date).format('ll')} - ${workingHours} Working Hours`
             },
 
             ...mapActions('overtimeBooking', ['getAllSlots', 'getEmployeeOvertimeRequests', 'updateEmployeeOvertimeRequests'])

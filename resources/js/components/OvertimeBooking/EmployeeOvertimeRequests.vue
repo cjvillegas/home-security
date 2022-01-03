@@ -59,6 +59,7 @@
                     sortable>
                 </el-table-column>
                 <el-table-column
+                    prop="available_date"
                     label="Date"
                     sortable>
                     <template slot-scope="scope">
@@ -66,6 +67,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="available_date"
                     label="Working Day"
                     sortable>
                     <template slot-scope="scope">
@@ -146,6 +148,7 @@
 
             confirm() {
                 this.confirmDialog = true
+                console.log('zz')
             },
 
             closeForm() {

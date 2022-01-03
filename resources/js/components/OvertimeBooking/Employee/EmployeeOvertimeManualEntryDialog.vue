@@ -175,7 +175,7 @@
                         .then((res) => {
                             this.$notify({
                                 title: 'Success',
-                                message: response.data.message,
+                                message: res.data.message,
                                 type: 'success'
                             })
                             setTimeout(_ => {
