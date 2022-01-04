@@ -103,10 +103,10 @@
                     class="custom-pagination-class  mt-3 float-right"
                     background
                     layout="total, sizes, prev, pager, next"
-                    :total="filters.total"
-                    :page-size="filters.size"
+                    :total="pagination.total"
+                    :page-size="pagination.size"
                     :page-sizes="[10, 25, 50, 100]"
-                    :current-page="filters.page"
+                    :current-page="pagination.page"
                     @size-change="handleSize"
                     @current-change="handlePage">
                 </el-pagination>
@@ -281,7 +281,7 @@
         },
 
         created() {
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchMachineCounters'
         },
 
@@ -302,12 +302,15 @@
             fetchMachineCounters() {
                 let apiUrl = `/admin/machine-counters/list`
                 this.loading = true
-                axios.post(apiUrl, this.filters).then( (response) => {
+
+                let params = {...this.filters, ...this.pagination}
+
+                axios.post(apiUrl, params).then( (response) => {
                     this.loading = false
                     this.machines = response.data.machines
                     this.machineCounters = response.data.machineCounters.data
                     this.employees = response.data.employees
-                    this.filters.total = response.data.machineCounters.total
+                    this.pagination.total = response.data.machineCounters.total
                 })
             },
 

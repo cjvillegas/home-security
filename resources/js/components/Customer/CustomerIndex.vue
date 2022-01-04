@@ -140,10 +140,9 @@
         },
 
         created() {
-            let params = {...this.filters, ...this.pagination}
-            this.fetchCustomers(this.filters)
+            this.fetchCustomersAction
             this.pagination.size = 10
-            this.functionName = 'fetchCustomers'
+            this.functionName = 'fetchCustomersAction'
 
             this.$EventBus.listen('CUSTOMER_CREATE', _ => {
                 this.fetchCustomers()
@@ -169,6 +168,12 @@
                 this.view = false
                 this.model = cloneDeep(customer)
                 this.showForm = true
+            },
+
+            fetchCustomersAction()
+            {
+                let params = {...this.filters, ...this.pagination}
+                this.fetchCustomers(params)
             },
 
             clickDelete(id) {

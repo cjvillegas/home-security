@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 @section('content')
+    <password-index></password-index>
 
 <div class="row">
     <div class="col-md-6">
