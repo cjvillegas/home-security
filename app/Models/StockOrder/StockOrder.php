@@ -6,8 +6,8 @@ use App\Models\SbgModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class StockOrder extends SbgModel
@@ -44,6 +44,8 @@ class StockOrder extends SbgModel
         'created_by',
         'updated_by',
         'approved_by',
+        'sage_order_no',
+        'picking_url',
         'created_at',
         'approved_at',
         'updated_at',
@@ -90,6 +92,26 @@ class StockOrder extends SbgModel
     public function orderItems(): HasMany
     {
         return $this->hasMany(StockOrderItem::class);
+    }
+
+    /**
+     * Get the user who approved the order
+     *
+     * @return HasOne
+     */
+    public function approver(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'approver_id');
+    }
+
+    /**
+     * Get the user who created the order
+     *
+     * @return HasOne
+     */
+    public function creator(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'created_by');
     }
 
     /********************************

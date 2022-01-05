@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Exports;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Exports\ExportRawScannersDataRequest;
 use App\Models\Export;
+use App\Models\StockOrder\StockOrder;
 use App\Models\User;
 use App\Services\CsvExporterService;
 use App\Services\Reports\ScannersDataService;

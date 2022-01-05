@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class SbgModel extends Model
 {
@@ -30,5 +31,18 @@ class SbgModel extends Model
         $caseQuery .= " END as {$alias}";
 
         return $caseQuery;
+    }
+
+    /**
+     * Format a date column to a specified format
+     *
+     * @param string $column
+     * @param string $format
+     *
+     * @return string
+     */
+    public function formatColumnDate(string $column, string $format = 'd/m/Y')
+    {
+        return Carbon::parse($this->$column, __env_timezone())->format($format);
     }
 }

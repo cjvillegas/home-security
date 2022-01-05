@@ -63,6 +63,16 @@
                                 Copy Order
                             </el-button>
                         </div>
+
+                        <div
+                            v-if="scope.row.picking_url"
+                            class="mt-2">
+                            <el-button
+                                @click="viewPickingList(scope.row)"
+                                size="mini">
+                                View Picking List
+                            </el-button>
+                        </div>
                     </template>
                 </el-table-column>
             </el-table>
@@ -159,6 +169,10 @@
                         id: order.id
                     }
                 })
+            },
+
+            viewPickingList(order) {
+                window.open(order.picking_url)
             },
 
             backToList() {

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Cron;
 
+use App\Jobs\GeneratePickingListJob;
 use App\Models\StockOrder\StockOrder;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
@@ -51,6 +52,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
         foreach ($stockOrders->chunk(100) as $chunk) {
             $orderNos = $chunk->pluck('order_no')->toArray();
             $sageOrders = $this->getSageOrders($orderNos);
+            $warehouseItems = $this->getWarehouseData($orderNos);
 
             /**
              * loop through all the retrieved items from sage, why?
@@ -61,12 +63,21 @@ class SageOrderNoUpdateOnStockOrder extends Command
 
                 if (!empty($order)) {
                     $stockOrder->sage_order_no = $order->DocumentNo;
-                    $stockOrder->save();
+                    $saved = $stockOrder->save();
+
+                    $warehouseItem = $warehouseItems->firstWhere('CustomerDocumentNo', $order->CustomerDocumentNo);
+
+                    /**
+                     * If the sage_order_no has been updated successfully
+                     * then we generate/send an email for picking list
+                     */
+                    if ($saved && !empty($warehouseItem)) {
+                        $warehouseItem = (array) $warehouseItem;
+                        GeneratePickingListJob::dispatch($stockOrder, $warehouseItem)->onQueue('default');
+                    }
                 }
             }
         }
-
-        return;
     }
 
     /**
@@ -74,7 +85,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
      *
      * @return SupCollection
      */
-    public function getSageOrders(array $orderNos): SupCollection
+    private function getSageOrders(array $orderNos): SupCollection
     {
         $imploded = implode(', ', $orderNos);
         $whereInOrderNos = "({$imploded})";
@@ -92,6 +103,46 @@ class SageOrderNoUpdateOnStockOrder extends Command
 
         // return data as collection
         return collect($stockOrders);
+    }
+
+    /**
+     * Get warehouse items from SAGE
+     *
+     * @param array $orderNos
+     *
+     * @return SupCollection
+     */
+    private function getWarehouseData(array $orderNos)
+    {
+        $imploded = implode(', ', $orderNos);
+        $whereInOrderNos = "({$imploded})";
+
+        $query = "
+            SELECT
+               SOPOrderReturn.DocumentNo,
+               SOPOrderReturn.CustomerDocumentNo,
+               SOPOrderReturn.DocumentDate,
+               BinItem.BinName as BinLocation,
+               SOPOrderReturnLine.ItemCode,
+               SOPOrderReturnLine.LineQuantity,
+               StockItem.Name AS Description,
+               WarehouseItem.ConfirmedQtyInStock + WarehouseItem.UnconfirmedQtyInStock AS [QtyInStock]
+            FROM  WarehouseItem
+                INNER JOIN Warehouse ON WarehouseItem.WarehouseID = Warehouse.WarehouseID
+                INNER JOIN BinItem ON WarehouseItem.WarehouseItemID = BinItem.WarehouseItemID
+                INNER JOIN SOPOrderReturn
+                INNER JOIN SOPOrderReturnLine ON SOPOrderReturn.SOPOrderReturnID = SOPOrderReturnLine.SOPOrderReturnID
+                INNER JOIN StockItem ON SOPOrderReturnLine.ItemCode = StockItem.Code ON WarehouseItem.ItemID = StockItem.ItemID
+            WHERE
+                (SOPOrderReturn.CustomerDocumentNo IN {$whereInOrderNos})
+                AND (Warehouse.Name = 'IPSWICH')
+        ";
+
+        // execute the query
+        $warehouseItems = DB::connection('sage_order')->select($query);
+
+        // return data as collection
+        return collect($warehouseItems);
     }
 
     /**
