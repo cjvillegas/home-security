@@ -22,16 +22,20 @@ class ChangePasswordController extends Controller
     {
         auth()->user()->update($request->validated());
 
-        return redirect()->route('profile.password.edit')->with('message', __('global.change_password_success'));
+        return response()->json([
+            'message' => 'Successfully changed password.'
+        ]);
     }
 
     public function updateProfile(UpdateProfileRequest $request)
     {
         $user = auth()->user();
-        dd($request->all());
+
         $user->update($request->validated());
 
-        return redirect()->route('profile.password.edit')->with('message', __('global.update_profile_success'));
+        return response()->json([
+            'message' => 'Successfully saved profile.'
+        ]);
     }
 
     public function destroy()
