@@ -157,7 +157,7 @@ class GeneratePickingListJob implements ShouldQueue
     {
         // if environment is in local, make sure we don't send any email
         if (__is_local()) {
-            return explode(',', env('TEST_EMAIL'));;
+            return explode(',', env('TEST_EMAIL'));
         }
 
         if (__is_production()) {
