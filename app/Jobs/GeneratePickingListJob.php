@@ -146,7 +146,7 @@ class GeneratePickingListJob implements ShouldQueue
         // loop through the emails
         foreach ($emails as $email) {
             Notification::route('mail', $email)
-                ->notify((new OrderPickingListNotification($this->stockOrder, $this->stockOrder->refresh()->url)));
+                ->notify((new OrderPickingListNotification($this->stockOrder, $this->stockOrder->refresh()->picking_url)));
         }
     }
 
