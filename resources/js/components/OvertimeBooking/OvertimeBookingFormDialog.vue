@@ -117,7 +117,7 @@
                 }
             },
             resetForm() {
-                this.slotForm = this.getDefaultFieldValues
+                this.slotForm = this.getDefaultFieldValues()
                 this.resetErrors()
             },
 

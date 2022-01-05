@@ -27,7 +27,7 @@ const actions = {
         let apiUrl = `/admin/overtime-bookings`
 
         commit('setLoading', true)
-        axios.post(apiUrl)
+        axios.post(apiUrl, data)
         .then((res) => {
             commit('setBookingSlots', res.data.slots.data)
             commit('setSlotsTotal', res.data.slots.total)
@@ -50,6 +50,12 @@ const actions = {
         let apiUrl = `/admin/overtime-bookings/${id}/toggle-lock`
 
         return axios.patch(apiUrl)
+    },
+
+    deleteSlot({commit}, id) {
+        let apiUrl = `/admin/overtime-bookings/${id}/delete`
+
+        return axios.delete(apiUrl)
     },
 
     // Overtime Confirmations

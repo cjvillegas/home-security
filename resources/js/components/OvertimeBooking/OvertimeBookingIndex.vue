@@ -72,6 +72,29 @@
                             </template>
                         </template>
                 </el-table-column>
+                <el-table-column
+                    width="100%"
+                    label="Delete Status"
+                    class-name="table-action-button">
+                        <template slot-scope="scope">
+                            <template>
+                               <el-popconfirm
+                                    @confirm="deleteSlotAction(scope.row.id)"
+                                    confirm-button-text='OK'
+                                    cancel-button-text='No, Thanks'
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    title="Are you sure to delete this?">
+                                    <el-button
+                                        type="text"
+                                        class="text-danger ml-2"
+                                        slot="reference">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </el-button>
+                                </el-popconfirm>
+                            </template>
+                        </template>
+                </el-table-column>
             </el-table>
             <el-pagination
                 class="custom-pagination-class mt-3 mb-3 float-right"
@@ -111,9 +134,10 @@
 
         created() {
             this.pagination.size = 10
-            this.getSlots(this.filters)
 
-            this.functionName = 'getSlots'
+            this.getSlotsAction()
+
+            this.functionName = 'getSlotsAction'
         },
 
         computed: {
@@ -123,6 +147,12 @@
         methods: {
             openAddNewSlot() {
                 this.showForm = true
+            },
+
+            getSlotsAction() {
+                let params = {...this.filters, ...this.pagination}
+                console.log(params)
+                this.getSlots(params)
             },
 
             toggle(id) {
@@ -137,11 +167,23 @@
                 })
             },
 
+            deleteSlotAction(id) {
+                this.deleteSlot(id)
+                .then((res) => {
+                    this.$notify({
+                        title: 'Success',
+                        message: res.data.message,
+                        type: 'success'
+                    })
+                    this.getSlotsAction()
+                })
+            },
+
             closeForm() {
                 this.showForm = false
             },
 
-            ...mapActions('overtimeBooking', ['getSlots', 'saveSlot', 'toggleLockSlot'])
+            ...mapActions('overtimeBooking', ['getSlots', 'saveSlot', 'toggleLockSlot', 'deleteSlot'])
         },
 
         watch: {

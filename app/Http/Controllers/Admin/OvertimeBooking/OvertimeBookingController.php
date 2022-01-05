@@ -8,6 +8,8 @@ use App\Models\EmployeeOvertime;
 use App\Models\OvertimeBooking;
 use Carbon\Carbon;
 use Exception;
+use Gate;
+use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,17 +24,21 @@ class OvertimeBookingController extends Controller
      */
     public function index()
     {
+        abort_if(Gate::denies('overtime_booking_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         return view('admin.overtime-booking.index');
     }
 
     public function getSlots(Request $request)
     {
+        abort_if(Gate::denies('overtime_booking_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $size = $request->get('size');
 
         $dateRange = $request->dateRange;
 
         $slots = OvertimeBooking::
-            orderBy('available_date', 'DESC')
+            orderBy('id', 'DESC')
             ->when($dateRange, function ($query) use ($dateRange) {
                 $query->whereBetween('available_date', $dateRange);
             });
@@ -95,6 +101,15 @@ class OvertimeBookingController extends Controller
         $message = $overtimeBooking->is_locked ? 'locked' : 'unlocked';
         return response()->json([
             'message' => 'Successfully '. $message. ' Slot'
+        ]);
+    }
+
+    public function deleteSlot(OvertimeBooking $overtimeBooking)
+    {
+        $overtimeBooking->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted Slot'
         ]);
     }
 
@@ -211,6 +226,8 @@ class OvertimeBookingController extends Controller
      */
     public function saveEmployeeOvertime(Request $request)
     {
+        abort_if(Gate::denies('overtime_booking_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         DB::beginTransaction();
         EmployeeOvertime::create([
             'overtime_booking_id' => $request->overtime_booking_id,
@@ -274,6 +291,8 @@ class OvertimeBookingController extends Controller
      */
     public function updateEmployeeOvertimeRequests(Request $request)
     {
+        abort_if(Gate::denies('overtime_booking_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $overtimeRequests = $request->overtimeRequests;
         $attribute = $request->value;
         DB::beginTransaction();
