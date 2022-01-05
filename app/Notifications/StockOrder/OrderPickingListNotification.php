@@ -44,6 +44,8 @@ class OrderPickingListNotification extends Notification implements ShouldQueue
         return [
             'order-picking',
             'order-picking-list-notification',
+            'stock-order: ' . $this->stockOrder->id,
+            'url: ' . $this->url
         ];
     }
 
