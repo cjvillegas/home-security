@@ -23,6 +23,7 @@ class EmployeeOvertime extends Model
         'department',
         'is_approved',
         'approved_at',
+        'rejected_at',
         'checked_by'
     ];
 

@@ -124,11 +124,11 @@
                     <template
                         slot-scope="scope">
                         <template
-                            v-if="scope.row.overtime_booking.shift == 'Morning'">
+                            v-if="scope.row.overtime_booking.shift == 'morning'">
                             Morning (06-14)
                         </template>
                         <template
-                            v-else>
+                            v-if="scope.row.overtime_booking.shift == 'afternoon'">
                             Afternoon (14-22)
                         </template>
                     </template>

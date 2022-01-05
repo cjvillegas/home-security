@@ -25,6 +25,7 @@
                 </el-button>
                 <div class="ml-auto">
                      <el-button
+                        v-show="overtimeRequests.length > 0"
                         @click="confirm"
                         type="primary">
                         <i class="fa fa-check-square"></i> Action
@@ -75,6 +76,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="department"
                     label="Department"
                     sortable>
                     <template slot-scope="scope">
@@ -82,6 +84,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="shift"
                     label="Shift"
                     sortable>
                     <template slot-scope="scope">
@@ -89,6 +92,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    prop="is_approved"
                     label="Status"
                     sortable>
                     <template slot-scope="scope">

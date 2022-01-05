@@ -8,7 +8,7 @@
             :model="employeeOvertimeForm"
             :rules="rules"
             v-loading="loading">
-            <el-form-item
+            <!-- <el-form-item
                 label="Date"
                 prop="overtime_booking_id"
                 :error="hasError('overtime_booking_id')">
@@ -26,7 +26,7 @@
                         :value="availableSlot.id">
                     </el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
 
             <el-form-item
                 label="Department"

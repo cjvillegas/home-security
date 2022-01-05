@@ -9,6 +9,7 @@ use App\Models\OvertimeBooking;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -288,9 +289,15 @@ class OvertimeBookingController extends Controller
                     $overtimeRequestModel->approved_at = Carbon::now();
                 }
 
+                if (isset($attribute['is_approved']) && $attribute['is_approved'] == false) {
+                    $overtimeRequest->rejected_at = Carbon::now();
+                }
+
                 if (!is_null($attribute['overtime_booking_id'])) {
                     $overtimeRequestModel->overtime_booking_id = $attribute['overtime_booking_id'];
                 }
+
+                $overtimeRequestModel->checked_by = Auth::user()->id;
 
                 $overtimeRequestModel->save();
             }
