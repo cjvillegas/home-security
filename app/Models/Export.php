@@ -40,9 +40,6 @@ class Export extends Model
     // orders export report type
     const ORDERS_EXPORT_REPORT = 'orders_export';
 
-    // order picking PDF export
-    const ORDER_PICKING_PDF_EXPORT = 'order_picking';
-
     /**
      * Export Status
      */
