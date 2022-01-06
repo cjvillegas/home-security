@@ -8,19 +8,18 @@ use App\Models\EmployeeOvertime;
 use App\Models\OvertimeBooking;
 use Carbon\Carbon;
 use Exception;
-use Gate;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Gate;
 
 class OvertimeBookingController extends Controller
 {
     /**
      * View for Overtime Booking Slot
      *
-     * @return void
+     * @return View
      */
     public function index()
     {
@@ -38,10 +37,10 @@ class OvertimeBookingController extends Controller
         $dateRange = $request->dateRange;
 
         $slots = OvertimeBooking::
-            orderBy('id', 'DESC')
-            ->when($dateRange, function ($query) use ($dateRange) {
+            when($dateRange, function ($query) use ($dateRange) {
                 $query->whereBetween('available_date', $dateRange);
-            });
+            })
+            ->orderBy('id', 'DESC');
 
         $slots = $slots->paginate($size);
 
@@ -53,23 +52,28 @@ class OvertimeBookingController extends Controller
     /**
      * Store Overtime Booking Slot
      *
-     * @param  mixed $request
+     * @param  request $request
      *
      * @return JsonResponse
      */
     public function store(Request $request)
     {
-        $dates = $request->dates;
+        $dates = $request->get('dates');
+
         DB::beginTransaction();
         try {
+            $overtimeBookings =  [];
+
             //iterate all selected dates
             foreach ($dates as $date) {
-                OvertimeBooking::create([
+                array_push($overtimeBookings, [
                     'available_date' => Carbon::parse($date),
-                    'working_hours' => $request->working_hours
+                    'working_hours' => $request->working_hours,
+                    'created_at' => Carbon::now(),
                 ]);
             }
 
+            OvertimeBooking::insert($overtimeBookings);
             DB::commit();
 
             return response()->json([
@@ -77,7 +81,6 @@ class OvertimeBookingController extends Controller
             ]);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info($e);
             return response()->json(['message' => "Something went wrong when creating a new Slot."], 500);
         }
     }
@@ -85,17 +88,20 @@ class OvertimeBookingController extends Controller
     /**
      * Toggle Lock and Unlock
      *
-     * @param  mixed $request
+     * @param  request $request
      *
      * @return JsonResponse
      */
     public function toggleSlot(Request $request, OvertimeBooking $overtimeBooking)
     {
+        // This is to identify if slot is locked or not. If locked, unlocked. Vice versa.
         if ($overtimeBooking->is_locked) {
             $overtimeBooking->is_locked = false;
         } else {
             $overtimeBooking->is_locked = true;
         }
+
+
         $overtimeBooking->save();
 
         $message = $overtimeBooking->is_locked ? 'locked' : 'unlocked';
@@ -104,6 +110,13 @@ class OvertimeBookingController extends Controller
         ]);
     }
 
+    /**
+     * Delete Selected Slot
+     *
+     * @param  request $overtimeBooking
+     *
+     * @return JsonResponse
+     */
     public function deleteSlot(OvertimeBooking $overtimeBooking)
     {
         $overtimeBooking->delete();
@@ -116,7 +129,7 @@ class OvertimeBookingController extends Controller
     /**
      * Employee Overtime Page
      *
-     * @return void
+     * @return View
      */
     public function employeesOvertime()
     {
@@ -126,13 +139,13 @@ class OvertimeBookingController extends Controller
     /**
      * Get lists of Employee's overtime
      *
-     * @param  mixed $request
+     * @param  Request $request
      *
      * @return JsonResponse
      */
     public function getOvertimeConfirmations(Request $request)
     {
-        $dateRange = $request->dateRange ?? [];
+        $dateRange = $request->get('dateRange', []);
 
         $employeeOvertimes = EmployeeOvertime::select([
                 'employees.fullname',
@@ -143,21 +156,25 @@ class OvertimeBookingController extends Controller
             ])
             ->join('employees', 'employees.id', 'employee_id')
             ->join('overtime_bookings', 'overtime_bookings.id', 'overtime_booking_id')
-
             ->groupBy('employees.fullname');
 
-        if (isset($request->dateRange)) {
+        if (!empty($dateRange)) {
              $employeeOvertimes->whereBetween('overtime_bookings.available_date', $dateRange);
         }
 
         $employeeOvertimes = $employeeOvertimes->get();
+
+        // Do this to compute a value for 'Approved Hours' and 'Available Slots'
+        // That two columns needs to be present upon fetching
         foreach ($employeeOvertimes as $overtime) {
+
             $approvedHours = OvertimeBooking::select([DB::raw('SUM(working_hours) AS approved_hours')])
                 ->join('employee_overtimes', 'employee_overtimes.overtime_booking_id', 'overtime_bookings.id')
                 ->where('employee_id', $overtime->id)
                 ->whereBetween('overtime_bookings.available_date', $dateRange)
                 ->where('is_approved', true)
                 ->first();
+
             $availableSlots = OvertimeBooking::select([DB::raw('COUNT(overtime_bookings.id) AS available_slots')])
                 ->join('employee_overtimes', 'employee_overtimes.overtime_booking_id', 'overtime_bookings.id')
                 ->whereDate('overtime_bookings.available_date', Carbon::parse($overtime->available_date)->format('Y-m-d'))
@@ -173,11 +190,19 @@ class OvertimeBookingController extends Controller
         ]);
     }
 
+    /**
+     * Show selected Employee Data
+     *
+     * @param  request $request
+     *
+     * @return JsonResponse
+     */
     public function showEmployeeOvertimeRequests(Request $request)
     {
         $employee = Employee::where('id', $request->employeeId)
             ->with('overtimeSlots.checkedBy', 'overtimeSlots.overtimeBooking')
             ->first();
+
         return response()->json([
             'employee' => $employee
         ]);
@@ -186,7 +211,7 @@ class OvertimeBookingController extends Controller
     /**
      * Manual Entry of Employee Overtime
      *
-     * @param  mixed $request
+     * @param  request $request
      *
      * @return JsonResponse
      */
@@ -202,7 +227,7 @@ class OvertimeBookingController extends Controller
     /**
      * Return only those slots that are available and not locked
      *
-     * @return void
+     * @return JsonResponse
      */
     public function getAllSlots()
     {
@@ -220,9 +245,9 @@ class OvertimeBookingController extends Controller
     /**
      * Save Manual Entry for Overtime
      *
-     * @param  mixed $request
+     * @param  Request $request
      *
-     * @return void
+     * @return JsonResponse
      */
     public function saveEmployeeOvertime(Request $request)
     {
@@ -248,7 +273,7 @@ class OvertimeBookingController extends Controller
     /**
      * Overtime Requests Page
      *
-     * @return void
+     * @return View
      */
     public function overtimeRequests()
     {
@@ -257,6 +282,8 @@ class OvertimeBookingController extends Controller
 
     /**
      * Get Employee Overtime Requests
+     *
+     * @param  Request $request
      *
      * @return JsonResponse
      */
@@ -285,7 +312,7 @@ class OvertimeBookingController extends Controller
     /**
      * Update all selected Employee Overtime Requests
      *
-     * @param  mixed $request
+     * @param  Request $request
      *
      * @return JsonResponse
      */
@@ -328,7 +355,6 @@ class OvertimeBookingController extends Controller
         }
         catch (Exception $e) {
             DB::rollBack();
-            Log::info($e);
 
             return response()->json([
                 'message' => 'An error occured while updating Employee Overtime Requests'

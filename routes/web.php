@@ -113,9 +113,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::group(['prefix' => 'overtime-bookings', 'as' => 'overtime-bookings', 'namespace' => 'OvertimeBooking'], function () {
         Route::get('/', 'OvertimeBookingController@index');
         Route::post('/', 'OvertimeBookingController@getSlots');
-        Route::delete('/{overtimeBooking}/delete', 'OvertimeBookingController@deleteSlot')->name('overtime-bookings.delete');
+        Route::delete('/{overtime_booking}/delete', 'OvertimeBookingController@deleteSlot')->name('overtime-bookings.delete');
         Route::post('/save', 'OvertimeBookingController@store')->name('overtime-bookings.store');
-        Route::patch('/{overtimeBooking}/toggle-lock', 'OvertimeBookingController@toggleSlot')->name('overtime-bookings.toggle');
+        Route::patch('/{overtime_booking}/toggle-lock', 'OvertimeBookingController@toggleSlot')->name('overtime-bookings.toggle');
 
         Route::get('/employee', 'OvertimeBookingController@employeesOvertime')->name('.employee');
         Route::get('/requests', 'OvertimeBookingController@overtimeRequests')->name('.requests');

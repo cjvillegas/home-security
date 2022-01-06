@@ -9,8 +9,6 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.', 'namespace' => 'Emplo
     Route::group(['middleware' => ['auth']], function () {
         Route::get('/index', 'EmployeeController@index');
     });
-
-     //Overtime
 });
 
 Route::group(['namespace' => 'Employee'], function() {

@@ -58,8 +58,7 @@ const actions = {
         return axios.delete(apiUrl)
     },
 
-    // Overtime Confirmations
-
+    //Overtime Confirmations
     getOvertimeConfirmations({commit}, data) {
         let apiUrl = `/admin/overtime-bookings/confirmations`
 
@@ -80,6 +79,7 @@ const actions = {
         return axios.post(apiUrl, data)
     },
 
+    //Slots
     getAllSlots({commit}) {
         let apiUrl = `/admin/overtime-bookings/get-all-slots`
 
@@ -89,9 +89,6 @@ const actions = {
         })
         .catch(err => {
             console.log(err)
-        })
-        .finally(_ => {
-
         })
     },
 
@@ -124,18 +121,23 @@ const mutations = {
     setBookingSlots(state, slots) {
         return state.slots = slots
     },
+
     setAvailableSlots(state, availableSlots) {
         return state.availableSlots = availableSlots
     },
+
     setOvertimeConfirmations(state, overtimeConfirmations) {
         return state.overtimeConfirmations = overtimeConfirmations
     },
+
     setOvertimeRequests(state, overtimeRequests) {
         return state.overtimeRequests = overtimeRequests
     },
+
     setSelectedOvertimeRequests(state, selectedOvertimeRequests) {
         return state.selectedOvertimeRequests = selectedOvertimeRequests
     },
+
     setSlotsTotal(state, slotsTotal) {
         return state.slotsTotal = slotsTotal
     },
