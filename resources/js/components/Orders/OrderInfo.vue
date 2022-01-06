@@ -81,7 +81,7 @@
                     <i class="fas fa-calendar-alt"></i>
                     Requested Date
                 </template>
-                {{ order_details.requested_at | fixDateTimeByFormat }}
+                {{ order_details.required_date | fixDateTimeByFormat }}
             </el-descriptions-item>
 
             <el-descriptions-item>
