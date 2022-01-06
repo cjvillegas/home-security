@@ -25,14 +25,19 @@
                 </el-button>
                 <div class="ml-auto">
                     <el-button
+                        v-print="'#employeeOvertimeTable'"
+                        type="success">
+                        <i class="fas fa-printer"></i> Print
+                    </el-button>
+                    <el-button
                         @click="openManualEntry"
                         type="primary">
                         <i class="fas fa-plus"></i> Add Confirmation
                     </el-button>
                 </div>
             </div>
-
             <el-table
+                id="employeeOvertimeTable"
                 ref="multipleTable"
                 :data="overtimeConfirmations"
                 @selection-change="handleSelectionChange"

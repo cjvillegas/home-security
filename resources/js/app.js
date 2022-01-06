@@ -17,6 +17,7 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/display.css'
 import locale from 'element-ui/lib/locale/lang/en'
+import Print from 'vue-print-nb'
 
 // import router file
 import router from './router'
@@ -32,6 +33,10 @@ import moment from 'moment'
 
 // make element UI globally accessible
 Vue.use(ElementUI, {  locale, size: 'small' })
+
+//Vue Printer
+Vue.use(Print);
+
 
 import API from './api/index.js'
 import EventBus from './services/EventBus'

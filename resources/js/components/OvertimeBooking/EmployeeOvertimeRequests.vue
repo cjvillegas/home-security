@@ -97,10 +97,25 @@
                     sortable>
                     <template slot-scope="scope">
                         <el-tag
+                            v-if="scope.row.is_approved"
                             size="mini"
-                            :type="scope.row.is_approved ? 'success' : 'danger'"
+                            type="success"
                             effect="dark">
-                            {{ scope.row.is_approved ? 'Approved' : 'Rejected' }}
+                            Approved
+                        </el-tag>
+                        <el-tag
+                            v-if="!scope.row.is_approved && scope.row.rejected_at != null"
+                            size="mini"
+                            type="danger"
+                            effect="dark">
+                            Rejected
+                        </el-tag>
+                        <el-tag
+                            v-if="!scope.row.is_approved && scope.row.rejected_at == null"
+                            size="mini"
+                            type="info"
+                            effect="dark">
+                            Waiting for Confirmation
                         </el-tag>
                     </template>
                 </el-table-column>
