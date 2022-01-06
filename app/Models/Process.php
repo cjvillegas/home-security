@@ -80,6 +80,16 @@ class Process extends Model
         return $this->hasMany(QcFault::class);
     }
 
+    /**
+     * Get the machines related to this process
+     *
+     * @return HasMany
+     */
+    public function machines(): HasMany
+    {
+       return $this->hasMany(Machine::class, 'process_barcode', 'barcode');
+    }
+
     /********************************
     * E N D  O F  R E L A T I O N S *
     ********************************/

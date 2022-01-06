@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -34,6 +35,7 @@ class Machine extends Model
         'parameter_9',
         'parameter_10',
         'status',
+        'process_barcode',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -56,5 +58,15 @@ class Machine extends Model
     public function machineCounters(): HasMany
     {
         return $this->hasMany(MachineCounter::class);
+    }
+
+    /**
+     * Relation to Process' model
+     *
+     * @return BelongsTo
+     */
+    public function process(): BelongsTo
+    {
+        return $this->belongsTo(Process::class, 'barcode', 'process_barcode');
     }
 }
