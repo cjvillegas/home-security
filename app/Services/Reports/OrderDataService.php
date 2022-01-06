@@ -104,8 +104,6 @@ class OrderDataService extends ReportDataService
                 'sa.work_date'
             ])
             ->with(['scanner' => function($query) {
-                $employees = $this->getFilterValue('employees');
-                $processes = $this->getFilterValue('processes');
                 $query
                     ->select([
                         'scanners.id AS scanners_id',
@@ -117,12 +115,6 @@ class OrderDataService extends ReportDataService
                     ])
                     ->leftJoin('employees AS emp', 'emp.barcode', 'scanners.employeeid')
                     ->leftJoin('processes AS pr', 'pr.barcode', 'scanners.processid')
-                    ->when(!empty($employees) && is_array($employees), function ($query) use ($employees) {
-                        $query->whereIn('emp.id', $employees);
-                    })
-                    ->when(!empty($processes) && is_array($processes), function ($query) use ($processes) {
-                        $query->whereIn('pr.id', $processes);
-                    })
                     ->orderBy('scanners.id', 'DESC');
             }])
             ->leftJoin('shift_assignments AS sa', 'sa.serial_id', 'orders.serial_id')
@@ -142,10 +134,31 @@ class OrderDataService extends ReportDataService
     public function applyFilters(): self
     {
         $dates = $this->getFilterValue('dates');
+        $employees = $this->getFilterValue('employees');
+        $processes = $this->getFilterValue('processes');
 
         // filter between the ordered at date
         if (!empty($dates)) {
             $this->query->inBetweenDates($dates);
+        }
+
+        if (!empty($employees) || !empty($processes)) {
+            $this->query->whereExists(function ($query) use ($employees, $processes){
+                $query->select()
+                    ->from('scanners')
+                    ->leftJoin('employees AS emp', 'emp.barcode', 'scanners.employeeid')
+                    ->leftJoin('processes AS pr', 'pr.barcode', 'scanners.processid')
+                    ->whereColumn('scanners.blindid', 'orders.serial_id')
+                    ->whereRaw(DB::raw("scanners.id = (SELECT MAX(sc.id) FROM scanners sc WHERE sc.blindid = scanners.blindid)"))
+                    ->when(!empty($employees) && is_array($employees), function ($query) use ($employees) {
+                        $query->whereIn('emp.id', $employees);
+                    })
+                    ->when(!empty($processes) && is_array($processes), function ($query) use ($processes) {
+                        $query->whereIn('pr.id', $processes);
+                    })
+                    ->orderBy('scanners.id', 'DESC')
+                    ->limit(1);
+            });
         }
 
         return $this;

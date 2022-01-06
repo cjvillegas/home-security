@@ -120,10 +120,10 @@
                 class="custom-pagination-class  mt-3 float-right"
                 background
                 layout="total, sizes, prev, pager, next"
-                :total="filters.total"
-                :page-size="filters.size"
+                :total="pagination.total"
+                :page-size="pagination.size"
                 :page-sizes="[1, 2, 10, 25, 50, 100]"
-                :current-page="filters.page"
+                :current-page="pagination.page"
                 @size-change="handleSize"
                 @current-change="handlePage">
             </el-pagination>
@@ -172,7 +172,7 @@ export default {
     },
 
     mounted() {
-        this.filters.size = 10
+        this.pagination.size = 10
         this.functionName = 'fetchStocks'
         this.fetchStocks();
     },
@@ -181,10 +181,13 @@ export default {
         fetchStocks() {
             let apiUrl = `/admin/in-house/stocks/list`
             this.loading = true
-            axios.post(apiUrl, this.filters)
+
+            let params = {...this.filters, ...this.pagination}
+
+            axios.post(apiUrl, params)
             .then((response) => {
                 this.stockItems = response.data.stockItems.data
-                this.filters.total = response.data.stockItems.total
+                this.pagination.total = response.data.stockItems.total
             })
             .catch( () => {})
             .finally( () => {

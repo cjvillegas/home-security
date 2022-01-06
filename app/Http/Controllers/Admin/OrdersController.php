@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Factories\Order\OrderFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\CsvImportTrait;
-use App\Http\Requests\MassDestroyOrderRequest;
-use App\Http\Requests\StoreOrderRequest;
-use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Requests\Order\ImportOrderFromBlindRequest;
 use App\Models\Order;
 use App\Models\OrderTracking;
 use App\Models\ProcessSequence\ProcessSequence;
@@ -19,21 +18,25 @@ use App\Services\Reports\OrderDataService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Psy\Util\Json;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
     use CsvImportTrait;
 
     /**
+     * @var OrderFactory
+     */
+    private $factory;
+
+    /**
      * OrdersController constructor.
      */
-    public function __construct(OrderRepository $repository)
+    public function __construct(OrderRepository $repository, OrderFactory $orderFactory)
     {
         $this->repository = $repository;
+        $this->factory = $orderFactory;
     }
 
     /**
@@ -79,6 +82,71 @@ class OrdersController extends Controller
         $orders = $service->getData('list');
 
         return response()->json($orders);
+    }
+
+    /**
+     * Import order directly from blind data
+     *
+     * @param ImportOrderFromBlindRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function importFromBlind(ImportOrderFromBlindRequest $request): JsonResponse
+    {
+        $value = $request->get('value');
+
+        $where = "sdl.id = '{$value}'";
+
+        if ($request->get('field') === 'order_no') {
+            $where = "o.order_id = '{$value}'";
+        }
+
+        // initialize the query
+        $query = $this->repository->generateBaseQueryForBlindData(
+            $where,
+            1
+        );
+
+        // execute the query
+        $orders = DB::connection('sqlsrv')->select($query);
+
+        // make sure that the order exists in the BlindData
+        if (empty($orders)) {
+            return response()->json([
+                'errors' => [
+                    'serial_id' => [
+                        "Order doesn't exist in Blind Data."
+                    ]
+                ]
+            ], 422);
+        }
+
+        $insertCount = 0;
+        // loop through all retrieved data
+        foreach ($orders as $order) {
+            // do a sanity check of the required data
+            if (empty($order->SerialID) ||
+                empty($order->OrderNo) ||
+                empty($order->Customer) ||
+                empty($order->ProductType) ||
+                empty($order->ProductCode)) {
+
+                continue;
+            }
+
+            $exists = Order::where('serial_id', $order->SerialID)->exists();
+
+            // make sure we don't get duplicate entry
+            if ($exists) {
+                continue;
+            }
+
+            $newOrder = $this->factory->createOrderFromBlind((array) $order);
+
+            $insertCount++;
+        }
+
+        return response()->json(true);
     }
 
     /**
@@ -246,6 +314,8 @@ class OrdersController extends Controller
      */
     public function getOrderScanners(Request $request, $orderNo): JsonResponse
     {
+        $isBlind = $request->get('is_blind');
+
         $scanners = Scanner::select([
                 'scanners.*',
                 'o.serial_id AS serial_id',
@@ -256,10 +326,16 @@ class OrdersController extends Controller
                 'p.id AS process_id'
             ])
             ->with('qcFault')
-            ->join('orders AS o', 'o.serial_id', 'scanners.blindid')
+            ->leftJoin('orders AS o', 'o.serial_id', 'scanners.blindid')
             ->leftJoin('employees AS e', 'e.barcode', 'scanners.employeeid')
             ->leftJoin('processes AS p', 'p.barcode', 'scanners.processid')
-            ->where('o.order_no', $orderNo)
+            ->where(function ($query) use ($orderNo, $isBlind) {
+                if ($isBlind) {
+                    $query->where('scanners.blindid', $orderNo);
+                } else {
+                    $query->where('o.order_no', $orderNo);
+                }
+            })
             ->groupBy('scanners.id')
             ->get();
 

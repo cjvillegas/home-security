@@ -28,7 +28,7 @@ export const formHelper = {
         },
 
         /**
-         * Reset and ropulates the error stack
+         * Reset and re-populates the error stack
          *
          * @param errors <array> - array of key value pair errors
          */

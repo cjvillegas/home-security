@@ -40,6 +40,7 @@ class StockItemController extends Controller
     public function fetchStocks(Request $request)
     {
         $searchString = $request->searchString;
+        $size = $request->get('size');
 
         $StockItems = StockItem::orderBy('id', 'DESC')
             ->when($searchString, function ($query) use ($searchString) {
@@ -51,7 +52,7 @@ class StockItemController extends Controller
                     ->orWhere('status', 'like', "%{$searchString}%");
             });
 
-        $StockItems = $StockItems->paginate($request->size);
+        $StockItems = $StockItems->paginate($size);
 
         return response()->json(['stockItems' => $StockItems]);
     }

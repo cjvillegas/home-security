@@ -103,10 +103,10 @@
                 class="custom-pagination-class  mt-3 float-right"
                 background
                 layout="total, sizes, prev, pager, next"
-                :total="filters.total"
-                :page-size="filters.size"
+                :total="pagination.total"
+                :page-size="pagination.size"
                 :page-sizes="[10, 25, 50, 100]"
-                :current-page="filters.page"
+                :current-page="pagination.page"
                 @size-change="handleSize"
                 @current-change="handlePage">
             </el-pagination>
@@ -439,7 +439,7 @@
         },
 
         created() {
-            this.filters.size = 10
+            this.pagination.size = 10
             this.functionName = 'fetchMachines'
         },
 
@@ -456,10 +456,13 @@
 
             fetchMachines() {
                 this.loading = true
-                this.$API.Machine.fetch(this.filters)
+
+                let params = {...this.filters, ...this.pagination}
+
+                this.$API.Machine.fetch(params)
                 .then ( (response) => {
                     this.machines = response.data.machines.data
-                    this.filters.total = response.data.machines.total
+                    this.pagination.total = response.data.machines.total
                 })
                 .catch(err => {
                     console.log(err)

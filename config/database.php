@@ -124,6 +124,19 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
+
+        'sage_order' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('SAGE_ORDER_DB_HOST', 'localhost'),
+            'port' => env('SAGE_ORDER_DB_PORT', '1433'),
+            'database' => env('SAGE_ORDER_DB_DATABASE', 'forge'),
+            'username' => env('SAGE_ORDER_DB_USERNAME', 'forge'),
+            'password' => env('SAGE_ORDER_DB_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
     ],
 
     /*

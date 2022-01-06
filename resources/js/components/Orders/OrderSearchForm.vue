@@ -21,7 +21,7 @@
                     clearable
                     class="w-100"
                     label="customer"
-                    :fetch-suggestions="querySearch"
+                    :fetch-suggestions="doSearch"
                     @select="selectOrder"
                     placeholder="Enter to search orders...">
                     <template slot-scope="{item}">
@@ -54,7 +54,17 @@ export default {
         }
     },
     methods: {
-        querySearch(searchString, cb) {
+        doSearch(searchString, cb) {
+            if (this.type === 'blindid') {
+                this.searchScanners(searchString, cb)
+
+                return
+            }
+
+            this.searchByOrder(searchString, cb)
+        },
+
+        searchByOrder(searchString, cb) {
             this.$API.Orders.searchOrderByField(this.searchForm.field, searchString)
             .then(res => {
                 cb(res.data)
@@ -64,6 +74,18 @@ export default {
             })
             .finally(_ => {})
         },
+
+        searchScanners(searchString, cb) {
+            this.$API.Scanners.searchScannerByField(this.searchForm.field, searchString)
+                .then(res => {
+                    cb(res.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+                .finally(_ => {})
+        },
+
         selectOrder(order) {
             this.$router.push({name: 'Order View', params: {toSearch: order[this.searchForm.field], field: this.searchForm.field}})
         },

@@ -11,6 +11,7 @@ use Illuminate\Support\Collection AS SupCollection;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ShiftPerformanceDataService extends ReportDataService
 {
@@ -109,7 +110,6 @@ class ShiftPerformanceDataService extends ReportDataService
                         $fullyManufactured = $this->manufacturedBlindsQuery($from, $to, $department, $shift);
                         $plannedWork = $this->totalPlannedQuery($from, $to, $department, $shift);
                         $peopleWorked = $this->peopleWorkedQuery($from, $to, $department);
-
                     }
                     if (Carbon::parse($date)->isWeekDay() || ($fullyManufactured > 0 && $plannedWork > 0 && $peopleWorked> 0)) {
                         if ($department == 'Vertical') {
@@ -157,6 +157,7 @@ class ShiftPerformanceDataService extends ReportDataService
                     }
                 }
 
+
                 // To get the total date range selected
                 $fromStart = Carbon::parse($this->dateRange[0])->startOfDay()->addHours(6);
                 $toEnd = Carbon::parse($this->dateRange[1])->addDay()->format('Y-m-d').' '. '05:59:59';
@@ -167,7 +168,7 @@ class ShiftPerformanceDataService extends ReportDataService
                     'date' => 'Total',
                     'fully_manufactured' => $totalManufacturedBlinds,
                     'total_planned' => $totalPlannedWork,
-                    'people_worked' => $this->peopleWorkedQuery($fromStart, $toEnd, $department),
+                    'people_worked' => $this->peopleWorkedQuery($fromStart, $toEnd, $department, $shift, true),
                     'target_performance' => $this->targetPerformanceTransformer($totalManufacturedBlinds, $totalPlannedWork, true),
                 ];
 
@@ -437,9 +438,11 @@ class ShiftPerformanceDataService extends ReportDataService
      *
      * @return Array
      */
-    private function peopleWorkedQuery($from, $to, $department)
+    private function peopleWorkedQuery($from, $to, $department, $shift = null, $isOverallTotal = false)
     {
         $processes = [];
+        $timeFrom = null;
+        $timeTo = null;
         // to dynamically define the Processes for People Worked Today
         // then assign it to query
         if ($department == 'Technical') {
@@ -452,14 +455,40 @@ class ShiftPerformanceDataService extends ReportDataService
                 'P1008',
                 'P1010'
             ];
+            if ($isOverallTotal && !is_null($shift)) {
+                if ($shift == 1) {
+                    $timeFrom = '06:00:00';
+                    $timeTo = '13:59:59';
+                }
+                if ($shift == 2) {
+                    $timeFrom = '14:00:00';
+                    $timeTo = '21:59:59';
+                }
+                if ($shift == 3) {
+                    $timeFrom = '22:00:00';
+                    $timeTo = '05:59:59';
+                }
+                $query = Order::query()
+                    ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
+                    ->join('scanners', 'orders.serial_id', 'scanners.blindid')
+                    ->where('orders.product_type', $department)
+                    ->whereIn('scanners.processid', $processes)
+                    ->whereBetween('scanners.scannedtime', [Carbon::parse($from)->format('Y-m-d'), Carbon::parse($to)->format('Y-m-d')])
+                    ->where(function($q) use ($timeFrom, $timeTo) {
+                        $q->whereTime('scanners.scannedtime', '>', $timeFrom)
+                            ->whereTime('scanners.scannedtime', '<', $timeTo);
+                    })
+                    ->first();
+            } else {
+                $query = Order::query()
+                    ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
+                    ->join('scanners', 'orders.serial_id', 'scanners.blindid')
+                    ->where('orders.product_type', $department)
+                    ->whereIn('scanners.processid', $processes)
+                    ->whereBetween('scanners.scannedtime', [$from, $to])
+                    ->first();
+            }
 
-            $query = Order::query()
-                ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
-                ->join('scanners', 'orders.serial_id', 'scanners.blindid')
-                ->where('orders.product_type', 'LIKE',  '%'.$department.'%')
-                ->whereIn('scanners.processid', $processes)
-                ->whereBetween('scanners.scannedtime', [$from, $to])
-                ->first();
         }
         if ($department == 'Venetian') {
             $processes = [
@@ -497,24 +526,39 @@ class ShiftPerformanceDataService extends ReportDataService
             ];
         }
 
-        if ($department == 'Vertical') {
-            $processes = [
-                'P1002',
-                'P1003',
-                'P1004',
-                'P1005',
-                'P1007',
-                'P1008',
-                'P1010'
-            ];
-        }
-
-        if ($department == 'Venetian' || $department == 'Roller Express' || $department == 'Roller' || $department == 'Vertical' || $department == 'Despatch') {
+        // Query for Overall Total People Workend
+        // Technical Department has different Query.
+        if ($isOverallTotal && !is_null($shift) && $department != 'Technical') {
+            if ($shift == 1) {
+                $timeFrom = '06:00:00';
+                $timeTo = '13:59:59';
+            }
+            if ($shift == 2) {
+                $timeFrom = '14:00:00';
+                $timeTo = '21:59:59';
+            }
+            if ($shift == 3) {
+                $timeFrom = '22:00:00';
+                $timeTo = '05:59:59';
+            }
             $query = Scanner::query()
             ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
             ->whereIn('scanners.processid', $processes)
-            ->whereBetween('scanners.scannedtime', [$from, $to])
+            ->whereBetween('scanners.scannedtime', [Carbon::parse($from)->format('Y-m-d'), Carbon::parse($to)->format('Y-m-d')])
+            ->where(function($q) use ($timeFrom, $timeTo) {
+                $q->whereTime('scanners.scannedtime', '>', $timeFrom)
+                    ->whereTime('scanners.scannedtime', '<', $timeTo);
+            })
             ->first();
+
+        } else {
+            if ($department == 'Venetian' || $department == 'Roller Express' || $department == 'Roller' || $department == 'Vertical' || $department == 'Despatch') {
+                $query = Scanner::query()
+                ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
+                ->whereIn('scanners.processid', $processes)
+                ->whereBetween('scanners.scannedtime', [$from, $to])
+                ->first();
+            }
         }
 
         return $query['total'];

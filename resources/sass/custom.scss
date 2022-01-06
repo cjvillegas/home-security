@@ -115,3 +115,15 @@
         }
     }
 }
+
+.sbg-compact-modal {
+    .el-dialog__body {
+        padding: 0px 20px !important;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .sbg-custom-popper {
+        width: 350px !important;
+    }
+}
