@@ -10,7 +10,7 @@ use App\Services\CsvExporterService;
 use App\Services\Reports\ScannersDataService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Gate;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
