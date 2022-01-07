@@ -10,3 +10,10 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.', 'namespace' => 'Emplo
         Route::get('/index', 'EmployeeController@index');
     });
 });
+
+Route::group(['namespace' => 'Employee'], function() {
+    Route::post('/barcode', 'EmployeeOvertimeController@getEmployee');
+    Route::get('/overtime-booking', 'EmployeeOvertimeController@index');
+    Route::get('/overtime-bookings/available', 'EmployeeOvertimeController@getAvailableSlots');
+    Route::post('/overtime-bookings/store-selected-slots', 'EmployeeOvertimeController@store');
+});

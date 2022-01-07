@@ -55,6 +55,10 @@ const StockInventoryDraftOrders = () => import('../components/InHouse/StockInven
 const StockInventoryPendingOrders = () => import('../components/InHouse/StockInventory/StockInventoryPendingOrders')
 const StockInventoryApprovedOrders = () => import('../components/InHouse/StockInventory/StockInventoryApprovedOrders')
 
+// Overtime Booking
+const OverTimeBookingDefault = () => import('../components/OvertimeBooking/OvertimeBookingDefault')
+const OvertimeBookingIndex = () => import('../components/OvertimeBooking/OvertimeBookingIndex')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -229,6 +233,20 @@ export default new VueRouter({
                     props: true,
                 },
             ]
+        },
+        {
+            path: '/overtime-booking',
+            name: 'Overtime booking Default',
+            component: OverTimeBookingDefault,
+            props: true,
+            children: [
+                {
+                    path: 'index',
+                    name: 'Overtime Booking Index',
+                    component: OvertimeBookingIndex,
+                    props: true,
+                },
+            ],
         }
     ]
 })

@@ -83,7 +83,7 @@
                 </a>
             </li> --}}
         @endcan
-        @if (auth()->user()->can('employee_access') && auth()->user()->canAny(['team_access', 'shift_access']))
+        @if (auth()->user()->can('employee_access') || auth()->user()->canAny(['team_access', 'shift_access']))
             <li class="c-sidebar-nav-dropdown  {{ request()->is("admin/employees*") || request()->is("admin/teams*") || request()->is("admin/shifts*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
@@ -111,6 +111,26 @@
                             <a href="{{ route("admin.shifts.index") }}" class="c-sidebar-nav-link {{ request()->is("admin/shifts") || request()->is("admin/shifts/*") ? "c-active" : "" }}">
                                 <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
                                 Shifts
+                            </a>
+                        </li>
+                    @endcan
+                    @can('overtime_booking_access')
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings.employee") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings/employee") || request()->is("admin/overtime-bookings/employee*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Employee Overtime Lists
+                            </a>
+                        </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Overtime Slots
+                            </a>
+                        </li>
+                        <li class="c-sidebar-nav-item">
+                            <a href="{{ route("admin.overtime-bookings.requests") }}" class="c-sidebar-nav-link {{ request()->is("admin/overtime-bookings/requests") || request()->is("admin/overtime-bookings/requests*") ? "c-active" : "" }}">
+                                <i class="fa-fw fas fa-calendar-check-o c-sidebar-nav-icon"></i>
+                                Overtime Requests
                             </a>
                         </li>
                     @endcan

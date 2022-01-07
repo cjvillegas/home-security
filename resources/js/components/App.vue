@@ -70,6 +70,10 @@ export default {
             if (pathname === '/admin' && hash === '#/') {
                 this.$router.push({name: 'Dashboard Index', params: {}})
             }
+
+            if (pathname === '/admin/overtime-bookings' && hash === '#/') {
+                this.$router.push({name: 'Overtime Booking Index', params: {}})
+            }
         }
     }
 }
