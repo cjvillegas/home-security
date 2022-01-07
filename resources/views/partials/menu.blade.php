@@ -83,7 +83,7 @@
                 </a>
             </li> --}}
         @endcan
-        @if (auth()->user()->can('employee_access') && auth()->user()->canAny(['team_access', 'shift_access']))
+        @if (auth()->user()->can('employee_access') || auth()->user()->canAny(['team_access', 'shift_access']))
             <li class="c-sidebar-nav-dropdown  {{ request()->is("admin/employees*") || request()->is("admin/teams*") || request()->is("admin/shifts*") ? "c-show" : "" }}">
                 <a class="c-sidebar-nav-dropdown-toggle" href="#">
                     <i class="fa-fw fas fa-users c-sidebar-nav-icon"></i>
