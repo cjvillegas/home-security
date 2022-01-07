@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\ColorAttributeTrait;
+use Carbon\Carbon;
 use \DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -170,6 +171,21 @@ class Employee extends Model
     public function clockOut(): HasOne
     {
         return $this->hasOne(TimeClock::class, 'employee_id')->orderBy('swiped_at', 'desc');
+    }
+
+    /**
+     * List of Employee's overtime slots
+     *
+     * @return HasMany
+     */
+    public function overtimeSlots()
+    {
+        return $this->hasMany(EmployeeOvertime::class, 'employee_id', 'id');
+    }
+
+    public function confirmedSlots()
+    {
+        return $this->overtimeSlots()->whereDate('created_at', '>=', Carbon::now()->format('Y-m-d'));
     }
 
     /********************************

@@ -109,6 +109,27 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('shifts/all-shifts', 'ShiftsController@getAllShifts')->name('shifts.all-shifts');
     Route::resource('shifts', 'ShiftsController')->only(['index', 'store', 'update', 'destroy']);
 
+    // Overtime Booking
+    Route::group(['prefix' => 'overtime-bookings', 'as' => 'overtime-bookings', 'namespace' => 'OvertimeBooking'], function () {
+        Route::get('/', 'OvertimeBookingController@index');
+        Route::post('/', 'OvertimeBookingController@getSlots');
+        Route::delete('/{overtime_booking}/delete', 'OvertimeBookingController@deleteSlot')->name('overtime-bookings.delete');
+        Route::post('/save', 'OvertimeBookingController@store')->name('overtime-bookings.store');
+        Route::patch('/{overtime_booking}/toggle-lock', 'OvertimeBookingController@toggleSlot')->name('overtime-bookings.toggle');
+
+        Route::get('/employee', 'OvertimeBookingController@employeesOvertime')->name('.employee');
+        Route::get('/requests', 'OvertimeBookingController@overtimeRequests')->name('.requests');
+        Route::post('/requests', 'OvertimeBookingController@getEmployeeOvertimeRequests')->name('overtime-bookings.get-employee-overtime-requests');
+        Route::post('/requests/update', 'OvertimeBookingController@updateEmployeeOvertimeRequests')->name('overtime-bookings.update-requests');
+        Route::post('/confirmations', 'OvertimeBookingController@getOvertimeConfirmations')->name('overtime-bookings.confirmations');
+        Route::post('/show-employee-overtimes', 'OvertimeBookingController@showEmployeeOvertimeRequests')->name('overtime-bookings.show-employee-overtimes');
+
+        //overtime confirmations
+        Route::get('/get-all-slots', 'OvertimeBookingController@getAllSlots')->name('overtime-bookings.get-all-slots');
+        Route::post('/save-manual-entry', 'OvertimeBookingController@saveEmployeeOvertime')->name('overtime-bookings.save-manual-entry');
+    });
+
+
     // Audit Logs
     Route::resource('audit-logs', 'AuditLogsController', ['except' => ['create', 'store', 'edit', 'update', 'destroy']]);
 
