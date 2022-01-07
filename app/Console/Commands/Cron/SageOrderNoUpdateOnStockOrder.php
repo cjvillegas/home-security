@@ -87,7 +87,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
      */
     private function getSageOrders(array $orderNos): SupCollection
     {
-        $imploded = implode(', ', $orderNos);
+        $imploded = $imploded = sprintf("'%s'", implode("','", $orderNos));
         $whereInOrderNos = "({$imploded})";
 
         $query = "
@@ -114,7 +114,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
      */
     private function getWarehouseData(array $orderNos)
     {
-        $imploded = implode(', ', $orderNos);
+        $imploded = sprintf("'%s'", implode("','", $orderNos));
         $whereInOrderNos = "({$imploded})";
 
         $query = "
