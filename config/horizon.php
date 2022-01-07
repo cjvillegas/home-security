@@ -186,7 +186,7 @@ return [
             ],
         ],
 
-        'dev' => [
+        'staging' => [
             'supervisor-1' => [
                 'maxProcesses' => 3,
             ],
