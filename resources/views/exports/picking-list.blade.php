@@ -25,7 +25,7 @@
 
             <div class="d-inline-block float-r">
                 <p>
-                    Requested By: John Doe: {{ $stockOrder->creator->name ?? 'N/A' }}
+                    Requested By: {{ $stockOrder->creator->name ?? 'N/A' }}
                 </p>
                 <p>
                     Approved By: {{ $stockOrder->approver->name ?? 'N/A' }}
