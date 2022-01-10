@@ -65,15 +65,17 @@ class SageOrderNoUpdateOnStockOrder extends Command
                     $stockOrder->sage_order_no = $order->DocumentNo;
                     $saved = $stockOrder->save();
 
-                    $warehouseItem = $warehouseItems->firstWhere('CustomerDocumentNo', $order->CustomerDocumentNo);
+                    $rawWarehouseItems = $warehouseItems->filter(function ($value) use ($order) {
+                        return $order->CustomerDocumentNo === $value->CustomerDocumentNo;
+                    })
+                        ->toArray();
 
                     /**
                      * If the sage_order_no has been updated successfully
                      * then we generate/send an email for picking list
                      */
-                    if ($saved && !empty($warehouseItem)) {
-                        $warehouseItem = (array) $warehouseItem;
-                        GeneratePickingListJob::dispatch($stockOrder, $warehouseItem)->onQueue('default');
+                    if ($saved && !empty($rawWarehouseItems)) {
+                        GeneratePickingListJob::dispatch($stockOrder, $rawWarehouseItems)->onQueue('default');
                     }
                 }
             }
