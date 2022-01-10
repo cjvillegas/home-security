@@ -137,7 +137,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
                 INNER JOIN StockItem ON SOPOrderReturnLine.ItemCode = StockItem.Code ON WarehouseItem.ItemID = StockItem.ItemID
             WHERE
                 (SOPOrderReturn.CustomerDocumentNo IN {$whereInOrderNos})
-                AND (Warehouse.Name = 'IPSWICH') AND (SOPOrderReturn.DocumentDate > CAST(GETDATE() AS DATE))
+                AND (Warehouse.Name = 'IPSWICH') AND (SOPOrderReturn.DocumentDate >= CAST(GETDATE() AS DATE))
         ";
 
         // execute the query
