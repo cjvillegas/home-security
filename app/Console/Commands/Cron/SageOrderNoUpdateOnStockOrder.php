@@ -51,7 +51,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
         // chunk orders
         foreach ($stockOrders->chunk(100) as $chunk) {
             $orderNos = $chunk->pluck('order_no')->toArray();
-            $sageOrders = $this->getSageOrders($orderNos);
+            $sageOrders = $this->getSageOrders($orderNos)->unique('CustomerDocumentNo');
             $warehouseItems = $this->getWarehouseData($orderNos);
 
             /**
@@ -137,7 +137,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
                 INNER JOIN StockItem ON SOPOrderReturnLine.ItemCode = StockItem.Code ON WarehouseItem.ItemID = StockItem.ItemID
             WHERE
                 (SOPOrderReturn.CustomerDocumentNo IN {$whereInOrderNos})
-                AND (Warehouse.Name = 'IPSWICH')
+                AND (Warehouse.Name = 'IPSWICH') AND (SOPOrderReturn.DocumentDate > CAST(GETDATE() AS DATE))
         ";
 
         // execute the query
