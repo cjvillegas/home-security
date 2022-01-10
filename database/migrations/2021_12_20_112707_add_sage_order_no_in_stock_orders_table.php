@@ -14,7 +14,7 @@ class AddSageOrderNoInStockOrdersTable extends Migration
     public function up()
     {
         Schema::table('stock_orders', function (Blueprint $table) {
-            $table->unsignedBigInteger('sage_order_no')->nullable()->after('approved_by');
+            $table->string('sage_order_no')->nullable()->after('approved_by');
         });
     }
 

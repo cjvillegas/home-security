@@ -84,9 +84,9 @@
                             <td>{{ $item->BinLocation ?? 'N/A' }}</td>
                             <td>{{ $item->ItemCode ?? 'N/A' }}</td>
                             <td>{{ $item->Description ?? 'N/A' }}</td>
-                            <td>{{ $item->LineQuantity ?? 'N/A' }}</td>
+                            <td class="text-right">{{ $item->LineQuantity ?? 'N/A' }}</td>
                             <td>&nbsp;</td>
-                            <td>{{ $item->QtyInStock ?? 'N/A' }}</td>
+                            <td class="text-right">{{ $item->QtyInStock ?? 'N/A' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
