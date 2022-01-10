@@ -101,7 +101,7 @@ class StockOrder extends SbgModel
      */
     public function approver(): HasOne
     {
-        return $this->hasOne(User::class, 'id', 'approver_id');
+        return $this->hasOne(User::class, 'id', 'approved_by');
     }
 
     /**

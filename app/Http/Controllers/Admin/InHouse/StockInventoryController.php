@@ -267,6 +267,7 @@ class StockInventoryController extends Controller
             ->approver()
             ->itemsCount()
             ->groupBy('stock_orders.id')
+            ->orderBy('approved_at', 'DESC')
             ->get();
 
         return response()->json($approvedOrders);
