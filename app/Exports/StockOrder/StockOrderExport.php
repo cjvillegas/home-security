@@ -4,23 +4,19 @@ namespace App\Exports\StockOrder;
 
 use App\Models\StockOrder\StockOrder;
 use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithStrictNullComparison;
 use stdClass;
-use Throwable;
 
 class StockOrderExport implements
     FromCollection,
     ShouldAutoSize,
     WithHeadings,
-    WithStrictNullComparison,
-    ShouldQueue
+    WithStrictNullComparison
 {
     use Exportable;
 
@@ -129,17 +125,5 @@ class StockOrderExport implements
 
             return $formatted;
         });
-    }
-
-    /**
-     * Handle when this job fails
-     *
-     * @param Throwable $exception
-     */
-    public function failed(Throwable $exception): void
-    {
-        Log::error('Stock Order Export', [
-            'exception' => $exception,
-        ]);
     }
 }

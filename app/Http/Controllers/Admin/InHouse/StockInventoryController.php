@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Admin\InHouse;
 
-use App\Exports\StockOrder\StockOrderExport;
 use App\Factories\StockOrder\StockOrderFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StockOrder\UpdateStockOrderRequest;
+use App\Jobs\Exports\StockInventoryExportJob;
 use App\Models\StockLevel;
 use App\Models\StockOrder\StockOrder;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Excel;
 
 class StockInventoryController extends Controller
 {
@@ -188,8 +187,7 @@ class StockInventoryController extends Controller
             ->statusName()
             ->first();
 
-        $export = new StockOrderExport($stockOrder);
-        $export->store("stock-order/{$stockOrder->order_no}.csv", 'public', Excel::CSV);
+        StockInventoryExportJob::dispatch($stockOrder)->onQueue('default');
 
         return response()->json([
             'message' => 'Stock order approved.',
