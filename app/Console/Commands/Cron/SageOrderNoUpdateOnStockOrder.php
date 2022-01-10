@@ -126,9 +126,9 @@ class SageOrderNoUpdateOnStockOrder extends Command
                SOPOrderReturn.DocumentDate,
                BinItem.BinName as BinLocation,
                SOPOrderReturnLine.ItemCode,
-               SOPOrderReturnLine.LineQuantity,
+               FORMAT(CAST(SOPOrderReturnLine.LineQuantity AS DECIMAL(9,6)), 'g18') as LineQuantity,
                StockItem.Name AS Description,
-               WarehouseItem.ConfirmedQtyInStock + WarehouseItem.UnconfirmedQtyInStock AS [QtyInStock]
+               CAST(WarehouseItem.ConfirmedQtyInStock + WarehouseItem.UnconfirmedQtyInStock AS INT) as [QtyInStock]
             FROM  WarehouseItem
                 INNER JOIN Warehouse ON WarehouseItem.WarehouseID = Warehouse.WarehouseID
                 INNER JOIN BinItem ON WarehouseItem.WarehouseItemID = BinItem.WarehouseItemID
@@ -138,6 +138,16 @@ class SageOrderNoUpdateOnStockOrder extends Command
             WHERE
                 (SOPOrderReturn.CustomerDocumentNo IN {$whereInOrderNos})
                 AND (Warehouse.Name = 'IPSWICH') AND (SOPOrderReturn.DocumentDate >= CAST(GETDATE() AS DATE))
+                GROUP BY
+                    BinItem.BinName,
+                    StockItem.Name,
+                    SOPOrderReturnLine.ItemCode,
+                    SOPOrderReturn.DocumentNo,
+                    SOPOrderReturn.CustomerDocumentNo,
+                    SOPOrderReturnLine.LineQuantity,
+                    SOPOrderReturn.DocumentDate,
+                    WarehouseItem.ConfirmedQtyInStock,
+                    WarehouseItem.UnconfirmedQtyInStock
         ";
 
         // execute the query
