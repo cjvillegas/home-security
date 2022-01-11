@@ -83,7 +83,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
                 }
             }
         } catch (Exception $error) {
-            $this->sendFailedNotification('Sage Order No Update On Stock Order', $error);
+//            $this->sendFailedNotification('Sage Order No Update On Stock Order', $error);
         }
     }
 
