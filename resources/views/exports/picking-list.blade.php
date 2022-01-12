@@ -25,7 +25,7 @@
 
             <div class="d-inline-block float-r">
                 <p>
-                    Requested By: John Doe: {{ $stockOrder->creator->name ?? 'N/A' }}
+                    Requested By: {{ $stockOrder->creator->name ?? 'N/A' }}
                 </p>
                 <p>
                     Approved By: {{ $stockOrder->approver->name ?? 'N/A' }}
@@ -84,9 +84,9 @@
                             <td>{{ $item->BinLocation ?? 'N/A' }}</td>
                             <td>{{ $item->ItemCode ?? 'N/A' }}</td>
                             <td>{{ $item->Description ?? 'N/A' }}</td>
-                            <td>{{ $item->LineQuantity ?? 'N/A' }}</td>
+                            <td class="text-right">{{ !empty($item->LineQuantity) ? round($item->LineQuantity) : 'N/A' }}</td>
                             <td>&nbsp;</td>
-                            <td>{{ $item->QtyInStock ?? 'N/A' }}</td>
+                            <td class="text-right">{{ !empty($item->QtyInStock) ? round($item->QtyInStock) : 'N/A' }}</td>
                         </tr>
                     @endforeach
                 </tbody>

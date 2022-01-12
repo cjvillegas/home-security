@@ -72,7 +72,7 @@ class GeneratePickingListJob implements ShouldQueue
     public function handle()
     {
         // set the file path
-        $filePath = "picking-list/{$this->stockOrder->id}/Order Picking for {$this->stockOrder->sage_order_no}.pdf";
+        $filePath = "picking-list/{$this->stockOrder->id}/{$this->stockOrder->sage_order_no}.pdf";
         $barcode = DNS1DFacade::getBarcodePNG($this->stockOrder->sage_order_no, 'C128', 1.5, 50 , [1,1,1], true);
 
         /**

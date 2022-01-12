@@ -48,7 +48,7 @@
                                         :key="dateKey"
                                         class="bg-secondary text-dark">
                                         <span>
-                                            <h5>{{ date| fixDateByFormat('MM-DD-YYYY') }}</h5>
+                                            <h5>{{ date| fixDateByFormat('DD-MM-YYYY') }}</h5>
                                         </span>
                                     </th>
                                     <th

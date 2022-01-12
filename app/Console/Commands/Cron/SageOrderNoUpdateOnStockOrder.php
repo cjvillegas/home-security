@@ -51,7 +51,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
         // chunk orders
         foreach ($stockOrders->chunk(100) as $chunk) {
             $orderNos = $chunk->pluck('order_no')->toArray();
-            $sageOrders = $this->getSageOrders($orderNos);
+            $sageOrders = $this->getSageOrders($orderNos)->unique('CustomerDocumentNo');
             $warehouseItems = $this->getWarehouseData($orderNos);
 
             /**
@@ -65,15 +65,17 @@ class SageOrderNoUpdateOnStockOrder extends Command
                     $stockOrder->sage_order_no = $order->DocumentNo;
                     $saved = $stockOrder->save();
 
-                    $warehouseItem = $warehouseItems->firstWhere('CustomerDocumentNo', $order->CustomerDocumentNo);
+                    $rawWarehouseItems = $warehouseItems->filter(function ($value) use ($order) {
+                        return $order->CustomerDocumentNo === $value->CustomerDocumentNo;
+                    })
+                        ->toArray();
 
                     /**
                      * If the sage_order_no has been updated successfully
                      * then we generate/send an email for picking list
                      */
-                    if ($saved && !empty($warehouseItem)) {
-                        $warehouseItem = (array) $warehouseItem;
-                        GeneratePickingListJob::dispatch($stockOrder, $warehouseItem)->onQueue('default');
+                    if ($saved && !empty($rawWarehouseItems)) {
+                        GeneratePickingListJob::dispatch($stockOrder, $rawWarehouseItems)->onQueue('default');
                     }
                 }
             }
@@ -87,7 +89,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
      */
     private function getSageOrders(array $orderNos): SupCollection
     {
-        $imploded = implode(', ', $orderNos);
+        $imploded = sprintf("'%s'", implode("','", $orderNos));
         $whereInOrderNos = "({$imploded})";
 
         $query = "
@@ -114,7 +116,7 @@ class SageOrderNoUpdateOnStockOrder extends Command
      */
     private function getWarehouseData(array $orderNos)
     {
-        $imploded = implode(', ', $orderNos);
+        $imploded = sprintf("'%s'", implode("','", $orderNos));
         $whereInOrderNos = "({$imploded})";
 
         $query = "
@@ -124,9 +126,9 @@ class SageOrderNoUpdateOnStockOrder extends Command
                SOPOrderReturn.DocumentDate,
                BinItem.BinName as BinLocation,
                SOPOrderReturnLine.ItemCode,
-               SOPOrderReturnLine.LineQuantity,
+               FORMAT(CAST(SOPOrderReturnLine.LineQuantity AS DECIMAL(9,6)), 'g18') as LineQuantity,
                StockItem.Name AS Description,
-               WarehouseItem.ConfirmedQtyInStock + WarehouseItem.UnconfirmedQtyInStock AS [QtyInStock]
+               CAST(WarehouseItem.ConfirmedQtyInStock + WarehouseItem.UnconfirmedQtyInStock AS INT) as [QtyInStock]
             FROM  WarehouseItem
                 INNER JOIN Warehouse ON WarehouseItem.WarehouseID = Warehouse.WarehouseID
                 INNER JOIN BinItem ON WarehouseItem.WarehouseItemID = BinItem.WarehouseItemID
@@ -135,7 +137,17 @@ class SageOrderNoUpdateOnStockOrder extends Command
                 INNER JOIN StockItem ON SOPOrderReturnLine.ItemCode = StockItem.Code ON WarehouseItem.ItemID = StockItem.ItemID
             WHERE
                 (SOPOrderReturn.CustomerDocumentNo IN {$whereInOrderNos})
-                AND (Warehouse.Name = 'IPSWICH')
+                AND (Warehouse.Name = 'IPSWICH') AND (SOPOrderReturn.DocumentDate >= CAST(GETDATE() AS DATE))
+                GROUP BY
+                    BinItem.BinName,
+                    StockItem.Name,
+                    SOPOrderReturnLine.ItemCode,
+                    SOPOrderReturn.DocumentNo,
+                    SOPOrderReturn.CustomerDocumentNo,
+                    SOPOrderReturnLine.LineQuantity,
+                    SOPOrderReturn.DocumentDate,
+                    WarehouseItem.ConfirmedQtyInStock,
+                    WarehouseItem.UnconfirmedQtyInStock
         ";
 
         // execute the query
