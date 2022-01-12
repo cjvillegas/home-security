@@ -526,7 +526,7 @@ class ShiftPerformanceDataService extends ReportDataService
             ];
         }
 
-        // Query for Overall Total People Workend
+        // Query for Overall Total People Worked
         // Technical Department has different Query.
         if ($isOverallTotal && !is_null($shift) && $department != 'Technical') {
             if ($shift == 1) {
@@ -538,26 +538,35 @@ class ShiftPerformanceDataService extends ReportDataService
                 $timeTo = '21:59:59';
             }
             if ($shift == 3) {
+                Log::info($department);
+                Log::info($shift);
                 $timeFrom = '22:00:00';
                 $timeTo = '05:59:59';
             }
+
             $query = Scanner::query()
-            ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
-            ->whereIn('scanners.processid', $processes)
-            ->whereBetween('scanners.scannedtime', [Carbon::parse($from)->format('Y-m-d'), Carbon::parse($to)->format('Y-m-d')])
-            ->where(function($q) use ($timeFrom, $timeTo) {
-                $q->whereTime('scanners.scannedtime', '>', $timeFrom)
-                    ->whereTime('scanners.scannedtime', '<', $timeTo);
-            })
+                ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
+                ->whereIn('scanners.processid', $processes)
+                ->whereBetween('scanners.scannedtime', [Carbon::parse($from)->format('Y-m-d'), Carbon::parse($to)->format('Y-m-d')])
+                ->where(function($q) use ($timeFrom, $timeTo) {
+                    $q->whereTime('scanners.scannedtime', '>', $timeFrom)
+                        //->whereRaw('scanners.scannedtime + interval 1 day < ?', $timeTo)
+                        ;
+
+                })
             ->first();
+
+            if ($shift == 3) {
+                Log::info($query);
+            }
 
         } else {
             if ($department == 'Venetian' || $department == 'Roller Express' || $department == 'Roller' || $department == 'Vertical' || $department == 'Despatch') {
                 $query = Scanner::query()
-                ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
-                ->whereIn('scanners.processid', $processes)
-                ->whereBetween('scanners.scannedtime', [$from, $to])
-                ->first();
+                    ->select([DB::raw('COUNT(DISTINCT scanners.employeeid) AS total')])
+                    ->whereIn('scanners.processid', $processes)
+                    ->whereBetween('scanners.scannedtime', [$from, $to])
+                    ->first();
             }
         }
 
