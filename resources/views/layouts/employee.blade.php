@@ -12,6 +12,7 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <script>
