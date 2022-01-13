@@ -47,7 +47,7 @@
                     v-for="(departmentData, departmentDataKey) in shiftPerformance.data"
                     :key="departmentDataKey">
                         <td>
-                            {{ departmentData.date }}
+                            {{ departmentData.date | fixDateTimeByFormat('DD, MMMM, YYYY') }}
                         </td>
                         <td>
                             {{ departmentData.fully_manufactured }}

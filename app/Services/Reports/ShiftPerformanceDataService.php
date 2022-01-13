@@ -550,9 +550,8 @@ class ShiftPerformanceDataService extends ReportDataService
                 ->whereBetween('scanners.scannedtime', [Carbon::parse($from)->format('Y-m-d'), Carbon::parse($to)->format('Y-m-d')])
                 ->where(function($q) use ($timeFrom, $timeTo) {
                     $q->whereTime('scanners.scannedtime', '>', $timeFrom)
-                        //->whereRaw('scanners.scannedtime + interval 1 day < ?', $timeTo)
+                        //->whereRaw('scanners.scannedtime + interval 1 day < ?', [$timeTo])
                         ;
-
                 })
             ->first();
 
