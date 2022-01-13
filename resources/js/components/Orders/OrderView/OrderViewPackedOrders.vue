@@ -8,7 +8,6 @@
         <div v-if="hasScanners">
             {{ totalScanned | numFormat }} of {{ totalBlind | numFormat }} Packed Blinds
         </div>
-        {{ privacy }}
         <el-table
             v-if="hasScanners"
             fit
