@@ -62,7 +62,7 @@
 
         created() {
             setTimeout(_ => {
-                location.reload(true);
+                this.reset()
             }, 15000)
         },
 

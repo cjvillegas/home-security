@@ -10,18 +10,20 @@
 
                 <div class="ml-auto">
                     <el-button
+                        type="primary"
                         @click="refresh">
-                        <i class="fa fa-refresh">
-                            Refresh
-                        </i>
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        Refresh
                     </el-button>
                     <el-button
+                        type="danger"
                         @click="reset">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i>
                         Logout
                     </el-button>
                 </div>
             </div>
-            <p class="text-center">Please selected Date(s) for which you're available for Overtime.</p>
+            <p class="text-center">Please select Date(s) for which you're available for Overtime.</p>
 
             <div class="row">
                 <div
@@ -31,7 +33,7 @@
                     <div class="card" style="width: 18rem;">
                         <el-button
                             @click="addSelectedSlot(slot)"
-                            :disabled="isInArray(slot.id, employeeConfirmedSlots, true)"
+                            :disabled="isInArray(slot.id, employeeConfirmedSlots, true) || slot.is_locked"
                             :type="isSelected(slot.id, slot.is_locked)">
                             <h5 class="card-title">{{ convertToDayName(slot.available_date) }}</h5>
                             <h5 class="card-text">{{ slot.available_date | fixDateTimeByFormat('DD, MMMM, YYYY') }}</h5>
@@ -61,7 +63,7 @@
                     <div class="ml-auto">
                         <el-button
                             @click="confirmSelectedSlots"
-                            type="info"
+                            type="default"
                             icon="el-icon-circle-check">
                             Confirm
                         </el-button>
