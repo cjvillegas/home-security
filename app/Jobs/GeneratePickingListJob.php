@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\StockOrder\StockOrder;
 use App\Notifications\StockOrder\OrderPickingListNotification;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,7 +25,8 @@ class GeneratePickingListJob implements ShouldQueue
      * @var array
      */
     CONST EMAILS = [
-        'ipswich.warehouse@stylebyglobal.com'
+//        'ipswich.warehouse@stylebyglobal.com'
+        'Cosmin.Begu@stylebyglobal.com'
     ];
 
     /**
@@ -73,7 +75,13 @@ class GeneratePickingListJob implements ShouldQueue
     {
         // set the file path
         $filePath = "picking-list/{$this->stockOrder->id}/{$this->stockOrder->sage_order_no}.pdf";
-        $barcode = DNS1DFacade::getBarcodePNG($this->stockOrder->sage_order_no, 'C128', 1.5, 50 , [1,1,1], true);
+        try {
+            $barcode = DNS1DFacade::getBarcodePNG($this->stockOrder->sage_order_no, 'C128', 1.5, 50 , [1,1,1], true);
+        } catch (Exception $exception) {
+            Log::error('Barcode Generator', [
+                'exception' => $exception
+            ]);
+        }
 
         /**
          * ohh here is where we generate the PDF.

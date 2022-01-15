@@ -4,6 +4,7 @@ namespace App\Console\Commands\Cron;
 
 use App\Jobs\GeneratePickingListJob;
 use App\Models\StockOrder\StockOrder;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupCollection;
@@ -42,43 +43,47 @@ class SageOrderNoUpdateOnStockOrder extends Command
      */
     public function handle(): void
     {
-        $stockOrders = $this->getOrders();
+        try {
+            $stockOrders = $this->getOrders();
 
-        if ($stockOrders->isEmpty()) {
-            return;
-        }
+            if ($stockOrders->isEmpty()) {
+                return;
+            }
 
-        // chunk orders
-        foreach ($stockOrders->chunk(100) as $chunk) {
-            $orderNos = $chunk->pluck('order_no')->toArray();
-            $sageOrders = $this->getSageOrders($orderNos)->unique('CustomerDocumentNo');
-            $warehouseItems = $this->getWarehouseData($orderNos);
+            // chunk orders
+            foreach ($stockOrders->chunk(100) as $chunk) {
+                $orderNos = $chunk->pluck('order_no')->toArray();
+                $sageOrders = $this->getSageOrders($orderNos)->unique('CustomerDocumentNo');
+                $warehouseItems = $this->getWarehouseData($orderNos);
 
-            /**
-             * loop through all the retrieved items from sage, why?
-             * it's better to only get what's present for optimization
-             */
-            foreach ($sageOrders as $order) {
-                $stockOrder = $chunk->firstWhere('order_no', $order->CustomerDocumentNo);
+                /**
+                 * loop through all the retrieved items from sage, why?
+                 * it's better to only get what's present for optimization
+                 */
+                foreach ($sageOrders as $order) {
+                    $stockOrder = $chunk->firstWhere('order_no', $order->CustomerDocumentNo);
 
-                if (!empty($order)) {
-                    $stockOrder->sage_order_no = $order->DocumentNo;
-                    $saved = $stockOrder->save();
+                    if (!empty($order)) {
+                        $stockOrder->sage_order_no = $order->DocumentNo;
+                        $saved = $stockOrder->save();
 
-                    $rawWarehouseItems = $warehouseItems->filter(function ($value) use ($order) {
-                        return $order->CustomerDocumentNo === $value->CustomerDocumentNo;
-                    })
-                        ->toArray();
+                        $rawWarehouseItems = $warehouseItems->filter(function ($value) use ($order) {
+                            return $order->CustomerDocumentNo === $value->CustomerDocumentNo;
+                        })
+                            ->toArray();
 
-                    /**
-                     * If the sage_order_no has been updated successfully
-                     * then we generate/send an email for picking list
-                     */
-                    if ($saved && !empty($rawWarehouseItems)) {
-                        GeneratePickingListJob::dispatch($stockOrder, $rawWarehouseItems)->onQueue('default');
+                        /**
+                         * If the sage_order_no has been updated successfully
+                         * then we generate/send an email for picking list
+                         */
+                        if ($saved && !empty($rawWarehouseItems)) {
+                            GeneratePickingListJob::dispatch($stockOrder, $rawWarehouseItems)->onQueue('default');
+                        }
                     }
                 }
             }
+        } catch (Exception $error) {
+//            $this->sendFailedNotification('Sage Order No Update On Stock Order', $error);
         }
     }
 
