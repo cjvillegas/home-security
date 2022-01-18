@@ -25,8 +25,7 @@ class GeneratePickingListJob implements ShouldQueue
      * @var array
      */
     CONST EMAILS = [
-//        'ipswich.warehouse@stylebyglobal.com'
-        'Cosmin.Begu@stylebyglobal.com'
+        'ipswich.warehouse@stylebyglobal.com'
     ];
 
     /**
