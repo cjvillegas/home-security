@@ -218,6 +218,10 @@
             },
         },
 
+        created() {
+            this.processForm = this.getDefaultFieldValues()
+        },
+
         methods: {
             validate() {
                 this.$refs.processForm.validate(valid => {
@@ -359,7 +363,7 @@
                 if (value) {
                     this.initializeForm()
                 } else {
-                    this.getDefaultFieldValues()
+                    this.processForm = this.getDefaultFieldValues()
                 }
             }
         }
