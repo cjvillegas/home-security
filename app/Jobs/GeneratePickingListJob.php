@@ -113,7 +113,7 @@ class GeneratePickingListJob implements ShouldQueue
         if ($stored) {
             $this->finishPdfGenerator($filePath);
 
-            $this->sendEmail();
+//            $this->sendEmail();
         }
     }
 
