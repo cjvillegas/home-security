@@ -26,7 +26,8 @@ class GeneratePickingListJob implements ShouldQueue
      */
     CONST EMAILS = [
         'ipswich.warehouse@stylebyglobal.com',
-        'lukasz.bandosz@stylebyglobal.com'
+        'lukasz.bandosz@stylebyglobal.com',
+        'chaprel.villegas@stylebyglobal.com'
     ];
 
     /**
