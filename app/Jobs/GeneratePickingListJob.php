@@ -25,7 +25,8 @@ class GeneratePickingListJob implements ShouldQueue
      * @var array
      */
     CONST EMAILS = [
-        'ipswich.warehouse@stylebyglobal.com'
+        'ipswich.warehouse@stylebyglobal.com',
+        'lukasz.bandosz@stylebyglobal.com'
     ];
 
     /**
@@ -113,7 +114,7 @@ class GeneratePickingListJob implements ShouldQueue
         if ($stored) {
             $this->finishPdfGenerator($filePath);
 
-//            $this->sendEmail();
+            $this->sendEmail();
         }
     }
 
