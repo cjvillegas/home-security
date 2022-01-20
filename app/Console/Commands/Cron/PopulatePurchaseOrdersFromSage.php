@@ -74,7 +74,7 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
                 }
 
                 // do the actual insertion of data
-                PurchaseOrder::insert($newPurchaseOrders);
+                //PurchaseOrder::insert($newPurchaseOrders);
 
                 // increment the execution counter
                 $chunkCounter++;
