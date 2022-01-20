@@ -105,28 +105,34 @@ class PopulateStocksLevelFromSage extends CronDatabasePopulator
     public function getDataFromBlind(): Collection
     {
         $query = "
-            SELECT
+             SELECT
                 StockItem.Code, StockItem.Name,
                 CAST(WarehouseItem.ConfirmedQtyInStock+WarehouseItem.UnconfirmedQtyInStock  AS INT) AS 'Actual Stock',
-                WarehouseItem.QuantityOnPOPOrder
+                WarehouseItem.QuantityOnPOPOrder,
+                NLNominalAccount.AccountName AS [ProductCategory]
             FROM
                 StockItem INNER JOIN
                 BinItem ON StockItem.ItemID = BinItem.ItemID INNER JOIN
-                WarehouseItem ON StockItem.ItemID = WarehouseItem.ItemID AND BinItem.WarehouseItemID = WarehouseItem.WarehouseItemID INNER JOIN
+                WarehouseItem ON StockItem.ItemID = WarehouseItem.ItemID
+                AND BinItem.WarehouseItemID = WarehouseItem.WarehouseItemID INNER JOIN
                 Warehouse ON WarehouseItem.WarehouseID = Warehouse.WarehouseID INNER JOIN
                 ProductGroup ON StockItem.ProductGroupID = ProductGroup.ProductGroupID INNER JOIN
                 StockItemNominalCode ON StockItem.ItemID = StockItemNominalCode.ItemID INNER JOIN
                 NLNominalAccount ON StockItemNominalCode.NominalCodeID = NLNominalAccount.NLNominalAccountID INNER JOIN
                 NominalUsage ON StockItemNominalCode.NominalUsageID = NominalUsage.NominalUsageID
             WHERE
-                (StockItem.StockItemStatusID = '0') AND
-                (NominalUsage.NominalUsageID = 1)
+                (StockItem.StockItemStatusID = '0')
+                AND (NominalUsage.NominalUsageID = 1)
             GROUP BY
-                ProductGroup.Code, StockItem.Code, ProductGroup.Description, StockItem.Name, Warehouse.Name, BinItem.BinName, WarehouseItem.ConfirmedQtyInStock, WarehouseItem.QuantityAllocatedSOP,
-                WarehouseItem.QuantityAllocatedStock, StockItem.StockUnitName, StockItem.AnalysisCode1, NLNominalAccount.AccountName, WarehouseItem.QuantityOnPOPOrder, WarehouseItem.UnconfirmedQtyInStock,
+                ProductGroup.Code, StockItem.Code, ProductGroup.Description,
+                StockItem.Name, Warehouse.Name, BinItem.BinName, WarehouseItem.ConfirmedQtyInStock,
+                WarehouseItem.QuantityAllocatedSOP,
+                WarehouseItem.QuantityAllocatedStock, StockItem.StockUnitName, StockItem.AnalysisCode1,
+                NLNominalAccount.AccountName, WarehouseItem.QuantityOnPOPOrder, WarehouseItem.UnconfirmedQtyInStock,
                 BinItem.DateOfLastStockCount, WarehouseItem.DateOfLastSale
             HAVING
                 (Warehouse.Name = 'IPSWICH')
+
         ";
 
         // execute the query
