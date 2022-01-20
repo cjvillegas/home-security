@@ -16,7 +16,7 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
      *
      * @var string
      */
-    protected $signature = 'orders:populate-purchase-orders-from-sage';
+    protected $signature = 'orders:populate-purchase-orders-from-sage {--truncate}';
 
     /**
      * The console command description.
@@ -43,6 +43,13 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
     public function handle()
     {
         try {
+            $toTruncate = $this->option('truncate');
+
+            // if to load all data, truncate the orders table
+            if ($toTruncate) {
+                $this->clearTable();
+            }
+
             $purchaseOrders = $this->getDataFromBlind();
 
             $chunkCounter = 0;
