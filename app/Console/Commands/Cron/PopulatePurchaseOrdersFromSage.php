@@ -33,6 +33,8 @@ class PopulatePurchaseOrdersFromSage extends CronDatabasePopulator
     public function __construct()
     {
         parent::__construct();
+
+        $this->table = 'purchase_orders';
     }
 
     /**
