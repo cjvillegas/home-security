@@ -25,54 +25,8 @@ export default {
             let pathname = window.location.pathname
             let hash = window.location.hash
 
-            console.log(pathname, hash)
-
-            if (pathname === '/admin/in-house/stock-orders' && hash === '#/') {
-                this.$router.push({name: 'Stock Inventory Index', params: {}})
-            }
-
-            if (pathname === '/admin/teams' && hash === '#/') {
-                this.$router.push({name: 'Team List', params: {}})
-            }
-
-            if (pathname === '/admin/notifications' && hash === '#/') {
-                this.$router.push({name: 'Notification List', params: {}})
-            }
-
             if (pathname === '/admin/users' && hash === '#/') {
                 this.$router.push({name: 'User List', params: {}})
-            }
-
-            if (pathname === '/admin/employees' && hash === '#/') {
-                this.$router.push({name: 'Employee List', params: {}})
-            }
-
-            if (pathname === '/admin/processes' && hash === '#/') {
-                this.$router.push({name: 'Process List', params: {}})
-            }
-
-            if (pathname === '/admin/orders' && hash === '#/') {
-                this.$router.push({name: 'Order List', params: {}})
-            }
-
-            if (pathname === '/admin/orders/order-search' && hash === '#/') {
-                this.$router.push({name: 'Order Search View', params: {}})
-            }
-
-            if (pathname === '/admin/reports/work-analytics' && hash === '#/') {
-                this.$router.push({name: 'Work Analytics', params: {}})
-            }
-
-            if (pathname === '/admin/settings' && hash === '#/') {
-                this.$router.push({name: 'Settings Index', params: {}})
-            }
-
-            if (pathname === '/admin' && hash === '#/') {
-                this.$router.push({name: 'Dashboard Index', params: {}})
-            }
-
-            if (pathname === '/admin/overtime-bookings' && hash === '#/') {
-                this.$router.push({name: 'Overtime Booking Index', params: {}})
             }
         }
     }

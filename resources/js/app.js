@@ -26,11 +26,6 @@ import router from './router'
 import {mapActions, mapGetters} from "vuex";
 import store from './store/store'
 
-// vue filters
-import filters from './filters'
-
-import moment from 'moment'
-
 // make element UI globally accessible
 Vue.use(ElementUI, {  locale, size: 'small' })
 
@@ -47,6 +42,8 @@ Vue.prototype.$API = API
 Vue.prototype.$EventBus = new EventBus()
 Vue.prototype.$StringService = new StringGenericService()
 Vue.prototype.$DateService = new DateGenericService()
+
+import filters from './filters'
 
 // vue filter
 import numeral from 'numeral';
