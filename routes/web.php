@@ -33,7 +33,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('users', 'UsersController');
 
     Route::get('monitorings/list', 'MonitoringController@list')->name('monitorings.list');
-    Route::resource('monitorings', 'MonitoringController');
+    Route::resource('monitorings', 'MonitoringController')->except(['show']);
 
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {

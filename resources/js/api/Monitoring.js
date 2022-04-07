@@ -51,5 +51,5 @@ export default {
      */
     delete(id) {
         return axios.delete(`/admin/monitorings/${id}`)
-    },
+    }
 }
