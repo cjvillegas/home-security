@@ -16,6 +16,9 @@ const UserIndex = () => import('../components/User/UserIndex')
 const UserList = () => import('../components/User/UserList')
 const UserView = () => import('../components/User/UserView')
 
+// Monitoring
+const MonitoringIndex = () => import('../components/Monitoring/MonitoringIndex')
+
 export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: '',
@@ -42,6 +45,13 @@ export default new VueRouter({
                     props: true,
                 }
             ]
+        },
+        {
+            path: '/monitoring-index',
+            name: "Monitoring Index",
+            component: MonitoringIndex,
+            props: true,
+            children: []
         }
     ]
 })

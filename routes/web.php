@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\OrdersController;
-
 Route::redirect('/', '/login');
 Route::get('/home', function () {
     if (session('status')) {
@@ -14,7 +12,6 @@ Route::get('/home', function () {
 Auth::routes(['register' => false]);
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
-    Route::get('/', 'HomeController@index')->name('home');
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::post('permissions/list', 'PermissionsController@fetchPermissions');
@@ -35,8 +32,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('users/check-privacy', 'UsersController@checkPrivacy')->name('users.check-privacy');
     Route::resource('users', 'UsersController');
 
-    Route::resource('employees', 'EmployeesController')->only(['index', 'show', 'store', 'update', 'destroy']);
-    Route::post('employees/search', 'EmployeesController@searchEmployee');
+    Route::get('monitorings/list', 'MonitoringController@list')->name('monitorings.list');
+    Route::resource('monitorings', 'MonitoringController');
 
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
@@ -48,6 +45,3 @@ Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 
         Route::post('profile/destroy', 'ChangePasswordController@destroy')->name('password.destroyProfile');
     }
 });
-
-require_once base_path('routes/employees.php');
-

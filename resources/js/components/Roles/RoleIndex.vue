@@ -324,7 +324,7 @@
                 this.$refs.form.validate(valid => {
                     if (valid) {
                         this.resetErrors()
-                        if (this.dialogType == 'Edit') {
+                        if (this.dialogType === 'Edit') {
                             this.updateRole()
 
                             return

@@ -1,15 +1,9 @@
 import User from './User'
 import Role from './Role'
-
-// Employee endpoint collections
-import EmployeeAuth from './Employee/Auth'
-import EmployeeEmployee from './Employee/Employee'
+import Monitoring from './Monitoring'
 
 export default {
     User,
     Role,
-
-    // employee dedicated endpoints
-    EmployeeAuth,
-    EmployeeEmployee
+    Monitoring
 }

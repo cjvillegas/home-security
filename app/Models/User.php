@@ -8,8 +8,6 @@ use Hash;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -108,12 +106,6 @@ class User extends Authenticatable
     /*******************************************
      * E N D  C U S T O M  P R O P E R T I E S *
      ******************************************/
-
-    public function userUserAlerts()
-    {
-        return $this->belongsToMany(UserAlert::class);
-    }
-
     public function setEmailVerifiedAtAttribute($value)
     {
         $this->attributes['email_verified_at'] = $value ? Carbon::createFromFormat(config('panel.date_format') . ' ' . config('panel.time_format'), $value)->format('Y-m-d H:i:s') : null;
@@ -139,26 +131,6 @@ class User extends Authenticatable
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
-    }
-
-    /**
-     * Get employee of this user
-     *
-     * @return HasOne
-     */
-    public function employee()
-    {
-        return $this->hasOne(Employee::class, 'user_id');
-    }
-
-    /**
-     * Get the qc faults created by this user
-     *
-     * @return HasMany
-     */
-    public function qcFaults(): HasMany
-    {
-        return $this->hasMany(QcFault::class);
     }
 
     /*********************
@@ -196,7 +168,7 @@ class User extends Authenticatable
      * This is useful to our Vue application if we want to
      * implement permissions in that level.
      *
-     * @param string $args
+     * @param string ...$permissions
      *
      * @return array
      */
@@ -218,7 +190,7 @@ class User extends Authenticatable
      * This will automatically generate permission names for that given module ie. user_access.
      * Commonly used in our frontend when we want to have permission checking in that level.
      *
-     * @param string $args
+     * @param string $moduleName
      *
      * @return array
      */

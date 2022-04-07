@@ -28,6 +28,10 @@ export default {
             if (pathname === '/admin/users' && hash === '#/') {
                 this.$router.push({name: 'User List', params: {}})
             }
+
+            if (pathname === '/admin/monitorings' && hash === '#/') {
+                this.$router.push({name: 'Monitoring Index', params: {}})
+            }
         }
     }
 }
