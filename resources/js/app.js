@@ -70,64 +70,6 @@ const app = new Vue({
         ...mapGetters(['user'])
     },
     created() {
-        let pathname = window.location.pathname
-
-        console.log(pathname)
-
-        // if on public
-        if (pathname.includes('/public/')) {
-            return
-        }
-
-        if (pathname.includes('/overtime-booking') && !pathname.includes('/admin')) {
-            return
-        }
-
-        if (pathname === '/admin') {
-            return
-        }
-
-        /**
-         * optionally load the data on specific pages. since we only use vuex in
-         * selected pages, we will only load the data in those pages, not to all pages
-         */
-        if (pathname === '/admin/reports/qc-report') {
-            this.getUsers()
-            this.getProcesses()
-            this.getQualityControls()
-            this.getProducts()
-        }
-
-        if (pathname === '/admin/reports/team-status') {
-            this.getTeams()
-            this.getShifts()
-        }
-
-        if (pathname === '/admin/reports/fire-register') {
-            this.getShifts()
-        }
-        if (pathname === '/admin/reports/work-analytics') {
-            this.getShifts()
-            this.getProcesses()
-        }
-
-        if (pathname === '/admin/reports/manufactured-blinds') {
-            this.getQualityControls()
-        }
-
-        if (pathname === '/admin/reports/target-performance') {
-            this.getCurrentUser()
-        }
-
-        if (pathname === '/admin/orders') {
-            this.getProcesses()
-        }
-        if (pathname === '/admin/reports/shift-performance') {
-            this.getShifts()
-        }
-
-        this.getEmployees()
-        this.checkPrivacy()
         this.getAuthUser()
     },
     methods: {
@@ -151,36 +93,6 @@ const app = new Vue({
             })
         },
 
-        getEmployees() {
-            this.$API.Employee.getCleanEmployees()
-            .then(res => {
-                this.setEmployees(res.data)
-            })
-            .catch(err => {
-                console.error(`Error: Global Employee Fetching Error`)
-            })
-        },
-
-        getProcesses() {
-            this.$API.Processes.getAll()
-            .then(res => {
-                this.setProcesses(res.data)
-            })
-            .catch(err => {
-                console.error(`Error: Global Process Fetching Error`)
-            })
-        },
-
-        getQualityControls() {
-            axios.get(`/admin/quality-control/list`)
-            .then(res => {
-                this.setQualityControls(res.data.qualityControls)
-            })
-            .catch(err => {
-                console.error(`Error: Global Quality Control Fetching Error`)
-            })
-        },
-
         getTeams() {
             axios.get(`/admin/teams/all-teams`)
             .then(res => {
@@ -188,27 +100,6 @@ const app = new Vue({
             })
             .catch(err => {
                 console.error(`Error: Global Teams Fetching Error`)
-            })
-        },
-
-        getShifts() {
-            axios.get(`/admin/shifts/all-shifts`)
-            .then(res => {
-                this.setShifts(res.data)
-            })
-            .catch(err => {
-                console.error(`Error: Global Shifts Fetching Error`)
-            })
-        },
-
-        getProducts() {
-            axios.get(`/admin/orders/all-products`)
-            .then(res => {
-                console.log(res.data)
-                this.setProducts(res.data)
-            })
-            .catch(err => {
-                console.error(`Error: Global Products Fetching Error`)
             })
         },
 
@@ -222,16 +113,7 @@ const app = new Vue({
             })
         },
 
-        checkPrivacy() {
-            let apiUrl = `/admin/users/check-privacy`
-
-            axios.get(apiUrl)
-            .then((response) => {
-                this.setPrivacy(response.data)
-            })
-        },
-
-        ...mapActions(['setUsers', 'setEmployees', 'setProcesses', 'setQualityControls', 'setTeams', 'setShifts', 'setProducts', 'setPrivacy', 'setUser'])
+        ...mapActions(['setUsers', 'setProcesses', 'setTeams', 'setUser'])
     }
 });
 

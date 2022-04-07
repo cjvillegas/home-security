@@ -98,45 +98,6 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
-
-        'stock_sqlsrv' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('SAGE_STOCK_DB_HOST', 'localhost'),
-            'port' => env('SAGE_DB_PORT', '1433'),
-            'database' => env('SAGE_STOCK_DB_DATABASE', 'Reports'),
-            'username' => env('SAGE_STOCK_DB_USERNAME', 'Reports'),
-            'password' => env('SAGE_STOCK_DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-        ],
-
-        'time_clock_sql' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('TIMECLOCK_DB_HOST', 'localhost'),
-            'port' => env('TIMECLOCK_DB_PORT', '1433'),
-            'database' => env('TIMECLOCK_DB_DATABASE', 'forge'),
-            'username' => env('TIMECLOCK_DB_USERNAME', 'forge'),
-            'password' => env('TIMECLOCK_DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-        ],
-
-        'sage_order' => [
-            'driver' => 'sqlsrv',
-            'url' => env('DATABASE_URL'),
-            'host' => env('SAGE_ORDER_DB_HOST', 'localhost'),
-            'port' => env('SAGE_ORDER_DB_PORT', '1433'),
-            'database' => env('SAGE_ORDER_DB_DATABASE', 'forge'),
-            'username' => env('SAGE_ORDER_DB_USERNAME', 'forge'),
-            'password' => env('SAGE_ORDER_DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-            'prefix_indexes' => true,
-        ],
     ],
 
     /*
@@ -188,7 +149,6 @@ return [
             'port' => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
-
     ],
 
 ];
