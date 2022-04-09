@@ -17,6 +17,7 @@ class CreateMonitoringsTable extends Migration
             $table->id();
             $table->string('name');
             $table->ipAddress('ip_address')->nullable();
+            $table->tinyInteger('status')->default(1);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->dateTime('created_at');

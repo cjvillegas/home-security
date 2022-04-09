@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+Broadcast::channel('user.{id}', function ($user, $id) {
+    \Log::error('Shit', [
+        $id, $user
+    ]);
     return (int) $user->id === (int) $id;
 });
