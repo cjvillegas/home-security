@@ -20,8 +20,37 @@
                     v-for="monitor in monitorings"
                     :key="monitor.id"
                     shadow="always"
-                    class="block-cards">
+                    :class="`block-cards ${setStatus(monitor)}`">
                     <div class="block-name">
+                        <el-tooltip
+                            v-if="Number(monitor.status) === STATUS.STATUS_BURNING"
+                            class="item"
+                            effect="dark"
+                            content="This house might be under fire."
+                            placement="top">
+                            <i class="fas fa-burn"></i>
+                        </el-tooltip>
+
+                        <el-tooltip
+                            v-else-if="Number(monitor.status) === STATUS.STATUS_BURGLAR"
+                            class="item"
+                            effect="dark"
+                            content="This house might be under burglary."
+                            placement="top">
+                            <i class="fas fa-theater-masks"></i>
+                        </el-tooltip>
+
+                        <el-tooltip
+                            v-else
+                            class="item"
+                            effect="dark"
+                            content="Safe and protected."
+                            placement="top">
+                            <i class="fas fa-user-shield"></i>
+                        </el-tooltip>
+
+
+
                         {{ monitor.name }}
                     </div>
 
@@ -30,6 +59,22 @@
                     </div>
 
                     <div class="action-buttons">
+                        <el-popconfirm
+                            v-if="Number(monitor.status) !== STATUS.STATUS_NORMAL"
+                            @confirm="revertStatus(monitor)"
+                            confirm-button-text='Yes'
+                            cancel-button-text='Not sure'
+                            icon="el-icon-info"
+                            icon-color="green"
+                            title="Do you wish to change status to normal?">
+                            <el-button
+                                slot="reference"
+                                type="text"
+                                class="text-success">
+                                <i class="fas fa-check-circle"></i>
+                            </el-button>
+                        </el-popconfirm>
+
                         <el-button
                             type="text"
                             @click="updateBlock(monitor)">
@@ -65,6 +110,7 @@
 
 <script>
     import MonitoringForm from "./MonitoringForm"
+    import * as STATUS from '../../constants/status'
 
     export default {
         name: "MonitoringIndex",
@@ -78,7 +124,8 @@
                 showForm: false,
                 loading: false,
                 monitorings: [],
-                selectedModel: null
+                selectedModel: null,
+                STATUS
             }
         },
 
@@ -92,10 +139,15 @@
             })
 
             this.$EventBus.listen('MONITORING_UPDATED', data => {
-                const index = this.monitorings.findIndex(m => m.id === data.id)
-                if (index > -1) {
-                    this.monitorings.splice(index, 1, data)
-                }
+                this.doUpdate(data)
+            })
+
+            window.GlobalEventBus.listen('GLOBAL_MONITORING_DELETED', data => {
+                this.doDeletion(data)
+            })
+
+            window.GlobalEventBus.listen('GLOBAL_MONITORING_STATUS_CHANGE', data => {
+                this.doUpdate(data)
             })
         },
 
@@ -126,10 +178,7 @@
                 this.$API.Monitoring.delete(item.id)
                     .then(res => {
                         if (res.data) {
-                            const index = this.monitorings.findIndex(m => m.id === item.id)
-                            if (index > -1) {
-                                this.monitorings.splice(index, 1)
-                            }
+                            this.doDeletion(item)
 
                             this.$notify({
                                 type: 'success',
@@ -147,6 +196,47 @@
                     })
             },
 
+            doDeletion(item) {
+                const index = this.monitorings.findIndex(m => m.id === item.id)
+                if (index > -1) {
+                    this.monitorings.splice(index, 1)
+                }
+            },
+
+            revertStatus(item) {
+                this.loading = true
+
+                const postData = {
+                    status: STATUS.STATUS_NORMAL
+                }
+
+                this.$API.Monitoring.changeStatus(item.id, postData)
+                    .then(res => {
+                        this.doUpdate(res.data)
+                        this.$notify({
+                            type: 'success',
+                            title: 'Monitoring',
+                            message: 'Item updated.',
+                            duration: 5000
+                        })
+
+                        this.closeForm()
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+                    .finally(_ => {
+                        this.loading = false
+                    })
+            },
+
+            doUpdate(item) {
+                const index = this.monitorings.findIndex(m => m.id === item.id)
+                if (index > -1) {
+                    this.monitorings.splice(index, 1, item)
+                }
+            },
+
             addNewMonitoring() {
                 this.showForm = true
             },
@@ -154,12 +244,42 @@
             formClosed() {
                 this.selectedModel = null
                 this.showForm = false
+            },
+
+            setStatus(item) {
+                if (STATUS.STATUS_BURNING === Number(item.status)) {
+                    return 'status-burning'
+                }
+
+                if (STATUS.STATUS_BURGLAR === Number(item.status)) {
+                    return 'status-burglar'
+                }
+
+                return ''
             }
         }
     }
 </script>
 
 <style lang="scss">
+    .status-burning {
+        background-color: #F56C6C !important;
+        color: #FFFF !important;
+
+        .action-buttons {
+            color: #FFFFFF !important;
+        }
+    }
+
+    .status-burglar {
+        background-color: #E6A23C !important;
+        color: #FFFF !important;
+
+        .action-buttons {
+            color: #FFFFFF !important;
+        }
+    }
+
     .block-cards {
         width: 200px;
         height: 85px;
@@ -167,6 +287,7 @@
         margin-right: 10px;
         margin-top: 10px;
         position: relative;
+        border-color: #67C23A;
 
         .block-name {
             font-weight: 700;

@@ -37,9 +37,11 @@ class Monitoring extends Model
     protected static function booted()
     {
         static::updated(function (self $monitoring) {
-            if ($monitoring->getOriginal('status') === self::STATUS_NORMAL && $monitoring->status !== self::STATUS_NORMAL) {
-                event(new UpdateBlockStatus($monitoring));
-            }
+            event(new UpdateBlockStatus($monitoring, 'status-change'));
+        });
+
+        static::deleted(function (self $monitoring) {
+            event(new UpdateBlockStatus($monitoring, 'deleted'));
         });
     }
 }

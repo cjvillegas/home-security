@@ -51,5 +51,22 @@ export default {
      */
     delete(id) {
         return axios.delete(`/admin/monitorings/${id}`)
-    }
+    },
+
+    /******
+    * API *
+    *******/
+    /**
+     * Change block status
+     *
+     * @handler Controllers\API\V1\MonitoringController@changeStatus
+     *
+     * @param id - int
+     * @param postData - object
+     *
+     * @return Promise
+     */
+    changeStatus(id, postData) {
+        return axios.patch(`/api/monitorings/${id}/status-change`, postData)
+    },
 }

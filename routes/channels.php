@@ -14,8 +14,5 @@ use Illuminate\Support\Facades\Broadcast;
 */
 
 Broadcast::channel('user.{id}', function ($user, $id) {
-    \Log::error('Shit', [
-        $id, $user
-    ]);
-    return (int) $user->id === (int) $id;
+    return true;
 });

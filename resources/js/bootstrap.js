@@ -1,3 +1,5 @@
+import Vue from "vue";
+
 window._ = require('lodash');
 
 /**
@@ -22,6 +24,7 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.GlobalEventBus = new EventBus()
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -30,6 +33,7 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
  */
 
 import Echo from 'laravel-echo';
+import EventBus from "./services/EventBus";
 
 window.Pusher = require('pusher-js');
 
@@ -40,7 +44,10 @@ window.Echo = new Echo({
     forceTLS: true
 });
 
-window.Echo.private(`monitoring.1`)
-    .listen('.monitoring.updated', (e) => {
-        console.log('yawa');
-    });
+window.Echo.private(`user.1`)
+    .listen('.monitoring.deleted', (data) => {
+        window.GlobalEventBus.fire('GLOBAL_MONITORING_DELETED', data.monitoring)
+    })
+    .listen('.monitoring.status-change', (data) => {
+        window.GlobalEventBus.fire('GLOBAL_MONITORING_STATUS_CHANGE', data.monitoring)
+    })
