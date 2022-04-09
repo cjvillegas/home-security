@@ -14,6 +14,7 @@ class Monitoring extends Model
     const STATUS_NORMAL = 1;
     const STATUS_BURNING = 2;
     const STATUS_BURGLAR = 3;
+    const STATUS_INACTIVE = 4;
 
     /**
      * @var string[]

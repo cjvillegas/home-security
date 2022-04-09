@@ -41,6 +41,15 @@
                         </el-tooltip>
 
                         <el-tooltip
+                            v-else-if="Number(monitor.status) === STATUS.STATUS_INACTIVE"
+                            class="item"
+                            effect="dark"
+                            content="This house is deactivated."
+                            placement="top">
+                            <i class="fas fa-pause-circle"></i>
+                        </el-tooltip>
+
+                        <el-tooltip
                             v-else
                             class="item"
                             effect="dark"
@@ -49,8 +58,6 @@
                             <i class="fas fa-user-shield"></i>
                         </el-tooltip>
 
-
-
                         {{ monitor.name }}
                     </div>
 
@@ -58,7 +65,9 @@
                         {{ monitor.ip_address }}
                     </div>
 
-                    <div class="action-buttons">
+                    <div
+                        v-if="Number(monitor.status) !== STATUS.STATUS_INACTIVE"
+                        class="action-buttons">
                         <el-popconfirm
                             v-if="Number(monitor.status) !== STATUS.STATUS_NORMAL"
                             @confirm="revertStatus(monitor)"
@@ -255,6 +264,10 @@
                     return 'status-burglar'
                 }
 
+                if (STATUS.STATUS_INACTIVE === Number(item.status)) {
+                    return 'status-inactive'
+                }
+
                 return ''
             }
         }
@@ -278,6 +291,10 @@
         .action-buttons {
             color: #FFFFFF !important;
         }
+    }
+
+    .status-inactive {
+        border-color: #909399 !important;
     }
 
     .block-cards {
